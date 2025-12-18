@@ -1,0 +1,12 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Start Mondrian Job Service (serial mode)",
+			"type": "shell",
+			"command": "python3 mondrian/job_service_v2.3.py --port 5005 --db mondrian.db",
+			"isBackground": false,
+			"group": "build"
+		}
+	]
+}
