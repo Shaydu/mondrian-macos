@@ -119,8 +119,10 @@ def init_database(db_path):
         if os.path.exists(prompts_dir):
             advisor_data = [
                 ("ansel", "Ansel Adams", "Legendary landscape photographer known for his black and white work and Zone System.", None, "1902-1984"),
-                ("okeefe", "Georgia O'Keeffe", "American modernist artist known for her paintings of enlarged flowers and New Mexico landscapes.", None, "1887-1986"),
-                ("mondrian", "Piet Mondrian", "Dutch painter known for neoplasticism and geometric abstract art.", None, "1872-1944")
+                ("okeefe", "Georgia O'Keeffe", "American modernist painter known for her paintings of enlarged flowers and New Mexico landscapes.", None, "1887-1986"),
+                ("mondrian", "Piet Mondrian", "Dutch painter known for neoplasticism and geometric abstract art.", None, "1872-1944"),
+                ("gehry", "Frank Gehry", "Visionary architect known for deconstructivist design and sculptural buildings.", None, "1929-"),
+                ("vangogh", "Vincent van Gogh", "Post-impressionist painter known for bold colors, emotional depth, and expressive brushwork.", None, "1853-1890")
             ]
 
             for advisor_id, name, bio, prompt, years in advisor_data:
@@ -143,7 +145,13 @@ def init_database(db_path):
             ("okeefe", "Color Theory", "Bold colors, contrast, and emotional impact"),
             ("okeefe", "Organic Forms", "Flowers, bones, and natural abstraction"),
             ("mondrian", "Geometric Abstraction", "Primary colors, straight lines, and balance"),
-            ("mondrian", "Composition", "Grid systems and spatial relationships")
+            ("mondrian", "Composition", "Grid systems and spatial relationships"),
+            ("gehry", "Spatial Dynamics", "Flow, interaction, and architectural composition"),
+            ("gehry", "Structural Elements", "Lines, forms, and unconventional angles"),
+            ("gehry", "Light & Material", "Surface qualities and light-material interaction"),
+            ("vangogh", "Emotional Resonance", "Mood, feeling, and expressive depth"),
+            ("vangogh", "Color Expression", "Bold, emotive use of color and harmony"),
+            ("vangogh", "Visual Movement", "Dynamic energy and flow through composition")
         ]
 
         for advisor_id, title, description in focus_areas_data:
@@ -175,6 +183,8 @@ if __name__ == "__main__":
     # Default database path
     db_path = "mondrian.db"
     init_database(db_path)
+
+
 
 
 

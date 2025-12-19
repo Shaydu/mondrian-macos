@@ -1,0 +1,18 @@
+[INFO] AI Advisor Service v1.13-BASE64-HTTP-OLLAMA starting...
+[INFO] Using base64 encoding for all images
+[INFO] Using Ollama HTTP API endpoint
+[INFO] Ollama URL: http://127.0.0.1:11434
+[INFO] Model: qwen3-vl:4b
+[INFO] Model timeout: 600s (increased for qwen3-vl:4b processing time)
+[INFO] System prompt loaded from database (3277 characters)
+AI Advisor Service starting up...
+  Port: 5100
+  DB Path: mondrian.db
+  Model: qwen3-vl:4b
+  Ollama URL: http://127.0.0.1:11434
+  Job service URL: http://169.254.136.128:5005
+  Current working directory: /Users/shaydu/dev/mondrian-macos/mondrian
+  Image Encoding: BASE64 (all platforms)
+AI Advisor Service running on port 5100...
+ * Serving Flask app 'ai_advisor_service_v1.13'
+ * Debug mode: off
