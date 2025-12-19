@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+            padding: 20px;
+            background: #000000;
+            line-height: 1.6;
+            color: #ffffff;
+            max-width: 100%;
+        }
+
+        .image-section {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .image-section h1 {
+            color: #ffffff;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .advisor-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #1c1c1e;
+            border-radius: 12px;
+        }
+
+        .advisor-section h1 {
+            color: #ffffff;
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .advisor-info {
+            text-align: center;
+        }
+
+        .advisor-info h2 {
+            color: #007AFF;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .advisor-years {
+            color: #98989d;
+            font-size: 16px;
+            font-weight: 500;
+            margin-bottom: 12px;
+        }
+
+        .advisor-bio {
+            color: #d1d1d6;
+            font-size: 16px;
+            line-height: 1.6;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        /* Responsive image styling for iOS devices */
+        /* Ensure images scale to the container width and preserve aspect ratio */
+        img {
+            width: 100% !important;
+            max-width: 100% !important;
+            height: auto !important;
+            display: block;
+            margin: 0 auto 20px auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            object-fit: contain;
+            max-height: 60vh; /* keep images from dominating the viewport */
+        }
+
+        /* Target images produced inside the analysis container specifically */
+        .analysis img {
+            width: 100% !important;
+            height: auto !important;
+            max-width: 100% !important;
+            display: block;
+        }
+
+        /* Ensure images don't overflow on small screens */
+        @media (max-width: 768px) {
+            img {
+                width: 100%;
+                margin: 0 0 20px 0;
+            }
+
+            body {
+                padding: 15px;
+            }
+
+            .analysis {
+                padding: 15px;
+            }
+        }
+
+        /* iPhone SE and smaller devices */
+        @media (max-width: 375px) {
+            body {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            .analysis {
+                padding: 12px;
+            }
+
+            img {
+                margin: 0 0 15px 0;
+            }
+        }
+
+        /* Large iPads and desktop (if used) */
+        @media (min-width: 1024px) {
+            body {
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 30px;
+            }
+
+            img {
+                max-width: 100%;
+                margin: 0 auto 30px auto;
+            }
+        }
+
+        .analysis {
+            background: #1c1c1e;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .analysis h2 {
+            color: #ffffff;
+            font-size: 22px;
+            font-weight: 600;
+            margin: 0 0 12px 0;
+        }
+
+        .analysis p {
+            color: #d1d1d6;
+            margin: 0 0 16px 0;
+            line-height: 1.6;
+        }
+
+        .feedback-card {
+            background: #1a1a1a;
+            /* Removed outer blue left bar so the dimension card is visually neutral.
+               Inner/inline indicators (if present inside the content) will remain. */
+            border-left: none;
+            padding: 16px;
+            margin-bottom: 16px;
+            border-radius: 8px;
+        }
+
+        .feedback-card h3 {
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+        }
+
+        .feedback-comment {
+            color: #d1d1d6;
+            font-size: 15px;
+            margin: 0 0 12px 0;
+            line-height: 1.5;
+        }
+
+        .feedback-recommendation {
+            background: #0a3d66;
+            border-left: 3px solid #34C759;
+            padding: 12px;
+            border-radius: 6px;
+            color: #e8f4f8;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+
+        .feedback-recommendation strong {
+            color: #34C759;
+        }
+
+        .overall-grade {
+            font-size: 32px;
+            font-weight: 700;
+            color: #007AFF;
+            margin: 16px 0 8px 0;
+            text-align: center;
+        }
+
+        .grade-note {
+            color: #98989d;
+            font-size: 14px;
+            text-align: center;
+            margin: 0 0 16px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="image-section">
+        <h1>Uploaded Image:</h1>
+        <img src="/image/photo-b78e984b.jpg" alt="Uploaded image for analysis" />
+    </div>
+
+    <div class="advisor-section">
+        <h1>AI Advisor</h1>
+        <div class="advisor-info">
+            <h2>Ansel Adams</h2>
+            <p class="advisor-years">1902-1984</p>
+            <p class="advisor-bio">Famous for black-and-white landscape photography.</p>
+        </div>
+    </div>
+
+    
+<div class="advisor-section" data-advisor="ansel">
+  <div class="analysis">
+  <h2>Image Analysis</h2>
+  <p>This photograph captures a serene desert landscape at golden hour, with soft, textured sand dunes in the foreground and a majestic, sunlit mountain range in the distance. The interplay of light and shadow creates a dramatic tonal range, while the sparse vegetation adds organic detail to the otherwise stark environment.</p>
+
+  <h2>Detailed Feedback</h2>
+
+  <div class="feedback-card">
+    <h3>Composition</h3>
+    <p class="feedback-comment">The foreground plants create a natural leading line toward the mountains, guiding the viewer’s eye with strong visual rhythm. The placement of the dunes and vegetation follows a balanced, almost symmetrical structure reminiscent of Ansel Adams’ deliberate compositional choices.</p>
+    <div class="feedback-recommendation">
+      <strong>Recommendation:</strong> Consider adjusting the horizon placement slightly to emphasize the mountain’s grandeur and ensure the foreground elements are more precisely framed to enhance the sense of scale.
+    </div>
+  </div>
+
+  <div class="feedback-card">
+    <h3>Lighting</h3>
+    <p class="feedback-comment">The lighting is exceptionally soft and directional, casting gentle shadows that reveal texture and form. This is a masterful use of the golden hour to create a warm, emotive glow that mirrors Adams’ love for the sublime power of natural light.</p>
+    <div class="feedback-recommendation">
+      <strong>Recommendation:</strong> To deepen the emotional impact, consider slightly increasing the contrast to reveal more detail in the shadows, enhancing the tonal range and drama.
+    </div>
+  </div>
+
+  <div class="feedback-card">
+    <h3>Focus & Sharpness</h3>
+    <p class="feedback-comment">The focus is crisp on the foreground vegetation, capturing fine detail with remarkable clarity. This precision aligns with Adams’ insistence on sharp, well-defined elements to convey the truth of nature.</p>
+    <div class="feedback-recommendation">
+      <strong>Recommendation:</strong> Maintain this level of sharpness while ensuring the distant mountains remain slightly softer to preserve depth, a technique Adams often employed to create a sense of atmospheric perspective.
+    </div>
+  </div>
+
+  <div class="feedback-card">
+    <h3>Color Harmony</h3>
+    <p class="feedback-comment">The color palette is harmonious, with warm tones dominating the scene and cool blues in the sky creating a gentle contrast. The natural transition from gold to blue evokes a sense of balance and tranquility.</p>
+    <div class="feedback-recommendation">
+      <strong>Recommendation:</strong> Slightly deepen the shadows to enhance the tonal gradation, and consider a subtle cool tint in the sky to better contrast the warm foreground, echoing Adams’ use of complementary color schemes.
+    </div>
+  </div>
+
+  <div class="feedback-card">
+    <h3>Subject Isolation</h3>
+    <p class="feedback-comment">The foreground plants are isolated effectively, standing out against the expansive dunes and mountains. This isolation draws attention to the resilience of life in harsh environments, a theme Adams often explored.</p>
+    <div class="feedback-recommendation">
+      <strong>Recommendation:</strong> Enhance the isolation by slightly increasing the contrast between the plants and the sand, making them appear more defined and emotionally resonant.
+    </div>
+  </div>
+
+  <div class="feedback-card">
+    <h3>Depth & Perspective</h3>
+    <p class="feedback-comment">The image exhibits excellent depth, with layered textures from the foreground to the distant mountains. The perspective is wide and immersive, inviting the viewer into the landscape.</p>
+    <div class="feedback-recommendation">
+      <strong>Recommendation:</strong> Use a slightly wider aperture to maintain sharpness across the entire depth, and consider a subtle tilt to emphasize the horizon’s curve for greater spatial depth.
+    </div>
+  </div>
+
+  <div class="feedback-card">
+    <h3>Visual Balance</h3>
+    <p class="feedback-comment">The composition is visually balanced, with the foreground and background elements in equilibrium. The natural asymmetry of the vegetation adds dynamic interest without disrupting harmony.</p>
+    <div class="feedback-recommendation">
+      <strong>Recommendation:</strong> Consider adding a subtle leading line, such as a winding dune ridge, to guide the eye more dynamically toward the mountains, enhancing the sense of movement and scale.
+    </div>
+  </div>
+
+  <div class="feedback-card">
+    <h3>Emotional Impact</h3>
+    <p class="feedback-comment">The image conveys a quiet, contemplative emotion, evoking awe and reverence for nature’s grandeur. The lighting and composition invite a sense of peace and timelessness.</p>
+    <div class="feedback-recommendation">
+      <strong>Recommendation:</strong> To deepen the emotional resonance, consider a slight increase in the warmth of the shadows to intensify the sense of time and place, echoing Adams’ ability to capture the soul of a landscape.
+    </div>
+  </div>
+
+  <h2>Overall Grade</h2>
+  <p class="overall-grade"><strong>8.7/10</strong></p>
+  <p class="grade-note">(Average of all dimension scores)</p>
+</div>
+</div>
+<hr class="advisor-divider" />
+
+</body>
+</html>
