@@ -1,3 +1,1 @@
-Fetching 14 files:   0%|          | 0/14 [00:00<?, ?it/s]Fetching 14 files: 100%|██████████| 14/14 [00:00<00:00, 244667.73it/s]
-Address already in use
-Port 5100 is in use by another program. Either identify and stop that program, or start the server with a different port.
+/Library/Frameworks/Python.framework/Versions/3.12/Resources/Python.app/Contents/MacOS/Python: can't open file '/Users/shaydu/dev/mondrian-macos/ai_advisor_service_v1.13.py': [Errno 2] No such file or directory
