@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            padding: 20px;
+            background: #000000;
+            color: #ffffff;
+            line-height: 1.6;
+        }
+
+        .advisor-profile {
+            background: #1c1c1e;
+            padding: 24px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+        }
+
+        .advisor-profile h1 {
+            color: #ffffff;
+            font-size: 28px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .advisor-years {
+            color: #98989d;
+            font-size: 16px;
+            font-weight: 400;
+            margin-bottom: 16px;
+        }
+
+        .advisor-bio {
+            color: #d1d1d6;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+
+        .wikipedia-link {
+            margin: 16px 0 20px 0;
+        }
+
+        .wikipedia-link a {
+            display: inline-block;
+            color: #007AFF;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 500;
+            padding: 8px 16px;
+            border: 1px solid #007AFF;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .wikipedia-link a:hover {
+            background: #007AFF;
+            color: #ffffff;
+        }
+
+        .wikipedia-link a:active {
+            background: #0051D5;
+            border-color: #0051D5;
+        }
+
+        .focus-areas {
+            margin-top: 20px;
+        }
+
+        .focus-areas h2 {
+            color: #98989d;
+            font-size: 14px;
+            font-weight: 400;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .focus-areas ul {
+            list-style-position: inside;
+            padding-left: 0;
+        }
+
+        .focus-areas li {
+            color: #d1d1d6;
+            font-size: 16px;
+            margin-bottom: 12px;
+        }
+
+        .focus-areas li strong {
+            color: #ffffff;
+        }
+
+        .representative-images {
+            background: #1c1c1e;
+            padding: 24px;
+            border-radius: 12px;
+        }
+
+        .representative-images h2 {
+            color: #ffffff;
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .image-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .image-item {
+            background: #2c2c2e;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.2s;
+        }
+
+        .image-item:hover {
+            transform: scale(1.02);
+        }
+
+        .image-item img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .image-caption {
+            padding: 8px;
+            font-size: 12px;
+            color: #98989d;
+            text-align: center;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .no-images {
+            background: #1c1c1e;
+            padding: 24px;
+            border-radius: 12px;
+            text-align: center;
+        }
+
+        .no-images p {
+            color: #98989d;
+            font-size: 16px;
+        }
+
+        /* Responsive layout */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+
+            .image-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+                gap: 12px;
+            }
+
+            .image-item img {
+                height: 150px;
+            }
+        }
+
+        @media (max-width: 375px) {
+            body {
+                padding: 10px;
+            }
+
+            .advisor-profile, .representative-images, .no-images {
+                padding: 16px;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            body {
+                max-width: 1000px;
+                margin: 0 auto;
+                padding: 30px;
+            }
+
+            .image-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            }
+
+            .image-item img {
+                height: 250px;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="advisor-profile">
+  <h1>Ansel Adams</h1>
+  <p class="advisor-years">1902-1984</p>
+  <p class="advisor-bio">Adams was a master of large-format landscape photography and a pioneer of photographic modernism in America. His technical innovations, particularly the Zone System for exposure and development, gave photographers unprecedented control over tonality and detail. His iconic images of Yosemite and the American West established landscape photography as a fine art form and inspired generations of photographers to see nature as a subject for both technical mastery and spiritual expression.</p>
+<div class="advisor-image"><img src="/advisor_image/ansel.jpg" alt="Advisor portrait" style="max-width:220px;max-height:300px;border-radius:10px;margin-bottom:18px;"/></div>
+  <p class="wikipedia-link"><a href="https://en.wikipedia.org/wiki/Ansel_Adams" target="_blank" rel="noopener noreferrer">View Full Biography on Wikipedia →</a></p>
+  <p class="commons-link"><a href="https://commons.wikimedia.org/wiki/Category:Ansel_Adams" target="_blank" rel="noopener noreferrer">View Media on Wikimedia Commons →</a></p>
+  <div class="focus-areas">
+    <h2>Review Focus</h2>
+    <ul>
+      <li><strong>Tonal Range</strong>: Emphasizes the full spectrum of light and dark</li>
+      <li><strong>Composition</strong>: Precise framing and perspective</li>
+      <li><strong>Technical Excellence</strong>: Sharp focus and perfect exposure</li>
+    </ul>
+  </div>
+</div>
+
+<div class="representative-images">
+  <h2>Representative Images</h2>
+  <div class="image-grid">
+    <div class="image-item">
+      <img src="/uploads/photo-3477EB62-8552-438A-83A8-00F1144EF976-29064920.jpg" alt="photo-3477EB62-8552-438A-83A8-00F1144EF976-29064920.jpg" />
+      <p class="image-caption">photo-3477EB62-8552-438A-83A8-00F1144EF976-29064920.jpg</p>
+    </div>
+    <div class="image-item">
+      <img src="/uploads/photo-1EFA0AE8-9D05-4EDC-9056-E58A634FB7CD-e211521f.jpg" alt="photo-1EFA0AE8-9D05-4EDC-9056-E58A634FB7CD-e211521f.jpg" />
+      <p class="image-caption">photo-1EFA0AE8-9D05-4EDC-9056-E58A634FB7CD-e211521f.jpg</p>
+    </div>
+    <div class="image-item">
+      <img src="/uploads/photo-05973A3B-68F9-4985-80EA-FE7B9F2FCF95-6e85347b.jpg" alt="photo-05973A3B-68F9-4985-80EA-FE7B9F2FCF95-6e85347b.jpg" />
+      <p class="image-caption">photo-05973A3B-68F9-4985-80EA-FE7B9F2FCF95-6e85347b.jpg</p>
+    </div>
+    <div class="image-item">
+      <img src="/uploads/photo-3E8CB6DA-9A35-4535-81F2-460A8E02ED8C-f2954bc7.jpg" alt="photo-3E8CB6DA-9A35-4535-81F2-460A8E02ED8C-f2954bc7.jpg" />
+      <p class="image-caption">photo-3E8CB6DA-9A35-4535-81F2-460A8E02ED8C-f2954bc7.jpg</p>
+    </div>
+    <div class="image-item">
+      <img src="/uploads/photo-34F66DBC-F8AC-49D0-898A-CE473DF31E55-81904a21.jpg" alt="photo-34F66DBC-F8AC-49D0-898A-CE473DF31E55-81904a21.jpg" />
+      <p class="image-caption">photo-34F66DBC-F8AC-49D0-898A-CE473DF31E55-81904a21.jpg</p>
+    </div>
+  </div>
+</div>
+</body>
+</html>

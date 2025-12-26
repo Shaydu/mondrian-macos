@@ -8,7 +8,7 @@ import sqlite3
 import json
 
 def get_db_connection():
-    conn = sqlite3.connect("mondrian/mondrian.db")
+    conn = sqlite3.connect("mondrian.db")
     conn.row_factory = sqlite3.Row
     return conn
 
