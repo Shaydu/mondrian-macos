@@ -4,8 +4,8 @@
 # This exercises the same endpoints in the same order as the iOS app
 # Now includes RAG (Retrieval-Augmented Generation) endpoints
 
-BASE_URL="http://10.0.0.227:5005"
-RAG_URL="http://10.0.0.227:5400"
+BASE_URL="http://127.0.0.1:5005"
+RAG_URL="http://127.0.0.1:5400"
 ADVISOR="${1:-ansel}"  # Default to ansel, or use first argument
 TEST_IMAGE="${2:-test_image.png}"  # Use provided image or default
 
@@ -145,13 +145,14 @@ while IFS= read -r line; do
                 echo -e "${GREEN}✅ SSE: Analysis complete event received${NC}"
                 # Save event data and extract HTML using Python for proper JSON parsing
                 echo "$EVENT_DATA" > /tmp/sse_event_data.json
-                
+
                 ANALYSIS_HTML=$(python3 -c "import json, sys; data=json.load(open('/tmp/sse_event_data.json')); print(data.get('analysis_html', ''))" 2>/dev/null)
-                
+
                 if [[ -n "$ANALYSIS_HTML" ]] && [[ ${#ANALYSIS_HTML} -gt 100 ]]; then
-                    echo "📄 Received HTML analysis: ${#ANALYSIS_HTML} characters"
+                    echo "📄 Received HTML analysis via SSE: ${#ANALYSIS_HTML} characters"
                     RECEIVED_ANALYSIS=true
                     STATUS="done"
+                    # Will save this HTML later in the output directory
                 else
                     echo "⚠️ Analysis HTML in event is empty or too short, will fetch via API"
                 fi
@@ -196,10 +197,30 @@ fi
 echo -e "${GREEN}✅ Analysis received: $ANALYSIS_LENGTH characters${NC}"
 echo ""
 
-# Save to file (backend returns HTML, not markdown)
-ANALYSIS_FILE="/tmp/mondrian_analysis_$JOB_ID.html"
-echo "$ANALYSIS_RESPONSE" > "$ANALYSIS_FILE"
-echo "Full analysis saved to: $ANALYSIS_FILE"
+# Create output directory with timestamp
+TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+OUTPUT_DIR="../analysis_output/${TIMESTAMP}"
+mkdir -p "$OUTPUT_DIR"
+
+# Save analysis HTML from whichever source we got it
+if [[ "$RECEIVED_ANALYSIS" == true ]]; then
+    # Save SSE version
+    SSE_FILE="$OUTPUT_DIR/analysis_sse.html"
+    echo "$ANALYSIS_RESPONSE" > "$SSE_FILE"
+    echo "Analysis from SSE saved to: $SSE_FILE"
+else
+    # Save API version
+    API_FILE="$OUTPUT_DIR/analysis_api.html"
+    echo "$ANALYSIS_RESPONSE" > "$API_FILE"
+    echo "Analysis from API saved to: $API_FILE"
+fi
+
+# Also save full JSON event data if we got it via SSE
+if [[ -f /tmp/sse_event_data.json ]]; then
+    cp /tmp/sse_event_data.json "$OUTPUT_DIR/sse_event.json"
+    echo "SSE event data saved to: $OUTPUT_DIR/sse_event.json"
+fi
+
 echo ""
 
 # Show preview
@@ -295,12 +316,49 @@ fi
 
 echo -e "${GREEN}🏁 Test Complete!${NC}"
 echo ""
+
+# Create summary.txt file
+SUMMARY_FILE="$OUTPUT_DIR/summary.txt"
+cat > "$SUMMARY_FILE" << SUMMARY_END
+================================================================================
+iOS API Flow Test Summary
+================================================================================
+Test Date: $(date)
+Job ID: $JOB_ID
+Advisor: $ADVISOR
+Test Image: $TEST_IMAGE
+
+Test Results:
+-------------
+✅ Step 1: Fetch Advisors - SUCCESS
+✅ Step 2: Upload Image - SUCCESS
+$([ "$RECEIVED_ANALYSIS" == true ] && echo "✅ Step 3: SSE Stream - SUCCESS (received analysis_html)" || echo "⚠️  Step 3: SSE Stream - Used API fallback")
+✅ Step 4: Get Analysis - SUCCESS
+$(echo "$INDEX_RESPONSE" | grep -q '"success":true' && echo "✅ Step 5: RAG Index - SUCCESS" || echo "⚠️  Step 5: RAG Index - FAILED")
+$(echo "$SEARCH_RESPONSE" | grep -q '"results"' && echo "✅ Step 6: RAG Search - SUCCESS" || echo "⚠️  Step 6: RAG Search - FAILED")
+
+Analysis Details:
+-----------------
+Status: $STATUS
+Progress: 100%
+Analysis Source: $([ "$RECEIVED_ANALYSIS" == true ] && echo "SSE analysis_complete event" || echo "API /analysis endpoint")
+Analysis Length: $ANALYSIS_LENGTH characters
+
+Output Files:
+-------------
+- Summary: $SUMMARY_FILE
+$([ "$RECEIVED_ANALYSIS" == true ] && echo "- Analysis (SSE): $SSE_FILE" || echo "- Analysis (API): $API_FILE")
+$([ -f "$OUTPUT_DIR/sse_event.json" ] && echo "- SSE Event JSON: $OUTPUT_DIR/sse_event.json" || echo "- SSE Event: Not captured")
+
+================================================================================
+SUMMARY_END
+
 echo "Summary:"
 echo "  Job ID: $JOB_ID"
 echo "  Final Status: $STATUS"
 echo "  Analysis Source: $([ "$RECEIVED_ANALYSIS" == true ] && echo "SSE analysis_complete event" || echo "API /analysis endpoint")"
 echo "  Analysis Length: $ANALYSIS_LENGTH chars"
-echo "  Analysis File: $ANALYSIS_FILE"
+echo "  Output Directory: $OUTPUT_DIR"
 echo ""
 echo "iOS App Flow (Complete):"
 echo "  1. ✅ Fetch advisors list (GET /advisors)"
