@@ -1,0 +1,104 @@
+
+    <html><head><title>Advisor Output Comparison</title>
+    <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif; background: #181818; color: #fff; padding: 24px; }
+    h1, h2, h3 { color: #fff; }
+    .compare-section { display: flex; gap: 32px; flex-wrap: wrap; }
+    .compare-block { background: #232323; border-radius: 12px; padding: 20px; flex: 1 1 400px; min-width: 350px; }
+    .feedback-card, .feedback-recommendation { margin-bottom: 16px; }
+    .top3-title { margin-top: 0; }
+    .bio-block { background: #1c1c1e; border-radius: 8px; padding: 16px; margin-bottom: 24px; color: #d1d1d6; }
+    </style></head><body>
+    <h1>Advisor Output Comparison</h1>
+    <img src="source/mike-shrub.jpg" style="max-width:100%;margin-bottom:20px;border-radius:12px;">
+    <div class="compare-section">
+      <div class="compare-block">
+        <h2>RAG/Embedding Output</h2>
+        <div class="bio-block"><strong>Advisor Bio:</strong> This photograph captures a serene desert landscape at golden hour, with soft, warm light illuminating the white sand dunes and sparse vegetation. The distant mountains are bathed in a rich, reddish-orange glow, creating a powerful contrast against the cool blue sky. The composition balances foreground detail with expansive background, evoking a sense of quiet grandeur and natural resilience.</div>
+        <h3 class="top3-title">Top 3 Feedback</h3>
+        <div class="feedback-card">
+<h3>Focus &amp; Sharpness <span class="dimension-score">(9/10)</span></h3>
+<p class="feedback-comment">The focus is precise, with the foreground plants rendered in crisp detail, and the background retains a pleasing softness. The exposure is well-controlled, preserving the white sand's purity without clipping highlights.</p>
+<div class="feedback-recommendation">
+<strong>Recommendation:</strong> Consider a slight increase in depth of field to ensure the entire range of dunes remains sharp, enhancing the sense of scale and texture.
+    </div>
+</div><div class="feedback-card">
+<h3>Depth &amp; Perspective <span class="dimension-score">(9/10)</span></h3>
+<p class="feedback-comment">The image effectively conveys depth through layered dunes and the distant mountains. The perspective is wide and immersive, allowing the viewer to feel the vastness of the landscape.</p>
+<div class="feedback-recommendation">
+<strong>Recommendation:</strong> Consider a slight tilt to emphasize the dune's slope and create a more dynamic sense of movement and perspective.
+    </div>
+</div><div class="feedback-card">
+<h3>Composition <span class="dimension-score">(8/10)</span></h3>
+<p class="feedback-comment">The foreground plants provide a strong anchor and texture, while the sweeping dunes create leading lines that draw the eye toward the mountains. The placement of the subject follows a natural rule of thirds, but the sky's dominance slightly reduces the sense of grounded intimacy.</p>
+<div class="feedback-recommendation">
+<strong>Recommendation:</strong> Tighten the foreground to emphasize the plant's texture and use a slightly lower horizon to enhance the sense of scale and depth.
+    </div>
+</div>
+        <h3>All Recommendations</h3>
+        <div class="feedback-recommendation">
+<strong>Recommendation:</strong> Tighten the foreground to emphasize the plant's texture and use a slightly lower horizon to enhance the sense of scale and depth.
+    </div><div class="feedback-recommendation">
+<strong>Recommendation:</strong> Slightly increase the contrast to deepen shadows and highlight the dune ridges, creating a more dynamic interplay of light and shadow.
+    </div><div class="feedback-recommendation">
+<strong>Recommendation:</strong> Consider a slight increase in depth of field to ensure the entire range of dunes remains sharp, enhancing the sense of scale and texture.
+    </div><div class="feedback-recommendation">
+<strong>Recommendation:</strong> Smooth the color transition by subtly adjusting the sky's gradient to blend more naturally with the mountain's glow.
+    </div><div class="feedback-recommendation">
+<strong>Recommendation:</strong> Use a tighter crop or add a foreground element to anchor the viewer's attention more firmly on the plants, enhancing their symbolic presence.
+    </div><div class="feedback-recommendation">
+<strong>Recommendation:</strong> Consider a slight tilt to emphasize the dune's slope and create a more dynamic sense of movement and perspective.
+    </div><div class="feedback-recommendation">
+<strong>Recommendation:</strong> Adjust the horizon slightly lower to give more visual weight to the foreground and enhance the sense of grounded presence.
+    </div><div class="feedback-recommendation">
+<strong>Recommendation:</strong> Enhance the emotional resonance by emphasizing the contrast between the fragile vegetation and the vast, enduring landscape.
+    </div>
+      </div>
+      <div class="compare-block">
+        <h2>Baseline Output</h2>
+        <div class="bio-block"><strong>Advisor Bio:</strong> This photograph captures a serene desert landscape at golden hour, with soft, warm light illuminating the white sand dunes and sparse vegetation. The distant mountains are bathed in a rich, reddish-orange glow, creating a powerful contrast against the cool blue sky. The composition balances foreground detail with expansive background, evoking a sense of quiet grandeur and natural resilience.</div>
+        <h3 class="top3-title">Top 3 Feedback</h3>
+        <div class="feedback-card">
+<h3>Focus &amp; Sharpness <span class="dimension-score">(9/10)</span></h3>
+<p class="feedback-comment">The focus is precise, with the foreground plants rendered in crisp detail, and the background retains a pleasing softness. The exposure is well-controlled, preserving the white sand's purity without clipping highlights.</p>
+<div class="feedback-recommendation">
+<strong>Recommendation:</strong> Consider a slight increase in depth of field to ensure the entire range of dunes remains sharp, enhancing the sense of scale and texture.
+    </div>
+</div><div class="feedback-card">
+<h3>Depth &amp; Perspective <span class="dimension-score">(9/10)</span></h3>
+<p class="feedback-comment">The image effectively conveys depth through layered dunes and the distant mountains. The perspective is wide and immersive, allowing the viewer to feel the vastness of the landscape.</p>
+<div class="feedback-recommendation">
+<strong>Recommendation:</strong> Consider a slight tilt to emphasize the dune's slope and create a more dynamic sense of movement and perspective.
+    </div>
+</div><div class="feedback-card">
+<h3>Composition <span class="dimension-score">(8/10)</span></h3>
+<p class="feedback-comment">The foreground plants provide a strong anchor and texture, while the sweeping dunes create leading lines that draw the eye toward the mountains. The placement of the subject follows a natural rule of thirds, but the sky's dominance slightly reduces the sense of grounded intimacy.</p>
+<div class="feedback-recommendation">
+<strong>Recommendation:</strong> Tighten the foreground to emphasize the plant's texture and use a slightly lower horizon to enhance the sense of scale and depth.
+    </div>
+</div>
+        <h3>All Recommendations</h3>
+        <div class="feedback-recommendation">
+<strong>Recommendation:</strong> Tighten the foreground to emphasize the plant's texture and use a slightly lower horizon to enhance the sense of scale and depth.
+    </div><div class="feedback-recommendation">
+<strong>Recommendation:</strong> Slightly increase the contrast to deepen shadows and highlight the dune ridges, creating a more dynamic interplay of light and shadow.
+    </div><div class="feedback-recommendation">
+<strong>Recommendation:</strong> Consider a slight increase in depth of field to ensure the entire range of dunes remains sharp, enhancing the sense of scale and texture.
+    </div><div class="feedback-recommendation">
+<strong>Recommendation:</strong> Smooth the color transition by subtly adjusting the sky's gradient to blend more naturally with the mountain's glow.
+    </div><div class="feedback-recommendation">
+<strong>Recommendation:</strong> Use a tighter crop or add a foreground element to anchor the viewer's attention more firmly on the plants, enhancing their symbolic presence.
+    </div><div class="feedback-recommendation">
+<strong>Recommendation:</strong> Consider a slight tilt to emphasize the dune's slope and create a more dynamic sense of movement and perspective.
+    </div><div class="feedback-recommendation">
+<strong>Recommendation:</strong> Adjust the horizon slightly lower to give more visual weight to the foreground and enhance the sense of grounded presence.
+    </div><div class="feedback-recommendation">
+<strong>Recommendation:</strong> Enhance the emotional resonance by emphasizing the contrast between the fragile vegetation and the vast, enduring landscape.
+    </div>
+      </div>
+    </div>
+    <div style='margin-top:32px;color:#aaa;font-size:14px;'>
+      <b>Tip:</b> Use <code>--compare</code> to see both RAG and baseline outputs side-by-side. Without it, only RAG output is shown.
+    </div>
+    </body></html>
+    

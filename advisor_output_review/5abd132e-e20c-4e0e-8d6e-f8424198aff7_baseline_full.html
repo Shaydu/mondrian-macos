@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+            padding: 20px;
+            background: #000000;
+            line-height: 1.6;
+            color: #ffffff;
+            max-width: 100%;
+        }
+
+        /* Responsive layout for iOS devices */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+
+            .analysis {
+                padding: 15px;
+            }
+        }
+
+        /* iPhone SE and smaller devices */
+        @media (max-width: 375px) {
+            body {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            .analysis {
+                padding: 12px;
+            }
+        }
+
+        /* Large iPads and desktop (if used) */
+        @media (min-width: 1024px) {
+            body {
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 30px;
+            }
+        }
+
+        .analysis {
+            background: #1c1c1e;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .analysis h2 {
+            color: #ffffff;
+            font-size: 22px;
+            font-weight: 600;
+            margin: 0 0 12px 0;
+            text-align: left;
+        }
+
+        .analysis p {
+            color: #d1d1d6;
+            font-size: 16px;
+            margin: 0 0 16px 0;
+            line-height: 1.6;
+            text-align: left;
+        }
+
+        .feedback-card {
+            background: #1a1a1a;
+            /* Removed outer blue left bar so the dimension card is visually neutral.
+               Inner/inline indicators (if present inside the content) will remain. */
+            border-left: none;
+            padding: 16px;
+            margin-bottom: 16px;
+            border-radius: 8px;
+        }
+
+        .feedback-card h3 {
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+        }
+
+        .dimension-score {
+            color: #98989d;
+            font-size: 14px;
+            font-weight: 400;
+            margin-left: 8px;
+        }
+
+        .feedback-comment {
+            color: #d1d1d6;
+            font-size: 16px;
+            margin: 0 0 12px 0;
+            line-height: 1.5;
+        }
+
+        .feedback-recommendation {
+            background: #0a3d66;
+            border-left: 3px solid #34C759;
+            padding: 12px;
+            border-radius: 6px;
+            color: #e8f4f8;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .feedback-recommendation strong {
+            color: #34C759;
+        }
+
+        .overall-grade-box {
+            background: #1c1c1e;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin: 20px 0 0 0;
+            border-left: 3px solid #007AFF;
+        }
+
+        .overall-grade-text {
+            font-size: 16px;
+            font-weight: 400;
+            color: #ffffff;
+            margin: 0;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+    
+<div class="advisor-section" data-advisor="ansel">
+  <div class="analysis">
+  <h2>Image Analysis</h2>
+  <p>This photograph captures the grandeur and beauty of the natural world through a lens of Ansel Adams' legendary approach to landscape and nature photography. The image showcases a strong compositional mastery, with strong leading lines and a strong sense of depth and perspective. The full range of tones from pure black to pure white is beautifully captured, with sharp focus and precise exposure. The dramatic use of natural light enhances the overall mood and emotional impact of the image. The photograph effectively connects the viewer to the natural world, showcasing the beauty and grandeur of the landscape.</p>
+
+  <h2>Detailed Feedback</h2>
+
+  <div class="feedback-card">
+    <h3>Composition <span class="dimension-score">(9/10)</span></h3>
+    <p>Strong compositional elements, including leading lines and a strong sense of depth and perspective.</p>
+    <div class="feedback-recommendation">
+      <strong>Recommendation:</strong> Incorporate more natural elements into the composition to enhance the overall mood and emotional impact.</div>
+  </div>
+
+  <div class="feedback-card">
+    <h3>Lighting <span class="dimension-score">(8/10)</span></h3>
+    <p>Use of natural light to enhance the mood and emotional impact of the image.</p>
+    <div class="feedback-recommendation">
+      <strong>Recommendation:</strong> Experiment with different lighting techniques to enhance the mood and emotional impact of the image.</div>
+  </div>
+
+  <div class="feedback-card">
+    <h3>Focus & Sharpness <span class="dimension-score">(9/10)</span></h3>
+    <p>Sharp focus and precise exposure.</p>
+    <div class="feedback-recommendation">
+      <strong>Recommendation:</strong> Improve the focus and sharpness of the image to enhance the overall quality.</div>
+  </div>
+
+  <div class="feedback-card">
+    <h3>Color Harmony <span class="dimension-score">(8/10)</span></h3>
+    <p>Color harmony in the image.</p>
+    <div class="feedback-recommendation">
+      <strong>Recommendation:</strong> Enhance the color harmony of the image to create a more visually appealing and cohesive composition.</div>
+  </div>
+
+  <div class="feedback-card">
+    <h3>Subject Isolation <span class="dimension-score">(7/10)</span></h3>
+    <p>Subject isolation in the image.</p>
+    <div class="feedback-recommendation">
+      <strong>Recommendation:</strong> Improve the subject isolation of the image to enhance the overall quality and impact.</div>
+  </div>
+
+  <div class="feedback-card">
+    <h3>Depth & Perspective <span class="dimension-score">(9/10)</span></h3>
+    <p>Depth and perspective in the image.</p>
+    <div class="feedback-recommendation">
+      <strong>Recommendation:</strong> Enhance the depth and perspective of the image to create a more three-dimensional and engaging composition.</div>
+  </div>
+
+  <div class="feedback-card">
+    <h3>Visual Balance <span class="dimension-score">(8/10)</span></h3>
+    <p>Visual balance in the image.</p>
+    <div class="feedback-recommendation">
+      <strong>Recommendation:</strong> Improve the visual balance of the image to create a more balanced and harmonious composition.</div>
+  </div>
+
+  <div class="feedback-card">
+    <h3>Emotional Impact <span class="dimension-score">(8/10)</span></h3>
+    <p>Emotional impact of the image.</p>
+    <div class="feedback-recommendation">
+      <strong>Recommendation:</strong> Enhance the emotional impact of the image to create a more powerful and engaging composition.</div>
+  </div>
+
+  <div class="overall-grade-box">
+    <p class="overall-grade-text">Overall Grade: 8.1/10</p>
+  </div>
+</div>
+</div>
+
+
+</body>
+</html>

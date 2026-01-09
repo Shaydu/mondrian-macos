@@ -40,7 +40,27 @@ Mondrian is a photography composition analysis system that uses **local MLX visi
 │           │                   │ - Metal acceleration │  │
 │           │                   │ - Cached in memory   │  │
 │           │                   └──────────────────────┘  │
-│           ▼                                             │
+│           │                                             │
+│           │                   ┌──────────────────────┐  │
+│           │                   │  RAG System (v2.4)   │  │
+│           │                   │                      │  │
+│           │       ┌───────────┤ Caption Service      │  │
+│           │       │           │ Port: 5200           │  │
+│           │       │           └──────────┬───────────┘  │
+│           │       │                      │             │
+│           │       │           ┌──────────▼───────────┐  │
+│           │       │           │ Embedding Service    │  │
+│           │       │           │ Port: 5300           │  │
+│           │       │           └──────────┬───────────┘  │
+│           │       │                      │             │
+│           │       │           ┌──────────▼───────────┐  │
+│           │       └──────────►│  RAG Service         │  │
+│           │                   │  Port: 5400          │  │
+│           │                   │                      │  │
+│           │                   │ - Index images       │  │
+│           │                   │ - Semantic search    │  │
+│           │                   └──────────┬───────────┘  │
+│           ▼                               ▼             │
 │  ┌──────────────────┐         ┌──────────────────────┐  │
 │  │  SQLite DB       │         │  Filesystem          │  │
 │  │  mondrian.db     │         │                      │  │
@@ -50,17 +70,21 @@ Mondrian is a photography composition analysis system that uses **local MLX visi
 │  │ - Focus areas    │         │  thumbnails/ (1320px)│  │
 │  │ - LLM outputs    │         │                      │  │
 │  │ - Status history │         │                      │  │
+│  │ - Image captions │◄────────┤  (RAG integration)   │  │
+│  │ - Embeddings     │         │                      │  │
 │  └──────────────────┘         └──────────────────────┘  │
 │                                                          │
 │  ┌──────────────────┐                                    │
-│  │ Monitoring       │  (Optional)                        │
+│  │ Monitoring       │  (v2.4-MONITORING-RAG)             │
 │  │ Service          │                                    │
 │  │ Port: 5007       │                                    │
 │  │                  │                                    │
-│  │ - Health checks  │                                    │
-│  │ - Job cleanup    │                                    │
-│  │ - Service restart│                                    │
-│  │ - Web dashboard  │                                    │
+│  │ - Health checks  │  Manages 5 services:               │
+│  │ - Job cleanup    │  • Caption (5200)                  │
+│  │ - Service restart│  • Embedding (5300)                │
+│  │ - Web dashboard  │  • RAG (5400)                      │
+│  │ - Auto-startup   │  • AI Advisor (5100)               │
+│  │                  │  • Job Service (5005)              │
 │  └──────────────────┘                                    │
 └──────────────────────────────────────────────────────────┘
 ```
@@ -241,21 +265,107 @@ python3 mondrian/ai_advisor_service_v1.13.py \
 
 ---
 
-### 4. Monitoring Service ([monitoring_service.py](../mondrian/monitoring_service.py)) *(Optional)*
+### 4. RAG System (v2.4) - Image Semantic Search
+
+**Purpose**: Enable semantic search across indexed images using natural language queries.
+
+**Components**:
+
+#### 4a. Caption Service ([caption_service.py](../mondrian/caption_service.py))
+
+**Port**: 5200
+
+**Purpose**: Generate descriptive captions for images using MLX vision model.
+
+**Key Endpoints**:
+```
+POST   /caption    - Generate caption for image
+GET    /health     - Health check
+```
+
+**Model**: Qwen3-VL-4B-Instruct-MLX (same as AI Advisor)
+**Performance**: ~2-5 seconds per image on Apple Silicon
+
+#### 4b. Embedding Service ([embedding_service.py](../mondrian/embedding_service.py))
+
+**Port**: 5300
+
+**Purpose**: Convert text captions to 384-dimensional embedding vectors.
+
+**Key Endpoints**:
+```
+POST   /embed      - Generate embedding for text
+GET    /health     - Health check
+```
+
+**Model**: `sentence-transformers/all-MiniLM-L6-v2`
+**Performance**: ~100ms per caption
+
+#### 4c. RAG Service ([rag_service.py](../mondrian/rag_service.py))
+
+**Port**: 5400
+
+**Purpose**: Orchestrate indexing and semantic search operations.
+
+**Key Endpoints**:
+```
+POST   /index      - Index an image (caption + embed + store)
+POST   /search     - Search for similar images by query
+GET    /health     - Health check with dependency status
+```
+
+**Workflow**:
+1. **Index**: image → caption → embedding → database
+2. **Search**: query → embedding → similarity search → results
+
+**Database Integration**:
+- Stores captions and embeddings in `image_captions` table
+- 384-dimensional vectors stored as BLOB
+- Cosine similarity search for retrieval
+
+**Configuration**:
+```bash
+python3 mondrian/rag_service.py \
+  --port 5400 \
+  --db mondrian.db \
+  --caption_url http://127.0.0.1:5200 \
+  --embedding_url http://127.0.0.1:5300
+```
+
+---
+
+### 5. Monitoring Service ([monitoring_service.py](../mondrian/monitoring_service.py))
 
 **Purpose**: Comprehensive service monitoring, health checks, and job cleanup.
 
 **Port**: 5007 (web dashboard)
 
+**Version**: v2.4-MONITORING-RAG
+
 **Features**:
-- **Health Monitoring**: Continuous health checks for Job Service and AI Advisor
+- **Health Monitoring**: Continuous health checks for all 5 services
 - **Job Cleanup**: Auto-mark timed-out jobs as errored (15min timeout)
 - **Service Restart**: Automatic restart of failed services
+- **Auto-Startup**: Manages startup of all services in dependency order
 - **Web Dashboard**: Real-time monitoring at `http://127.0.0.1:5007/monitor`
 
-**Configuration** ([monitoring_config.json](../mondrian/monitoring_config.json)):
+**Managed Services** (startup order):
+1. Caption Service (Port 5200)
+2. Embedding Service (Port 5300)
+3. RAG Service (Port 5400)
+4. AI Advisor Service (Port 5100)
+5. Job Service (Port 5005)
+
+**Configuration**:
 ```json
 {
+  "services": {
+    "caption_service": {"port": 5200, ...},
+    "embedding_service": {"port": 5300, ...},
+    "rag_service": {"port": 5400, ...},
+    "ai_advisor": {"port": 5100, ...},
+    "job_service": {"port": 5005, ...}
+  },
   "cleanup": {
     "enabled": true,
     "interval": 60,
@@ -330,6 +440,19 @@ CREATE TABLE config (
     value TEXT NOT NULL,
     created_at TEXT,
     updated_at TEXT
+);
+```
+
+**`image_captions` table** (RAG system):
+```sql
+CREATE TABLE image_captions (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    job_id TEXT NOT NULL,
+    image_path TEXT NOT NULL,
+    caption TEXT NOT NULL,
+    embedding BLOB NOT NULL,        -- 384-dimensional vector
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(job_id, image_path)
 );
 ```
 
@@ -533,57 +656,223 @@ CLEANUP_INTERVAL=60
 
 ## iOS Integration
 
-### Recommended Flow
+### Network Configuration
 
-**1. Upload & Stream**:
-```swift
-// Upload image
-POST /upload
-  - image: Data
-  - advisor: "all"
-  - auto_analyze: true
+When services start with `./mondrian.sh`, available IP addresses are displayed:
 
-→ Returns: {job_id, stream_url, status_url}
-
-// Open SSE stream
-EventSource(stream_url)
-  - status_update: Update progress bar
-  - thinking_update: Show live feedback
-  - completion: Fetch results
+```bash
+[NETWORK] Configure your iOS app with one of these addresses:
+Local (same machine): http://127.0.0.1:5005
+en0: http://10.0.0.131:5005       # WiFi network
+en1: http://192.168.1.100:5005    # Ethernet
 ```
 
-**2. Retrieve Results**:
+**iOS App Configuration:**
 ```swift
-// After "completion" event
-GET /summary/{job_id}     // Fast, top 5 recommendations
-GET /analysis/{job_id}    // Full HTML analysis
+// Use the IP shown in startup output for your connection type
+let baseURL = "http://10.0.0.131:5005"  // Example WiFi address
+APIService.shared.configure(baseURL: baseURL)
+```
 
-// Display in WebView with iOS CSS
+### Complete API Workflow
+
+#### Phase 1: Upload & Stream (Real-time Updates)
+
+**1. Upload Image**
+```swift
+POST /upload
+Content-Type: multipart/form-data
+
+Parameters:
+  - image: Data (required)
+  - advisor: "all" | "ansel" | "okeefe,mondrian" (optional, default: "all")
+  - auto_analyze: "true" (optional, default: "true")
+
+Response (201 Created):
+{
+  "job_id": "abc-123-def",
+  "filename": "photo-uuid.jpg",
+  "advisor": "all",
+  "status": "queued",
+  "status_url": "http://10.0.0.131:5005/status/abc-123-def",
+  "stream_url": "http://10.0.0.131:5005/stream/abc-123-def"
+}
+```
+
+**2. Connect to SSE Stream**
+```swift
+// Open EventSource connection
+let eventSource = EventSource(url: streamURL)
+
+// Handle SSE events
+eventSource.onMessage { event in
+    switch event.type {
+    case "connected":
+        // Connection established
+    case "status_update":
+        // Update progress UI
+        let jobData = event.data["job_data"]
+        updateProgress(jobData["progress_percentage"])
+        updateStatus(jobData["current_step"])
+    case "thinking_update":
+        // Show live AI feedback
+        showThinking(event.data["thinking"])
+    case "done":
+        // Analysis complete - close stream and fetch results
+        eventSource.close()
+        fetchResults(jobId)
+    }
+}
+```
+
+#### Phase 2: Retrieve Results
+
+Two endpoint options after analysis completes (status = "done"):
+
+**Option A: Summary-First (Recommended)**
+```swift
+// 1. Get quick preview (3 lowest-scoring dimensions)
+GET /summary/{job_id}
+Returns: HTML with priority improvements
+Use case: Immediate feedback, smaller payload
+
+// 2. Get full analysis (optional, all 8 dimensions)
+GET /analysis/{job_id}
+Returns: Complete HTML with all dimensions
+Use case: Detailed review when user requests
+```
+
+**Option B: Full Analysis Only**
+```swift
+// Get complete analysis directly
+GET /analysis/{job_id}
+Returns: Complete HTML with all 8 dimensions
+Use case: When user wants full details immediately
+```
+
+### Critical URL Construction Rules
+
+⚠️ **IMPORTANT**: Always use the SAME base URL throughout the workflow:
+
+```swift
+// ✅ CORRECT: Use consistent base URL
+let baseURL = "http://10.0.0.131:5005"  // From server startup
+
+// Upload
+let uploadURL = "\(baseURL)/upload"
+
+// Stream (from upload response)
+let streamURL = uploadResponse.stream_url  // Already has correct base
+
+// Results (construct with same base)
+let analysisURL = "\(baseURL)/analysis/\(jobId)"
+let summaryURL = "\(baseURL)/summary/\(jobId)"
+
+// ❌ WRONG: Don't mix different IPs/hostnames
+// Upload to: http://10.0.0.131:5005/upload
+// Fetch from: http://127.0.0.1:5005/analysis/...  ❌ Will fail!
+```
+
+### Common Integration Issues
+
+#### Issue: "Not Found" (404) After Analysis Completes
+
+**Symptom**: SSE stream completes successfully with "done" event, but `GET /analysis/{job_id}` returns 404.
+
+**Root Causes**:
+1. **Base URL Mismatch**: iOS app using different IP than server bound to
+   - Example: Server uses `10.0.0.131:5005`, app requests from `127.0.0.1:5005` ❌
+   
+2. **Incorrect job_id**: Using truncated or modified job ID
+   - Use exact job_id from upload response
+   
+3. **Premature Request**: Fetching before status is "done"
+   - Wait for SSE "done" event before requesting results
+
+**Solution**:
+```swift
+class MondrianAPIService {
+    let baseURL: String  // Set once from server startup output
+    
+    func handleSSEEvent(_ event: SSEEvent) {
+        if event.type == "done" {
+            // Only fetch after "done" event
+            Task {
+                let analysis = try await fetchAnalysis(jobId)
+                displayInWebView(analysis)
+            }
+        }
+    }
+    
+    func fetchAnalysis(_ jobId: String) async throws -> String {
+        // Use same baseURL throughout
+        let url = URL(string: "\(baseURL)/analysis/\(jobId)")!
+        let (data, response) = try await URLSession.shared.data(from: url)
+        
+        guard let http = response as? HTTPURLResponse else {
+            throw APIError.invalidResponse
+        }
+        
+        switch http.statusCode {
+        case 200:
+            return String(data: data, encoding: .utf8) ?? ""
+        case 202:
+            throw APIError.notReady  // Status not "done" yet
+        case 404:
+            throw APIError.notFound  // Job doesn't exist or wrong URL
+        default:
+            throw APIError.serverError
+        }
+    }
+}
 ```
 
 ### SSE Event Types
 
 ```json
-// status_update
+// connected - Initial connection established
 {
-  "status": "analyzing",
-  "current_step": "Summoning Ansel Adams",
-  "progress_percentage": 45,
-  "current_advisor": 2,
-  "total_advisors": 3
+  "type": "connected",
+  "job_id": "abc-123"
 }
 
-// thinking_update
+// status_update - Progress and status changes
 {
-  "llm_thinking": "Analyzing tonal range and composition balance..."
+  "type": "status_update",
+  "job_data": {
+    "status": "analyzing",
+    "current_step": "Analyzing with Ansel Adams",
+    "progress_percentage": 45,
+    "current_advisor": 2,
+    "total_advisors": 3,
+    "step_phase": "advisor_analysis"
+  }
 }
 
-// completion
+// thinking_update - Live AI analysis feedback
 {
-  "status": "done",
+  "type": "thinking_update",
+  "job_id": "abc-123",
+  "thinking": "Evaluating tonal range and composition balance..."
+}
+
+// done - Analysis complete, ready to fetch results
+{
+  "type": "done",
   "job_id": "abc-123"
 }
 ```
+
+### Testing iOS Integration
+
+Verify the complete workflow with the included test script:
+
+```bash
+cd /Users/shaydu/dev/mondrian-macos/mondrian/test
+python3 test_full_ios_workflow.py
+```
+
+This simulates the complete iOS app experience and validates all endpoints.
 
 ---
 

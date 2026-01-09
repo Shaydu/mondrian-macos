@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+            padding: 20px;
+            background: #000000;
+            line-height: 1.6;
+            color: #ffffff;
+            max-width: 100%;
+        }
+
+        /* Responsive layout for iOS devices */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+
+            .analysis {
+                padding: 15px;
+            }
+        }
+
+        /* iPhone SE and smaller devices */
+        @media (max-width: 375px) {
+            body {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            .analysis {
+                padding: 12px;
+            }
+        }
+
+        /* Large iPads and desktop (if used) */
+        @media (min-width: 1024px) {
+            body {
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 30px;
+            }
+        }
+
+        .analysis {
+            background: #1c1c1e;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .analysis h2 {
+            color: #ffffff;
+            font-size: 22px;
+            font-weight: 600;
+            margin: 0 0 12px 0;
+            text-align: left;
+        }
+
+        .analysis p {
+            color: #d1d1d6;
+            font-size: 16px;
+            margin: 0 0 16px 0;
+            line-height: 1.6;
+            text-align: left;
+        }
+
+        .feedback-card {
+            background: #1a1a1a;
+            /* Removed outer blue left bar so the dimension card is visually neutral.
+               Inner/inline indicators (if present inside the content) will remain. */
+            border-left: none;
+            padding: 16px;
+            margin-bottom: 16px;
+            border-radius: 8px;
+        }
+
+        .feedback-card h3 {
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+        }
+
+        .dimension-score {
+            color: #98989d;
+            font-size: 14px;
+            font-weight: 400;
+            margin-left: 8px;
+        }
+
+        .feedback-comment {
+            color: #d1d1d6;
+            font-size: 16px;
+            margin: 0 0 12px 0;
+            line-height: 1.5;
+        }
+
+        .feedback-recommendation {
+            background: #0a3d66;
+            border-left: 3px solid #34C759;
+            padding: 12px;
+            border-radius: 6px;
+            color: #e8f4f8;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .feedback-recommendation strong {
+            color: #34C759;
+        }
+
+        .overall-grade-box {
+            background: #1c1c1e;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin: 20px 0 0 0;
+            border-left: 3px solid #007AFF;
+        }
+
+        .overall-grade-text {
+            font-size: 16px;
+            font-weight: 400;
+            color: #ffffff;
+            margin: 0;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+    
+<div class="advisor-section" data-advisor="ansel">
+  <div class="analysis">
+  <h2>Image Analysis</h2>
+  <p>The photograph depicts a serene landscape, featuring a calm lake surrounded by lush green trees. The image is captured in a natural setting, with the lake serving as the focal point. The composition is balanced, with the lake positioned centrally and the trees framing it. The lighting is soft and natural, creating a tranquil atmosphere. The overall mood of the image is peaceful and calming, evoking a sense of tranquility and connection to nature.</p>
+
+  <h2>Detailed Feedback</h2>
+
+  <div class="feedback-card">
+    <h3>Composition <span class="dimension-score">(8.5/10)</span></h3>
+    <p class="feedback-comment">The composition is well-balanced, with the lake positioned centrally and framed by the trees. The rule of thirds is used effectively, and the foreground interest is strong, drawing the viewer&#39;s eye towards the lake.</p>
+    <div class="feedback-recommendation">
+      <strong>Recommendation:</strong> Consider adding more leading lines or incorporating a focal point to further enhance the composition.
+    </div>
+  </div>
+  <div class="feedback-card">
+    <h3>Lighting <span class="dimension-score">(8.0/10)</span></h3>
+    <p class="feedback-comment">The lighting is soft and natural, creating a tranquil atmosphere. The use of natural light enhances the mood and emotional impact of the image.</p>
+    <div class="feedback-recommendation">
+      <strong>Recommendation:</strong> Consider adding more contrast or using artificial lighting to create a more dramatic effect.
+    </div>
+  </div>
+  <div class="feedback-card">
+    <h3>Focus &amp; Sharpness <span class="dimension-score">(9.0/10)</span></h3>
+    <p class="feedback-comment">The focus is sharp, and the image is well-exposed. The lake and trees are in clear focus, and the exposure is precise, capturing the details of the scene.</p>
+    <div class="feedback-recommendation">
+      <strong>Recommendation:</strong> Consider using a wider aperture to achieve a shallower depth of field, or using a tripod to ensure the image is well-exposed.
+    </div>
+  </div>
+  <div class="feedback-card">
+    <h3>Color Harmony <span class="dimension-score">(8.5/10)</span></h3>
+    <p class="feedback-comment">The color harmony is well-balanced, with the natural tones of the trees and lake complementing each other. The contrast between the green trees and the blue lake creates a pleasing visual effect.</p>
+    <div class="feedback-recommendation">
+      <strong>Recommendation:</strong> Consider adding more color to the image, such as using a wider color range or incorporating more vibrant colors, to create a more dynamic and engaging image.
+    </div>
+  </div>
+  <div class="feedback-card">
+    <h3>Subject Isolation <span class="dimension-score">(8.5/10)</span></h3>
+    <p class="feedback-comment">The subject, the lake, is well-isolated, and the viewer&#39;s attention is drawn to it. The trees frame the lake, creating a sense of depth and perspective.</p>
+    <div class="feedback-recommendation">
+      <strong>Recommendation:</strong> Consider adding more foreground interest or incorporating a focal point to further enhance the composition.
+    </div>
+  </div>
+  <div class="feedback-card">
+    <h3>Depth &amp; Perspective <span class="dimension-score">(9.0/10)</span></h3>
+    <p class="feedback-comment">The depth and perspective are well-captured, with the lake serving as the focal point and the trees framing it. The rule of thirds is used effectively, and the composition is balanced.</p>
+    <div class="feedback-recommendation">
+      <strong>Recommendation:</strong> Consider adding more leading lines or incorporating a focal point to further enhance the composition.
+    </div>
+  </div>
+  <div class="feedback-card">
+    <h3>Visual Balance <span class="dimension-score">(8.5/10)</span></h3>
+    <p class="feedback-comment">The visual balance is well-captured, with the composition being well-balanced and the elements of the image being in harmony with each other.</p>
+    <div class="feedback-recommendation">
+      <strong>Recommendation:</strong> Consider adding more leading lines or incorporating a focal point to further enhance the composition.
+    </div>
+  </div>
+  <div class="feedback-card">
+    <h3>Emotional Impact <span class="dimension-score">(8.5/10)</span></h3>
+    <p class="feedback-comment">The emotional impact is strong, with the peacefulness of the lake and the lush green trees evoking a sense of tranquility and connection to nature.</p>
+    <div class="feedback-recommendation">
+      <strong>Recommendation:</strong> Consider adding more emotional impact or incorporating a focal point to further enhance the composition.
+    </div>
+  </div>
+
+  <div class="overall-grade-box">
+    <p class="overall-grade-text">Overall Grade: 8.5/10</p>
+  </div>
+</div>
+</div>
+
+
+</body>
+</html>
