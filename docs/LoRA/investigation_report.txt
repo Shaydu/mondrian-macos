@@ -1,0 +1,56 @@
+================================================================================
+MLX-VLM Safe Investigation (No MLX Import)
+================================================================================
+
+✓ mlx-vlm package found
+  Location: /Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/mlx_vlm/__init__.py
+  Package directory: /Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/mlx_vlm
+
+📦 Package Structure:
+  📁 __main__ (module)
+  📁 chat (module)
+  📁 chat_ui (module)
+  📁 convert (module)
+  📁 deprecation (module)
+  📁 evals (package)
+  📁 generate (module)
+  📁 lora (module)
+  📁 models (package)
+  📁 prompt_utils (module)
+  📁 sample_utils (module)
+  📁 server (module)
+  📁 smolvlm_video_generate (module)
+  📁 tokenizer_utils (module)
+  📁 trainer (package)
+  📁 utils (module)
+  📁 version (module)
+  📁 video_generate (module)
+
+🔍 Key Files:
+  ✓ __init__.py
+  ✗ models.py
+  ✓ utils.py
+      → Found keywords: lora, adapter, train
+  ✓ prompt_utils.py
+  ✗ training.py
+  ✓ lora.py
+      → Found keywords: lora, adapter, train, optimizer
+
+================================================================================
+Package Exports (from __init__.py)
+================================================================================
+
+  Exported items found:
+    - generate
+    - load
+
+================================================================================
+Investigation Summary
+================================================================================
+
+Next steps:
+1. Review package structure above
+2. Check mlx-vlm GitHub: https://github.com/Blaizzy/mlx-vlm
+3. Look for training examples in repository
+4. Examine source code for LoRA support
+5. Test actual imports in a proper environment (not sandboxed)

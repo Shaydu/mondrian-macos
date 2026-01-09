@@ -62,6 +62,8 @@ def check_services():
     ]
     
     all_up = True
+    down_services = []
+    
     for name, url, port in services:
         try:
             resp = requests.get(url, timeout=5)
@@ -70,12 +72,23 @@ def check_services():
             else:
                 print_error(f"{name} (port {port}) - DOWN (status {resp.status_code})")
                 all_up = False
+                down_services.append(f"{name} (port {port})")
         except Exception as e:
             print_error(f"{name} (port {port}) - DOWN ({e})")
             all_up = False
+            down_services.append(f"{name} (port {port})")
     
     if not all_up:
+        print()
         print_error("Not all services are running. Please start them first.")
+        print()
+        print(f"{YELLOW}Services that are DOWN:{NC}")
+        for service in down_services:
+            print(f"  ✗ {service}")
+        print()
+        print(f"{BLUE}To start all services, run:{NC}")
+        print(f"  ./mondrian.sh --restart")
+        print()
         sys.exit(1)
     
     print()
@@ -123,8 +136,8 @@ def upload_image(enable_rag=False):
 def monitor_progress(job_id):
     """Monitor job progress (simulates iOS SSE monitoring)"""
     print_step(3, "Monitoring Progress")
-    
-    max_retries = 60  # 60 seconds timeout
+
+    max_retries = 1800  # 30 minutes timeout (1800 seconds)
     retry = 0
     
     while retry < max_retries:
