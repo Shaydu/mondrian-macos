@@ -310,73 +310,36 @@ def get_analysis_html(job_id):
         print_error(f"Exception getting analysis: {e}")
         return None
 
-def extract_summary_html(full_html):
-    """Extract just the summary section (what iOS shows first)"""
-    # Extract the summary paragraph from the analysis
-    match = re.search(r'<h2>Image Analysis</h2>\s*<p>(.*?)</p>', full_html, re.DOTALL)
-
-    if not match:
+def get_summary_html(job_id):
+    """Fetch summary HTML from the /summary endpoint (what iOS shows first)"""
+    try:
+        summary_url = f"{JOB_SERVICE_URL}/summary/{job_id}"
+        print_info(f"Fetching summary from: {summary_url}")
+        
+        response = requests.get(summary_url, timeout=30)
+        response.raise_for_status()
+        
+        summary_html = response.text
+        
+        if not summary_html or len(summary_html) < 100:
+            print_error(f"Summary HTML too short ({len(summary_html)} chars)")
+            return None
+        
+        # Verify it contains expected elements
+        required_elements = ['Top 3 Recommendations', 'recommendation-item']
+        missing = [elem for elem in required_elements if elem not in summary_html]
+        if missing:
+            print_warning(f"Summary missing expected elements: {missing}")
+        
+        print_success(f"Summary HTML retrieved: {len(summary_html):,} characters")
+        return summary_html
+        
+    except requests.exceptions.RequestException as e:
+        print_error(f"Failed to fetch summary: {e}")
         return None
-
-    summary_text = match.group(1)
-
-    # Create a simplified HTML with just the summary
-    summary_html = f"""<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        * {{
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }}
-        body {{
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
-            padding: 20px;
-            background: #000000;
-            color: #ffffff;
-        }}
-        .summary-container {{
-            background: #1c1c1e;
-            padding: 20px;
-            border-radius: 12px;
-            margin-bottom: 20px;
-        }}
-        h1 {{
-            color: #ffffff;
-            font-size: 24px;
-            font-weight: 600;
-            margin-bottom: 16px;
-        }}
-        .summary-text {{
-            color: #d1d1d6;
-            font-size: 18px;
-            line-height: 1.6;
-        }}
-        .view-details {{
-            margin-top: 20px;
-            padding: 12px 24px;
-            background: #007AFF;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 16px;
-            font-weight: 600;
-        }}
-    </style>
-</head>
-<body>
-    <div class="summary-container">
-        <h1>Analysis Summary</h1>
-        <p class="summary-text">{summary_text}</p>
-        <button class="view-details">View Detailed Analysis</button>
-    </div>
-</body>
-</html>"""
-
-    return summary_html
+    except Exception as e:
+        print_error(f"Error getting summary: {e}")
+        return None
 
 def save_outputs(full_html, job_id, mode, output_dir):
     """Save full HTML, summary HTML, and create metadata"""
@@ -388,15 +351,15 @@ def save_outputs(full_html, job_id, mode, output_dir):
         f.write(full_html)
     print_success(f"Detailed HTML saved to: {full_html_file}")
 
-    # Extract and save summary HTML
-    summary_html = extract_summary_html(full_html)
+    # Fetch summary HTML from /summary endpoint (includes image, top 3, advisor details)
+    summary_html = get_summary_html(job_id)
     if summary_html:
         summary_html_file = output_dir / "analysis_summary.html"
         with open(summary_html_file, 'w', encoding='utf-8') as f:
             f.write(summary_html)
         print_success(f"Summary HTML saved to: {summary_html_file}")
     else:
-        print_error("Could not extract summary HTML")
+        print_error("Could not fetch summary HTML from endpoint")
         summary_html_file = None
 
     # Create metadata file
