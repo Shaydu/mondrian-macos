@@ -10,7 +10,7 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'mondrian'))
 
 from sqlite_helper import set_config, get_config
 
-DB_PATH = "mondrian.db"
+DB_PATH = "mondrian/mondrian.db"
 NEW_PROMPT_FILE = "mondrian/prompts/system_html.md"
 
 def main():
