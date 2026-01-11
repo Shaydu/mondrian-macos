@@ -1,3 +1,5 @@
 # Ignore SQLite database files
-mondrian.db
+# Database files
 mondrian/mondrian.db
+*.db-shm
+*.db-wal
