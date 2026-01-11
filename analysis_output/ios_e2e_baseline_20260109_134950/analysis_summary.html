@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            padding: 16px;
+            background: #000000;
+            color: #ffffff;
+        }
+
+        .user-image-container {
+            width: 100%;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            overflow: hidden;
+            background: #1c1c1e;
+        }
+
+        .user-image {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .summary-header {
+            margin-bottom: 8px;
+            padding-bottom: 16px;
+        }
+
+        .summary-header h1 {
+            font-size: 24px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .recommendations-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .recommendation-item {
+            display: flex;
+            gap: 12px;
+            padding: 10px;
+            background: #1c1c1e;
+            border-radius: 6px;
+            border-left: 3px solid #30b0c0;
+        }
+
+        .rec-number {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            background: #0a84ff;
+            color: #ffffff;
+            border-radius: 50%;
+            font-weight: 600;
+            font-size: 12px;
+            flex-shrink: 0;
+        }
+
+        .rec-content {
+            flex: 1;
+        }
+
+        .rec-text {
+            font-size: 14px;
+            line-height: 1.4;
+            color: #e0e0e0;
+        }
+
+        .view-full-button-container {
+            margin-top: 24px;
+            text-align: center;
+        }
+
+        .view-full-button {
+            display: inline-block;
+            padding: 12px 24px;
+            background: #0a84ff;
+            color: #ffffff;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 16px;
+            transition: background 0.2s;
+        }
+
+        .view-full-button:active {
+            background: #0060df;
+        }
+
+        .advisor-section {
+            background: #1c1c1e;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 24px;
+            display: flex;
+            gap: 20px;
+            align-items: flex-start;
+        }
+
+        .advisor-image-container {
+            flex-shrink: 0;
+        }
+
+        .advisor-image {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 2px solid #333;
+        }
+
+        .advisor-info {
+            flex: 1;
+        }
+
+        .advisor-name {
+            font-size: 22px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #ffffff;
+        }
+
+        .advisor-years {
+            font-size: 16px;
+            font-weight: 400;
+            color: #d1d1d6;
+        }
+
+        .advisor-bio {
+            font-size: 14px;
+            line-height: 1.5;
+            color: #d1d1d6;
+            margin-bottom: 16px;
+        }
+
+        .focus-areas-list {
+            list-style: none;
+            padding: 0;
+            margin: 12px 0 0 0;
+        }
+
+        .focus-areas-list li {
+            font-size: 14px;
+            line-height: 1.5;
+            color: #ffffff;
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .focus-areas-list li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+            color: #0a84ff;
+            font-size: 18px;
+        }
+
+        .disclaimer {
+            margin-top: 24px;
+            padding: 16px;
+            background: #1c1c1e;
+            border-radius: 8px;
+            border-left: 3px solid #ff9500;
+        }
+
+        .disclaimer p {
+            font-size: 12px;
+            line-height: 1.4;
+            color: #d1d1d6;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+<div class="user-image-container">  <img src="/uploads/mike-shrub-a988d1b8.jpg" alt="Your Photo" class="user-image" /></div><div class="summary-header">  <h1>Top 3 Recommendations</h1></div><div class="recommendations-list">  <div class="recommendation-item">    <div class="rec-number">1</div>    <div class="rec-content">      <p class="rec-text">Subject Isolation (7.5/10): Enhance isolation by slightly increasing the contrast between the foreground and mid-ground, or by using a subtle vignette to draw more attention to the foreground vegetation.</p>    </div>  </div>  <div class="recommendation-item">    <div class="rec-number">2</div>    <div class="rec-content">      <p class="rec-text">Visual Balance (8/10): Maintain this balance, but consider slightly shifting the horizon to create a more dynamic visual rhythm, especially if the foreground is too heavy.</p>    </div>  </div>  <div class="recommendation-item">    <div class="rec-number">3</div>    <div class="rec-content">      <p class="rec-text">Composition (8.5/10): Consider subtly adjusting the horizon placement to ensure the mountain range is more centered for a more balanced composition, especially if the foreground is slightly too dominant.</p>    </div>  </div></div><div class="advisor-section">  <div class="advisor-image-container">    <img src="/advisor_image/ansel.jpg" alt="Ansel Adams" class="advisor-image" />  </div>  <div class="advisor-info">    <h2 class="advisor-name">Ansel Adams <span class="advisor-years">(1902-1984)</span></h2>    <p class="advisor-bio">Adams was a master of large-format landscape photography and a pioneer of photographic modernism in America. His technical innovations, particularly the Zone System for exposure and development, gave photographers unprecedented control over tonality and detail. His iconic images of Yosemite and the American West established landscape photography as a fine art form and inspired generations of photographers to see nature as a subject for both technical mastery and spiritual expression.</p>    <ul class="focus-areas-list">      <li>Emphasizes the full spectrum of light and dark</li>      <li>Precise framing and perspective</li>      <li>Sharp focus and perfect exposure</li>    </ul>  </div></div><div class="view-full-button-container">  <a href="/analysis/a1e38d8f-4fc3-433e-af56-4aec3c830d67" class="view-full-button">View Full Analysis</a></div>
+<div class="disclaimer">
+    <p><strong>Note:</strong> These recommendations are generated by AI and should be used as creative guidance. Individual artistic interpretation may vary.</p>
+</div>
+</body>
+</html>

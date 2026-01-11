@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+            padding: 20px;
+            background: #000000;
+            line-height: 1.6;
+            color: #ffffff;
+            max-width: 100%;
+        }
+
+        /* Responsive layout for iOS devices */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+
+            .analysis {
+                padding: 15px;
+            }
+        }
+
+        /* iPhone SE and smaller devices */
+        @media (max-width: 375px) {
+            body {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            .analysis {
+                padding: 12px;
+            }
+        }
+
+        /* Large iPads and desktop (if used) */
+        @media (min-width: 1024px) {
+            body {
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 30px;
+            }
+        }
+
+        .analysis {
+            background: #1c1c1e;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .analysis h2 {
+            color: #ffffff;
+            font-size: 22px;
+            font-weight: 600;
+            margin: 0 0 12px 0;
+            text-align: left;
+        }
+
+        .analysis p {
+            color: #d1d1d6;
+            font-size: 16px;
+            margin: 0 0 16px 0;
+            line-height: 1.6;
+            text-align: left;
+        }
+
+        .feedback-card {
+            background: #1a1a1a;
+            /* Removed outer blue left bar so the dimension card is visually neutral.
+               Inner/inline indicators (if present inside the content) will remain. */
+            border-left: none;
+            padding: 16px;
+            margin-bottom: 16px;
+            border-radius: 8px;
+        }
+
+        .feedback-card h3 {
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+        }
+
+        .dimension-score {
+            color: #98989d;
+            font-size: 14px;
+            font-weight: 400;
+            margin-left: 8px;
+        }
+
+        .feedback-comment {
+            color: #d1d1d6;
+            font-size: 16px;
+            margin: 0 0 12px 0;
+            line-height: 1.5;
+        }
+
+        .feedback-recommendation {
+            background: #0a3d66;
+            border-left: 3px solid #34C759;
+            padding: 12px;
+            border-radius: 6px;
+            color: #e8f4f8;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .feedback-recommendation strong {
+            color: #34C759;
+        }
+
+        .overall-grade-box {
+            background: #1c1c1e;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin: 20px 0 0 0;
+            border-left: 3px solid #007AFF;
+        }
+
+        .overall-grade-text {
+            font-size: 16px;
+            font-weight: 400;
+            color: #ffffff;
+            margin: 0;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+    
+<div class="advisor-section" data-advisor="ansel">
+  <div class="analysis">
+  <h2>Image Analysis</h2>
+  <p>The photograph captures a serene desert landscape at golden hour, with soft, undulating white dunes in the foreground and a rugged, sunlit mountain range in the distance. Sparse desert vegetation adds texture and life to the scene, while the sky transitions from warm orange to cool blue, creating a dramatic and tranquil atmosphere.</p>
+
+  <h2>Detailed Feedback</h2>
+
+  <div class="feedback-card">
+    <h3>Composition <span class="dimension-score">(8.5/10)</span></h3>
+    <p class="feedback-comment">The composition effectively uses the foreground dunes and plants to create depth and draw the eye toward the mountains, with a strong sense of leading lines. The placement of the vegetation adds visual interest without overwhelming the scene.</p>
+    <div class="feedback-recommendation">
+      <strong>Recommendation:</strong> Consider subtly adjusting the horizon placement to ensure the mountain range is more centered for a more balanced composition, especially if the foreground is slightly too dominant.
+    </div>
+  </div>
+  <div class="feedback-card">
+    <h3>Lighting <span class="dimension-score">(8.5/10)</span></h3>
+    <p class="feedback-comment">The lighting is exceptionally soft and directional, capturing the golden hour glow with a warm, natural palette that enhances the textures of the dunes and mountains. The light is balanced and avoids harsh shadows.</p>
+    <div class="feedback-recommendation">
+      <strong>Recommendation:</strong> To deepen the drama, consider slightly increasing the contrast in the shadows to reveal more tonal detail, especially in the dune crevices and mountain ridges.
+    </div>
+  </div>
+  <div class="feedback-card">
+    <h3>Focus &amp; Sharpness <span class="dimension-score">(9.0/10)</span></h3>
+    <p class="feedback-comment">The focus is razor-sharp, particularly on the foreground vegetation, capturing fine textures and subtle details. The depth of field is well-managed, keeping both foreground and distant mountains in crisp focus.</p>
+    <div class="feedback-recommendation">
+      <strong>Recommendation:</strong> Maintain this level of sharpness across the entire frame; consider a slight increase in focus precision on the mid-ground vegetation to ensure no elements appear soft or out of focus.
+    </div>
+  </div>
+  <div class="feedback-card">
+    <h3>Color Harmony <span class="dimension-score">(8.5/10)</span></h3>
+    <p class="feedback-comment">The color palette is harmonious, with a seamless transition from warm golden tones to cool blues, creating a natural and emotionally resonant atmosphere. The white dunes contrast beautifully with the earthy tones of the mountains.</p>
+    <div class="feedback-recommendation">
+      <strong>Recommendation:</strong> Subtly reduce the saturation of the sky’s blue to prevent it from overpowering the warm tones of the dunes and mountains, enhancing the naturalistic feel.
+    </div>
+  </div>
+  <div class="feedback-card">
+    <h3>Subject Isolation <span class="dimension-score">(7.5/10)</span></h3>
+    <p class="feedback-comment">The subject is well-isolated by the foreground vegetation and dunes, but the mountains are slightly less distinct due to atmospheric haze. The isolation is effective but could be more pronounced.</p>
+    <div class="feedback-recommendation">
+      <strong>Recommendation:</strong> Enhance isolation by slightly increasing the contrast between the foreground and mid-ground, or by using a subtle vignette to draw more attention to the foreground vegetation.
+    </div>
+  </div>
+  <div class="feedback-card">
+    <h3>Depth &amp; Perspective <span class="dimension-score">(9.0/10)</span></h3>
+    <p class="feedback-comment">The image exhibits exceptional depth, with clear layers from the foreground dunes to the distant mountains. The perspective is wide and immersive, giving a sense of scale and grandeur.</p>
+    <div class="feedback-recommendation">
+      <strong>Recommendation:</strong> Consider adding a subtle foreground element, like a small rock or plant stem, to further anchor the viewer’s eye and enhance the sense of depth.
+    </div>
+  </div>
+  <div class="feedback-card">
+    <h3>Visual Balance <span class="dimension-score">(8.0/10)</span></h3>
+    <p class="feedback-comment">The visual balance is strong, with the foreground vegetation and dunes counterbalancing the mountain range. The color and tonal distribution is even, creating a sense of equilibrium.</p>
+    <div class="feedback-recommendation">
+      <strong>Recommendation:</strong> Maintain this balance, but consider slightly shifting the horizon to create a more dynamic visual rhythm, especially if the foreground is too heavy.
+    </div>
+  </div>
+  <div class="feedback-card">
+    <h3>Emotional Impact <span class="dimension-score">(8.5/10)</span></h3>
+    <p class="feedback-comment">The image evokes a sense of peace and awe, capturing the grandeur of nature with a quiet, contemplative tone. The lighting and composition invite the viewer to reflect on the vastness of the landscape.</p>
+    <div class="feedback-recommendation">
+      <strong>Recommendation:</strong> To deepen the emotional impact, consider adding a subtle textural element, like a wind-blown dune or a single leaf, to enhance the sense of time and nature’s quiet power.
+    </div>
+  </div>
+
+  <div class="overall-grade-box">
+    <p class="overall-grade-text">Overall Grade: 8.5/10</p>
+  </div>
+</div>
+</div>
+
+
+</body>
+</html>

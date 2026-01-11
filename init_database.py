@@ -8,6 +8,28 @@ import sqlite3
 import os
 import json
 
+def migrate_database(db_path):
+    """Apply migrations to existing database."""
+    print(f"Applying migrations to: {db_path}")
+
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+
+    # Check if enable_rag column exists
+    cursor.execute("PRAGMA table_info(jobs)")
+    columns = [col[1] for col in cursor.fetchall()]
+
+    if 'enable_rag' not in columns:
+        print("  Adding enable_rag column to jobs table...")
+        cursor.execute('ALTER TABLE jobs ADD COLUMN enable_rag INTEGER DEFAULT 0')
+        conn.commit()
+        print("  ✓ enable_rag column added")
+    else:
+        print("  ✓ enable_rag column already exists")
+
+    conn.close()
+    print("Migration complete!")
+
 def init_database(db_path):
     """Initialize the database with all required tables and data."""
     print(f"Initializing database: {db_path}")
@@ -89,7 +111,8 @@ def init_database(db_path):
         analysis_markup TEXT,
         llm_prompt TEXT,
         prompt TEXT,
-        last_activity TEXT
+        last_activity TEXT,
+        enable_rag INTEGER DEFAULT 0
     )
     ''')
 
@@ -182,7 +205,20 @@ def init_database(db_path):
 if __name__ == "__main__":
     # Default database path
     db_path = "mondrian.db"
-    init_database(db_path)
+
+    # Check if database already exists
+    db_exists = os.path.exists(db_path)
+
+    if db_exists:
+        print(f"Database {db_path} already exists. Running migrations...")
+        migrate_database(db_path)
+    else:
+        print(f"Creating new database {db_path}...")
+        init_database(db_path)
+
+
+
+
 
 
 

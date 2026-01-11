@@ -1,0 +1,3 @@
+# Ignore SQLite database files
+mondrian.db
+mondrian/mondrian.db
