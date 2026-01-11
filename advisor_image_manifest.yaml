@@ -1,0 +1,76 @@
+# Canonical Advisor Image Manifest
+# This YAML file lists all images for each advisor, grouped by category and advisor name.
+# Use this as the authoritative source for populating advisor data and metadata.
+
+advisors:
+  - category: photographer
+    advisor: ansel
+    images:
+      - filename: 2.jpg
+        title: ""
+        date_taken: ""
+        description: ""
+      - filename: 3.jpg
+        title: ""
+        date_taken: ""
+        description: ""
+      - filename: 4.jpeg
+        title: ""
+        date_taken: ""
+        description: ""
+      - filename: 5.jpg
+        title: ""
+        date_taken: ""
+        description: ""
+      - filename: 5a.jpg
+        title: ""
+        date_taken: ""
+        description: ""
+      - filename: Adams_The_Tetons_and_the_Snake_River.jpg
+        title: ""
+        date_taken: ""
+        description: ""
+      - filename: Ansel_Adams_-_National_Archives_79-AA-Q04.jpg
+        title: ""
+        date_taken: ""
+        description: ""
+      - filename: Ansel_Adams_-_National_Archives_79-AAB-02.jpg
+        title: ""
+        date_taken: ""
+        description: ""
+      - filename: Screenshot 2026-01-08 at 2.52.49 PM.png
+        title: ""
+        date_taken: ""
+        description: ""
+      - filename: Screenshot 2026-01-08 at 2.52.55 PM.png
+        title: ""
+        date_taken: ""
+        description: ""
+      - filename: Screenshot 2026-01-08 at 2.53.03 PM.png
+        title: ""
+        date_taken: ""
+        description: ""
+      - filename: Screenshot 2026-01-08 at 2.53.07 PM.png
+        title: ""
+        date_taken: ""
+        description: ""
+      - filename: Screenshot 2026-01-08 at 2.53.18 PM.png
+        title: ""
+        date_taken: ""
+        description: ""
+      - filename: Screenshot 2026-01-08 at 2.57.13 PM.png
+        title: ""
+        date_taken: ""
+        description: ""
+      - filename: af.jpg
+        title: ""
+        date_taken: ""
+        description: ""
+# Add additional advisors and categories below as directories are populated
+# Example:
+#  - category: painter
+#    advisor: mondrian
+#    images: []
+#  - category: architect
+#    advisor: gehry
+#    images: []
