@@ -1,0 +1,25 @@
+# Mondrian macOS - Core Dependencies
+
+# Web framework
+Flask==3.0.0
+Flask-CORS==4.0.0
+
+# Image processing
+Pillow==10.1.0
+
+# YAML support (for metadata)
+PyYAML==6.0.1
+
+# HTTP requests
+requests==2.31.0
+
+# Database
+# (using built-in sqlite3)
+
+# MLX and ML dependencies
+mlx==0.18.0
+mlx-lm==0.18.0
+
+# Optional: For development/testing
+pytest==7.4.3
+
