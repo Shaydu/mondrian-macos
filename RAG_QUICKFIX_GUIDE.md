@@ -102,7 +102,7 @@ sqlite3 mondrian.db "SELECT COUNT(*) FROM image_captions WHERE caption_type='cli
 
 ```bash
 # Step 1: Start RAG service
-python mondrian/rag_service.py --port 5400
+python scripts/rag_service.py --port 5400
 
 # Step 2: Test search by image
 curl -X POST http://localhost:5400/search_by_image \
@@ -182,7 +182,7 @@ def get_similar_images_from_rag(image_path, top_k=3, advisor_id="ansel",
 Add `use_semantic_rag` parameter:
 
 ```python
-# mondrian/job_service_v2.3.py
+# scripts/job_service_v2.3.py
 enable_rag = request.form.get("enable_rag", "false").lower() == "true"
 use_semantic_rag = request.form.get("use_semantic_rag", "false").lower() == "true"
 

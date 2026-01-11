@@ -39,8 +39,8 @@ ANALYSIS_DIR=${ANALYSIS_DIR:-./analysis_output}
 read -p "Source images directory [./source]: " SOURCE_DIR
 SOURCE_DIR=${SOURCE_DIR:-./source}
 
-read -p "Prompts directory [./mondrian/prompts]: " PROMPTS_DIR
-PROMPTS_DIR=${PROMPTS_DIR:-./mondrian/prompts}
+read -p "Prompts directory [./scripts/prompts]: " PROMPTS_DIR
+PROMPTS_DIR=${PROMPTS_DIR:-./scripts/prompts}
 
 read -p "Output directory for training data [./training_data]: " OUTPUT_DIR
 OUTPUT_DIR=${OUTPUT_DIR:-./training_data}

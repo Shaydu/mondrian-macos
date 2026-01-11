@@ -5,4 +5,4 @@
 cd "$(dirname "$0")"
 
 # Run Python in unbuffered mode (-u flag) for immediate output
-python3 -u mondrian/start_services.py start-comprehensive
+python3 -u scripts/start_services.py start-comprehensive

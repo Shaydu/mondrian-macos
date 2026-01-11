@@ -22,7 +22,7 @@ The Mondrian services use Apple's MLX framework for efficient on-device AI infer
 ### Method 2: Add to Your Shell Profile
 Add this alias to your `~/.zshrc` or `~/.bashrc`:
 ```bash
-alias mondrian='/Library/Frameworks/Python.framework/Versions/3.12/bin/python3 /Users/shaydu/dev/mondrian-macos/mondrian/start_services.py'
+alias mondrian='/Library/Frameworks/Python.framework/Versions/3.12/bin/python3 /Users/shaydu/dev/mondrian-macos/scripts/start_services.py'
 ```
 
 Then reload:
@@ -41,7 +41,7 @@ mondrian status             # Check status
 ### Method 3: Direct Python 3.12 Call
 ```bash
 cd /Users/shaydu/dev/mondrian-macos
-/Library/Frameworks/Python.framework/Versions/3.12/bin/python3 mondrian/start_services.py
+/Library/Frameworks/Python.framework/Versions/3.12/bin/python3 scripts/start_services.py
 ```
 
 ## Testing the Setup

@@ -18,7 +18,7 @@ echo "============================================================"
 
 # Test 2: Simple image analysis
 curl -X POST http://localhost:5100/analyze \
-  -F "image=@mondrian/source/mike-shrub.jpg" \
+  -F "image=@scripts/source/mike-shrub.jpg" \
   -F "advisor=mondrian" \
   -F "job_id=quick_test" \
   --max-time 180 \
