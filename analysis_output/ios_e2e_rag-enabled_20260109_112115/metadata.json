@@ -1,0 +1,14 @@
+{
+  "job_id": "38a7390d-122f-4688-8b05-4715a4d71b31",
+  "mode": "rag-enabled",
+  "advisor": "ansel",
+  "test_image": "source/mike-shrub.jpg",
+  "timestamp": "2026-01-09T11:23:19.458011",
+  "files": {
+    "detailed_html": "analysis_detailed.html",
+    "summary_html": "analysis_summary.html",
+    "sse_stream_log": "sse_stream.log",
+    "sse_events_json": "sse_events.json",
+    "status_polling_log": "status_polling.log"
+  }
+}

@@ -1,4 +1,4 @@
-# RAG System Requirements
+# [DEPRECATED] See docs/architecture/rag.md for the latest RAG architecture and data flow documentation.
 
 ## Overview
 
@@ -892,3 +892,4 @@ THEN:
 | Date | Version | Changes | Author |
 |------|---------|---------|--------|
 | 2025-12-19 | 1.0 | Initial requirements document | System |
+

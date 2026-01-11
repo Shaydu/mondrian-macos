@@ -530,3 +530,4 @@ The architecture is **exactly** what you described:
 **But**: The advisor reference images currently have NULL scores, so the RAG system returns empty results. Once we re-index them properly, the system will work as designed.
 
 Would you like me to proceed with creating the batch analysis script and re-indexing the advisor images?
+

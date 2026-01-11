@@ -1,0 +1,329 @@
+[
+  {
+    "timestamp": "08:14:25.400",
+    "type": "connected",
+    "data": {
+      "type": "connected",
+      "job_id": "623a0962-2c39-4f8e-865f-21990f1d7a23"
+    }
+  },
+  {
+    "timestamp": "08:14:25.400",
+    "type": "status_update",
+    "data": {
+      "type": "status_update",
+      "job_data": {
+        "job_id": "623a0962-2c39-4f8e-865f-21990f1d7a23",
+        "status": "processing",
+        "current_step": "Processing image",
+        "llm_thinking": "",
+        "current_advisor": 0,
+        "total_advisors": 1,
+        "step_phase": "image_processing",
+        "progress_percentage": 5
+      },
+      "timestamp": 1768058065.399873
+    }
+  },
+  {
+    "timestamp": "08:14:25.410",
+    "type": "status_update",
+    "data": {
+      "type": "status_update",
+      "job_data": {
+        "job_id": "623a0962-2c39-4f8e-865f-21990f1d7a23",
+        "status": "analyzing",
+        "current_step": "Starting advisor analysis",
+        "llm_thinking": "",
+        "current_advisor": 0,
+        "total_advisors": 1,
+        "step_phase": "advisor_preparation",
+        "progress_percentage": 10
+      },
+      "timestamp": 1768058065.4102788
+    }
+  },
+  {
+    "timestamp": "08:14:25.411",
+    "type": "status_update",
+    "data": {
+      "type": "status_update",
+      "job_data": {
+        "job_id": "623a0962-2c39-4f8e-865f-21990f1d7a23",
+        "status": "analyzing",
+        "current_step": "Starting advisor analysis",
+        "llm_thinking": "",
+        "current_advisor": 0,
+        "total_advisors": 1,
+        "step_phase": "advisor_preparation",
+        "progress_percentage": 10
+      },
+      "timestamp": 1768058065.411197
+    }
+  },
+  {
+    "timestamp": "08:14:25.412",
+    "type": "status_update",
+    "data": {
+      "type": "status_update",
+      "job_data": {
+        "job_id": "623a0962-2c39-4f8e-865f-21990f1d7a23",
+        "status": "analyzing",
+        "current_step": "Conjuring Ansel",
+        "llm_thinking": "",
+        "current_advisor": 1,
+        "total_advisors": 1,
+        "step_phase": "advisor_analysis",
+        "progress_percentage": 90
+      },
+      "timestamp": 1768058065.4119291
+    }
+  },
+  {
+    "timestamp": "08:14:25.412",
+    "type": "status_update",
+    "data": {
+      "type": "status_update",
+      "job_data": {
+        "job_id": "623a0962-2c39-4f8e-865f-21990f1d7a23",
+        "status": "analyzing",
+        "current_step": "Conjuring Ansel",
+        "llm_thinking": "",
+        "current_advisor": 1,
+        "total_advisors": 1,
+        "step_phase": "advisor_analysis",
+        "progress_percentage": 90
+      },
+      "timestamp": 1768058065.4127018
+    }
+  },
+  {
+    "timestamp": "08:14:25.414",
+    "type": "status_update",
+    "data": {
+      "type": "status_update",
+      "job_data": {
+        "job_id": "623a0962-2c39-4f8e-865f-21990f1d7a23",
+        "status": "analyzing",
+        "current_step": "Conjuring Ansel",
+        "llm_thinking": "Analyzing composition and framing...",
+        "current_advisor": 1,
+        "total_advisors": 1,
+        "step_phase": "advisor_analysis",
+        "progress_percentage": 90
+      },
+      "timestamp": 1768058065.413891
+    }
+  },
+  {
+    "timestamp": "08:14:25.420",
+    "type": "thinking_update",
+    "data": {
+      "type": "thinking_update",
+      "job_id": "623a0962-2c39-4f8e-865f-21990f1d7a23",
+      "thinking": "Detecting photographic techniques..."
+    }
+  },
+  {
+    "timestamp": "08:14:25.420",
+    "type": "status_update",
+    "data": {
+      "type": "status_update",
+      "job_data": {
+        "job_id": "623a0962-2c39-4f8e-865f-21990f1d7a23",
+        "status": "thinking",
+        "current_step": "Detecting photographic techniques...",
+        "llm_thinking": "",
+        "current_advisor": 0,
+        "total_advisors": 0,
+        "step_phase": "",
+        "progress_percentage": 0
+      }
+    }
+  },
+  {
+    "timestamp": "08:14:25.426",
+    "type": "thinking_update",
+    "data": {
+      "type": "thinking_update",
+      "job_id": "623a0962-2c39-4f8e-865f-21990f1d7a23",
+      "thinking": "Loading Advisor Model..."
+    }
+  },
+  {
+    "timestamp": "08:14:25.427",
+    "type": "status_update",
+    "data": {
+      "type": "status_update",
+      "job_data": {
+        "job_id": "623a0962-2c39-4f8e-865f-21990f1d7a23",
+        "status": "thinking",
+        "current_step": "Loading Advisor Model...",
+        "llm_thinking": "",
+        "current_advisor": 0,
+        "total_advisors": 0,
+        "step_phase": "",
+        "progress_percentage": 0
+      }
+    }
+  },
+  {
+    "timestamp": "08:14:25.429",
+    "type": "thinking_update",
+    "data": {
+      "type": "thinking_update",
+      "job_id": "623a0962-2c39-4f8e-865f-21990f1d7a23",
+      "thinking": "Generating analysis..."
+    }
+  },
+  {
+    "timestamp": "08:14:25.429",
+    "type": "status_update",
+    "data": {
+      "type": "status_update",
+      "job_data": {
+        "job_id": "623a0962-2c39-4f8e-865f-21990f1d7a23",
+        "status": "thinking",
+        "current_step": "Generating analysis...",
+        "llm_thinking": "",
+        "current_advisor": 0,
+        "total_advisors": 0,
+        "step_phase": "",
+        "progress_percentage": 0
+      }
+    }
+  },
+  {
+    "timestamp": "08:14:55.297",
+    "type": "thinking_update",
+    "data": {
+      "type": "thinking_update",
+      "job_id": "623a0962-2c39-4f8e-865f-21990f1d7a23",
+      "thinking": "MLX analysis complete"
+    }
+  },
+  {
+    "timestamp": "08:14:55.298",
+    "type": "status_update",
+    "data": {
+      "type": "status_update",
+      "job_data": {
+        "job_id": "623a0962-2c39-4f8e-865f-21990f1d7a23",
+        "status": "thinking",
+        "current_step": "MLX analysis complete",
+        "llm_thinking": "",
+        "current_advisor": 0,
+        "total_advisors": 0,
+        "step_phase": "",
+        "progress_percentage": 0
+      }
+    }
+  },
+  {
+    "timestamp": "08:14:55.301",
+    "type": "status_update",
+    "data": {
+      "type": "status_update",
+      "job_data": {
+        "job_id": "623a0962-2c39-4f8e-865f-21990f1d7a23",
+        "status": "analyzing",
+        "current_step": "Conjuring Ansel",
+        "llm_thinking": "",
+        "current_advisor": 1,
+        "total_advisors": 1,
+        "step_phase": "advisor_analysis",
+        "progress_percentage": 90
+      },
+      "timestamp": 1768058095.301323
+    }
+  },
+  {
+    "timestamp": "08:14:55.301",
+    "type": "status_update",
+    "data": {
+      "type": "status_update",
+      "job_data": {
+        "job_id": "623a0962-2c39-4f8e-865f-21990f1d7a23",
+        "status": "analyzing",
+        "current_step": "Conjuring Ansel",
+        "llm_thinking": "",
+        "current_advisor": 1,
+        "total_advisors": 1,
+        "step_phase": "advisor_analysis",
+        "progress_percentage": 90
+      },
+      "timestamp": 1768058095.3017092
+    }
+  },
+  {
+    "timestamp": "08:14:55.302",
+    "type": "status_update",
+    "data": {
+      "type": "status_update",
+      "job_data": {
+        "job_id": "623a0962-2c39-4f8e-865f-21990f1d7a23",
+        "status": "finalizing",
+        "current_step": "Finalizing analysis results",
+        "llm_thinking": "",
+        "current_advisor": 1,
+        "total_advisors": 1,
+        "step_phase": "finalizing",
+        "progress_percentage": 95
+      },
+      "timestamp": 1768058095.3021598
+    }
+  },
+  {
+    "timestamp": "08:14:55.302",
+    "type": "status_update",
+    "data": {
+      "type": "status_update",
+      "job_data": {
+        "job_id": "623a0962-2c39-4f8e-865f-21990f1d7a23",
+        "status": "finalizing",
+        "current_step": "Finalizing analysis results",
+        "llm_thinking": "",
+        "current_advisor": 1,
+        "total_advisors": 1,
+        "step_phase": "finalizing",
+        "progress_percentage": 95
+      },
+      "timestamp": 1768058095.302818
+    }
+  },
+  {
+    "timestamp": "08:14:55.305",
+    "type": "status_update",
+    "data": {
+      "type": "status_update",
+      "job_data": {
+        "job_id": "623a0962-2c39-4f8e-865f-21990f1d7a23",
+        "status": "done",
+        "current_step": "Completed",
+        "llm_thinking": "",
+        "current_advisor": 1,
+        "total_advisors": 1,
+        "step_phase": "done",
+        "progress_percentage": 100
+      },
+      "timestamp": 1768058095.3054678
+    }
+  },
+  {
+    "timestamp": "08:14:55.308",
+    "type": "analysis_complete",
+    "data": {
+      "type": "analysis_complete",
+      "job_id": "623a0962-2c39-4f8e-865f-21990f1d7a23",
+      "analysis_html": "\n<div class=\"advisor-section\" data-advisor=\"ansel\">\n  <div class=\"analysis\">\n  <h2>Image Analysis</h2>\n  <p>The photograph captures a serene desert landscape at golden hour, with soft, undulating white dunes in the foreground and a rugged, sunlit mountain range in the distance. Sparse desert vegetation adds texture and life to the scene, while the sky transitions from warm orange to cool blue, creating a dramatic and tranquil atmosphere.</p>\n\n  <h2>Detailed Feedback</h2>\n\n  <div class=\"feedback-card\">\n    <h3>Composition <span class=\"dimension-score\">(8.5/10)</span></h3>\n    <p class=\"feedback-comment\">The composition effectively uses the foreground dunes and plants to create depth and draw the eye toward the mountains, with a strong sense of leading lines. The placement of the vegetation adds visual interest without overwhelming the scene.</p>\n    <div class=\"feedback-recommendation\">\n      <strong>Recommendation:</strong> Consider subtly adjusting the horizon placement to ensure the mountain range is more centered for a more balanced composition, especially if the foreground is slightly too dominant.\n    </div>\n  </div>\n  <div class=\"feedback-card\">\n    <h3>Lighting <span class=\"dimension-score\">(8.5/10)</span></h3>\n    <p class=\"feedback-comment\">The lighting is exceptionally soft and directional, capturing the golden hour glow with a warm, natural palette that enhances the textures of the dunes and mountains. The light is balanced and avoids harsh shadows.</p>\n    <div class=\"feedback-recommendation\">\n      <strong>Recommendation:</strong> To deepen the drama, consider slightly increasing the contrast in the shadows to reveal more tonal detail, especially in the dune crevices and mountain ridges.\n    </div>\n  </div>\n  <div class=\"feedback-card\">\n    <h3>Focus &amp; Sharpness <span class=\"dimension-score\">(9.0/10)</span></h3>\n    <p class=\"feedback-comment\">The focus is razor-sharp, particularly on the foreground vegetation, capturing fine textures and subtle details. The depth of field is well-managed, keeping both foreground and distant mountains in crisp focus.</p>\n    <div class=\"feedback-recommendation\">\n      <strong>Recommendation:</strong> Maintain this level of sharpness across the entire frame; consider a slight increase in focus precision on the mid-ground vegetation to ensure no elements appear soft or out of focus.\n    </div>\n  </div>\n  <div class=\"feedback-card\">\n    <h3>Color Harmony <span class=\"dimension-score\">(8.5/10)</span></h3>\n    <p class=\"feedback-comment\">The color palette is harmonious, with a seamless transition from warm golden tones to cool blues, creating a natural and emotionally resonant atmosphere. The white dunes contrast beautifully with the earthy tones of the mountains.</p>\n    <div class=\"feedback-recommendation\">\n      <strong>Recommendation:</strong> Subtly reduce the saturation of the sky\u2019s blue to prevent it from overpowering the warm tones of the dunes and mountains, enhancing the naturalistic feel.\n    </div>\n  </div>\n  <div class=\"feedback-card\">\n    <h3>Subject Isolation <span class=\"dimension-score\">(7.5/10)</span></h3>\n    <p class=\"feedback-comment\">The subject is well-isolated by the foreground vegetation and dunes, but the mountains are slightly less distinct due to atmospheric haze. The isolation is effective but could be more pronounced.</p>\n    <div class=\"feedback-recommendation\">\n      <strong>Recommendation:</strong> Enhance isolation by slightly increasing the contrast between the foreground and mid-ground, or by using a subtle vignette to draw more attention to the foreground vegetation.\n    </div>\n  </div>\n  <div class=\"feedback-card\">\n    <h3>Depth &amp; Perspective <span class=\"dimension-score\">(9.0/10)</span></h3>\n    <p class=\"feedback-comment\">The image exhibits exceptional depth, with clear layers from the foreground dunes to the distant mountains. The perspective is wide and immersive, giving a sense of scale and grandeur.</p>\n    <div class=\"feedback-recommendation\">\n      <strong>Recommendation:</strong> Consider adding a subtle foreground element, like a small rock or plant stem, to further anchor the viewer\u2019s eye and enhance the sense of depth.\n    </div>\n  </div>\n  <div class=\"feedback-card\">\n    <h3>Visual Balance <span class=\"dimension-score\">(8.0/10)</span></h3>\n    <p class=\"feedback-comment\">The visual balance is strong, with the foreground vegetation and dunes counterbalancing the mountain range. The color and tonal distribution is even, creating a sense of equilibrium.</p>\n    <div class=\"feedback-recommendation\">\n      <strong>Recommendation:</strong> Maintain this balance, but consider slightly shifting the horizon to create a more dynamic visual rhythm, especially if the foreground is too heavy.\n    </div>\n  </div>\n  <div class=\"feedback-card\">\n    <h3>Emotional Impact <span class=\"dimension-score\">(8.5/10)</span></h3>\n    <p class=\"feedback-comment\">The image evokes a sense of peace and awe, capturing the grandeur of nature with a quiet, contemplative tone. The lighting and composition invite the viewer to reflect on the vastness of the landscape.</p>\n    <div class=\"feedback-recommendation\">\n      <strong>Recommendation:</strong> To deepen the emotional impact, consider adding a subtle textural element, like a wind-blown dune or a single leaf, to enhance the sense of time and nature\u2019s quiet power.\n    </div>\n  </div>\n\n  <div class=\"overall-grade-box\">\n    <p class=\"overall-grade-text\">Overall Grade: 8.5/10</p>\n  </div>\n</div>\n</div>\n"
+    }
+  },
+  {
+    "timestamp": "08:14:55.308",
+    "type": "done",
+    "data": {
+      "type": "done",
+      "job_id": "623a0962-2c39-4f8e-865f-21990f1d7a23"
+    }
+  }
+]

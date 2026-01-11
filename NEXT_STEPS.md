@@ -328,3 +328,4 @@ If you encounter any issues:
 4. Run verification: `python batch_analyze_advisor_images.py --advisor ansel --verify-only`
 
 The system architecture is correct - we just need to populate the advisor reference data!
+

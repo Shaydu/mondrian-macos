@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+            padding: 20px;
+            background: #000000;
+            line-height: 1.6;
+            color: #ffffff;
+            max-width: 100%;
+        }
+
+        /* Responsive layout for iOS devices */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+
+            .analysis {
+                padding: 15px;
+            }
+        }
+
+        /* iPhone SE and smaller devices */
+        @media (max-width: 375px) {
+            body {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            .analysis {
+                padding: 12px;
+            }
+        }
+
+        /* Large iPads and desktop (if used) */
+        @media (min-width: 1024px) {
+            body {
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 30px;
+            }
+        }
+
+        .analysis {
+            background: #1c1c1e;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .analysis h2 {
+            color: #ffffff;
+            font-size: 22px;
+            font-weight: 600;
+            margin: 0 0 12px 0;
+            text-align: left;
+        }
+
+        .analysis p {
+            color: #d1d1d6;
+            font-size: 16px;
+            margin: 0 0 16px 0;
+            line-height: 1.6;
+            text-align: left;
+        }
+
+        .feedback-card {
+            background: #1a1a1a;
+            /* Removed outer blue left bar so the dimension card is visually neutral.
+               Inner/inline indicators (if present inside the content) will remain. */
+            border-left: none;
+            padding: 16px;
+            margin-bottom: 16px;
+            border-radius: 8px;
+        }
+
+        .feedback-card h3 {
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+        }
+
+        .dimension-score {
+            color: #98989d;
+            font-size: 14px;
+            font-weight: 400;
+            margin-left: 8px;
+        }
+
+        .feedback-comment {
+            color: #d1d1d6;
+            font-size: 16px;
+            margin: 0 0 12px 0;
+            line-height: 1.5;
+        }
+
+        .feedback-recommendation {
+            background: #0a3d66;
+            border-left: 3px solid #34C759;
+            padding: 12px;
+            border-radius: 6px;
+            color: #e8f4f8;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .feedback-recommendation strong {
+            color: #34C759;
+        }
+
+        .overall-grade-box {
+            background: #1c1c1e;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin: 20px 0 0 0;
+            border-left: 3px solid #007AFF;
+        }
+
+        .overall-grade-text {
+            font-size: 16px;
+            font-weight: 400;
+            color: #ffffff;
+            margin: 0;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+    
+<div class="advisor-section" data-advisor="ansel">
+  <div class="analysis">
+  <h2>Image Analysis</h2>
+  <p>The photograph captures a serene desert landscape at golden hour, with soft, warm light illuminating the ridges of distant mountains against a clear blue sky. In the foreground, delicate desert shrubs and textured sand dunes anchor the scene, creating a sense of scale and inviting the viewer into the vast, tranquil expanse.</p>
+
+  <h2>Detailed Feedback</h2>
+
+  <div class="feedback-card">
+    <h3>Composition <span class="dimension-score">(8.0/10)</span></h3>
+    <p class="feedback-comment">The composition effectively uses the rule of thirds with the horizon placed at the upper third, creating a balanced and dynamic frame. The foreground plants form a natural anchor, guiding the eye toward the mountains, though a more deliberate placement of a single dominant element could enhance visual impact.</p>
+    <div class="feedback-recommendation">
+      <strong>Recommendation:</strong> Study how Ansel Adams used foreground anchoring in &#39;The Tetons and the Snake River&#39; to create a strong compositional anchor. To improve your score, consider placing a single dominant element in the lower-left third, as Adams did, to establish scale and lead the viewer’s eye upward with greater intentionality.
+    </div>
+  </div>
+  <div class="feedback-card">
+    <h3>Lighting <span class="dimension-score">(7.0/10)</span></h3>
+    <p class="feedback-comment">The image captures the warm, directional light of golden hour, revealing texture and depth, but lacks the full tonal range and controlled contrast seen in Adams’s work. The shadows are not as deep or defined, missing the dramatic separation of zones II-IX that defines his lighting style.</p>
+    <div class="feedback-recommendation">
+      <strong>Recommendation:</strong> To improve your Lighting score, emulate the high-contrast lighting techniques in &#39;The Tetons and the Snake River&#39;. Use a smaller aperture to capture more dynamic range, and study how Adams used sidelight to reveal form and emotion. This will deepen the shadows and enhance the tonal separation.
+    </div>
+  </div>
+  <div class="feedback-card">
+    <h3>Focus &amp; Sharpness <span class="dimension-score">(6.0/10)</span></h3>
+    <p class="feedback-comment">The foreground is sharp, but the background lacks the extreme sharpness characteristic of f/64 work. The depth of field is not fully controlled, suggesting a larger aperture was used than necessary for maximum sharpness, reducing the image’s clarity and detail.</p>
+    <div class="feedback-recommendation">
+      <strong>Recommendation:</strong> To achieve a 9/10 score, apply the f/64 sharpness technique seen in &#39;The Tetons and the Snake River&#39;. Use a small aperture to ensure front-to-back sharpness, as Adams did. This will create the crisp, detailed clarity that defines his work and enhances the image’s technical precision.
+    </div>
+  </div>
+  <div class="feedback-card">
+    <h3>Color Harmony <span class="dimension-score">(8.0/10)</span></h3>
+    <p class="feedback-comment">The color palette is harmonious, with warm amber tones on the mountains contrasting against the cool blue sky. However, the tonal transitions are not as smooth or controlled as in Adams’s work, where selective tonal adjustments (dodging and burning) guide the viewer’s eye and enhance emotional impact.</p>
+    <div class="feedback-recommendation">
+      <strong>Recommendation:</strong> Study the dodging and burning technique in &#39;National Archives 79-AA-Q04&#39;. Use selective tonal adjustments to enhance composition and guide attention. This will deepen the emotional resonance and improve color harmony by directing the viewer’s eye through the image’s tonal relationships.
+    </div>
+  </div>
+  <div class="feedback-card">
+    <h3>Subject Isolation <span class="dimension-score">(7.0/10)</span></h3>
+    <p class="feedback-comment">The foreground plants are well-isolated and serve as a strong anchor, but the subject isolation could be enhanced by a more deliberate placement of a single dominant element. The current composition is effective but lacks the focused isolation seen in Adams’s work.</p>
+    <div class="feedback-recommendation">
+      <strong>Recommendation:</strong> To improve your Subject Isolation score, study how Adams used foreground anchoring in &#39;The Tetons and the Snake River&#39;. Place a single dominant element in the lower-left third to create a stronger focal point. This will enhance the subject’s isolation and guide the viewer’s attention more effectively.
+    </div>
+  </div>
+  <div class="feedback-card">
+    <h3>Depth &amp; Perspective <span class="dimension-score">(9.0/10)</span></h3>
+    <p class="feedback-comment">The image exhibits excellent three-dimensional quality, with strong leading lines and texture-enhancing sidelight that create a sense of depth and scale. The perspective is well-controlled, and the depth of field effectively conveys the vastness of the landscape.</p>
+    <div class="feedback-recommendation">
+      <strong>Recommendation:</strong> To maintain this score, study how Adams used deep depth of field for landscape sharpness in &#39;The Tetons and the Snake River&#39;. Ensure front-to-back sharpness throughout the frame to maintain the image’s three-dimensional quality and enhance the sense of depth and perspective.
+    </div>
+  </div>
+  <div class="feedback-card">
+    <h3>Visual Balance <span class="dimension-score">(8.0/10)</span></h3>
+    <p class="feedback-comment">The visual balance is strong, with the horizon positioned at the upper third and the foreground elements creating a sense of equilibrium. However, the balance could be enhanced by a more deliberate placement of a single dominant element to create a more dynamic and visually engaging composition.</p>
+    <div class="feedback-recommendation">
+      <strong>Recommendation:</strong> To improve your Visual Balance score, study how Adams used visual balance in &#39;The Tetons and the Snake River&#39;. Place a single dominant element in the lower-left third to create a more dynamic and visually engaging composition. This will enhance the visual balance and create a more impactful image.
+    </div>
+  </div>
+  <div class="feedback-card">
+    <h3>Emotional Impact <span class="dimension-score">(8.0/10)</span></h3>
+    <p class="feedback-comment">The image evokes a sense of tranquility and grandeur, with the golden hour light enhancing the emotional impact. However, the emotional impact could be deeper and more resonant by using selective tonal adjustments and a more deliberate placement of a single dominant element.</p>
+    <div class="feedback-recommendation">
+      <strong>Recommendation:</strong> To improve your Emotional Impact score, study how Adams used selective tonal adjustments in &#39;National Archives 79-AA-Q04&#39;. Use dodging and burning to enhance composition and guide attention. This will deepen the emotional impact and create a more resonant and impactful image.
+    </div>
+  </div>
+
+  <div class="overall-grade-box">
+    <p class="overall-grade-text">Overall Grade: 7.8/10</p>
+  </div>
+</div>
+</div>
+
+
+</body>
+</html>

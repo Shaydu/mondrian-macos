@@ -446,3 +446,4 @@ curl -X POST http://localhost:5005/upload \
 3. **If you want both**: Implement a hybrid RAG system that uses both dimensional and semantic similarity
 
 Let me know which direction you'd like to pursue and I can help implement the solution!
+

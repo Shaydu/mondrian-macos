@@ -1,4 +1,4 @@
-# RAG System Architecture Diagram
+# [DEPRECATED] See docs/architecture/rag.md for the latest RAG architecture and data flow documentation.
 
 ## Current State: Two Parallel RAG Systems
 

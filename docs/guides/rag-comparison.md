@@ -1,4 +1,4 @@
-# RAG-Augmented Advisor Comparison Guide
+# [DEPRECATED] See docs/architecture/rag.md for the latest RAG architecture and data flow documentation.
 
 ## What Was Implemented
 

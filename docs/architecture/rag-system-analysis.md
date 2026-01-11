@@ -1,43 +1,5 @@
-# RAG System Analysis: Missing Ingestion Link
+# [DEPRECATED] See docs/architecture/rag.md for the latest RAG architecture and data flow documentation.
 
-## Executive Summary
-
-Your Mondrian system has **TWO separate RAG implementations**:
-
-1. **Caption-Based RAG** (Original) - Has missing ingestion link ❌
-2. **Dimensional RAG** (Current) - Fully functional ✅
-
-The issue you identified is correct: `compute_image_embeddings.py` generates `.npy` files but they're never ingested into the RAG system.
-
----
-
-## System 1: Caption-Based RAG (The Problem)
-
-### Architecture
-
-```
-compute_image_embeddings.py
-    ↓
-Generates .npy files (CLIP embeddings)
-    ↓
-❌ MISSING LINK ❌
-    ↓
-Should ingest into image_captions table
-    ↓
-rag_service.py /search_by_image endpoint
-```
-
-### Current Files
-
-1. **`compute_image_embeddings.py`**
-   - Purpose: Generate CLIP embeddings for advisor images
-   - Output: `.npy` files saved next to images
-   - Problem: **Only saves to disk, doesn't update database**
-
-2. **`compute_image_embeddings_to_db.py`**
-   - Purpose: Generate embeddings AND save to database
-   - Output: Inserts into `image_captions` table with embedding BLOB
-   - Status: **This is the correct script but may not be used**
 
 3. **`rag_service.py`**
    - Purpose: Semantic search service

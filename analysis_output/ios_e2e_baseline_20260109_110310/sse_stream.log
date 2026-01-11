@@ -1,0 +1,199 @@
+SSE Stream Started: 2026-01-09 11:03:10.994115
+Stream URL: http://127.0.0.1:5005/stream/484a0950-c696-4f53-a82c-bd14ddf3494c
+================================================================================
+
+[11:03:10.994] connected: {
+  "type": "connected",
+  "job_id": "484a0950-c696-4f53-a82c-bd14ddf3494c"
+}
+
+[11:03:10.999] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "484a0950-c696-4f53-a82c-bd14ddf3494c",
+    "status": "processing",
+    "current_step": "Processing image",
+    "llm_thinking": "",
+    "current_advisor": 0,
+    "total_advisors": 1,
+    "step_phase": "image_processing",
+    "progress_percentage": 5
+  },
+  "timestamp": 1767981790.9996202
+}
+
+[11:03:11.001] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "484a0950-c696-4f53-a82c-bd14ddf3494c",
+    "status": "processing",
+    "current_step": "Processing image",
+    "llm_thinking": "",
+    "current_advisor": 0,
+    "total_advisors": 1,
+    "step_phase": "image_processing",
+    "progress_percentage": 5
+  },
+  "timestamp": 1767981791.001632
+}
+
+[11:03:11.047] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "484a0950-c696-4f53-a82c-bd14ddf3494c",
+    "status": "analyzing",
+    "current_step": "Starting advisor analysis",
+    "llm_thinking": "",
+    "current_advisor": 0,
+    "total_advisors": 1,
+    "step_phase": "advisor_preparation",
+    "progress_percentage": 10
+  },
+  "timestamp": 1767981791.047644
+}
+
+[11:03:11.049] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "484a0950-c696-4f53-a82c-bd14ddf3494c",
+    "status": "analyzing",
+    "current_step": "Starting advisor analysis",
+    "llm_thinking": "",
+    "current_advisor": 0,
+    "total_advisors": 1,
+    "step_phase": "advisor_preparation",
+    "progress_percentage": 10
+  },
+  "timestamp": 1767981791.049736
+}
+
+[11:03:11.051] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "484a0950-c696-4f53-a82c-bd14ddf3494c",
+    "status": "analyzing",
+    "current_step": "Summoning Ansel",
+    "llm_thinking": "",
+    "current_advisor": 1,
+    "total_advisors": 1,
+    "step_phase": "advisor_analysis",
+    "progress_percentage": 90
+  },
+  "timestamp": 1767981791.051404
+}
+
+[11:03:11.052] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "484a0950-c696-4f53-a82c-bd14ddf3494c",
+    "status": "analyzing",
+    "current_step": "Summoning Ansel",
+    "llm_thinking": "",
+    "current_advisor": 1,
+    "total_advisors": 1,
+    "step_phase": "advisor_analysis",
+    "progress_percentage": 90
+  },
+  "timestamp": 1767981791.052486
+}
+
+[11:03:11.057] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "484a0950-c696-4f53-a82c-bd14ddf3494c",
+    "status": "analyzing",
+    "current_step": "Summoning Ansel",
+    "llm_thinking": "Analyzing composition and framing...",
+    "current_advisor": 1,
+    "total_advisors": 1,
+    "step_phase": "advisor_analysis",
+    "progress_percentage": 90
+  },
+  "timestamp": 1767981791.057027
+}
+
+[11:03:41.085] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1767981821.066095
+}
+
+[11:04:11.315] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1767981851.1054468
+}
+
+[11:04:41.138] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1767981881.126003
+}
+
+[11:05:11.145] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1767981911.132832
+}
+
+[11:05:41.288] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1767981941.172204
+}
+
+[11:06:11.271] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1767981971.238732
+}
+
+[11:06:41.272] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1767982001.2646139
+}
+
+[11:07:11.478] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1767982031.2999759
+}
+
+[11:07:41.630] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1767982061.440299
+}
+
+[11:08:11.456] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1767982091.4477959
+}
+
+[11:08:41.457] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1767982121.4537878
+}
+
+[11:09:11.478] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1767982151.462259
+}
+
+[11:09:41.480] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1767982181.472254
+}
+
+[11:10:11.573] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1767982211.5035079
+}
+
+[11:10:41.520] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1767982241.5150158
+}
+
+[11:11:11.530] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1767982271.520364
+}
+
+[11:11:41.532] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1767982301.526228
+}
+

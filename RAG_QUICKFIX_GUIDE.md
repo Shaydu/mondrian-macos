@@ -270,3 +270,4 @@ sqlite3 mondrian.db "SELECT LENGTH(embedding) FROM image_captions LIMIT 1"
 - Combined → Best of both worlds
 
 See `RAG_SYSTEM_ANALYSIS.md` for complete details.
+
