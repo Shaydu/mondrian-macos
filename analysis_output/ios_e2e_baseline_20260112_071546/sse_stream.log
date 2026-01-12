@@ -1,0 +1,489 @@
+SSE Stream Started: 2026-01-12 07:15:46.252912
+Stream URL: http://127.0.0.1:5005/stream/0d8ac304-cdd4-4eb2-a9a1-1d851aa3531c
+================================================================================
+
+[07:15:46.252] connected: {
+  "type": "connected",
+  "job_id": "0d8ac304-cdd4-4eb2-a9a1-1d851aa3531c"
+}
+
+[07:15:46.253] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "0d8ac304-cdd4-4eb2-a9a1-1d851aa3531c",
+    "status": "processing",
+    "current_step": "Processing image",
+    "llm_thinking": "",
+    "current_advisor": 0,
+    "total_advisors": 1,
+    "step_phase": "image_processing",
+    "progress_percentage": 5
+  },
+  "timestamp": 1768227346.2531781
+}
+
+[07:15:46.274] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "0d8ac304-cdd4-4eb2-a9a1-1d851aa3531c",
+    "status": "analyzing",
+    "current_step": "Starting advisor analysis",
+    "llm_thinking": "",
+    "current_advisor": 0,
+    "total_advisors": 1,
+    "step_phase": "advisor_preparation",
+    "progress_percentage": 10
+  },
+  "timestamp": 1768227346.274511
+}
+
+[07:15:46.275] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "0d8ac304-cdd4-4eb2-a9a1-1d851aa3531c",
+    "status": "analyzing",
+    "current_step": "Starting advisor analysis",
+    "llm_thinking": "",
+    "current_advisor": 0,
+    "total_advisors": 1,
+    "step_phase": "advisor_preparation",
+    "progress_percentage": 10
+  },
+  "timestamp": 1768227346.275104
+}
+
+[07:15:46.275] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "0d8ac304-cdd4-4eb2-a9a1-1d851aa3531c",
+    "status": "analyzing",
+    "current_step": "Calling forth Ansel",
+    "llm_thinking": "",
+    "current_advisor": 1,
+    "total_advisors": 1,
+    "step_phase": "advisor_analysis",
+    "progress_percentage": 90
+  },
+  "timestamp": 1768227346.275465
+}
+
+[07:15:46.276] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "0d8ac304-cdd4-4eb2-a9a1-1d851aa3531c",
+    "status": "analyzing",
+    "current_step": "Calling forth Ansel",
+    "llm_thinking": "",
+    "current_advisor": 1,
+    "total_advisors": 1,
+    "step_phase": "advisor_analysis",
+    "progress_percentage": 90
+  },
+  "timestamp": 1768227346.275924
+}
+
+[07:15:46.276] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "0d8ac304-cdd4-4eb2-a9a1-1d851aa3531c",
+    "status": "analyzing",
+    "current_step": "Calling forth Ansel",
+    "llm_thinking": "Analyzing composition and framing...",
+    "current_advisor": 1,
+    "total_advisors": 1,
+    "step_phase": "advisor_analysis",
+    "progress_percentage": 90
+  },
+  "timestamp": 1768227346.2766678
+}
+
+[07:15:46.289] thinking_update: {
+  "type": "thinking_update",
+  "job_id": "0d8ac304-cdd4-4eb2-a9a1-1d851aa3531c",
+  "thinking": "Loading Advisor Model..."
+}
+
+[07:15:46.289] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "0d8ac304-cdd4-4eb2-a9a1-1d851aa3531c",
+    "status": "thinking",
+    "current_step": "Loading Advisor Model...",
+    "llm_thinking": "",
+    "current_advisor": 0,
+    "total_advisors": 0,
+    "step_phase": "",
+    "progress_percentage": 0
+  }
+}
+
+[07:15:49.679] thinking_update: {
+  "type": "thinking_update",
+  "job_id": "0d8ac304-cdd4-4eb2-a9a1-1d851aa3531c",
+  "thinking": "Generating analysis..."
+}
+
+[07:15:49.679] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "0d8ac304-cdd4-4eb2-a9a1-1d851aa3531c",
+    "status": "thinking",
+    "current_step": "Generating analysis...",
+    "llm_thinking": "",
+    "current_advisor": 0,
+    "total_advisors": 0,
+    "step_phase": "",
+    "progress_percentage": 0
+  }
+}
+
+[07:16:19.683] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768227379.68164
+}
+
+[07:16:49.687] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768227409.68721
+}
+
+[07:17:19.693] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768227439.692597
+}
+
+[07:17:49.700] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768227469.698474
+}
+
+[07:18:19.706] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768227499.703906
+}
+
+[07:18:49.709] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768227529.7083871
+}
+
+[07:19:19.719] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768227559.715361
+}
+
+[07:19:49.720] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768227589.719529
+}
+
+[07:20:19.729] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768227619.724263
+}
+
+[07:20:49.737] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768227649.733641
+}
+
+[07:21:19.741] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768227679.740385
+}
+
+[07:21:49.743] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768227709.739525
+}
+
+[07:22:19.742] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768227739.739784
+}
+
+[07:22:49.746] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768227769.745312
+}
+
+[07:23:19.753] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768227799.750529
+}
+
+[07:23:49.755] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768227829.7543821
+}
+
+[07:24:19.759] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768227859.758815
+}
+
+[07:24:49.762] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768227889.761806
+}
+
+[07:25:19.770] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768227919.767915
+}
+
+[07:25:49.786] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768227949.773988
+}
+
+[07:26:19.794] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768227979.7862961
+}
+
+[07:26:49.797] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768228009.796157
+}
+
+[07:27:19.802] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768228039.800916
+}
+
+[07:27:49.807] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768228069.8044438
+}
+
+[07:28:19.823] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768228099.813876
+}
+
+[07:28:49.832] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768228129.829798
+}
+
+[07:29:19.838] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768228159.8370612
+}
+
+[07:29:49.840] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768228189.839684
+}
+
+[07:30:19.848] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768228219.845671
+}
+
+[07:30:49.852] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768228249.851409
+}
+
+[07:31:19.854] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768228279.853439
+}
+
+[07:31:49.861] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768228309.859835
+}
+
+[07:32:19.866] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768228339.866025
+}
+
+[07:32:49.872] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768228369.871833
+}
+
+[07:33:19.886] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768228399.882563
+}
+
+[07:33:49.888] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768228429.8881469
+}
+
+[07:34:19.897] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768228459.893642
+}
+
+[07:34:49.897] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768228489.8965151
+}
+
+[07:35:19.905] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768228519.902049
+}
+
+[07:35:49.905] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768228549.90447
+}
+
+[07:36:19.913] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768228579.912246
+}
+
+[07:36:49.919] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768228609.917959
+}
+
+[07:37:19.925] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768228639.9231098
+}
+
+[07:37:49.930] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768228669.9293811
+}
+
+[07:38:19.936] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768228699.935342
+}
+
+[07:38:49.940] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768228729.940098
+}
+
+[07:39:19.948] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768228759.947341
+}
+
+[07:39:49.951] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768228789.9508932
+}
+
+[07:40:19.961] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768228819.958494
+}
+
+[07:40:49.966] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768228849.965718
+}
+
+[07:41:19.975] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768228879.972279
+}
+
+[07:41:49.974] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768228909.974045
+}
+
+[07:42:19.984] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768228939.980004
+}
+
+[07:42:49.996] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768228969.995927
+}
+
+[07:43:20.001] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768229000.0003462
+}
+
+[07:43:50.012] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768229030.0116942
+}
+
+[07:44:20.022] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768229060.020791
+}
+
+[07:44:50.025] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768229090.024781
+}
+
+[07:45:20.036] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768229120.0352159
+}
+
+[07:45:50.047] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768229150.046494
+}
+
+[07:46:20.051] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768229180.0495071
+}
+
+[07:46:50.059] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768229210.059277
+}
+
+[07:47:20.070] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768229240.069964
+}
+
+[07:47:50.075] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768229270.074506
+}
+
+[07:48:20.077] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768229300.077035
+}
+
+[07:48:50.093] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768229330.089215
+}
+
+[07:49:20.094] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768229360.093983
+}
+
+[07:49:50.109] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768229390.105912
+}
+
+[07:50:20.113] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768229420.11056
+}
+
+[07:50:50.120] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768229450.118759
+}
+
