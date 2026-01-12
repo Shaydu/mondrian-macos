@@ -1,0 +1,176 @@
+[INFO] MLX configured to use GPU backend (Metal)
+[INFO] MLX backend initialized successfully (GPU mode)
+[INFO] AI Advisor Service v2.0-JSON starting...
+[INFO] Using JSON output format (converted to HTML for backward compatibility)
+[INFO] Using base64 encoding for all images
+[INFO] Using MLX backend for vision analysis
+[INFO] MLX Mode: ENABLED
+[INFO] MLX Model: Qwen/Qwen2-VL-2B-Instruct
+[INFO] Model timeout: 300s
+[INFO] RAG Service URL: http://127.0.0.1:5400
+[INFO] RAG Default: ENABLED (from RAG_ENABLED env var)
+[INFO] System prompt loaded from database (2521 characters)
+AI Advisor Service starting up...
+  Port: 5100
+  DB Path: /Users/shaydu/dev/mondrian-macos/mondrian/mondrian.db
+  MLX Model: Qwen/Qwen2-VL-2B-Instruct
+  Job service URL: http://127.0.0.1:5005
+  Current working directory: /Users/shaydu/dev/mondrian-macos/mondrian
+  Image Encoding: BASE64 (all platforms)
+AI Advisor Service running on port 5100...
+ * Serving Flask app 'ai_advisor_service'
+ * Debug mode: off
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5100
+ * Running on http://10.0.0.131:5100
+[33mPress CTRL+C to quit[0m
+[DEBUG] === AI ADVISOR SERVICE REQUEST START ===
+[DEBUG] Timestamp: 1768243580.222662
+[DEBUG] Received analyze request
+[DEBUG] Content-Type: application/json
+[DEBUG] Request method: POST
+[DEBUG] Processing JSON data
+[AI SERVICE] JSON: enable_rag from request (string): 'true' → True
+[RAG] === STARTING RAG ANALYSIS (2-PASS) ===
+[RAG] Advisor: ansel
+[RAG] Image path: /Users/shaydu/dev/mondrian-macos/source/mike-shrub.jpg
+[RAG] Job ID: None
+[RAG] Job service URL: None
+[DEBUG] get_advisor_from_db called with db_path=/Users/shaydu/dev/mondrian-macos/mondrian/mondrian.db, advisor_id=ansel
+[DEBUG] raw row fetched for advisor_id=ansel: ('ansel', 'Ansel Adams', 'Ansel Adams (1902-1984) was an American landscape photographer and environmentalist known for his black-and-white images of the American West, especially Yosemite National Park. He helped found the photography group f/64, developed the Zone System for achieving perfect exposure and tonal range, and was a pioneering advocate for environmental conservation through his art.', '1902-1984', "You are Ansel Adams, master of black-and-white landscape photography. You revolutionized photography through your Zone System, which gave photographers unprecedented control over exposure and tonal range.\n\nYour approach to evaluating an image:\n\n1. **Tonal Range & Zone System** - Analyze the full spectrum from Zone 0 (pure black) to Zone X (pure white). Look for:\n   - Rich blacks with detail in shadows (Zones II-III)\n   - Pure whites that aren't blown out (Zone VIII-IX)\n   - Full midtone gradation (Zones IV-VI)\n   - Proper exposure that preserves detail across the entire tonal range\n\n2. **Composition & Perspective** - Examine the geometric structure:\n   - Leading lines that draw the eye through the frame\n   - Rule of thirds and golden ratio placement\n   - Foreground, midground, and background layering\n   - Balance between elements\n   - Use of natural frames\n\n3. **Technical Excellence** - Assess the craft:\n   - Critical sharpness and focus (f/64 philosophy)\n   - Depth of field appropriate to the subject\n   - Proper exposure (not too dark, not too light)\n   - Clean, well-printed negative equivalent\n\n4. **Light & Shadow** - Evaluate the interplay:\n   - Direction and quality of light\n   - Dramatic use of shadows to create depth\n   - Texture revealed through sidelight\n   - Time of day considerations (golden hour, blue hour)\n\n5. **Emotional Impact** - Consider the feeling:\n   - Sense of scale and majesty\n   - Connection to the natural world\n   - Drama and atmosphere\n   - Timeless quality\n\nWhen providing feedback, be specific and constructive. Reference the Zone System and technical aspects while also addressing the emotional impact. Encourage the photographer to see beyond the literal and capture the feeling of being present in that moment.", '[{"title": "Tonal Range & Zone System", "description": "Master of the full spectrum from pure black to pure white, using his Zone System to achieve perfect exposure and tonal gradation in every image."}, {"title": "Composition & Perspective", "description": "Precise framing that emphasizes geometric elements, leading lines, and careful positioning to create powerful visual impact."}, {"title": "Technical Excellence", "description": "Perfect sharpness, focus, and exposure achieved through large-format cameras and meticulous darkroom work."}, {"title": "Landscape Drama", "description": "Captures the majesty and drama of natural landscapes with emphasis on light, shadow, and texture."}]', 'Photographer', 'https://en.wikipedia.org/wiki/Ansel_Adams', 'https://commons.wikimedia.org/wiki/Category:Ansel_Adams', 'baseline') (cols: ['id', 'name', 'bio', 'years', 'prompt', 'focus_areas', 'category', 'wikipedia_url', 'commons_url', 'prompt_type'])
+[DEBUG] Advisor prompt loaded, length: 1763 chars
+[RAG] ========================================
+[RAG] 2-PASS RAG WORKFLOW ACTIVATED
+[RAG] ========================================
+[RAG PASS 1] Extracting dimensional profile from user image...
+[RAG PASS 1] Dimensional extraction prompt length: 1013 chars
+[DEBUG] === STARTING MLX PYTHON API CALL ===
+[DEBUG] MLX Model: Qwen/Qwen2-VL-2B-Instruct
+[DEBUG] Image path: /Users/shaydu/dev/mondrian-macos/source/mike-shrub.jpg
+[DEBUG] Prompt length: 1013 chars
+[INFO] Loading MLX model: Qwen/Qwen2-VL-2B-Instruct...
+[INFO] Testing Metal GPU access...
+[INFO] ✓ Metal GPU is available and working
+Fetching 11 files:   0%|          | 0/11 [00:00<?, ?it/s]Fetching 11 files: 100%|██████████| 11/11 [00:00<00:00, 106552.76it/s]
+The image processor of type `Qwen2VLImageProcessor` is now loaded as a fast processor by default, even if the model checkpoint was saved with a slow processor. This is a breaking change and may produce slightly different outputs. To continue using the slow processor, instantiate this class with `use_fast=False`. Note that this behavior will be extended to all models in a future release.
+[INFO] MLX model loaded in 4.50s using GPU backend and cached
+[INFO] MLX default device: Device(gpu, 0)
+Fetching 11 files:   0%|          | 0/11 [00:00<?, ?it/s]Fetching 11 files: 100%|██████████| 11/11 [00:00<00:00, 207825.87it/s]
+[INFO] Processing with image: /Users/shaydu/dev/mondrian-macos/source/mike-shrub.jpg
+[INFO] Running MLX generation (timeout handling disabled to preserve GPU access)...
+[INFO] GPU Device: Device(gpu, 0)
+[INFO] GPU operations synchronized
+[DEBUG] MLX generation completed in 15.22s
+[DEBUG] Response type: <class 'str'>
+[DEBUG] Response length: 1722 chars
+[DEBUG] Response preview (first 500 chars): {
+  "dimensional_analysis": {
+    "composition": "7.5",
+    "comment": "The composition is well-balanced, with the desert landscape and the mountain in the background creating a strong visual contrast.",
+    "lighting": "8.0",
+    "comment": "The lighting is natural and enhances the colors of the scene, creating a warm and inviting atmosphere.",
+    "focus_sharpness": "9.0",
+    "comment": "The focus is sharp, allowing for clear details of the desert landscape and the mountain in the background.
+[DEBUG] Response appears to start with JSON structure
+[RAG PASS 1] Model call completed in 19.87s
+[RAG PASS 1] Raw result type: <class 'str'>
+[RAG PASS 1] Raw result length: 1722 chars
+[RAG PASS 1] Raw result preview (first 500 chars):
+{
+  "dimensional_analysis": {
+    "composition": "7.5",
+    "comment": "The composition is well-balanced, with the desert landscape and the mountain in the background creating a strong visual contrast.",
+    "lighting": "8.0",
+    "comment": "The lighting is natural and enhances the colors of the scene, creating a warm and inviting atmosphere.",
+    "focus_sharpness": "9.0",
+    "comment": "The focus is sharp, allowing for clear details of the desert landscape and the mountain in the background.
+[RAG PASS 1] Raw result preview (last 200 chars):
+l and earthy, and the depth of field is well-managed. The subject is well-isolated, and the visual balance is good. The emotional impact is strong, creating a sense of tranquility and serenity."
+  }
+}
+[RAG PASS 1] ✓ Successfully parsed dimensional data
+[RAG PASS 1] Parsed JSON keys: ['dimensional_analysis', 'overall_assessment']
+[RAG PASS 1] Extracting dimensional profile from parsed JSON...
+[RAG PASS 1] ✓ Extracted dimensional data
+[RAG PASS 1] Dimensional data keys: ['image_description', 'overall_grade']
+[RAG PASS 1] Dimensional scores: {}
+[RAG PASS 1] Saving profile to database: /Users/shaydu/dev/mondrian-macos/mondrian/mondrian.db
+[RAG] ✓ Updated existing dimensional profile e65cb32e-a722-4180-a2d3-4c023cded1e9 for 'mike-shrub.jpg'
+[RAG PASS 1] Profile save completed in 0.01s
+[RAG PASS 1] ✓ Profile saved to database: e65cb32e-a722-4180-a2d3-4c023cded1e9
+[RAG PASS 1] Total Pass 1 time: 19.89s
+[RAG QUERY] Searching for similar Ansel Adams images...
+[RAG QUERY] Will retrieve profile from DB path: /Users/shaydu/dev/mondrian-macos/mondrian/mondrian.db
+[RAG QUERY] Looking for profile with image_path: /Users/shaydu/dev/mondrian-macos/source/mike-shrub.jpg
+[RAG QUERY] Calling get_technique_based_rag_context...
+[RAG] ========================================
+[RAG] Technique-Based RAG Workflow
+[RAG] ========================================
+[RAG] Advisor: Ansel Adams (ansel)
+[RAG] Image: mike-shrub.jpg
+[RAG] Database: /Users/shaydu/dev/mondrian-macos/mondrian/mondrian.db
+[RAG] Retrieving user's dimensional profile...
+[RAG]   DB path: /Users/shaydu/dev/mondrian-macos/mondrian/mondrian.db
+[RAG]   Image path: /Users/shaydu/dev/mondrian-macos/source/mike-shrub.jpg
+[RAG]   Advisor ID: ansel
+[RAG] ✓ Retrieved user's dimensional profile from database
+[RAG] Profile keys: ['id', 'job_id', 'advisor_id', 'image_path', 'composition_score', 'lighting_score', 'focus_sharpness_score', 'color_harmony_score', 'subject_isolation_score', 'depth_perspective_score', 'visual_balance_score', 'emotional_impact_score', 'composition_comment', 'lighting_comment', 'focus_sharpness_comment', 'color_harmony_comment', 'subject_isolation_comment', 'depth_perspective_comment', 'visual_balance_comment', 'emotional_impact_comment', 'overall_grade', 'image_description', 'analysis_html', 'image_title', 'date_taken', 'location', 'image_significance', 'techniques', 'created_at']
+[RAG] Dimensional scores: {'composition_score': None, 'lighting_score': None, 'focus_sharpness_score': None, 'color_harmony_score': None, 'subject_isolation_score': None, 'depth_perspective_score': None, 'visual_balance_score': None, 'emotional_impact_score': None}
+[RAG] Searching for similar images in dimensional space...
+[RAG] User profile dimensions: 8
+[RAG] No valid dimensional scores found in user profile
+[RAG] No similar images found
+[RAG] This might mean advisor images haven't been indexed yet
+[RAG] Run: python3 tools/rag/index_ansel_dimensional_profiles.py
+[RAG] Falling back to baseline (no RAG)
+[RAG QUERY] get_technique_based_rag_context completed in 0.00s
+[RAG QUERY] Augmented prompt length: 1763 chars
+[RAG QUERY] Prompt increase: 0 chars
+[RAG QUERY] Similar images returned: 0
+[RAG QUERY] ⚠️  No similar advisor images found
+[RAG QUERY] This likely means advisor images haven't been indexed yet
+[RAG QUERY] Or profile retrieval failed (check logs above)
+[RAG QUERY] Run: python3 tools/rag/index_ansel_dimensional_profiles.py
+[RAG QUERY] Continuing with unaugmented prompt (baseline-like)
+[RAG QUERY] Total query time: 0.00s
+[RAG PASS 2] ===== FULL ANALYSIS WITH RAG CONTEXT =====
+[DEBUG] Full prompt length: 4315 chars
+[DEBUG] Calling run_model_mlx with Python API...
+[DEBUG] === STARTING MLX PYTHON API CALL ===
+[DEBUG] MLX Model: Qwen/Qwen2-VL-2B-Instruct
+[DEBUG] Image path: /Users/shaydu/dev/mondrian-macos/source/mike-shrub.jpg
+[DEBUG] Prompt length: 4315 chars
+Fetching 11 files:   0%|          | 0/11 [00:00<?, ?it/s]Fetching 11 files: 100%|██████████| 11/11 [00:00<00:00, 146467.76it/s]
+[INFO] Processing with image: /Users/shaydu/dev/mondrian-macos/source/mike-shrub.jpg
+[INFO] Running MLX generation (timeout handling disabled to preserve GPU access)...
+[INFO] GPU Device: Device(gpu, 0)
+[INFO] GPU operations synchronized
+[DEBUG] MLX generation completed in 23.11s
+[DEBUG] Response type: <class 'str'>
+[DEBUG] Response length: 3299 chars
+[DEBUG] Response preview (first 500 chars): ```json
+{
+  "image_description": "The image captures a serene desert landscape at sunset, with a mountain range in the background. The foreground features a small shrub, and the sand dunes stretch out towards the horizon.",
+  "dimensions": [
+    {
+      "name": "Composition",
+      "score": 8,
+      "comment": "The composition is balanced with a clear foreground, midground, and background. The shrub draws the viewer's eye towards the mountain range.",
+      "recommendation": "Consider adding mor
+[WARN] Response does NOT start with JSON structure - may fail parsing
+[WARN] First 100 chars: ```json
+{
+  "image_description": "The image captures a serene desert landscape at sunset, with a mou
+[DEBUG] run_model_mlx returned, result length: 3299
+[DEBUG] Parsing JSON response from model...
+[DEBUG] Converting JSON to HTML...
+[DEBUG] Extracting dimensional profile from JSON...
+[RAG] ✓ Updated existing dimensional profile e65cb32e-a722-4180-a2d3-4c023cded1e9 for 'mike-shrub.jpg'
+[OK] Dimensional profile saved: e65cb32e-a722-4180-a2d3-4c023cded1e9
+[DEBUG] Returning HTML response: 3790 chars, starts with: <div class="analysis">
+  <h2>Image Analysis</h2>
+  <p>The image captures a serene desert landscape a
+127.0.0.1 - - [12/Jan/2026 11:47:03] "POST /analyze HTTP/1.1" 200 -
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/multiprocessing/resource_tracker.py:254: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '

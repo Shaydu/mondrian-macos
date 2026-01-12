@@ -79,20 +79,29 @@ def print_info(text):
     """Print info message"""
     print(f"{YELLOW}ℹ{NC} {text}")
 
-def check_services():
-    """Check that all required services are running"""
+def check_services(require_rag_service=False):
+    """Check that all required services are running
+    
+    Args:
+        require_rag_service: If True, RAG Service (port 5400) is required. 
+                            If False, it's optional (for dimensional RAG testing).
+    """
     print_step(1, "Checking Services")
 
-    # Required services (must be running)
+    # Always required services
     required_services = [
         ("Job Service", f"{JOB_SERVICE_URL}/health", 5005),
         ("AI Advisor Service", f"{AI_ADVISOR_URL}/health", 5100),
     ]
     
-    # Optional services (nice to have, but not required for dimensional RAG)
-    optional_services = [
-        ("RAG Service (caption-based)", f"{RAG_SERVICE_URL}/health", 5400),
-    ]
+    # RAG Service - required if testing RAG, optional otherwise
+    if require_rag_service:
+        required_services.append(("RAG Service", f"{RAG_SERVICE_URL}/health", 5400))
+        optional_services = []
+    else:
+        optional_services = [
+            ("RAG Service (caption-based)", f"{RAG_SERVICE_URL}/health", 5400),
+        ]
 
     all_required_up = True
     down_services = []
@@ -134,8 +143,11 @@ def check_services():
         print(f"{BLUE}To start all services, run:{NC}")
         print(f"  ./mondrian.sh --restart")
         print()
-        print(f"{YELLOW}Note:{NC} RAG Service (port 5400) is optional - it's only needed for caption-based RAG.")
-        print(f"       Dimensional RAG (currently used) is integrated into AI Advisor Service.")
+        if require_rag_service:
+            print(f"{YELLOW}Note:{NC} RAG Service (port 5400) is required for this test.")
+        else:
+            print(f"{YELLOW}Note:{NC} RAG Service (port 5400) is optional - it's only needed for caption-based RAG.")
+            print(f"       Dimensional RAG (currently used) is integrated into AI Advisor Service.")
         print()
         sys.exit(1)
 
@@ -571,8 +583,8 @@ def main():
         print_success("SSE client available - will stream real-time updates")
         use_sse = True
 
-    # Check services
-    check_services()
+    # Check services (RAG service not required for baseline)
+    check_services(require_rag_service=False)
 
     # Run baseline test
     print_header("TEST 1: BASELINE (No RAG)")
@@ -585,6 +597,11 @@ def main():
     # Wait between tests
     print_info("Waiting 5 seconds before RAG test...")
     time.sleep(5)
+
+    # Check services again - now require RAG service for RAG test
+    print()
+    print_header("Checking Services for RAG Test")
+    check_services(require_rag_service=True)
 
     # Run RAG test
     print_header("TEST 2: RAG-ENABLED")
