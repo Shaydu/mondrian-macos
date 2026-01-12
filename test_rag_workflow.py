@@ -170,3 +170,6 @@ print("   - Find similar reference images")
 print("   - Augment prompt with comparative context")
 print("   - Generate dimensional comparison feedback")
 
+
+
+

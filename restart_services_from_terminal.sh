@@ -44,3 +44,6 @@ echo "  cd mondrian && python3 start_services.py --stop"
 echo ""
 
 
+
+
+

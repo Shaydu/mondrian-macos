@@ -266,3 +266,6 @@ A: Start with: `python3 mondrian/ai_advisor_service.py --port 5100`
 
 **Summary:** The RAG system now provides rich, contextual feedback by referencing actual artwork titles and historical significance instead of meaningless filenames. This makes the AI advisor's feedback more educational and compelling.
 
+
+
+

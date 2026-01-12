@@ -47,3 +47,6 @@ See `MLX_METAL_CRASH_FIX.md` for alternative solutions (upgrade MLX, install Oll
 The services will keep running in Terminal.app's background, and you can continue using Cursor for editing code.
 
 
+
+
+

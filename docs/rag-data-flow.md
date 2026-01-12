@@ -754,3 +754,6 @@ CREATE TABLE dimensional_profiles (
 
 **The key insight**: By storing BOTH dimensional data AND technique data for advisor images, we can provide technique-specific, comparative feedback that teaches users HOW to shoot like the masters, not just WHAT score they received.
 
+
+
+

@@ -83,42 +83,66 @@ def check_services():
     """Check that all required services are running"""
     print_step(1, "Checking Services")
 
-    services = [
+    # Required services (must be running)
+    required_services = [
         ("Job Service", f"{JOB_SERVICE_URL}/health", 5005),
         ("AI Advisor Service", f"{AI_ADVISOR_URL}/health", 5100),
-        ("RAG Service", f"{RAG_SERVICE_URL}/health", 5400),
+    ]
+    
+    # Optional services (nice to have, but not required for dimensional RAG)
+    optional_services = [
+        ("RAG Service (caption-based)", f"{RAG_SERVICE_URL}/health", 5400),
     ]
 
-    all_up = True
+    all_required_up = True
     down_services = []
 
-    for name, url, port in services:
+    # Check required services
+    for name, url, port in required_services:
         try:
             resp = requests.get(url, timeout=5)
             if resp.status_code == 200:
                 print_success(f"{name} (port {port}) - UP")
             else:
                 print_error(f"{name} (port {port}) - DOWN (status {resp.status_code})")
-                all_up = False
+                all_required_up = False
                 down_services.append(f"{name} (port {port})")
         except Exception as e:
             print_error(f"{name} (port {port}) - DOWN ({e})")
-            all_up = False
+            all_required_up = False
             down_services.append(f"{name} (port {port})")
 
-    if not all_up:
+    # Check optional services (warn but don't fail)
+    for name, url, port in optional_services:
+        try:
+            resp = requests.get(url, timeout=5)
+            if resp.status_code == 200:
+                print_success(f"{name} (port {port}) - UP")
+            else:
+                print_info(f"{name} (port {port}) - DOWN (optional, not required for dimensional RAG)")
+        except Exception as e:
+            print_info(f"{name} (port {port}) - DOWN (optional, not required for dimensional RAG)")
+
+    if not all_required_up:
         print()
-        print_error("Not all services are running. Please start them first.")
+        print_error("Not all required services are running. Please start them first.")
         print()
-        print(f"{YELLOW}Services that are DOWN:{NC}")
+        print(f"{YELLOW}Required services that are DOWN:{NC}")
         for service in down_services:
             print(f"  ✗ {service}")
         print()
         print(f"{BLUE}To start all services, run:{NC}")
         print(f"  ./mondrian.sh --restart")
         print()
+        print(f"{YELLOW}Note:{NC} RAG Service (port 5400) is optional - it's only needed for caption-based RAG.")
+        print(f"       Dimensional RAG (currently used) is integrated into AI Advisor Service.")
+        print()
         sys.exit(1)
 
+    print()
+    print_success("All required services are running")
+    if len(optional_services) > 0:
+        print_info("Optional services (caption-based RAG) are not required for dimensional RAG")
     print()
 
 def upload_image(enable_rag=False):

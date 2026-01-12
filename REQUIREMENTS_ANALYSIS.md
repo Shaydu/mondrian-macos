@@ -531,3 +531,6 @@ The architecture is **exactly** what you described:
 
 Would you like me to proceed with creating the batch analysis script and re-indexing the advisor images?
 
+
+
+
