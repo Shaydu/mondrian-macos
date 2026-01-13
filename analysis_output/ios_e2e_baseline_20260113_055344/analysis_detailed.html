@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+            padding: 20px;
+            background: #000000;
+            line-height: 1.6;
+            color: #ffffff;
+            max-width: 100%;
+        }
+
+        /* Responsive layout for iOS devices */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+
+            .analysis {
+                padding: 15px;
+            }
+        }
+
+        /* iPhone SE and smaller devices */
+        @media (max-width: 375px) {
+            body {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            .analysis {
+                padding: 12px;
+            }
+        }
+
+        /* Large iPads and desktop (if used) */
+        @media (min-width: 1024px) {
+            body {
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 30px;
+            }
+        }
+
+        .analysis {
+            background: #1c1c1e;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .analysis h2 {
+            color: #ffffff;
+            font-size: 22px;
+            font-weight: 600;
+            margin: 0 0 12px 0;
+            text-align: left;
+        }
+
+        .analysis p {
+            color: #d1d1d6;
+            font-size: 16px;
+            margin: 0 0 16px 0;
+            line-height: 1.6;
+            text-align: left;
+        }
+
+        .feedback-card {
+            background: #1a1a1a;
+            /* Removed outer blue left bar so the dimension card is visually neutral.
+               Inner/inline indicators (if present inside the content) will remain. */
+            border-left: none;
+            padding: 16px;
+            margin-bottom: 16px;
+            border-radius: 8px;
+        }
+
+        .feedback-card h3 {
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+        }
+
+        .dimension-score {
+            color: #98989d;
+            font-size: 14px;
+            font-weight: 400;
+            margin-left: 8px;
+        }
+
+        .feedback-comment {
+            color: #d1d1d6;
+            font-size: 16px;
+            margin: 0 0 12px 0;
+            line-height: 1.5;
+        }
+
+        .feedback-recommendation {
+            background: #0a3d66;
+            border-left: 3px solid #34C759;
+            padding: 12px;
+            border-radius: 6px;
+            color: #e8f4f8;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .feedback-recommendation strong {
+            color: #34C759;
+        }
+
+        .overall-grade-box {
+            background: #1c1c1e;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin: 20px 0 0 0;
+            border-left: 3px solid #007AFF;
+        }
+
+        .overall-grade-text {
+            font-size: 16px;
+            font-weight: 400;
+            color: #ffffff;
+            margin: 0;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+    
+<div class="advisor-section" data-advisor="ansel">
+  <div class="analysis">
+  <h2>Image Analysis</h2>
+  <p>The image captures a serene desert landscape at sunset, with a mountain range in the background. The foreground features a small shrub, and the sand dunes stretch out towards the horizon.</p>
+
+  <h2>Detailed Dimensional Analysis & Improvement Guide</h2>
+  <p style="color: #666; margin-bottom: 20px;">Each dimension is analyzed with specific feedback and actionable recommendations for improvement.</p>
+
+  <div class="feedback-card" style="margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: #fff;">
+    <h3 style="margin-top: 0; display: flex; justify-content: space-between; align-items: center;">
+      <span>Composition</span>
+      <span style="color: #388e3c; font-size: 1.1em;">8.0/10 <span style="font-size: 0.7em; font-weight: normal;">(Excellent)</span></span>
+    </h3>
+    <div class="feedback-comment" style="margin: 15px 0; padding: 12px; background: #f8f9fa; border-left: 4px solid #388e3c; border-radius: 4px;">
+      <p style="margin: 0; line-height: 1.6;">The composition is balanced with a clear foreground, midground, and background. The shrub draws the viewer&#39;s eye towards the mountain range.</p>
+    </div>
+    <div class="feedback-recommendation" style="margin-top: 15px; padding: 12px; background: #e3f2fd; border-left: 4px solid #2196f3; border-radius: 4px;">
+      <strong style="display: block; margin-bottom: 8px; color: #1976d2;">💡 How to Improve:</strong>
+      <p style="margin: 0; line-height: 1.6;">Consider adding more elements to the foreground to create a more dynamic composition.</p>
+    </div>
+  </div>
+
+  <div class="feedback-card" style="margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: #fff;">
+    <h3 style="margin-top: 0; display: flex; justify-content: space-between; align-items: center;">
+      <span>Lighting</span>
+      <span style="color: #388e3c; font-size: 1.1em;">8.0/10 <span style="font-size: 0.7em; font-weight: normal;">(Excellent)</span></span>
+    </h3>
+    <div class="feedback-comment" style="margin: 15px 0; padding: 12px; background: #f8f9fa; border-left: 4px solid #388e3c; border-radius: 4px;">
+      <p style="margin: 0; line-height: 1.6;">The lighting is soft and warm, creating a sense of tranquility. The mountain range is well-lit, while the shrub is slightly underexposed.</p>
+    </div>
+    <div class="feedback-recommendation" style="margin-top: 15px; padding: 12px; background: #e3f2fd; border-left: 4px solid #2196f3; border-radius: 4px;">
+      <strong style="display: block; margin-bottom: 8px; color: #1976d2;">💡 How to Improve:</strong>
+      <p style="margin: 0; line-height: 1.6;">Increase the exposure of the shrub to bring out more detail.</p>
+    </div>
+  </div>
+
+  <div class="feedback-card" style="margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: #fff;">
+    <h3 style="margin-top: 0; display: flex; justify-content: space-between; align-items: center;">
+      <span>Focus &amp; Sharpness</span>
+      <span style="color: #388e3c; font-size: 1.1em;">9.0/10 <span style="font-size: 0.7em; font-weight: normal;">(Excellent)</span></span>
+    </h3>
+    <div class="feedback-comment" style="margin: 15px 0; padding: 12px; background: #f8f9fa; border-left: 4px solid #388e3c; border-radius: 4px;">
+      <p style="margin: 0; line-height: 1.6;">The focus is sharp, capturing the texture of the sand and the details of the shrub.</p>
+    </div>
+    <div class="feedback-recommendation" style="margin-top: 15px; padding: 12px; background: #e3f2fd; border-left: 4px solid #2196f3; border-radius: 4px;">
+      <strong style="display: block; margin-bottom: 8px; color: #1976d2;">💡 How to Improve:</strong>
+      <p style="margin: 0; line-height: 1.6;">Maintain this level of sharpness for the rest of the image.</p>
+    </div>
+  </div>
+
+  <div class="feedback-card" style="margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: #fff;">
+    <h3 style="margin-top: 0; display: flex; justify-content: space-between; align-items: center;">
+      <span>Color Harmony</span>
+      <span style="color: #f57c00; font-size: 1.1em;">7.0/10 <span style="font-size: 0.7em; font-weight: normal;">(Good)</span></span>
+    </h3>
+    <div class="feedback-comment" style="margin: 15px 0; padding: 12px; background: #f8f9fa; border-left: 4px solid #f57c00; border-radius: 4px;">
+      <p style="margin: 0; line-height: 1.6;">The color palette is muted, with a mix of earthy tones and the warm glow of the setting sun.</p>
+    </div>
+    <div class="feedback-recommendation" style="margin-top: 15px; padding: 12px; background: #e3f2fd; border-left: 4px solid #2196f3; border-radius: 4px;">
+      <strong style="display: block; margin-bottom: 8px; color: #1976d2;">💡 How to Improve:</strong>
+      <p style="margin: 0; line-height: 1.6;">Consider adding more vibrant colors to the image to create a more dynamic composition.</p>
+    </div>
+  </div>
+
+  <div class="feedback-card" style="margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: #fff;">
+    <h3 style="margin-top: 0; display: flex; justify-content: space-between; align-items: center;">
+      <span>Depth &amp; Perspective</span>
+      <span style="color: #f57c00; font-size: 1.1em;">7.0/10 <span style="font-size: 0.7em; font-weight: normal;">(Good)</span></span>
+    </h3>
+    <div class="feedback-comment" style="margin: 15px 0; padding: 12px; background: #f8f9fa; border-left: 4px solid #f57c00; border-radius: 4px;">
+      <p style="margin: 0; line-height: 1.6;">The depth is well-balanced, with the shrub in the foreground leading the viewer&#39;s eye towards the mountain range.</p>
+    </div>
+    <div class="feedback-recommendation" style="margin-top: 15px; padding: 12px; background: #e3f2fd; border-left: 4px solid #2196f3; border-radius: 4px;">
+      <strong style="display: block; margin-bottom: 8px; color: #1976d2;">💡 How to Improve:</strong>
+      <p style="margin: 0; line-height: 1.6;">Consider adding more elements to the foreground to create a more dynamic composition.</p>
+    </div>
+  </div>
+
+  <div class="feedback-card" style="margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: #fff;">
+    <h3 style="margin-top: 0; display: flex; justify-content: space-between; align-items: center;">
+      <span>Visual Balance</span>
+      <span style="color: #388e3c; font-size: 1.1em;">8.0/10 <span style="font-size: 0.7em; font-weight: normal;">(Excellent)</span></span>
+    </h3>
+    <div class="feedback-comment" style="margin: 15px 0; padding: 12px; background: #f8f9fa; border-left: 4px solid #388e3c; border-radius: 4px;">
+      <p style="margin: 0; line-height: 1.6;">The visual balance is good, with the shrub in the foreground and the mountain range in the background.</p>
+    </div>
+    <div class="feedback-recommendation" style="margin-top: 15px; padding: 12px; background: #e3f2fd; border-left: 4px solid #2196f3; border-radius: 4px;">
+      <strong style="display: block; margin-bottom: 8px; color: #1976d2;">💡 How to Improve:</strong>
+      <p style="margin: 0; line-height: 1.6;">Consider adding more elements to the foreground to create a more dynamic composition.</p>
+    </div>
+  </div>
+
+  <div class="feedback-card" style="margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: #fff;">
+    <h3 style="margin-top: 0; display: flex; justify-content: space-between; align-items: center;">
+      <span>Emotional Impact</span>
+      <span style="color: #f57c00; font-size: 1.1em;">7.0/10 <span style="font-size: 0.7em; font-weight: normal;">(Good)</span></span>
+    </h3>
+    <div class="feedback-comment" style="margin: 15px 0; padding: 12px; background: #f8f9fa; border-left: 4px solid #f57c00; border-radius: 4px;">
+      <p style="margin: 0; line-height: 1.6;">The emotional impact is strong, with a sense of tranquility and connection to nature.</p>
+    </div>
+    <div class="feedback-recommendation" style="margin-top: 15px; padding: 12px; background: #e3f2fd; border-left: 4px solid #2196f3; border-radius: 4px;">
+      <strong style="display: block; margin-bottom: 8px; color: #1976d2;">💡 How to Improve:</strong>
+      <p style="margin: 0; line-height: 1.6;">Consider adding more elements to the foreground to create a more dynamic composition.</p>
+    </div>
+  </div>
+
+  <h2>Overall Grade</h2>
+  <p><strong>7.4/10</strong></p>
+  <p><strong>Grade Note:</strong> The image was taken with a wide aperture, which helps to capture the depth of field and the details of the shrub. The exposure was set to capture the warm glow of the setting sun, which adds a sense of tranquility to the image.</p>
+</div>
+</div>
+
+
+</body>
+</html>

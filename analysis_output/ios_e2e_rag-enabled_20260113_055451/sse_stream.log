@@ -1,0 +1,365 @@
+SSE Stream Started: 2026-01-13 05:54:51.766687
+Stream URL: http://127.0.0.1:5005/stream/78cdfce5-9cbd-4487-afa6-4b94d7b2f62a
+================================================================================
+
+[05:54:51.766] connected: {
+  "type": "connected",
+  "job_id": "78cdfce5-9cbd-4487-afa6-4b94d7b2f62a"
+}
+
+[05:54:51.767] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "78cdfce5-9cbd-4487-afa6-4b94d7b2f62a",
+    "status": "processing",
+    "current_step": "Processing image",
+    "llm_thinking": "",
+    "current_advisor": 0,
+    "total_advisors": 1,
+    "step_phase": "image_processing",
+    "progress_percentage": 5
+  },
+  "timestamp": 1768308891.767362
+}
+
+[05:54:51.780] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "78cdfce5-9cbd-4487-afa6-4b94d7b2f62a",
+    "status": "analyzing",
+    "current_step": "Starting advisor analysis",
+    "llm_thinking": "",
+    "current_advisor": 0,
+    "total_advisors": 1,
+    "step_phase": "advisor_preparation",
+    "progress_percentage": 10
+  },
+  "timestamp": 1768308891.780427
+}
+
+[05:54:51.781] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "78cdfce5-9cbd-4487-afa6-4b94d7b2f62a",
+    "status": "analyzing",
+    "current_step": "Starting advisor analysis",
+    "llm_thinking": "",
+    "current_advisor": 0,
+    "total_advisors": 1,
+    "step_phase": "advisor_preparation",
+    "progress_percentage": 10
+  },
+  "timestamp": 1768308891.781204
+}
+
+[05:54:51.781] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "78cdfce5-9cbd-4487-afa6-4b94d7b2f62a",
+    "status": "analyzing",
+    "current_step": "Summoning Ansel",
+    "llm_thinking": "",
+    "current_advisor": 1,
+    "total_advisors": 1,
+    "step_phase": "advisor_analysis",
+    "progress_percentage": 90
+  },
+  "timestamp": 1768308891.781871
+}
+
+[05:54:51.784] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "78cdfce5-9cbd-4487-afa6-4b94d7b2f62a",
+    "status": "analyzing",
+    "current_step": "Summoning Ansel",
+    "llm_thinking": "",
+    "current_advisor": 1,
+    "total_advisors": 1,
+    "step_phase": "advisor_analysis",
+    "progress_percentage": 90
+  },
+  "timestamp": 1768308891.784605
+}
+
+[05:54:51.785] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "78cdfce5-9cbd-4487-afa6-4b94d7b2f62a",
+    "status": "analyzing",
+    "current_step": "Summoning Ansel",
+    "llm_thinking": "Analyzing composition and framing...",
+    "current_advisor": 1,
+    "total_advisors": 1,
+    "step_phase": "advisor_analysis",
+    "progress_percentage": 90
+  },
+  "timestamp": 1768308891.785624
+}
+
+[05:54:51.818] thinking_update: {
+  "type": "thinking_update",
+  "job_id": "78cdfce5-9cbd-4487-afa6-4b94d7b2f62a",
+  "thinking": "Analyzing image dimensions..."
+}
+
+[05:54:51.818] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "78cdfce5-9cbd-4487-afa6-4b94d7b2f62a",
+    "status": "thinking",
+    "current_step": "Analyzing image dimensions...",
+    "llm_thinking": "",
+    "current_advisor": 0,
+    "total_advisors": 0,
+    "step_phase": "",
+    "progress_percentage": 0
+  }
+}
+
+[05:54:51.821] thinking_update: {
+  "type": "thinking_update",
+  "job_id": "78cdfce5-9cbd-4487-afa6-4b94d7b2f62a",
+  "thinking": "Loading Advisor Model..."
+}
+
+[05:54:51.821] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "78cdfce5-9cbd-4487-afa6-4b94d7b2f62a",
+    "status": "thinking",
+    "current_step": "Loading Advisor Model...",
+    "llm_thinking": "",
+    "current_advisor": 0,
+    "total_advisors": 0,
+    "step_phase": "",
+    "progress_percentage": 0
+  }
+}
+
+[05:54:51.823] thinking_update: {
+  "type": "thinking_update",
+  "job_id": "78cdfce5-9cbd-4487-afa6-4b94d7b2f62a",
+  "thinking": "Generating analysis..."
+}
+
+[05:54:51.823] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "78cdfce5-9cbd-4487-afa6-4b94d7b2f62a",
+    "status": "thinking",
+    "current_step": "Generating analysis...",
+    "llm_thinking": "",
+    "current_advisor": 0,
+    "total_advisors": 0,
+    "step_phase": "",
+    "progress_percentage": 0
+  }
+}
+
+[05:55:11.249] thinking_update: {
+  "type": "thinking_update",
+  "job_id": "78cdfce5-9cbd-4487-afa6-4b94d7b2f62a",
+  "thinking": "MLX analysis complete"
+}
+
+[05:55:11.254] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "78cdfce5-9cbd-4487-afa6-4b94d7b2f62a",
+    "status": "thinking",
+    "current_step": "MLX analysis complete",
+    "llm_thinking": "",
+    "current_advisor": 0,
+    "total_advisors": 0,
+    "step_phase": "",
+    "progress_percentage": 0
+  }
+}
+
+[05:55:11.445] thinking_update: {
+  "type": "thinking_update",
+  "job_id": "78cdfce5-9cbd-4487-afa6-4b94d7b2f62a",
+  "thinking": "Comparing your image's dimensions with Ansel Adams's portfolio statistics..."
+}
+
+[05:55:11.445] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "78cdfce5-9cbd-4487-afa6-4b94d7b2f62a",
+    "status": "thinking",
+    "current_step": "Comparing your image's dimensions with Ansel Adams's portfolio statistics...",
+    "llm_thinking": "",
+    "current_advisor": 0,
+    "total_advisors": 0,
+    "step_phase": "",
+    "progress_percentage": 0
+  }
+}
+
+[05:55:11.732] thinking_update: {
+  "type": "thinking_update",
+  "job_id": "78cdfce5-9cbd-4487-afa6-4b94d7b2f62a",
+  "thinking": "Reviewing your image with Ansel Adams..."
+}
+
+[05:55:11.734] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "78cdfce5-9cbd-4487-afa6-4b94d7b2f62a",
+    "status": "thinking",
+    "current_step": "Reviewing your image with Ansel Adams...",
+    "llm_thinking": "",
+    "current_advisor": 0,
+    "total_advisors": 0,
+    "step_phase": "",
+    "progress_percentage": 0
+  }
+}
+
+[05:55:11.736] thinking_update: {
+  "type": "thinking_update",
+  "job_id": "78cdfce5-9cbd-4487-afa6-4b94d7b2f62a",
+  "thinking": "Loading Advisor Model..."
+}
+
+[05:55:11.736] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "78cdfce5-9cbd-4487-afa6-4b94d7b2f62a",
+    "status": "thinking",
+    "current_step": "Loading Advisor Model...",
+    "llm_thinking": "",
+    "current_advisor": 0,
+    "total_advisors": 0,
+    "step_phase": "",
+    "progress_percentage": 0
+  }
+}
+
+[05:55:11.744] thinking_update: {
+  "type": "thinking_update",
+  "job_id": "78cdfce5-9cbd-4487-afa6-4b94d7b2f62a",
+  "thinking": "Generating analysis..."
+}
+
+[05:55:11.744] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "78cdfce5-9cbd-4487-afa6-4b94d7b2f62a",
+    "status": "thinking",
+    "current_step": "Generating analysis...",
+    "llm_thinking": "",
+    "current_advisor": 0,
+    "total_advisors": 0,
+    "step_phase": "",
+    "progress_percentage": 0
+  }
+}
+
+[05:55:36.285] thinking_update: {
+  "type": "thinking_update",
+  "job_id": "78cdfce5-9cbd-4487-afa6-4b94d7b2f62a",
+  "thinking": "MLX analysis complete"
+}
+
+[05:55:36.299] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "78cdfce5-9cbd-4487-afa6-4b94d7b2f62a",
+    "status": "thinking",
+    "current_step": "MLX analysis complete",
+    "llm_thinking": "",
+    "current_advisor": 0,
+    "total_advisors": 0,
+    "step_phase": "",
+    "progress_percentage": 0
+  }
+}
+
+[05:55:36.380] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "78cdfce5-9cbd-4487-afa6-4b94d7b2f62a",
+    "status": "analyzing",
+    "current_step": "Summoning Ansel",
+    "llm_thinking": "",
+    "current_advisor": 1,
+    "total_advisors": 1,
+    "step_phase": "advisor_analysis",
+    "progress_percentage": 90
+  },
+  "timestamp": 1768308936.379984
+}
+
+[05:55:36.382] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "78cdfce5-9cbd-4487-afa6-4b94d7b2f62a",
+    "status": "analyzing",
+    "current_step": "Summoning Ansel",
+    "llm_thinking": "",
+    "current_advisor": 1,
+    "total_advisors": 1,
+    "step_phase": "advisor_analysis",
+    "progress_percentage": 90
+  },
+  "timestamp": 1768308936.382675
+}
+
+[05:55:36.389] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "78cdfce5-9cbd-4487-afa6-4b94d7b2f62a",
+    "status": "finalizing",
+    "current_step": "Finalizing analysis results",
+    "llm_thinking": "",
+    "current_advisor": 1,
+    "total_advisors": 1,
+    "step_phase": "finalizing",
+    "progress_percentage": 95
+  },
+  "timestamp": 1768308936.389009
+}
+
+[05:55:36.390] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "78cdfce5-9cbd-4487-afa6-4b94d7b2f62a",
+    "status": "finalizing",
+    "current_step": "Finalizing analysis results",
+    "llm_thinking": "",
+    "current_advisor": 1,
+    "total_advisors": 1,
+    "step_phase": "finalizing",
+    "progress_percentage": 95
+  },
+  "timestamp": 1768308936.389903
+}
+
+[05:55:36.417] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "78cdfce5-9cbd-4487-afa6-4b94d7b2f62a",
+    "status": "done",
+    "current_step": "Completed",
+    "llm_thinking": "",
+    "current_advisor": 1,
+    "total_advisors": 1,
+    "step_phase": "done",
+    "progress_percentage": 100
+  },
+  "timestamp": 1768308936.417525
+}
+
+[05:55:36.420] analysis_complete: {
+  "type": "analysis_complete",
+  "job_id": "78cdfce5-9cbd-4487-afa6-4b94d7b2f62a",
+  "analysis_html": "\n<div class=\"advisor-section\" data-advisor=\"ansel\">\n  <div class=\"analysis\">\n  <h2>Error</h2>\n  <p>Failed to parse model response. The model returned 2913 characters that could not be parsed as JSON.</p>\n  <p><strong>Debug info:</strong> Check logs for full response. Debug file saved to: /Users/shaydu/dev/mondrian-macos/mondrian/analysis_md/error-response-ansel-78cdfce5-9cbd-4487-afa6-4b94d7b2f62a.txt</p>\n  <details>\n    <summary>Raw response preview (first 500 chars)</summary>\n    <pre>```json\n{\n  \"image_description\": \"The image captures a serene desert landscape at sunset, with a mountain range in the background. The foreground features a small shrub, and the sand dunes stretch out towards the horizon.\",\n  \"dimensions\": [\n    {\n      \"name\": \"Composition\",\n      \"score\": 8,\n      \"comment\": \"The composition is balanced with a clear foreground, midground, and background, creating a sense of depth.\",\n      \"recommendation\": \"Consider using a wider aperture to capture more of th</pre>\n  </details>\n</div>\n</div>\n"
+}
+
+[05:55:36.421] done: {
+  "type": "done",
+  "job_id": "78cdfce5-9cbd-4487-afa6-4b94d7b2f62a"
+}
+

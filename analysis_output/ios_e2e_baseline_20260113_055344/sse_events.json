@@ -1,0 +1,337 @@
+[
+  {
+    "timestamp": "05:53:44.700",
+    "type": "connected",
+    "data": {
+      "type": "connected",
+      "job_id": "5b32f3b7-60db-4a65-a08e-93ad74eaace1"
+    }
+  },
+  {
+    "timestamp": "05:53:44.707",
+    "type": "status_update",
+    "data": {
+      "type": "status_update",
+      "job_data": {
+        "job_id": "5b32f3b7-60db-4a65-a08e-93ad74eaace1",
+        "status": "processing",
+        "current_step": "Processing image",
+        "llm_thinking": "",
+        "current_advisor": 0,
+        "total_advisors": 1,
+        "step_phase": "image_processing",
+        "progress_percentage": 5
+      },
+      "timestamp": 1768308824.706947
+    }
+  },
+  {
+    "timestamp": "05:53:44.712",
+    "type": "status_update",
+    "data": {
+      "type": "status_update",
+      "job_data": {
+        "job_id": "5b32f3b7-60db-4a65-a08e-93ad74eaace1",
+        "status": "processing",
+        "current_step": "Processing image",
+        "llm_thinking": "",
+        "current_advisor": 0,
+        "total_advisors": 1,
+        "step_phase": "image_processing",
+        "progress_percentage": 5
+      },
+      "timestamp": 1768308824.7118678
+    }
+  },
+  {
+    "timestamp": "05:53:44.763",
+    "type": "status_update",
+    "data": {
+      "type": "status_update",
+      "job_data": {
+        "job_id": "5b32f3b7-60db-4a65-a08e-93ad74eaace1",
+        "status": "analyzing",
+        "current_step": "Starting advisor analysis",
+        "llm_thinking": "",
+        "current_advisor": 0,
+        "total_advisors": 1,
+        "step_phase": "advisor_preparation",
+        "progress_percentage": 10
+      },
+      "timestamp": 1768308824.76298
+    }
+  },
+  {
+    "timestamp": "05:53:44.767",
+    "type": "status_update",
+    "data": {
+      "type": "status_update",
+      "job_data": {
+        "job_id": "5b32f3b7-60db-4a65-a08e-93ad74eaace1",
+        "status": "analyzing",
+        "current_step": "Starting advisor analysis",
+        "llm_thinking": "",
+        "current_advisor": 0,
+        "total_advisors": 1,
+        "step_phase": "advisor_preparation",
+        "progress_percentage": 10
+      },
+      "timestamp": 1768308824.767203
+    }
+  },
+  {
+    "timestamp": "05:53:44.769",
+    "type": "status_update",
+    "data": {
+      "type": "status_update",
+      "job_data": {
+        "job_id": "5b32f3b7-60db-4a65-a08e-93ad74eaace1",
+        "status": "analyzing",
+        "current_step": "Conjuring Ansel",
+        "llm_thinking": "",
+        "current_advisor": 1,
+        "total_advisors": 1,
+        "step_phase": "advisor_analysis",
+        "progress_percentage": 90
+      },
+      "timestamp": 1768308824.7688372
+    }
+  },
+  {
+    "timestamp": "05:53:44.770",
+    "type": "status_update",
+    "data": {
+      "type": "status_update",
+      "job_data": {
+        "job_id": "5b32f3b7-60db-4a65-a08e-93ad74eaace1",
+        "status": "analyzing",
+        "current_step": "Conjuring Ansel",
+        "llm_thinking": "",
+        "current_advisor": 1,
+        "total_advisors": 1,
+        "step_phase": "advisor_analysis",
+        "progress_percentage": 90
+      },
+      "timestamp": 1768308824.7701719
+    }
+  },
+  {
+    "timestamp": "05:53:44.772",
+    "type": "status_update",
+    "data": {
+      "type": "status_update",
+      "job_data": {
+        "job_id": "5b32f3b7-60db-4a65-a08e-93ad74eaace1",
+        "status": "analyzing",
+        "current_step": "Conjuring Ansel",
+        "llm_thinking": "Analyzing composition and framing...",
+        "current_advisor": 1,
+        "total_advisors": 1,
+        "step_phase": "advisor_analysis",
+        "progress_percentage": 90
+      },
+      "timestamp": 1768308824.772039
+    }
+  },
+  {
+    "timestamp": "05:53:44.922",
+    "type": "thinking_update",
+    "data": {
+      "type": "thinking_update",
+      "job_id": "5b32f3b7-60db-4a65-a08e-93ad74eaace1",
+      "thinking": "Loading Advisor Model..."
+    }
+  },
+  {
+    "timestamp": "05:53:44.922",
+    "type": "status_update",
+    "data": {
+      "type": "status_update",
+      "job_data": {
+        "job_id": "5b32f3b7-60db-4a65-a08e-93ad74eaace1",
+        "status": "thinking",
+        "current_step": "Loading Advisor Model...",
+        "llm_thinking": "",
+        "current_advisor": 0,
+        "total_advisors": 0,
+        "step_phase": "",
+        "progress_percentage": 0
+      }
+    }
+  },
+  {
+    "timestamp": "05:53:44.931",
+    "type": "thinking_update",
+    "data": {
+      "type": "thinking_update",
+      "job_id": "5b32f3b7-60db-4a65-a08e-93ad74eaace1",
+      "thinking": "Generating analysis..."
+    }
+  },
+  {
+    "timestamp": "05:53:44.931",
+    "type": "status_update",
+    "data": {
+      "type": "status_update",
+      "job_data": {
+        "job_id": "5b32f3b7-60db-4a65-a08e-93ad74eaace1",
+        "status": "thinking",
+        "current_step": "Generating analysis...",
+        "llm_thinking": "",
+        "current_advisor": 0,
+        "total_advisors": 0,
+        "step_phase": "",
+        "progress_percentage": 0
+      }
+    }
+  },
+  {
+    "timestamp": "05:54:15.006",
+    "type": "heartbeat",
+    "data": {
+      "type": "heartbeat",
+      "timestamp": 1768308854.9604118
+    }
+  },
+  {
+    "timestamp": "05:54:45.097",
+    "type": "heartbeat",
+    "data": {
+      "type": "heartbeat",
+      "timestamp": 1768308885.0157702
+    }
+  },
+  {
+    "timestamp": "05:54:46.437",
+    "type": "thinking_update",
+    "data": {
+      "type": "thinking_update",
+      "job_id": "5b32f3b7-60db-4a65-a08e-93ad74eaace1",
+      "thinking": "MLX analysis complete"
+    }
+  },
+  {
+    "timestamp": "05:54:46.445",
+    "type": "status_update",
+    "data": {
+      "type": "status_update",
+      "job_data": {
+        "job_id": "5b32f3b7-60db-4a65-a08e-93ad74eaace1",
+        "status": "thinking",
+        "current_step": "MLX analysis complete",
+        "llm_thinking": "",
+        "current_advisor": 0,
+        "total_advisors": 0,
+        "step_phase": "",
+        "progress_percentage": 0
+      }
+    }
+  },
+  {
+    "timestamp": "05:54:46.545",
+    "type": "status_update",
+    "data": {
+      "type": "status_update",
+      "job_data": {
+        "job_id": "5b32f3b7-60db-4a65-a08e-93ad74eaace1",
+        "status": "analyzing",
+        "current_step": "Conjuring Ansel",
+        "llm_thinking": "",
+        "current_advisor": 1,
+        "total_advisors": 1,
+        "step_phase": "advisor_analysis",
+        "progress_percentage": 90
+      },
+      "timestamp": 1768308886.543977
+    }
+  },
+  {
+    "timestamp": "05:54:46.555",
+    "type": "status_update",
+    "data": {
+      "type": "status_update",
+      "job_data": {
+        "job_id": "5b32f3b7-60db-4a65-a08e-93ad74eaace1",
+        "status": "analyzing",
+        "current_step": "Conjuring Ansel",
+        "llm_thinking": "",
+        "current_advisor": 1,
+        "total_advisors": 1,
+        "step_phase": "advisor_analysis",
+        "progress_percentage": 90
+      },
+      "timestamp": 1768308886.550338
+    }
+  },
+  {
+    "timestamp": "05:54:46.557",
+    "type": "status_update",
+    "data": {
+      "type": "status_update",
+      "job_data": {
+        "job_id": "5b32f3b7-60db-4a65-a08e-93ad74eaace1",
+        "status": "finalizing",
+        "current_step": "Finalizing analysis results",
+        "llm_thinking": "",
+        "current_advisor": 1,
+        "total_advisors": 1,
+        "step_phase": "finalizing",
+        "progress_percentage": 95
+      },
+      "timestamp": 1768308886.557573
+    }
+  },
+  {
+    "timestamp": "05:54:46.566",
+    "type": "status_update",
+    "data": {
+      "type": "status_update",
+      "job_data": {
+        "job_id": "5b32f3b7-60db-4a65-a08e-93ad74eaace1",
+        "status": "finalizing",
+        "current_step": "Finalizing analysis results",
+        "llm_thinking": "",
+        "current_advisor": 1,
+        "total_advisors": 1,
+        "step_phase": "finalizing",
+        "progress_percentage": 95
+      },
+      "timestamp": 1768308886.565749
+    }
+  },
+  {
+    "timestamp": "05:54:46.622",
+    "type": "status_update",
+    "data": {
+      "type": "status_update",
+      "job_data": {
+        "job_id": "5b32f3b7-60db-4a65-a08e-93ad74eaace1",
+        "status": "done",
+        "current_step": "Completed",
+        "llm_thinking": "",
+        "current_advisor": 1,
+        "total_advisors": 1,
+        "step_phase": "done",
+        "progress_percentage": 100
+      },
+      "timestamp": 1768308886.6221251
+    }
+  },
+  {
+    "timestamp": "05:54:46.629",
+    "type": "analysis_complete",
+    "data": {
+      "type": "analysis_complete",
+      "job_id": "5b32f3b7-60db-4a65-a08e-93ad74eaace1",
+      "analysis_html": "\n<div class=\"advisor-section\" data-advisor=\"ansel\">\n  <div class=\"analysis\">\n  <h2>Image Analysis</h2>\n  <p>The image captures a serene desert landscape at sunset, with a mountain range in the background. The foreground features a small shrub, and the sand dunes stretch out towards the horizon.</p>\n\n  <h2>Detailed Dimensional Analysis & Improvement Guide</h2>\n  <p style=\"color: #666; margin-bottom: 20px;\">Each dimension is analyzed with specific feedback and actionable recommendations for improvement.</p>\n\n  <div class=\"feedback-card\" style=\"margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: #fff;\">\n    <h3 style=\"margin-top: 0; display: flex; justify-content: space-between; align-items: center;\">\n      <span>Composition</span>\n      <span style=\"color: #388e3c; font-size: 1.1em;\">8.0/10 <span style=\"font-size: 0.7em; font-weight: normal;\">(Excellent)</span></span>\n    </h3>\n    <div class=\"feedback-comment\" style=\"margin: 15px 0; padding: 12px; background: #f8f9fa; border-left: 4px solid #388e3c; border-radius: 4px;\">\n      <p style=\"margin: 0; line-height: 1.6;\">The composition is balanced with a clear foreground, midground, and background. The shrub draws the viewer&#39;s eye towards the mountain range.</p>\n    </div>\n    <div class=\"feedback-recommendation\" style=\"margin-top: 15px; padding: 12px; background: #e3f2fd; border-left: 4px solid #2196f3; border-radius: 4px;\">\n      <strong style=\"display: block; margin-bottom: 8px; color: #1976d2;\">\ud83d\udca1 How to Improve:</strong>\n      <p style=\"margin: 0; line-height: 1.6;\">Consider adding more elements to the foreground to create a more dynamic composition.</p>\n    </div>\n  </div>\n\n  <div class=\"feedback-card\" style=\"margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: #fff;\">\n    <h3 style=\"margin-top: 0; display: flex; justify-content: space-between; align-items: center;\">\n      <span>Lighting</span>\n      <span style=\"color: #388e3c; font-size: 1.1em;\">8.0/10 <span style=\"font-size: 0.7em; font-weight: normal;\">(Excellent)</span></span>\n    </h3>\n    <div class=\"feedback-comment\" style=\"margin: 15px 0; padding: 12px; background: #f8f9fa; border-left: 4px solid #388e3c; border-radius: 4px;\">\n      <p style=\"margin: 0; line-height: 1.6;\">The lighting is soft and warm, creating a sense of tranquility. The mountain range is well-lit, while the shrub is slightly underexposed.</p>\n    </div>\n    <div class=\"feedback-recommendation\" style=\"margin-top: 15px; padding: 12px; background: #e3f2fd; border-left: 4px solid #2196f3; border-radius: 4px;\">\n      <strong style=\"display: block; margin-bottom: 8px; color: #1976d2;\">\ud83d\udca1 How to Improve:</strong>\n      <p style=\"margin: 0; line-height: 1.6;\">Increase the exposure of the shrub to bring out more detail.</p>\n    </div>\n  </div>\n\n  <div class=\"feedback-card\" style=\"margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: #fff;\">\n    <h3 style=\"margin-top: 0; display: flex; justify-content: space-between; align-items: center;\">\n      <span>Focus &amp; Sharpness</span>\n      <span style=\"color: #388e3c; font-size: 1.1em;\">9.0/10 <span style=\"font-size: 0.7em; font-weight: normal;\">(Excellent)</span></span>\n    </h3>\n    <div class=\"feedback-comment\" style=\"margin: 15px 0; padding: 12px; background: #f8f9fa; border-left: 4px solid #388e3c; border-radius: 4px;\">\n      <p style=\"margin: 0; line-height: 1.6;\">The focus is sharp, capturing the texture of the sand and the details of the shrub.</p>\n    </div>\n    <div class=\"feedback-recommendation\" style=\"margin-top: 15px; padding: 12px; background: #e3f2fd; border-left: 4px solid #2196f3; border-radius: 4px;\">\n      <strong style=\"display: block; margin-bottom: 8px; color: #1976d2;\">\ud83d\udca1 How to Improve:</strong>\n      <p style=\"margin: 0; line-height: 1.6;\">Maintain this level of sharpness for the rest of the image.</p>\n    </div>\n  </div>\n\n  <div class=\"feedback-card\" style=\"margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: #fff;\">\n    <h3 style=\"margin-top: 0; display: flex; justify-content: space-between; align-items: center;\">\n      <span>Color Harmony</span>\n      <span style=\"color: #f57c00; font-size: 1.1em;\">7.0/10 <span style=\"font-size: 0.7em; font-weight: normal;\">(Good)</span></span>\n    </h3>\n    <div class=\"feedback-comment\" style=\"margin: 15px 0; padding: 12px; background: #f8f9fa; border-left: 4px solid #f57c00; border-radius: 4px;\">\n      <p style=\"margin: 0; line-height: 1.6;\">The color palette is muted, with a mix of earthy tones and the warm glow of the setting sun.</p>\n    </div>\n    <div class=\"feedback-recommendation\" style=\"margin-top: 15px; padding: 12px; background: #e3f2fd; border-left: 4px solid #2196f3; border-radius: 4px;\">\n      <strong style=\"display: block; margin-bottom: 8px; color: #1976d2;\">\ud83d\udca1 How to Improve:</strong>\n      <p style=\"margin: 0; line-height: 1.6;\">Consider adding more vibrant colors to the image to create a more dynamic composition.</p>\n    </div>\n  </div>\n\n  <div class=\"feedback-card\" style=\"margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: #fff;\">\n    <h3 style=\"margin-top: 0; display: flex; justify-content: space-between; align-items: center;\">\n      <span>Depth &amp; Perspective</span>\n      <span style=\"color: #f57c00; font-size: 1.1em;\">7.0/10 <span style=\"font-size: 0.7em; font-weight: normal;\">(Good)</span></span>\n    </h3>\n    <div class=\"feedback-comment\" style=\"margin: 15px 0; padding: 12px; background: #f8f9fa; border-left: 4px solid #f57c00; border-radius: 4px;\">\n      <p style=\"margin: 0; line-height: 1.6;\">The depth is well-balanced, with the shrub in the foreground leading the viewer&#39;s eye towards the mountain range.</p>\n    </div>\n    <div class=\"feedback-recommendation\" style=\"margin-top: 15px; padding: 12px; background: #e3f2fd; border-left: 4px solid #2196f3; border-radius: 4px;\">\n      <strong style=\"display: block; margin-bottom: 8px; color: #1976d2;\">\ud83d\udca1 How to Improve:</strong>\n      <p style=\"margin: 0; line-height: 1.6;\">Consider adding more elements to the foreground to create a more dynamic composition.</p>\n    </div>\n  </div>\n\n  <div class=\"feedback-card\" style=\"margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: #fff;\">\n    <h3 style=\"margin-top: 0; display: flex; justify-content: space-between; align-items: center;\">\n      <span>Visual Balance</span>\n      <span style=\"color: #388e3c; font-size: 1.1em;\">8.0/10 <span style=\"font-size: 0.7em; font-weight: normal;\">(Excellent)</span></span>\n    </h3>\n    <div class=\"feedback-comment\" style=\"margin: 15px 0; padding: 12px; background: #f8f9fa; border-left: 4px solid #388e3c; border-radius: 4px;\">\n      <p style=\"margin: 0; line-height: 1.6;\">The visual balance is good, with the shrub in the foreground and the mountain range in the background.</p>\n    </div>\n    <div class=\"feedback-recommendation\" style=\"margin-top: 15px; padding: 12px; background: #e3f2fd; border-left: 4px solid #2196f3; border-radius: 4px;\">\n      <strong style=\"display: block; margin-bottom: 8px; color: #1976d2;\">\ud83d\udca1 How to Improve:</strong>\n      <p style=\"margin: 0; line-height: 1.6;\">Consider adding more elements to the foreground to create a more dynamic composition.</p>\n    </div>\n  </div>\n\n  <div class=\"feedback-card\" style=\"margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: #fff;\">\n    <h3 style=\"margin-top: 0; display: flex; justify-content: space-between; align-items: center;\">\n      <span>Emotional Impact</span>\n      <span style=\"color: #f57c00; font-size: 1.1em;\">7.0/10 <span style=\"font-size: 0.7em; font-weight: normal;\">(Good)</span></span>\n    </h3>\n    <div class=\"feedback-comment\" style=\"margin: 15px 0; padding: 12px; background: #f8f9fa; border-left: 4px solid #f57c00; border-radius: 4px;\">\n      <p style=\"margin: 0; line-height: 1.6;\">The emotional impact is strong, with a sense of tranquility and connection to nature.</p>\n    </div>\n    <div class=\"feedback-recommendation\" style=\"margin-top: 15px; padding: 12px; background: #e3f2fd; border-left: 4px solid #2196f3; border-radius: 4px;\">\n      <strong style=\"display: block; margin-bottom: 8px; color: #1976d2;\">\ud83d\udca1 How to Improve:</strong>\n      <p style=\"margin: 0; line-height: 1.6;\">Consider adding more elements to the foreground to create a more dynamic composition.</p>\n    </div>\n  </div>\n\n  <h2>Overall Grade</h2>\n  <p><strong>7.4/10</strong></p>\n  <p><strong>Grade Note:</strong> The image was taken with a wide aperture, which helps to capture the depth of field and the details of the shrub. The exposure was set to capture the warm glow of the setting sun, which adds a sense of tranquility to the image.</p>\n</div>\n</div>\n"
+    }
+  },
+  {
+    "timestamp": "05:54:46.630",
+    "type": "done",
+    "data": {
+      "type": "done",
+      "job_id": "5b32f3b7-60db-4a65-a08e-93ad74eaace1"
+    }
+  }
+]
