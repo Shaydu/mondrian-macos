@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+            padding: 20px;
+            background: #000000;
+            line-height: 1.6;
+            color: #ffffff;
+            max-width: 100%;
+        }
+
+        /* Responsive layout for iOS devices */
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+
+            .analysis {
+                padding: 15px;
+            }
+        }
+
+        /* iPhone SE and smaller devices */
+        @media (max-width: 375px) {
+            body {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            .analysis {
+                padding: 12px;
+            }
+        }
+
+        /* Large iPads and desktop (if used) */
+        @media (min-width: 1024px) {
+            body {
+                max-width: 800px;
+                margin: 0 auto;
+                padding: 30px;
+            }
+        }
+
+        .analysis {
+            background: #1c1c1e;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .analysis h2 {
+            color: #ffffff;
+            font-size: 22px;
+            font-weight: 600;
+            margin: 0 0 12px 0;
+            text-align: left;
+        }
+
+        .analysis p {
+            color: #d1d1d6;
+            font-size: 16px;
+            margin: 0 0 16px 0;
+            line-height: 1.6;
+            text-align: left;
+        }
+
+        .feedback-card {
+            background: #1a1a1a;
+            /* Removed outer blue left bar so the dimension card is visually neutral.
+               Inner/inline indicators (if present inside the content) will remain. */
+            border-left: none;
+            padding: 16px;
+            margin-bottom: 16px;
+            border-radius: 8px;
+        }
+
+        .feedback-card h3 {
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: 600;
+            margin: 0 0 8px 0;
+        }
+
+        .dimension-score {
+            color: #98989d;
+            font-size: 14px;
+            font-weight: 400;
+            margin-left: 8px;
+        }
+
+        .feedback-comment {
+            color: #d1d1d6;
+            font-size: 16px;
+            margin: 0 0 12px 0;
+            line-height: 1.5;
+        }
+
+        .feedback-recommendation {
+            background: #0a3d66;
+            border-left: 3px solid #34C759;
+            padding: 12px;
+            border-radius: 6px;
+            color: #e8f4f8;
+            font-size: 16px;
+            line-height: 1.5;
+        }
+
+        .feedback-recommendation strong {
+            color: #34C759;
+        }
+
+        .overall-grade-box {
+            background: #1c1c1e;
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin: 20px 0 0 0;
+            border-left: 3px solid #007AFF;
+        }
+
+        .overall-grade-text {
+            font-size: 16px;
+            font-weight: 400;
+            color: #ffffff;
+            margin: 0;
+            text-align: left;
+        }
+    </style>
+</head>
+<body>
+
+    
+<div class="advisor-section" data-advisor="ansel">
+  <div class="analysis">
+  <h2>Image Analysis</h2>
+  <p>A serene desert landscape at sunset, with sand dunes, shrubs, and distant mountains under a clear sky.</p>
+
+  <h2>Dimensional Comparison with Ansel Adams&#39;s Portfolio</h2>
+  <p class="rag-intro">Your image's dimensional scores compared to similar works from Ansel Adams:</p>
+
+  <div class="reference-image-card" style="margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 8px;">
+    <h3 style="margin-top: 0;">Reference #1: analyze image 0fd189b6-1ab2-4944-b1cd-1b40487ef7d8</h3>
+    <div class="reference-metadata" style="color: #666; font-size: 0.9em; margin: 10px 0;"><p style="margin: 5px 0;"><strong>Title:</strong> analyze image 0fd189b6-1ab2-4944-b1cd-1b40487ef7d8</p>
+    </div>
+    <p class="similarity-score" style="color: #0066cc; margin: 10px 0;"><strong>Dimensional Profile Similarity:</strong> 100.0%<br><span style="font-size: 0.85em; color: #666;">(Based on similarity of lighting, composition, focus, color, depth, balance, and emotional impact scores)</span></p>
+    <div class="dimensional-comparison" style="margin-top: 15px; background: #f8f9fa; padding: 15px; border-radius: 4px;">
+      <strong style="display: block; margin-bottom: 10px;">Dimensional Score Comparison:</strong>
+      <table style="width: 100%; border-collapse: collapse; font-size: 0.9em;">
+        <thead>
+          <tr style="border-bottom: 2px solid #ddd;">
+            <th style="text-align: left; padding: 8px;">Dimension</th>
+            <th style="text-align: center; padding: 8px;">Your Score</th>
+            <th style="text-align: center; padding: 8px;">Reference Score</th>
+            <th style="text-align: center; padding: 8px;">Difference</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr style="border-bottom: 1px solid #eee;">
+            <td style="padding: 8px; font-weight: 500;">Composition</td>
+            <td style="text-align: center; padding: 8px;">8.0</td>
+            <td style="text-align: center; padding: 8px; font-weight: 500;">7.5</td>
+            <td style="text-align: center; padding: 8px; color: #388e3c;">↓ -0.5</td>
+          </tr>
+          <tr style="border-bottom: 1px solid #eee;">
+            <td style="padding: 8px; font-weight: 500;">Lighting</td>
+            <td style="text-align: center; padding: 8px;">8.0</td>
+            <td style="text-align: center; padding: 8px; font-weight: 500;">8.0</td>
+            <td style="text-align: center; padding: 8px; color: #666;">= +0.0</td>
+          </tr>
+          <tr style="border-bottom: 1px solid #eee;">
+            <td style="padding: 8px; font-weight: 500;">Focus &amp; Sharpness</td>
+            <td style="text-align: center; padding: 8px;">9.0</td>
+            <td style="text-align: center; padding: 8px; font-weight: 500;">9.0</td>
+            <td style="text-align: center; padding: 8px; color: #666;">= +0.0</td>
+          </tr>
+          <tr style="border-bottom: 1px solid #eee;">
+            <td style="padding: 8px; font-weight: 500;">Color Harmony</td>
+            <td style="text-align: center; padding: 8px;">7.0</td>
+            <td style="text-align: center; padding: 8px; font-weight: 500;">6.5</td>
+            <td style="text-align: center; padding: 8px; color: #388e3c;">↓ -0.5</td>
+          </tr>
+          <tr style="border-bottom: 1px solid #eee;">
+            <td style="padding: 8px; font-weight: 500;">Subject Isolation</td>
+            <td style="text-align: center; padding: 8px;">—</td>
+            <td style="text-align: center; padding: 8px; font-weight: 500;">7.0</td>
+            <td style="text-align: center; padding: 8px; color: #666;"> —</td>
+          </tr>
+          <tr style="border-bottom: 1px solid #eee;">
+            <td style="padding: 8px; font-weight: 500;">Depth &amp; Perspective</td>
+            <td style="text-align: center; padding: 8px;">7.0</td>
+            <td style="text-align: center; padding: 8px; font-weight: 500;">8.5</td>
+            <td style="text-align: center; padding: 8px; color: #d32f2f;">↑ +1.5</td>
+          </tr>
+          <tr style="border-bottom: 1px solid #eee;">
+            <td style="padding: 8px; font-weight: 500;">Visual Balance</td>
+            <td style="text-align: center; padding: 8px;">8.0</td>
+            <td style="text-align: center; padding: 8px; font-weight: 500;">7.5</td>
+            <td style="text-align: center; padding: 8px; color: #388e3c;">↓ -0.5</td>
+          </tr>
+          <tr style="border-bottom: 1px solid #eee;">
+            <td style="padding: 8px; font-weight: 500;">Emotional Impact</td>
+            <td style="text-align: center; padding: 8px;">7.0</td>
+            <td style="text-align: center; padding: 8px; font-weight: 500;">8.0</td>
+            <td style="text-align: center; padding: 8px; color: #d32f2f;">↑ +1.0</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <h2>Detailed Dimensional Analysis & Improvement Guide</h2>
+  <p style="color: #666; margin-bottom: 20px;">Each dimension is analyzed with specific feedback and actionable recommendations for improvement.</p>
+
+  <div class="feedback-card" style="margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: #fff;">
+    <h3 style="margin-top: 0; display: flex; justify-content: space-between; align-items: center;">
+      <span>Composition</span>
+      <span style="color: #388e3c; font-size: 1.1em;">8.0/10 <span style="font-size: 0.7em; font-weight: normal;">(Excellent)</span></span>
+    </h3>
+    <div class="feedback-comment" style="margin: 15px 0; padding: 12px; background: #f8f9fa; border-left: 4px solid #388e3c; border-radius: 4px;">
+      <p style="margin: 0; line-height: 1.6;">The composition is balanced and visually appealing, with the sand dunes and shrubs framing the distant mountains.</p>
+    </div>
+    <div class="feedback-recommendation" style="margin-top: 15px; padding: 12px; background: #e3f2fd; border-left: 4px solid #2196f3; border-radius: 4px;">
+      <strong style="display: block; margin-bottom: 8px; color: #1976d2;">💡 How to Improve:</strong>
+      <p style="margin: 0; line-height: 1.6;">Consider adding more foreground elements to create a more dynamic composition.</p>
+    </div>
+  </div>
+
+  <div class="feedback-card" style="margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: #fff;">
+    <h3 style="margin-top: 0; display: flex; justify-content: space-between; align-items: center;">
+      <span>Lighting</span>
+      <span style="color: #388e3c; font-size: 1.1em;">8.0/10 <span style="font-size: 0.7em; font-weight: normal;">(Excellent)</span></span>
+    </h3>
+    <div class="feedback-comment" style="margin: 15px 0; padding: 12px; background: #f8f9fa; border-left: 4px solid #388e3c; border-radius: 4px;">
+      <p style="margin: 0; line-height: 1.6;">The lighting is soft and natural, creating a warm, golden hue that enhances the desert&#39;s beauty.</p>
+    </div>
+    <div class="feedback-recommendation" style="margin-top: 15px; padding: 12px; background: #e3f2fd; border-left: 4px solid #2196f3; border-radius: 4px;">
+      <strong style="display: block; margin-bottom: 8px; color: #1976d2;">💡 How to Improve:</strong>
+      <p style="margin: 0; line-height: 1.6;">Consider using a wider aperture to capture more detail in the sand dunes and shrubs.</p>
+    </div>
+  </div>
+
+  <div class="feedback-card" style="margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: #fff;">
+    <h3 style="margin-top: 0; display: flex; justify-content: space-between; align-items: center;">
+      <span>Focus &amp; Sharpness</span>
+      <span style="color: #388e3c; font-size: 1.1em;">9.0/10 <span style="font-size: 0.7em; font-weight: normal;">(Excellent)</span></span>
+    </h3>
+    <div class="feedback-comment" style="margin: 15px 0; padding: 12px; background: #f8f9fa; border-left: 4px solid #388e3c; border-radius: 4px;">
+      <p style="margin: 0; line-height: 1.6;">The focus is sharp, allowing for clear details in the sand dunes and shrubs.</p>
+    </div>
+    <div class="feedback-recommendation" style="margin-top: 15px; padding: 12px; background: #e3f2fd; border-left: 4px solid #2196f3; border-radius: 4px;">
+      <strong style="display: block; margin-bottom: 8px; color: #1976d2;">💡 How to Improve:</strong>
+      <p style="margin: 0; line-height: 1.6;">Maintain this level of sharpness to ensure the image is crisp and detailed.</p>
+    </div>
+  </div>
+
+  <div class="feedback-card" style="margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: #fff;">
+    <h3 style="margin-top: 0; display: flex; justify-content: space-between; align-items: center;">
+      <span>Color Harmony</span>
+      <span style="color: #f57c00; font-size: 1.1em;">7.0/10 <span style="font-size: 0.7em; font-weight: normal;">(Good)</span></span>
+    </h3>
+    <div class="feedback-comment" style="margin: 15px 0; padding: 12px; background: #f8f9fa; border-left: 4px solid #f57c00; border-radius: 4px;">
+      <p style="margin: 0; line-height: 1.6;">The color palette is natural and earthy, with a mix of warm and cool tones.</p>
+    </div>
+    <div class="feedback-recommendation" style="margin-top: 15px; padding: 12px; background: #e3f2fd; border-left: 4px solid #2196f3; border-radius: 4px;">
+      <strong style="display: block; margin-bottom: 8px; color: #1976d2;">💡 How to Improve:</strong>
+      <p style="margin: 0; line-height: 1.6;">Consider adding more vibrant colors to the image to create a more dynamic and engaging composition.</p>
+    </div>
+  </div>
+
+  <div class="feedback-card" style="margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: #fff;">
+    <h3 style="margin-top: 0; display: flex; justify-content: space-between; align-items: center;">
+      <span>Depth &amp; Perspective</span>
+      <span style="color: #f57c00; font-size: 1.1em;">7.0/10 <span style="font-size: 0.7em; font-weight: normal;">(Good)</span></span>
+    </h3>
+    <div class="feedback-comment" style="margin: 15px 0; padding: 12px; background: #f8f9fa; border-left: 4px solid #f57c00; border-radius: 4px;">
+      <p style="margin: 0; line-height: 1.6;">The depth of field is appropriate, with the sand dunes and shrubs in focus and the distant mountains slightly out of focus.</p>
+    </div>
+    <div class="feedback-recommendation" style="margin-top: 15px; padding: 12px; background: #e3f2fd; border-left: 4px solid #2196f3; border-radius: 4px;">
+      <strong style="display: block; margin-bottom: 8px; color: #1976d2;">💡 How to Improve:</strong>
+      <p style="margin: 0; line-height: 1.6;">Consider using a wider aperture to achieve a shallower depth of field and create a more dramatic effect.</p>
+    </div>
+  </div>
+
+  <div class="feedback-card" style="margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: #fff;">
+    <h3 style="margin-top: 0; display: flex; justify-content: space-between; align-items: center;">
+      <span>Visual Balance</span>
+      <span style="color: #388e3c; font-size: 1.1em;">8.0/10 <span style="font-size: 0.7em; font-weight: normal;">(Excellent)</span></span>
+    </h3>
+    <div class="feedback-comment" style="margin: 15px 0; padding: 12px; background: #f8f9fa; border-left: 4px solid #388e3c; border-radius: 4px;">
+      <p style="margin: 0; line-height: 1.6;">The visual balance is well achieved, with the sand dunes and shrubs creating a natural frame for the distant mountains.</p>
+    </div>
+    <div class="feedback-recommendation" style="margin-top: 15px; padding: 12px; background: #e3f2fd; border-left: 4px solid #2196f3; border-radius: 4px;">
+      <strong style="display: block; margin-bottom: 8px; color: #1976d2;">💡 How to Improve:</strong>
+      <p style="margin: 0; line-height: 1.6;">Consider adding more foreground elements to create a more dynamic and engaging composition.</p>
+    </div>
+  </div>
+
+  <div class="feedback-card" style="margin: 20px 0; padding: 20px; border: 1px solid #ddd; border-radius: 8px; background: #fff;">
+    <h3 style="margin-top: 0; display: flex; justify-content: space-between; align-items: center;">
+      <span>Emotional Impact</span>
+      <span style="color: #f57c00; font-size: 1.1em;">7.0/10 <span style="font-size: 0.7em; font-weight: normal;">(Good)</span></span>
+    </h3>
+    <div class="feedback-comment" style="margin: 15px 0; padding: 12px; background: #f8f9fa; border-left: 4px solid #f57c00; border-radius: 4px;">
+      <p style="margin: 0; line-height: 1.6;">The emotional impact is strong, with a sense of tranquility and beauty in the desert landscape.</p>
+    </div>
+    <div class="feedback-recommendation" style="margin-top: 15px; padding: 12px; background: #e3f2fd; border-left: 4px solid #2196f3; border-radius: 4px;">
+      <strong style="display: block; margin-bottom: 8px; color: #1976d2;">💡 How to Improve:</strong>
+      <p style="margin: 0; line-height: 1.6;">Consider adding more vibrant colors to the image to create a more dynamic and engaging composition.</p>
+    </div>
+  </div>
+
+  <h2>Overall Grade</h2>
+  <p><strong>7.4/10</strong></p>
+  <p><strong>Grade Note:</strong> The image was taken with a wide aperture to capture more detail in the sand dunes and shrubs.</p>
+</div>
+</div>
+
+
+</body>
+</html>

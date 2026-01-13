@@ -29,8 +29,10 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'mondrian
 from json_to_html_converter import (
     parse_json_response,
     extract_dimensional_profile_from_json,
-    save_dimensional_profile
+    save_dimensional_profile,
+    get_dimensional_profile
 )
+import sqlite3
 
 # Configuration
 AI_ADVISOR_URL = "http://localhost:5100/analyze"
@@ -90,39 +92,57 @@ def analyze_image_with_metadata(image_path, advisor_id, metadata, db_path):
         
         if response.status_code != 200:
             print(f"  [✗] Analysis failed: {response.status_code}")
+            print(f"      Response: {response.text[:200]}")
             return False
         
-        # Parse the HTML response to extract JSON
-        # The AI service returns HTML, but we need the underlying JSON
-        # For now, we'll need to modify the AI service to return JSON directly
-        # or parse it from the HTML
+        print(f"  [✓] Analysis complete - waiting for profile to be saved...")
         
-        print(f"  [✓] Analysis complete")
+        # The AI service automatically saves dimensional profiles when analyzing
+        # Wait a moment for the database write to complete, then retrieve and update with metadata
+        time.sleep(1)
         
-        # Note: The AI service now automatically saves dimensional profiles
-        # but we need to UPDATE the profile with metadata
+        # Get the saved profile from database
+        saved_profile = get_dimensional_profile(
+            db_path=db_path,
+            image_path=abs_path,
+            advisor_id=advisor_id
+        )
         
-        # For now, create a mock profile with metadata
-        # In production, you'd parse the actual analysis response
-        profile_data = {
-            'composition_score': 8.0,
-            'lighting_score': 8.0,
-            'focus_sharpness_score': 8.0,
-            'color_harmony_score': 7.5,
-            'subject_isolation_score': 7.5,
-            'depth_perspective_score': 8.0,
-            'visual_balance_score': 8.0,
-            'emotional_impact_score': 8.0,
-            'overall_grade': 7.9,
-            'image_description': img_metadata.get('description', ''),
-            'image_title': img_metadata.get('title', filename),
-            'date_taken': img_metadata.get('date_taken', ''),
-            'location': img_metadata.get('location', ''),
-            'image_significance': img_metadata.get('significance', ''),
-            'techniques': img_metadata.get('techniques', [])
-        }
+        if not saved_profile:
+            print(f"  [✗] Profile not found in database after analysis")
+            print(f"      This might mean the analysis didn't save properly")
+            return False
         
-        # Save profile with metadata
+        print(f"  [✓] Retrieved profile from database")
+        
+        # Merge metadata from YAML into the saved profile
+        # Keep all the dimensional scores and comments from analysis
+        # Add/update metadata fields from YAML
+        profile_data = dict(saved_profile)  # Start with saved profile
+        
+        # Update with metadata from YAML (only if not already set or if YAML has better data)
+        if img_metadata.get('title'):
+            profile_data['image_title'] = img_metadata.get('title')
+        if img_metadata.get('date_taken'):
+            profile_data['date_taken'] = img_metadata.get('date_taken')
+        if img_metadata.get('location'):
+            profile_data['location'] = img_metadata.get('location')
+        if img_metadata.get('significance'):
+            profile_data['image_significance'] = img_metadata.get('significance')
+        if img_metadata.get('description'):
+            # Use description as image_description if not already set
+            if not profile_data.get('image_description'):
+                profile_data['image_description'] = img_metadata.get('description')
+        
+        # Handle techniques - merge if both exist
+        yaml_techniques = img_metadata.get('techniques', [])
+        if yaml_techniques:
+            # If saved profile has techniques, keep them (they're from analysis)
+            # Otherwise use YAML techniques
+            if not profile_data.get('techniques'):
+                profile_data['techniques'] = yaml_techniques
+        
+        # Update the profile with merged metadata
         profile_id = save_dimensional_profile(
             db_path=db_path,
             advisor_id=advisor_id,
@@ -132,10 +152,10 @@ def analyze_image_with_metadata(image_path, advisor_id, metadata, db_path):
         )
         
         if profile_id:
-            print(f"  [✓] Saved with metadata: '{title}'")
+            print(f"  [✓] Updated with metadata: '{title}' ({img_metadata.get('date_taken', 'no date')})")
             return True
         else:
-            print(f"  [✗] Failed to save profile")
+            print(f"  [✗] Failed to update profile with metadata")
             return False
         
     except requests.exceptions.Timeout:
@@ -153,12 +173,26 @@ def main():
     parser.add_argument('--advisor', type=str, required=True, help='Advisor ID (e.g., ansel)')
     parser.add_argument('--metadata-file', type=str, required=True, help='Path to metadata.yaml')
     parser.add_argument('--image-dir', type=str, help='Override image directory')
-    parser.add_argument('--db', type=str, default='mondrian.db', help='Database path')
+    parser.add_argument('--db', type=str, help='Database path (default: mondrian/mondrian.db)')
     args = parser.parse_args()
+    
+    # Determine database path
+    if args.db:
+        db_path = os.path.abspath(args.db)
+    else:
+        # Default to mondrian/mondrian.db relative to script location
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        db_path = os.path.join(script_dir, '..', '..', 'mondrian', 'mondrian.db')
+        db_path = os.path.abspath(db_path)
+    
+    if not os.path.exists(db_path):
+        print(f"[✗] Database not found: {db_path}")
+        sys.exit(1)
     
     print("=" * 70)
     print(f"Indexing {args.advisor.title()} Images with Metadata")
     print("=" * 70)
+    print(f"Database: {db_path}")
     
     # Load metadata
     if not os.path.exists(args.metadata_file):
@@ -224,7 +258,7 @@ def main():
     for i, image_path in enumerate(images_to_process, 1):
         print(f"[{i}/{len(images_to_process)}] {image_path.name}")
         
-        if analyze_image_with_metadata(image_path, args.advisor, metadata, args.db):
+        if analyze_image_with_metadata(image_path, args.advisor, metadata, db_path):
             success_count += 1
         else:
             fail_count += 1

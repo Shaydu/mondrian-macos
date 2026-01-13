@@ -1,0 +1,250 @@
+SSE Stream Started: 2026-01-12 12:39:00.358786
+Stream URL: http://127.0.0.1:5005/stream/58558993-146e-4577-ac64-c977335b1284
+================================================================================
+
+[12:39:00.358] connected: {
+  "type": "connected",
+  "job_id": "58558993-146e-4577-ac64-c977335b1284"
+}
+
+[12:39:00.359] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "58558993-146e-4577-ac64-c977335b1284",
+    "status": "processing",
+    "current_step": "Processing image",
+    "llm_thinking": "",
+    "current_advisor": 0,
+    "total_advisors": 1,
+    "step_phase": "image_processing",
+    "progress_percentage": 5
+  },
+  "timestamp": 1768246740.359118
+}
+
+[12:39:00.367] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "58558993-146e-4577-ac64-c977335b1284",
+    "status": "analyzing",
+    "current_step": "Starting advisor analysis",
+    "llm_thinking": "",
+    "current_advisor": 0,
+    "total_advisors": 1,
+    "step_phase": "advisor_preparation",
+    "progress_percentage": 10
+  },
+  "timestamp": 1768246740.3671622
+}
+
+[12:39:00.367] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "58558993-146e-4577-ac64-c977335b1284",
+    "status": "analyzing",
+    "current_step": "Starting advisor analysis",
+    "llm_thinking": "",
+    "current_advisor": 0,
+    "total_advisors": 1,
+    "step_phase": "advisor_preparation",
+    "progress_percentage": 10
+  },
+  "timestamp": 1768246740.3677802
+}
+
+[12:39:00.368] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "58558993-146e-4577-ac64-c977335b1284",
+    "status": "analyzing",
+    "current_step": "Manifesting Ansel",
+    "llm_thinking": "",
+    "current_advisor": 1,
+    "total_advisors": 1,
+    "step_phase": "advisor_analysis",
+    "progress_percentage": 90
+  },
+  "timestamp": 1768246740.368161
+}
+
+[12:39:00.368] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "58558993-146e-4577-ac64-c977335b1284",
+    "status": "analyzing",
+    "current_step": "Manifesting Ansel",
+    "llm_thinking": "",
+    "current_advisor": 1,
+    "total_advisors": 1,
+    "step_phase": "advisor_analysis",
+    "progress_percentage": 90
+  },
+  "timestamp": 1768246740.368769
+}
+
+[12:39:00.369] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "58558993-146e-4577-ac64-c977335b1284",
+    "status": "analyzing",
+    "current_step": "Manifesting Ansel",
+    "llm_thinking": "Analyzing composition and framing...",
+    "current_advisor": 1,
+    "total_advisors": 1,
+    "step_phase": "advisor_analysis",
+    "progress_percentage": 90
+  },
+  "timestamp": 1768246740.3695202
+}
+
+[12:39:00.385] thinking_update: {
+  "type": "thinking_update",
+  "job_id": "58558993-146e-4577-ac64-c977335b1284",
+  "thinking": "Analyzing image dimensions..."
+}
+
+[12:39:00.385] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "58558993-146e-4577-ac64-c977335b1284",
+    "status": "thinking",
+    "current_step": "Analyzing image dimensions...",
+    "llm_thinking": "",
+    "current_advisor": 0,
+    "total_advisors": 0,
+    "step_phase": "",
+    "progress_percentage": 0
+  }
+}
+
+[12:39:00.387] thinking_update: {
+  "type": "thinking_update",
+  "job_id": "58558993-146e-4577-ac64-c977335b1284",
+  "thinking": "Loading Advisor Model..."
+}
+
+[12:39:00.387] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "58558993-146e-4577-ac64-c977335b1284",
+    "status": "thinking",
+    "current_step": "Loading Advisor Model...",
+    "llm_thinking": "",
+    "current_advisor": 0,
+    "total_advisors": 0,
+    "step_phase": "",
+    "progress_percentage": 0
+  }
+}
+
+[12:39:00.389] thinking_update: {
+  "type": "thinking_update",
+  "job_id": "58558993-146e-4577-ac64-c977335b1284",
+  "thinking": "Generating analysis..."
+}
+
+[12:39:00.389] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "58558993-146e-4577-ac64-c977335b1284",
+    "status": "thinking",
+    "current_step": "Generating analysis...",
+    "llm_thinking": "",
+    "current_advisor": 0,
+    "total_advisors": 0,
+    "step_phase": "",
+    "progress_percentage": 0
+  }
+}
+
+[12:39:15.032] thinking_update: {
+  "type": "thinking_update",
+  "job_id": "58558993-146e-4577-ac64-c977335b1284",
+  "thinking": "MLX analysis complete"
+}
+
+[12:39:15.033] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "58558993-146e-4577-ac64-c977335b1284",
+    "status": "thinking",
+    "current_step": "MLX analysis complete",
+    "llm_thinking": "",
+    "current_advisor": 0,
+    "total_advisors": 0,
+    "step_phase": "",
+    "progress_percentage": 0
+  }
+}
+
+[12:39:15.047] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "58558993-146e-4577-ac64-c977335b1284",
+    "status": "analyzing",
+    "current_step": "Manifesting Ansel",
+    "llm_thinking": "MLX analysis complete",
+    "current_advisor": 1,
+    "total_advisors": 1,
+    "step_phase": "advisor_analysis",
+    "progress_percentage": 90
+  },
+  "timestamp": 1768246755.047126
+}
+
+[12:39:15.048] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "58558993-146e-4577-ac64-c977335b1284",
+    "status": "finalizing",
+    "current_step": "Finalizing analysis results",
+    "llm_thinking": "MLX analysis complete",
+    "current_advisor": 1,
+    "total_advisors": 1,
+    "step_phase": "finalizing",
+    "progress_percentage": 95
+  },
+  "timestamp": 1768246755.04834
+}
+
+[12:39:15.049] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "58558993-146e-4577-ac64-c977335b1284",
+    "status": "finalizing",
+    "current_step": "Finalizing analysis results",
+    "llm_thinking": "MLX analysis complete",
+    "current_advisor": 1,
+    "total_advisors": 1,
+    "step_phase": "finalizing",
+    "progress_percentage": 95
+  },
+  "timestamp": 1768246755.049427
+}
+
+[12:39:15.050] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "58558993-146e-4577-ac64-c977335b1284",
+    "status": "done",
+    "current_step": "Completed",
+    "llm_thinking": "",
+    "current_advisor": 1,
+    "total_advisors": 1,
+    "step_phase": "done",
+    "progress_percentage": 100
+  },
+  "timestamp": 1768246755.0507572
+}
+
+[12:39:15.056] analysis_complete: {
+  "type": "analysis_complete",
+  "job_id": "58558993-146e-4577-ac64-c977335b1284",
+  "analysis_html": "Your Creative Advisor  \n# Ansel Adams\nAnsel Adams (1902-1984) was an American landscape photographer and environmentalist known for his black-and-white images of the American West, especially Yosemite National Park. He helped found the photography group f/64, developed the Zone System for achieving perfect exposure and tonal range, and was a pioneering advocate for environmental conservation through his art.\n\n<p>Advisor Review Focus</p>\n<div class='advisor-focus-section'>\n<ul>\n<li>Tonal Range & Zone System: Master of the full spectrum from pure black to pure white, using his Zone System to achieve perfect exposure and tonal gradation in every image.</li>\n<li>Composition & Perspective: Precise framing that emphasizes geometric elements, leading lines, and careful positioning to create powerful visual impact.</li>\n<li>Technical Excellence: Perfect sharpness, focus, and exposure achieved through large-format cameras and meticulous darkroom work.</li>\n</ul>\n</div>\n\n<h2>Analysis Results</h2>\n<p>Error: AI service returned HTTP error - 500 Server Error: INTERNAL SERVER ERROR for url: http://127.0.0.1:5100/analyze</p>\n\n"
+}
+
+[12:39:15.056] done: {
+  "type": "done",
+  "job_id": "58558993-146e-4577-ac64-c977335b1284"
+}
+

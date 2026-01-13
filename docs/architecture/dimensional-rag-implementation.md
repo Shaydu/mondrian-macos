@@ -1,4 +1,20 @@
-# [DEPRECATED] See docs/architecture/rag.md for the latest RAG architecture and data flow documentation.
+# [DEPRECATED] Dimensional RAG Implementation
+
+> **⚠️ THIS FILE IS DEPRECATED AND CONTAINS OUTDATED INFORMATION**
+> 
+> This file documents an **older implementation** of the dimensional RAG system that is no longer accurate.
+> 
+> **Key inaccuracies in this file:**
+> - References non-existent files (`dimensional_extractor.py`, wrong script locations)
+> - Uses outdated function names (`find_similar_by_dimensions`, `augment_prompt_with_rag_context`)
+> - Describes simple similarity search, but current implementation uses **distribution-based comparison**
+> - Database schema is incomplete (missing metadata fields)
+> - Line numbers are outdated
+> - Implementation details do not match current codebase
+> 
+> **Please refer to [`rag.md`](rag.md) for the current, accurate RAG architecture documentation.**
+> 
+> This file is kept for historical reference only and should NOT be used for understanding the current implementation.
 
 ## Overview
 

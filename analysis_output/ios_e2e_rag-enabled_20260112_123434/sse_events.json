@@ -1,0 +1,329 @@
+[
+  {
+    "timestamp": "12:34:34.987",
+    "type": "connected",
+    "data": {
+      "type": "connected",
+      "job_id": "35955225-2baa-4e6d-8eb2-728aa743a046"
+    }
+  },
+  {
+    "timestamp": "12:34:34.988",
+    "type": "status_update",
+    "data": {
+      "type": "status_update",
+      "job_data": {
+        "job_id": "35955225-2baa-4e6d-8eb2-728aa743a046",
+        "status": "processing",
+        "current_step": "Processing image",
+        "llm_thinking": "",
+        "current_advisor": 0,
+        "total_advisors": 1,
+        "step_phase": "image_processing",
+        "progress_percentage": 5
+      },
+      "timestamp": 1768246474.987277
+    }
+  },
+  {
+    "timestamp": "12:34:34.988",
+    "type": "status_update",
+    "data": {
+      "type": "status_update",
+      "job_data": {
+        "job_id": "35955225-2baa-4e6d-8eb2-728aa743a046",
+        "status": "processing",
+        "current_step": "Processing image",
+        "llm_thinking": "",
+        "current_advisor": 0,
+        "total_advisors": 1,
+        "step_phase": "image_processing",
+        "progress_percentage": 5
+      },
+      "timestamp": 1768246474.9882188
+    }
+  },
+  {
+    "timestamp": "12:34:35.001",
+    "type": "status_update",
+    "data": {
+      "type": "status_update",
+      "job_data": {
+        "job_id": "35955225-2baa-4e6d-8eb2-728aa743a046",
+        "status": "analyzing",
+        "current_step": "Starting advisor analysis",
+        "llm_thinking": "",
+        "current_advisor": 0,
+        "total_advisors": 1,
+        "step_phase": "advisor_preparation",
+        "progress_percentage": 10
+      },
+      "timestamp": 1768246475.001728
+    }
+  },
+  {
+    "timestamp": "12:34:35.002",
+    "type": "status_update",
+    "data": {
+      "type": "status_update",
+      "job_data": {
+        "job_id": "35955225-2baa-4e6d-8eb2-728aa743a046",
+        "status": "analyzing",
+        "current_step": "Starting advisor analysis",
+        "llm_thinking": "",
+        "current_advisor": 0,
+        "total_advisors": 1,
+        "step_phase": "advisor_preparation",
+        "progress_percentage": 10
+      },
+      "timestamp": 1768246475.002301
+    }
+  },
+  {
+    "timestamp": "12:34:35.003",
+    "type": "status_update",
+    "data": {
+      "type": "status_update",
+      "job_data": {
+        "job_id": "35955225-2baa-4e6d-8eb2-728aa743a046",
+        "status": "analyzing",
+        "current_step": "Manifesting Ansel",
+        "llm_thinking": "",
+        "current_advisor": 1,
+        "total_advisors": 1,
+        "step_phase": "advisor_analysis",
+        "progress_percentage": 90
+      },
+      "timestamp": 1768246475.0032651
+    }
+  },
+  {
+    "timestamp": "12:34:35.003",
+    "type": "status_update",
+    "data": {
+      "type": "status_update",
+      "job_data": {
+        "job_id": "35955225-2baa-4e6d-8eb2-728aa743a046",
+        "status": "analyzing",
+        "current_step": "Manifesting Ansel",
+        "llm_thinking": "",
+        "current_advisor": 1,
+        "total_advisors": 1,
+        "step_phase": "advisor_analysis",
+        "progress_percentage": 90
+      },
+      "timestamp": 1768246475.0038211
+    }
+  },
+  {
+    "timestamp": "12:34:35.005",
+    "type": "status_update",
+    "data": {
+      "type": "status_update",
+      "job_data": {
+        "job_id": "35955225-2baa-4e6d-8eb2-728aa743a046",
+        "status": "analyzing",
+        "current_step": "Manifesting Ansel",
+        "llm_thinking": "Analyzing composition and framing...",
+        "current_advisor": 1,
+        "total_advisors": 1,
+        "step_phase": "advisor_analysis",
+        "progress_percentage": 90
+      },
+      "timestamp": 1768246475.005565
+    }
+  },
+  {
+    "timestamp": "12:34:35.020",
+    "type": "thinking_update",
+    "data": {
+      "type": "thinking_update",
+      "job_id": "35955225-2baa-4e6d-8eb2-728aa743a046",
+      "thinking": "Analyzing image dimensions..."
+    }
+  },
+  {
+    "timestamp": "12:34:35.020",
+    "type": "status_update",
+    "data": {
+      "type": "status_update",
+      "job_data": {
+        "job_id": "35955225-2baa-4e6d-8eb2-728aa743a046",
+        "status": "thinking",
+        "current_step": "Analyzing image dimensions...",
+        "llm_thinking": "",
+        "current_advisor": 0,
+        "total_advisors": 0,
+        "step_phase": "",
+        "progress_percentage": 0
+      }
+    }
+  },
+  {
+    "timestamp": "12:34:35.023",
+    "type": "thinking_update",
+    "data": {
+      "type": "thinking_update",
+      "job_id": "35955225-2baa-4e6d-8eb2-728aa743a046",
+      "thinking": "Loading Advisor Model..."
+    }
+  },
+  {
+    "timestamp": "12:34:35.023",
+    "type": "status_update",
+    "data": {
+      "type": "status_update",
+      "job_data": {
+        "job_id": "35955225-2baa-4e6d-8eb2-728aa743a046",
+        "status": "thinking",
+        "current_step": "Loading Advisor Model...",
+        "llm_thinking": "",
+        "current_advisor": 0,
+        "total_advisors": 0,
+        "step_phase": "",
+        "progress_percentage": 0
+      }
+    }
+  },
+  {
+    "timestamp": "12:34:35.026",
+    "type": "thinking_update",
+    "data": {
+      "type": "thinking_update",
+      "job_id": "35955225-2baa-4e6d-8eb2-728aa743a046",
+      "thinking": "Generating analysis..."
+    }
+  },
+  {
+    "timestamp": "12:34:35.026",
+    "type": "status_update",
+    "data": {
+      "type": "status_update",
+      "job_data": {
+        "job_id": "35955225-2baa-4e6d-8eb2-728aa743a046",
+        "status": "thinking",
+        "current_step": "Generating analysis...",
+        "llm_thinking": "",
+        "current_advisor": 0,
+        "total_advisors": 0,
+        "step_phase": "",
+        "progress_percentage": 0
+      }
+    }
+  },
+  {
+    "timestamp": "12:34:52.270",
+    "type": "thinking_update",
+    "data": {
+      "type": "thinking_update",
+      "job_id": "35955225-2baa-4e6d-8eb2-728aa743a046",
+      "thinking": "MLX analysis complete"
+    }
+  },
+  {
+    "timestamp": "12:34:52.274",
+    "type": "status_update",
+    "data": {
+      "type": "status_update",
+      "job_data": {
+        "job_id": "35955225-2baa-4e6d-8eb2-728aa743a046",
+        "status": "thinking",
+        "current_step": "MLX analysis complete",
+        "llm_thinking": "",
+        "current_advisor": 0,
+        "total_advisors": 0,
+        "step_phase": "",
+        "progress_percentage": 0
+      }
+    }
+  },
+  {
+    "timestamp": "12:34:52.301",
+    "type": "status_update",
+    "data": {
+      "type": "status_update",
+      "job_data": {
+        "job_id": "35955225-2baa-4e6d-8eb2-728aa743a046",
+        "status": "analyzing",
+        "current_step": "Manifesting Ansel",
+        "llm_thinking": "MLX analysis complete",
+        "current_advisor": 1,
+        "total_advisors": 1,
+        "step_phase": "advisor_analysis",
+        "progress_percentage": 90
+      },
+      "timestamp": 1768246492.3016162
+    }
+  },
+  {
+    "timestamp": "12:34:52.303",
+    "type": "status_update",
+    "data": {
+      "type": "status_update",
+      "job_data": {
+        "job_id": "35955225-2baa-4e6d-8eb2-728aa743a046",
+        "status": "finalizing",
+        "current_step": "Finalizing analysis results",
+        "llm_thinking": "MLX analysis complete",
+        "current_advisor": 1,
+        "total_advisors": 1,
+        "step_phase": "finalizing",
+        "progress_percentage": 95
+      },
+      "timestamp": 1768246492.3035269
+    }
+  },
+  {
+    "timestamp": "12:34:52.308",
+    "type": "status_update",
+    "data": {
+      "type": "status_update",
+      "job_data": {
+        "job_id": "35955225-2baa-4e6d-8eb2-728aa743a046",
+        "status": "finalizing",
+        "current_step": "Finalizing analysis results",
+        "llm_thinking": "MLX analysis complete",
+        "current_advisor": 1,
+        "total_advisors": 1,
+        "step_phase": "finalizing",
+        "progress_percentage": 95
+      },
+      "timestamp": 1768246492.308098
+    }
+  },
+  {
+    "timestamp": "12:34:52.312",
+    "type": "status_update",
+    "data": {
+      "type": "status_update",
+      "job_data": {
+        "job_id": "35955225-2baa-4e6d-8eb2-728aa743a046",
+        "status": "done",
+        "current_step": "Completed",
+        "llm_thinking": "",
+        "current_advisor": 1,
+        "total_advisors": 1,
+        "step_phase": "done",
+        "progress_percentage": 100
+      },
+      "timestamp": 1768246492.311931
+    }
+  },
+  {
+    "timestamp": "12:34:52.316",
+    "type": "analysis_complete",
+    "data": {
+      "type": "analysis_complete",
+      "job_id": "35955225-2baa-4e6d-8eb2-728aa743a046",
+      "analysis_html": "Your Creative Advisor  \n# Ansel Adams\nAnsel Adams (1902-1984) was an American landscape photographer and environmentalist known for his black-and-white images of the American West, especially Yosemite National Park. He helped found the photography group f/64, developed the Zone System for achieving perfect exposure and tonal range, and was a pioneering advocate for environmental conservation through his art.\n\n<p>Advisor Review Focus</p>\n<div class='advisor-focus-section'>\n<ul>\n<li>Tonal Range & Zone System: Master of the full spectrum from pure black to pure white, using his Zone System to achieve perfect exposure and tonal gradation in every image.</li>\n<li>Composition & Perspective: Precise framing that emphasizes geometric elements, leading lines, and careful positioning to create powerful visual impact.</li>\n<li>Technical Excellence: Perfect sharpness, focus, and exposure achieved through large-format cameras and meticulous darkroom work.</li>\n</ul>\n</div>\n\n<h2>Analysis Results</h2>\n<p>Error: AI service returned HTTP error - 500 Server Error: INTERNAL SERVER ERROR for url: http://127.0.0.1:5100/analyze</p>\n\n"
+    }
+  },
+  {
+    "timestamp": "12:34:52.317",
+    "type": "done",
+    "data": {
+      "type": "done",
+      "job_id": "35955225-2baa-4e6d-8eb2-728aa743a046"
+    }
+  }
+]

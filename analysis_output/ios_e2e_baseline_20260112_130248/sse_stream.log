@@ -1,0 +1,265 @@
+SSE Stream Started: 2026-01-12 13:02:48.793807
+Stream URL: http://127.0.0.1:5005/stream/f2ddcc57-2e09-4404-b311-b8fd3a14b277
+================================================================================
+
+[13:02:48.793] connected: {
+  "type": "connected",
+  "job_id": "f2ddcc57-2e09-4404-b311-b8fd3a14b277"
+}
+
+[13:02:48.793] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "f2ddcc57-2e09-4404-b311-b8fd3a14b277",
+    "status": "processing",
+    "current_step": "Processing image",
+    "llm_thinking": "",
+    "current_advisor": 0,
+    "total_advisors": 1,
+    "step_phase": "image_processing",
+    "progress_percentage": 5
+  },
+  "timestamp": 1768248168.7937632
+}
+
+[13:02:48.796] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "f2ddcc57-2e09-4404-b311-b8fd3a14b277",
+    "status": "processing",
+    "current_step": "Processing image",
+    "llm_thinking": "",
+    "current_advisor": 0,
+    "total_advisors": 1,
+    "step_phase": "image_processing",
+    "progress_percentage": 5
+  },
+  "timestamp": 1768248168.796093
+}
+
+[13:02:48.817] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "f2ddcc57-2e09-4404-b311-b8fd3a14b277",
+    "status": "analyzing",
+    "current_step": "Starting advisor analysis",
+    "llm_thinking": "",
+    "current_advisor": 0,
+    "total_advisors": 1,
+    "step_phase": "advisor_preparation",
+    "progress_percentage": 10
+  },
+  "timestamp": 1768248168.817538
+}
+
+[13:02:48.818] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "f2ddcc57-2e09-4404-b311-b8fd3a14b277",
+    "status": "analyzing",
+    "current_step": "Starting advisor analysis",
+    "llm_thinking": "",
+    "current_advisor": 0,
+    "total_advisors": 1,
+    "step_phase": "advisor_preparation",
+    "progress_percentage": 10
+  },
+  "timestamp": 1768248168.8184268
+}
+
+[13:02:48.819] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "f2ddcc57-2e09-4404-b311-b8fd3a14b277",
+    "status": "analyzing",
+    "current_step": "Beckoning Ansel",
+    "llm_thinking": "",
+    "current_advisor": 1,
+    "total_advisors": 1,
+    "step_phase": "advisor_analysis",
+    "progress_percentage": 90
+  },
+  "timestamp": 1768248168.8192608
+}
+
+[13:02:48.820] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "f2ddcc57-2e09-4404-b311-b8fd3a14b277",
+    "status": "analyzing",
+    "current_step": "Beckoning Ansel",
+    "llm_thinking": "",
+    "current_advisor": 1,
+    "total_advisors": 1,
+    "step_phase": "advisor_analysis",
+    "progress_percentage": 90
+  },
+  "timestamp": 1768248168.8203342
+}
+
+[13:02:48.821] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "f2ddcc57-2e09-4404-b311-b8fd3a14b277",
+    "status": "analyzing",
+    "current_step": "Beckoning Ansel",
+    "llm_thinking": "Analyzing composition and framing...",
+    "current_advisor": 1,
+    "total_advisors": 1,
+    "step_phase": "advisor_analysis",
+    "progress_percentage": 90
+  },
+  "timestamp": 1768248168.821344
+}
+
+[13:02:48.895] thinking_update: {
+  "type": "thinking_update",
+  "job_id": "f2ddcc57-2e09-4404-b311-b8fd3a14b277",
+  "thinking": "Loading Advisor Model..."
+}
+
+[13:02:48.895] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "f2ddcc57-2e09-4404-b311-b8fd3a14b277",
+    "status": "thinking",
+    "current_step": "Loading Advisor Model...",
+    "llm_thinking": "",
+    "current_advisor": 0,
+    "total_advisors": 0,
+    "step_phase": "",
+    "progress_percentage": 0
+  }
+}
+
+[13:02:48.897] thinking_update: {
+  "type": "thinking_update",
+  "job_id": "f2ddcc57-2e09-4404-b311-b8fd3a14b277",
+  "thinking": "Generating analysis..."
+}
+
+[13:02:48.897] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "f2ddcc57-2e09-4404-b311-b8fd3a14b277",
+    "status": "thinking",
+    "current_step": "Generating analysis...",
+    "llm_thinking": "",
+    "current_advisor": 0,
+    "total_advisors": 0,
+    "step_phase": "",
+    "progress_percentage": 0
+  }
+}
+
+[13:03:19.074] heartbeat: {
+  "type": "heartbeat",
+  "timestamp": 1768248199.005718
+}
+
+[13:03:31.429] thinking_update: {
+  "type": "thinking_update",
+  "job_id": "f2ddcc57-2e09-4404-b311-b8fd3a14b277",
+  "thinking": "MLX analysis complete"
+}
+
+[13:03:31.433] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "f2ddcc57-2e09-4404-b311-b8fd3a14b277",
+    "status": "thinking",
+    "current_step": "MLX analysis complete",
+    "llm_thinking": "",
+    "current_advisor": 0,
+    "total_advisors": 0,
+    "step_phase": "",
+    "progress_percentage": 0
+  }
+}
+
+[13:03:31.464] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "f2ddcc57-2e09-4404-b311-b8fd3a14b277",
+    "status": "analyzing",
+    "current_step": "Beckoning Ansel",
+    "llm_thinking": "",
+    "current_advisor": 1,
+    "total_advisors": 1,
+    "step_phase": "advisor_analysis",
+    "progress_percentage": 90
+  },
+  "timestamp": 1768248211.4640331
+}
+
+[13:03:31.474] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "f2ddcc57-2e09-4404-b311-b8fd3a14b277",
+    "status": "analyzing",
+    "current_step": "Beckoning Ansel",
+    "llm_thinking": "",
+    "current_advisor": 1,
+    "total_advisors": 1,
+    "step_phase": "advisor_analysis",
+    "progress_percentage": 90
+  },
+  "timestamp": 1768248211.464784
+}
+
+[13:03:31.474] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "f2ddcc57-2e09-4404-b311-b8fd3a14b277",
+    "status": "finalizing",
+    "current_step": "Finalizing analysis results",
+    "llm_thinking": "",
+    "current_advisor": 1,
+    "total_advisors": 1,
+    "step_phase": "finalizing",
+    "progress_percentage": 95
+  },
+  "timestamp": 1768248211.4661
+}
+
+[13:03:31.474] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "f2ddcc57-2e09-4404-b311-b8fd3a14b277",
+    "status": "finalizing",
+    "current_step": "Finalizing analysis results",
+    "llm_thinking": "",
+    "current_advisor": 1,
+    "total_advisors": 1,
+    "step_phase": "finalizing",
+    "progress_percentage": 95
+  },
+  "timestamp": 1768248211.467982
+}
+
+[13:03:31.482] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "f2ddcc57-2e09-4404-b311-b8fd3a14b277",
+    "status": "done",
+    "current_step": "Completed",
+    "llm_thinking": "",
+    "current_advisor": 1,
+    "total_advisors": 1,
+    "step_phase": "done",
+    "progress_percentage": 100
+  },
+  "timestamp": 1768248211.482257
+}
+
+[13:03:31.483] analysis_complete: {
+  "type": "analysis_complete",
+  "job_id": "f2ddcc57-2e09-4404-b311-b8fd3a14b277",
+  "analysis_html": "\n<div class=\"advisor-section\" data-advisor=\"ansel\">\n  <div class=\"analysis\">\n  <h2>Image Analysis</h2>\n  <p>The image captures a serene desert landscape at sunset, with a mountain range in the background. The foreground features a small shrub, and the sand dunes stretch out towards the horizon.</p>\n\n  <h2>Detailed Feedback</h2>\n\n  <div class=\"feedback-card\">\n    <h3>Composition <span class=\"dimension-score\">(8/10)</span></h3>\n    <p class=\"feedback-comment\">The composition is balanced with a clear foreground, midground, and background. The shrub draws the viewer&#39;s eye towards the mountain range.</p>\n    <div class=\"feedback-recommendation\">\n      <strong>Recommendation:</strong> Consider adding more elements to the foreground to create a more dynamic composition.\n    </div>\n  </div>\n\n  <div class=\"feedback-card\">\n    <h3>Lighting <span class=\"dimension-score\">(8/10)</span></h3>\n    <p class=\"feedback-comment\">The lighting is soft and warm, creating a sense of tranquility. The mountain range is well-lit, while the shrub is slightly underexposed.</p>\n    <div class=\"feedback-recommendation\">\n      <strong>Recommendation:</strong> Increase the exposure of the shrub to bring out more detail.\n    </div>\n  </div>\n\n  <div class=\"feedback-card\">\n    <h3>Focus &amp; Sharpness <span class=\"dimension-score\">(9/10)</span></h3>\n    <p class=\"feedback-comment\">The focus is sharp, capturing the texture of the sand and the details of the shrub.</p>\n    <div class=\"feedback-recommendation\">\n      <strong>Recommendation:</strong> Maintain this level of sharpness for the rest of the image.\n    </div>\n  </div>\n\n  <div class=\"feedback-card\">\n    <h3>Color Harmony <span class=\"dimension-score\">(7/10)</span></h3>\n    <p class=\"feedback-comment\">The color palette is muted, with a mix of earthy tones and the warm glow of the setting sun.</p>\n    <div class=\"feedback-recommendation\">\n      <strong>Recommendation:</strong> Consider adding more vibrant colors to the image to create a more dynamic composition.\n    </div>\n  </div>\n\n  <div class=\"feedback-card\">\n    <h3>Depth &amp; Perspective <span class=\"dimension-score\">(7/10)</span></h3>\n    <p class=\"feedback-comment\">The depth is well-balanced, with the shrub in the foreground leading the viewer&#39;s eye towards the mountain range.</p>\n    <div class=\"feedback-recommendation\">\n      <strong>Recommendation:</strong> Consider adding more elements to the foreground to create a more dynamic composition.\n    </div>\n  </div>\n\n  <div class=\"feedback-card\">\n    <h3>Visual Balance <span class=\"dimension-score\">(8/10)</span></h3>\n    <p class=\"feedback-comment\">The visual balance is good, with the shrub in the foreground and the mountain range in the background.</p>\n    <div class=\"feedback-recommendation\">\n      <strong>Recommendation:</strong> Consider adding more elements to the foreground to create a more dynamic composition.\n    </div>\n  </div>\n\n  <div class=\"feedback-card\">\n    <h3>Emotional Impact <span class=\"dimension-score\">(7/10)</span></h3>\n    <p class=\"feedback-comment\">The emotional impact is strong, with a sense of tranquility and connection to nature.</p>\n    <div class=\"feedback-recommendation\">\n      <strong>Recommendation:</strong> Consider adding more elements to the foreground to create a more dynamic composition.\n    </div>\n  </div>\n\n  <h2>Overall Grade</h2>\n  <p><strong>7.4/10</strong></p>\n  <p><strong>Grade Note:</strong> The image was taken with a wide aperture, which helps to capture the depth of field and the details of the shrub. The exposure was set to capture the warm glow of the setting sun, which adds a sense of tranquility to the image.</p>\n</div>\n</div>\n"
+}
+
+[13:03:31.484] done: {
+  "type": "done",
+  "job_id": "f2ddcc57-2e09-4404-b311-b8fd3a14b277"
+}
+

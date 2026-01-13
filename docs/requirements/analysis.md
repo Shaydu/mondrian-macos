@@ -530,3 +530,453 @@ The architecture is **exactly** what you described:
 **But**: The advisor reference images currently have NULL scores, so the RAG system returns empty results. Once we re-index them properly, the system will work as designed.
 
 Would you like me to proceed with creating the batch analysis script and re-indexing the advisor images?
+
+---
+
+## RAG Analysis Data Flow
+
+This section describes the complete technical data flow for RAG-enabled image analysis in the Mondrian system.
+
+### Overview
+
+RAG (Retrieval-Augmented Generation) analysis uses a **2-pass workflow** to provide comparative feedback by:
+1. First analyzing the user's image to extract dimensional scores
+2. Finding similar advisor images from the portfolio
+3. Generating comparative feedback that references specific advisor works
+
+### High-Level Flow
+
+```
+User Upload → Job Service → AI Advisor Service (RAG) → HTML Output
+                                      ↓
+                             2-Pass Analysis:
+                             1. Extract Dimensional Profile
+                             2. Find Similar Images
+                             3. Generate Comparative Analysis
+```
+
+### Detailed Data Flow
+
+#### 1. Request Initiation
+
+**Entry Point:** `job_service_v2.3.py` → `process_job()`
+
+```python
+# User uploads image with enable_rag=true
+POST /upload
+{
+  "image": <file>,
+  "advisor": "ansel",
+  "enable_rag": "true"
+}
+```
+
+**Flow:**
+- Job Service receives upload
+- Creates job record in database
+- Calls AI Advisor Service: `POST /analyze` with `enable_rag=true`
+
+#### 2. AI Advisor Service - RAG Route
+
+**Entry Point:** `ai_advisor_service.py` → `_analyze_image_rag()`
+
+**Initial Setup:**
+- Fetches advisor metadata from database (name, prompt, bio)
+- Loads system prompt from database
+- Initializes `similar_images_for_html = None` (will be populated later)
+
+#### 3. Pass 1: Dimensional Profile Extraction
+
+**Purpose:** Extract dimensional scores from user's image to enable similarity matching
+
+**Flow:**
+
+```
+User Image → MLX Model → JSON Response → Extract Profile → Save to Database
+```
+
+**Steps:**
+
+1. **Generate Extraction Prompt**
+   - Uses `get_dimensional_extraction_prompt()` from `ai_advisor_service.py`
+   - Minimal prompt focused on extracting:
+     - 8 dimensional scores (composition, lighting, focus_sharpness, etc.)
+     - Techniques used (zone_system, depth_of_field, etc.)
+
+2. **Run MLX Model**
+   - `run_model_mlx(pass1_prompt, image_path=abs_image_path)`
+   - Returns JSON string with dimensional analysis
+
+3. **Parse JSON Response**
+   - `parse_json_response(pass1_result)` - handles markdown code blocks
+   - Extracts `dimensional_analysis` object
+
+4. **Extract Dimensional Profile**
+   - `extract_dimensional_profile_from_json(pass1_json)`
+   - Maps JSON structure to database fields:
+     ```python
+     {
+       "composition_score": 8.0,
+       "lighting_score": 8.0,
+       "focus_sharpness_score": 9.0,
+       # ... 8 dimensions total
+       "techniques": {...}
+     }
+     ```
+
+5. **Save to Database**
+   - `save_dimensional_profile(db_path, advisor_id, image_path, profile_data, job_id)`
+   - Stores in `dimensional_profiles` table
+   - **Critical:** This profile is used for similarity matching
+
+**Database Schema:**
+```sql
+dimensional_profiles (
+  id, advisor_id, image_path,
+  composition_score, lighting_score, focus_sharpness_score,
+  color_harmony_score, subject_isolation_score, depth_perspective_score,
+  visual_balance_score, emotional_impact_score,
+  composition_comment, lighting_comment, ... (comments for each),
+  image_title, date_taken, location, image_significance,
+  techniques, overall_grade, image_description, analysis_html
+)
+```
+
+#### 4. Query: Find Similar Advisor Images
+
+**Purpose:** Find advisor images with similar dimensional profiles or matching techniques
+
+**Entry Point:** `technique_rag.py` → `get_technique_based_rag_context()`
+
+**Flow:**
+
+```
+User Profile → Retrieve from DB → Find Similar Images → Augment Prompt
+```
+
+**Steps:**
+
+1. **Retrieve User Profile**
+   - `get_dimensional_profile(db_path, image_path, advisor_id)`
+   - Gets the profile saved in Pass 1
+   - Retries up to 3 times (handles timing issues)
+
+2. **Find Similar Images - Two Strategies:**
+
+   **Strategy A: Technique-Based Matching** (Primary)
+   - `get_similar_images_by_techniques()`
+   - Matches by techniques: zone_system, depth_of_field, composition, lighting, foreground_anchoring
+   - Returns images where advisor used same techniques as user
+
+   **Strategy B: Dimensional Similarity** (Fallback)
+   - `find_similar_by_dimensions()`
+   - Calculates Euclidean distance across 8 dimensions
+   - Returns top 3 most similar advisor images
+
+3. **Exclusion Logic**
+   - Filters out user's own image:
+     - Paths containing `/tmp/` or `analyze_image`
+     - Exact path matches
+   - Only returns advisor images (not user's previous analyses)
+
+4. **Format Results**
+   - Each result includes:
+     ```python
+     {
+       'dimensional_profile': {
+         'image_path': '/path/to/advisor/image.jpg',
+         'image_title': 'The Tetons and the Snake River',
+         'date_taken': '1942',
+         'location': 'Grand Teton National Park',
+         'image_significance': '...',
+         'composition_score': 9.0,
+         # ... all dimensional scores and comments
+       },
+       'distance': 2.5,  # Euclidean distance (lower = more similar)
+       'deltas': {  # Score differences
+         'composition': 0.5,  # Reference is 0.5 points higher
+         'lighting': -1.0,     # User is 1.0 points higher
+       }
+     }
+     ```
+
+#### 5. Prompt Augmentation
+
+**Purpose:** Inject comparative context into advisor prompt
+
+**Entry Point:** `technique_rag.py` → `augment_prompt_with_technique_context()`
+
+**What Gets Added:**
+
+1. **User's Techniques & Execution**
+   - Lists techniques user used
+   - Shows dimensional scores (execution quality)
+
+2. **Reference Images Context**
+   For each similar image:
+   - Image title and metadata
+   - Techniques advisor used
+   - Dimensional scores
+   - Comparison to user's techniques
+
+3. **Critical Instructions**
+   - Detailed format for comparative feedback:
+     - User's Technique & Execution
+     - Advisor's Technique & Execution  
+     - Execution Gap
+     - Improvement Recommendation (with specific steps)
+
+**Example Augmented Prompt Section:**
+```
+## TECHNIQUE EXECUTION COMPARISON: User vs Advisor Reference Images
+
+### Reference Image #1: "The Tetons and the Snake River" (1942)
+**Advisor's Techniques Used in This Reference:**
+- Zone System Tonal Range: Strong
+- Depth of Field: Deep (f/64 approach)
+- Composition: Leading lines
+- Lighting: Dramatic sidelight
+
+### CRITICAL INSTRUCTIONS: Technique Execution Comparison
+For each dimension, compare how well the user executed their techniques 
+vs how the advisor executed the same (or similar) techniques...
+```
+
+#### 6. Pass 2: Full Analysis with RAG Context
+
+**Purpose:** Generate final analysis with comparative feedback
+
+**Flow:**
+
+```
+Augmented Prompt + User Image → MLX Model → JSON Response → HTML Conversion
+```
+
+**Steps:**
+
+1. **Build Full Prompt**
+   ```python
+   full_prompt = (
+       SYSTEM_PROMPT.replace("<AdvisorName>", advisor)
+       + "\n\n"
+       + augmented_prompt  # Contains reference images context
+       + "\n\nAnalyze the provided image."
+   )
+   ```
+
+2. **Run MLX Model**
+   - `run_model_mlx(full_prompt, image_path=abs_image_path)`
+   - Model sees:
+     - User's techniques and scores
+     - Reference images with their techniques and scores
+     - Instructions to compare execution quality
+   - Returns JSON with comparative feedback
+
+3. **Parse JSON Response**
+   - `parse_json_response(md)`
+   - Extracts dimensional feedback with references to advisor images
+
+#### 7. HTML Generation
+
+**Purpose:** Convert JSON analysis to HTML with reference images displayed
+
+**Entry Point:** `json_to_html_converter.py` → `json_to_html()`
+
+**Flow:**
+
+```
+JSON Data + similar_images_for_html → HTML with Reference Images Section
+```
+
+**What Gets Generated:**
+
+1. **Reference Images Section** (if `similar_images` provided)
+   - Header: "Dimensional Comparison with [Advisor]'s Portfolio"
+   - For each reference image:
+     - **Title** (from `image_title` in database)
+     - **Year** (from `date_taken`)
+     - **Location** (from `location`)
+     - **The Actual Image** (served via `/advisor_image/{advisor_id}/{filename}`)
+     - **Historical Significance** (from `image_significance`)
+     - **Dimensional Comparison Table**:
+       - User Score vs Reference Score
+       - Delta (difference)
+       - Color-coded indicators (↑ if reference better, ↓ if user better)
+
+2. **Dimensional Feedback Sections**
+   - Each dimension gets a feedback card
+   - **Comments** - formatted to replace "Reference #1" with "Title (Year)"
+   - **Recommendations** - formatted to replace "Reference #1" with "Title (Year)"
+   - Example: "See 'The Tetons and the Snake River' (1942) for perfect execution"
+
+3. **Reference Formatting**
+   - `format_reference_in_text()` function
+   - Finds patterns like "Reference #1", "Reference Image #2"
+   - Replaces with: `"Image Title" (Year)`
+   - Applied to both comments and recommendations
+
+#### 8. Data Storage
+
+**What Gets Saved:**
+
+1. **User's Dimensional Profile**
+   - Saved in Pass 1
+   - Used for future similarity matching
+   - Stored with `advisor_id='ansel'` (allows matching against advisor portfolio)
+
+2. **Analysis HTML**
+   - Final HTML output stored in `jobs.analysis_markdown`
+   - Includes reference images section
+   - Includes formatted dimensional feedback
+
+3. **Critical Recommendations**
+   - Top 3 recommendations extracted
+   - Stored in `jobs.critical_recommendations` (JSON)
+   - Used for summary view
+
+### Key Data Structures
+
+#### Dimensional Profile
+```python
+{
+  'composition_score': 8.0,
+  'lighting_score': 8.0,
+  'focus_sharpness_score': 9.0,
+  'color_harmony_score': 7.0,
+  'subject_isolation_score': 7.0,
+  'depth_perspective_score': 7.0,
+  'visual_balance_score': 8.0,
+  'emotional_impact_score': 7.0,
+  'composition_comment': '...',
+  # ... comments for each dimension
+  'image_title': 'The Tetons and the Snake River',
+  'date_taken': '1942',
+  'location': 'Grand Teton National Park',
+  'image_significance': '...',
+  'techniques': {...},
+  'overall_grade': 7.4,
+  'image_description': '...'
+}
+```
+
+#### Similar Images Result
+```python
+[
+  {
+    'dimensional_profile': {
+      'image_path': '/path/to/advisor/image.jpg',
+      'image_title': 'The Tetons and the Snake River',
+      'date_taken': '1942',
+      'location': 'Grand Teton National Park',
+      'image_significance': '...',
+      'composition_score': 9.0,
+      # ... all scores and comments
+    },
+    'distance': 2.5,  # Euclidean distance
+    'deltas': {
+      'composition': 0.5,
+      'lighting': -1.0,
+      # ... deltas for each dimension
+    }
+  },
+  # ... up to 3 similar images
+]
+```
+
+### Exclusion Logic
+
+**Critical:** User images must be excluded from similarity matching
+
+**Filters Applied:**
+1. Path-based: Exclude paths containing `/tmp/` or `analyze_image`
+2. Exact match: Exclude if path exactly matches user's image path
+3. Filename match: Exclude if basename matches
+
+**Why:** User's own previous analyses are saved with `advisor_id='ansel'`, so they would match themselves without exclusion.
+
+### Metadata Flow
+
+**Source:** `metadata.yaml` file in advisor directory
+
+**Indexing Process:**
+1. `tools/rag/index_with_metadata.py` loads YAML
+2. Analyzes each advisor image (gets real dimensional scores)
+3. Retrieves saved profile from database
+4. Merges metadata from YAML:
+   - `title` → `image_title`
+   - `date_taken` → `date_taken`
+   - `location` → `location`
+   - `significance` → `image_significance`
+   - `description` → `image_description`
+5. Updates profile in database
+
+**Result:** Advisor images have both:
+- Real dimensional analysis (from AI)
+- Rich metadata (from YAML)
+
+### Error Handling
+
+**Pass 1 Failures:**
+- If JSON parsing fails → Return 500 error
+- If profile extraction fails → Return 500 error
+- If database save fails → Return 500 error
+
+**Query Failures:**
+- If no profile found → Raise RuntimeError with helpful message
+- If no similar images found → Raise RuntimeError with indexing instructions
+- If exclusion fails → May return user's own image (fixed in recent changes)
+
+**Pass 2 Failures:**
+- If JSON parsing fails → Return error HTML
+- If model returns error → Log and return error HTML
+
+**No Silent Fallbacks:** RAG mode fails explicitly (does not fall back to baseline)
+
+### Performance Considerations
+
+**Timing:**
+- Pass 1: ~10-30 seconds (dimensional extraction)
+- Query: ~0.5-2 seconds (database lookup)
+- Pass 2: ~30-60 seconds (full analysis with context)
+- Total: ~40-90 seconds
+
+**Optimizations:**
+- Profile saved immediately after Pass 1
+- Similarity matching uses indexed database queries
+- Images cached after first load
+- Metadata cached in memory
+
+### Files Involved
+
+**Core Implementation:**
+- `mondrian/ai_advisor_service.py` - Main RAG workflow (`_analyze_image_rag()`)
+- `mondrian/technique_rag.py` - Similarity matching and prompt augmentation
+- `mondrian/json_to_html_converter.py` - HTML generation and reference formatting
+
+**Supporting:**
+- `mondrian/job_service_v2.3.py` - Job orchestration
+- `tools/rag/index_with_metadata.py` - Advisor image indexing
+
+**Database:**
+- `dimensional_profiles` table - Stores all profiles
+- `jobs` table - Stores analysis results
+
+### Example Flow
+
+1. **User uploads image** → Job created
+2. **Pass 1:** Extract scores → `{composition: 8.0, lighting: 8.0, ...}` → Save to DB
+3. **Query:** Find similar → Matches "The Tetons and the Snake River" (composition: 9.0, lighting: 9.0)
+4. **Augment:** Add reference context to prompt
+5. **Pass 2:** Generate analysis → "Your composition (8.0) is similar to 'The Tetons and the Snake River' (1942) which scored 9.0. To improve..."
+6. **HTML:** Display reference image with title, year, location, and comparison table
+7. **Format:** Replace "Reference #1" in text with "'The Tetons and the Snake River' (1942)"
+
+### Data Flow Summary
+
+The RAG analysis data flow ensures:
+- ✅ User images are analyzed and profiled
+- ✅ Similar advisor images are found (not user's own images)
+- ✅ Rich metadata (titles, dates, locations) is available
+- ✅ Comparative feedback references specific artworks
+- ✅ HTML output displays reference images with full details
+- ✅ Text references are formatted as "Title (Year)" for clarity

@@ -19,7 +19,7 @@ Fix the dimensional RAG system so it can compare user photos to advisor referenc
 ### 📚 Essential Reading (in order)
 1. **Start Here**: `docs/requirements/rag.md` - Complete requirements specification
 2. **Quick Fix**: `docs/guides/next-steps.md` - Step-by-step fix instructions (~60 min)
-3. **Architecture**: `docs/architecture/rag-system-analysis.md` - How the system works
+3. **Architecture**: `docs/architecture/rag.md` - How the system works
 4. **This File**: Track your progress below
 
 ---
@@ -709,7 +709,7 @@ When you're done, these should all be ✅:
 ### Documentation
 - **Requirements**: `docs/requirements/rag.md`
 - **Quick Fix Guide**: `docs/guides/next-steps.md`
-- **Architecture**: `docs/architecture/rag-system-analysis.md`
+- **Architecture**: `docs/architecture/rag.md`
 - **Diagrams**: `docs/architecture/rag-diagrams.md`
 
 ### Scripts

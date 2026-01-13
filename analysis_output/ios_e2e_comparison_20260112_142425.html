@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>iOS E2E Test - RAG vs Baseline Comparison</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #000;
+            color: #fff;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .section {
+            margin-bottom: 40px;
+        }
+        .section h2 {
+            color: #007AFF;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #333;
+            padding-bottom: 10px;
+        }
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .panel {
+            background: #1c1c1e;
+            padding: 20px;
+            border-radius: 12px;
+        }
+        .panel h3 {
+            color: #30D158;
+            margin-bottom: 15px;
+        }
+        .file-link {
+            display: block;
+            color: #30D158;
+            text-decoration: none;
+            margin: 8px 0;
+            padding: 8px;
+            background: #2c2c2e;
+            border-radius: 6px;
+        }
+        .file-link:hover {
+            background: #3c3c3e;
+            text-decoration: underline;
+        }
+        iframe {
+            width: 100%;
+            height: 600px;
+            border: 1px solid #333;
+            border-radius: 8px;
+            background: white;
+        }
+        .missing {
+            color: #ff9500;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>iOS End-to-End Test Results</h1>
+        <p>RAG vs Baseline Comparison - 2026-01-12 14:24:25</p>
+        <p style="color: #999; font-size: 14px;">This shows the HTML output that would be sent to the iOS app</p>
+    </div>
+
+    <!-- Advisor Bio Section -->
+    <div class="section">
+        <h2>1. Advisor Bio HTML</h2>
+        <div class="comparison-grid">
+            <div class="panel">
+                <h3>Baseline (No RAG)</h3>
+                <iframe src="ios_e2e_baseline_20260112_142302/advisor_bio.html"></iframe>
+                <a href="ios_e2e_baseline_20260112_142302/advisor_bio.html" class="file-link" target="_blank">📄 Open Advisor Bio HTML</a>
+            </div>
+            <div class="panel">
+                <h3>RAG-Enabled</h3>
+                <iframe src="ios_e2e_rag-enabled_20260112_142341/advisor_bio.html"></iframe>
+                <a href="ios_e2e_rag-enabled_20260112_142341/advisor_bio.html" class="file-link" target="_blank">📄 Open Advisor Bio HTML</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analysis Summary Section -->
+    <div class="section">
+        <h2>2. Analysis Summary HTML (Top 3 Recommendations)</h2>
+        <div class="comparison-grid">
+            <div class="panel">
+                <h3>Baseline (No RAG)</h3>
+                <iframe src="ios_e2e_baseline_20260112_142302/analysis_summary.html"></iframe>
+                <a href="ios_e2e_baseline_20260112_142302/analysis_summary.html" class="file-link" target="_blank">📄 Open Summary HTML</a>
+            </div>
+            <div class="panel">
+                <h3>RAG-Enabled</h3>
+                <iframe src="ios_e2e_rag-enabled_20260112_142341/analysis_summary.html"></iframe>
+                <a href="ios_e2e_rag-enabled_20260112_142341/analysis_summary.html" class="file-link" target="_blank">📄 Open Summary HTML</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Analysis Details Section -->
+    <div class="section">
+        <h2>3. Analysis Details HTML (Full Analysis)</h2>
+        <div class="comparison-grid">
+            <div class="panel">
+                <h3>Baseline (No RAG)</h3>
+                <iframe src="ios_e2e_baseline_20260112_142302/analysis_detailed.html"></iframe>
+                <a href="ios_e2e_baseline_20260112_142302/analysis_detailed.html" class="file-link" target="_blank">📄 Open Detailed HTML</a>
+            </div>
+            <div class="panel">
+                <h3>RAG-Enabled</h3>
+                <iframe src="ios_e2e_rag-enabled_20260112_142341/analysis_detailed.html"></iframe>
+                <a href="ios_e2e_rag-enabled_20260112_142341/analysis_detailed.html" class="file-link" target="_blank">📄 Open Detailed HTML</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- File Links Section -->
+    <div class="section">
+        <h2>Additional Files</h2>
+        <div class="comparison-grid">
+            <div class="panel">
+                <h3>Baseline (No RAG)</h3>
+                <a href="ios_e2e_baseline_20260112_142302/sse_stream.log" class="file-link" target="_blank">📝 SSE Stream Log</a>
+                <a href="ios_e2e_baseline_20260112_142302/sse_events.json" class="file-link" target="_blank">📝 SSE Events JSON</a>
+                <a href="ios_e2e_baseline_20260112_142302/status_polling.log" class="file-link" target="_blank">📝 Status Polling Log</a>
+                <a href="ios_e2e_baseline_20260112_142302/metadata.json" class="file-link" target="_blank">ℹ️ Metadata</a>
+            </div>
+            <div class="panel">
+                <h3>RAG-Enabled</h3>
+                <a href="ios_e2e_rag-enabled_20260112_142341/sse_stream.log" class="file-link" target="_blank">📝 SSE Stream Log</a>
+                <a href="ios_e2e_rag-enabled_20260112_142341/sse_events.json" class="file-link" target="_blank">📝 SSE Events JSON</a>
+                <a href="ios_e2e_rag-enabled_20260112_142341/status_polling.log" class="file-link" target="_blank">📝 Status Polling Log</a>
+                <a href="ios_e2e_rag-enabled_20260112_142341/metadata.json" class="file-link" target="_blank">ℹ️ Metadata</a>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

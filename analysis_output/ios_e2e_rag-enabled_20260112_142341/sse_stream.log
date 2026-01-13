@@ -1,0 +1,380 @@
+SSE Stream Started: 2026-01-12 14:23:41.030420
+Stream URL: http://127.0.0.1:5005/stream/189ad241-974a-431f-96b4-4d57b1406def
+================================================================================
+
+[14:23:41.030] connected: {
+  "type": "connected",
+  "job_id": "189ad241-974a-431f-96b4-4d57b1406def"
+}
+
+[14:23:41.030] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "189ad241-974a-431f-96b4-4d57b1406def",
+    "status": "processing",
+    "current_step": "Processing image",
+    "llm_thinking": "",
+    "current_advisor": 0,
+    "total_advisors": 1,
+    "step_phase": "image_processing",
+    "progress_percentage": 5
+  },
+  "timestamp": 1768253021.0300741
+}
+
+[14:23:41.031] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "189ad241-974a-431f-96b4-4d57b1406def",
+    "status": "processing",
+    "current_step": "Processing image",
+    "llm_thinking": "",
+    "current_advisor": 0,
+    "total_advisors": 1,
+    "step_phase": "image_processing",
+    "progress_percentage": 5
+  },
+  "timestamp": 1768253021.031178
+}
+
+[14:23:41.039] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "189ad241-974a-431f-96b4-4d57b1406def",
+    "status": "analyzing",
+    "current_step": "Starting advisor analysis",
+    "llm_thinking": "",
+    "current_advisor": 0,
+    "total_advisors": 1,
+    "step_phase": "advisor_preparation",
+    "progress_percentage": 10
+  },
+  "timestamp": 1768253021.039335
+}
+
+[14:23:41.040] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "189ad241-974a-431f-96b4-4d57b1406def",
+    "status": "analyzing",
+    "current_step": "Starting advisor analysis",
+    "llm_thinking": "",
+    "current_advisor": 0,
+    "total_advisors": 1,
+    "step_phase": "advisor_preparation",
+    "progress_percentage": 10
+  },
+  "timestamp": 1768253021.04
+}
+
+[14:23:41.040] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "189ad241-974a-431f-96b4-4d57b1406def",
+    "status": "analyzing",
+    "current_step": "Invoking Ansel",
+    "llm_thinking": "",
+    "current_advisor": 1,
+    "total_advisors": 1,
+    "step_phase": "advisor_analysis",
+    "progress_percentage": 90
+  },
+  "timestamp": 1768253021.040384
+}
+
+[14:23:41.041] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "189ad241-974a-431f-96b4-4d57b1406def",
+    "status": "analyzing",
+    "current_step": "Invoking Ansel",
+    "llm_thinking": "",
+    "current_advisor": 1,
+    "total_advisors": 1,
+    "step_phase": "advisor_analysis",
+    "progress_percentage": 90
+  },
+  "timestamp": 1768253021.040991
+}
+
+[14:23:41.042] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "189ad241-974a-431f-96b4-4d57b1406def",
+    "status": "analyzing",
+    "current_step": "Invoking Ansel",
+    "llm_thinking": "Analyzing composition and framing...",
+    "current_advisor": 1,
+    "total_advisors": 1,
+    "step_phase": "advisor_analysis",
+    "progress_percentage": 90
+  },
+  "timestamp": 1768253021.042284
+}
+
+[14:23:41.060] thinking_update: {
+  "type": "thinking_update",
+  "job_id": "189ad241-974a-431f-96b4-4d57b1406def",
+  "thinking": "Analyzing image dimensions..."
+}
+
+[14:23:41.060] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "189ad241-974a-431f-96b4-4d57b1406def",
+    "status": "thinking",
+    "current_step": "Analyzing image dimensions...",
+    "llm_thinking": "",
+    "current_advisor": 0,
+    "total_advisors": 0,
+    "step_phase": "",
+    "progress_percentage": 0
+  }
+}
+
+[14:23:41.063] thinking_update: {
+  "type": "thinking_update",
+  "job_id": "189ad241-974a-431f-96b4-4d57b1406def",
+  "thinking": "Loading Advisor Model..."
+}
+
+[14:23:41.063] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "189ad241-974a-431f-96b4-4d57b1406def",
+    "status": "thinking",
+    "current_step": "Loading Advisor Model...",
+    "llm_thinking": "",
+    "current_advisor": 0,
+    "total_advisors": 0,
+    "step_phase": "",
+    "progress_percentage": 0
+  }
+}
+
+[14:23:41.065] thinking_update: {
+  "type": "thinking_update",
+  "job_id": "189ad241-974a-431f-96b4-4d57b1406def",
+  "thinking": "Generating analysis..."
+}
+
+[14:23:41.065] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "189ad241-974a-431f-96b4-4d57b1406def",
+    "status": "thinking",
+    "current_step": "Generating analysis...",
+    "llm_thinking": "",
+    "current_advisor": 0,
+    "total_advisors": 0,
+    "step_phase": "",
+    "progress_percentage": 0
+  }
+}
+
+[14:24:00.986] thinking_update: {
+  "type": "thinking_update",
+  "job_id": "189ad241-974a-431f-96b4-4d57b1406def",
+  "thinking": "MLX analysis complete"
+}
+
+[14:24:00.991] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "189ad241-974a-431f-96b4-4d57b1406def",
+    "status": "thinking",
+    "current_step": "MLX analysis complete",
+    "llm_thinking": "",
+    "current_advisor": 0,
+    "total_advisors": 0,
+    "step_phase": "",
+    "progress_percentage": 0
+  }
+}
+
+[14:24:00.992] thinking_update: {
+  "type": "thinking_update",
+  "job_id": "189ad241-974a-431f-96b4-4d57b1406def",
+  "thinking": "Finding similar Ansel Adams images..."
+}
+
+[14:24:00.992] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "189ad241-974a-431f-96b4-4d57b1406def",
+    "status": "thinking",
+    "current_step": "Finding similar Ansel Adams images...",
+    "llm_thinking": "",
+    "current_advisor": 0,
+    "total_advisors": 0,
+    "step_phase": "",
+    "progress_percentage": 0
+  }
+}
+
+[14:24:00.994] thinking_update: {
+  "type": "thinking_update",
+  "job_id": "189ad241-974a-431f-96b4-4d57b1406def",
+  "thinking": "Reviewing your image with Ansel Adams..."
+}
+
+[14:24:00.994] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "189ad241-974a-431f-96b4-4d57b1406def",
+    "status": "thinking",
+    "current_step": "Reviewing your image with Ansel Adams...",
+    "llm_thinking": "",
+    "current_advisor": 0,
+    "total_advisors": 0,
+    "step_phase": "",
+    "progress_percentage": 0
+  }
+}
+
+[14:24:01.002] thinking_update: {
+  "type": "thinking_update",
+  "job_id": "189ad241-974a-431f-96b4-4d57b1406def",
+  "thinking": "Loading Advisor Model..."
+}
+
+[14:24:01.002] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "189ad241-974a-431f-96b4-4d57b1406def",
+    "status": "thinking",
+    "current_step": "Loading Advisor Model...",
+    "llm_thinking": "",
+    "current_advisor": 0,
+    "total_advisors": 0,
+    "step_phase": "",
+    "progress_percentage": 0
+  }
+}
+
+[14:24:01.005] thinking_update: {
+  "type": "thinking_update",
+  "job_id": "189ad241-974a-431f-96b4-4d57b1406def",
+  "thinking": "Generating analysis..."
+}
+
+[14:24:01.006] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "189ad241-974a-431f-96b4-4d57b1406def",
+    "status": "thinking",
+    "current_step": "Generating analysis...",
+    "llm_thinking": "",
+    "current_advisor": 0,
+    "total_advisors": 0,
+    "step_phase": "",
+    "progress_percentage": 0
+  }
+}
+
+[14:24:25.713] thinking_update: {
+  "type": "thinking_update",
+  "job_id": "189ad241-974a-431f-96b4-4d57b1406def",
+  "thinking": "MLX analysis complete"
+}
+
+[14:24:25.717] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "189ad241-974a-431f-96b4-4d57b1406def",
+    "status": "thinking",
+    "current_step": "MLX analysis complete",
+    "llm_thinking": "",
+    "current_advisor": 0,
+    "total_advisors": 0,
+    "step_phase": "",
+    "progress_percentage": 0
+  }
+}
+
+[14:24:25.778] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "189ad241-974a-431f-96b4-4d57b1406def",
+    "status": "analyzing",
+    "current_step": "Invoking Ansel",
+    "llm_thinking": "",
+    "current_advisor": 1,
+    "total_advisors": 1,
+    "step_phase": "advisor_analysis",
+    "progress_percentage": 90
+  },
+  "timestamp": 1768253065.777995
+}
+
+[14:24:25.779] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "189ad241-974a-431f-96b4-4d57b1406def",
+    "status": "analyzing",
+    "current_step": "Invoking Ansel",
+    "llm_thinking": "",
+    "current_advisor": 1,
+    "total_advisors": 1,
+    "step_phase": "advisor_analysis",
+    "progress_percentage": 90
+  },
+  "timestamp": 1768253065.778956
+}
+
+[14:24:25.780] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "189ad241-974a-431f-96b4-4d57b1406def",
+    "status": "finalizing",
+    "current_step": "Finalizing analysis results",
+    "llm_thinking": "",
+    "current_advisor": 1,
+    "total_advisors": 1,
+    "step_phase": "finalizing",
+    "progress_percentage": 95
+  },
+  "timestamp": 1768253065.779954
+}
+
+[14:24:25.781] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "189ad241-974a-431f-96b4-4d57b1406def",
+    "status": "finalizing",
+    "current_step": "Finalizing analysis results",
+    "llm_thinking": "",
+    "current_advisor": 1,
+    "total_advisors": 1,
+    "step_phase": "finalizing",
+    "progress_percentage": 95
+  },
+  "timestamp": 1768253065.781302
+}
+
+[14:24:25.804] status_update: {
+  "type": "status_update",
+  "job_data": {
+    "job_id": "189ad241-974a-431f-96b4-4d57b1406def",
+    "status": "done",
+    "current_step": "Completed",
+    "llm_thinking": "",
+    "current_advisor": 1,
+    "total_advisors": 1,
+    "step_phase": "done",
+    "progress_percentage": 100
+  },
+  "timestamp": 1768253065.8038442
+}
+
+[14:24:25.808] analysis_complete: {
+  "type": "analysis_complete",
+  "job_id": "189ad241-974a-431f-96b4-4d57b1406def",
+  "analysis_html": "\n<div class=\"advisor-section\" data-advisor=\"ansel\">\n  <div class=\"analysis\">\n  <h2>Image Analysis</h2>\n  <p>A serene desert landscape at sunset, with sand dunes, shrubs, and distant mountains under a clear sky.</p>\n\n  <h2>Reference Images from Master's Portfolio</h2>\n  <p class=\"rag-intro\">Your image was compared to these similar works:</p>\n\n  <div class=\"reference-image-card\" style=\"margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 8px;\">\n    <h3 style=\"margin-top: 0;\">Reference #1: </h3>\n    <p class=\"similarity-score\" style=\"color: #0066cc;\"><strong>Similarity:</strong> 100.0%</p>\n    <div class=\"reference-dimensions\" style=\"margin-top: 10px;\">\n      <strong>Key Dimensions:</strong>\n      <ul style=\"margin: 5px 0; padding-left: 20px;\">\n        <li>Composition: 7.5/10</li>\n        <li>Lighting: 8.0/10</li>\n        <li>Focus & Sharpness: 9.0/10</li>\n        <li>Emotional Impact: 8.0/10</li>\n      </ul>\n    </div>\n  </div>\n\n  <h2>Detailed Feedback</h2>\n\n  <div class=\"feedback-card\">\n    <h3>Composition <span class=\"dimension-score\">(8/10)</span></h3>\n    <p class=\"feedback-comment\">The composition is balanced and visually appealing, with the sand dunes and shrubs framing the distant mountains.</p>\n    <div class=\"feedback-recommendation\">\n      <strong>Recommendation:</strong> Consider adding more foreground elements to create a more dynamic composition.\n    </div>\n  </div>\n\n  <div class=\"feedback-card\">\n    <h3>Lighting <span class=\"dimension-score\">(8/10)</span></h3>\n    <p class=\"feedback-comment\">The lighting is soft and natural, creating a warm, golden hue that enhances the desert&#39;s beauty.</p>\n    <div class=\"feedback-recommendation\">\n      <strong>Recommendation:</strong> Consider using a wider aperture to capture more detail in the sand dunes and shrubs.\n    </div>\n  </div>\n\n  <div class=\"feedback-card\">\n    <h3>Focus &amp; Sharpness <span class=\"dimension-score\">(9/10)</span></h3>\n    <p class=\"feedback-comment\">The focus is sharp, allowing for clear details in the sand dunes and shrubs.</p>\n    <div class=\"feedback-recommendation\">\n      <strong>Recommendation:</strong> Maintain this level of sharpness to ensure the image is crisp and detailed.\n    </div>\n  </div>\n\n  <div class=\"feedback-card\">\n    <h3>Color Harmony <span class=\"dimension-score\">(7/10)</span></h3>\n    <p class=\"feedback-comment\">The color palette is natural and earthy, with a mix of warm and cool tones.</p>\n    <div class=\"feedback-recommendation\">\n      <strong>Recommendation:</strong> Consider adding more vibrant colors to the image to create a more dynamic and engaging composition.\n    </div>\n  </div>\n\n  <div class=\"feedback-card\">\n    <h3>Depth &amp; Perspective <span class=\"dimension-score\">(7/10)</span></h3>\n    <p class=\"feedback-comment\">The depth of field is appropriate, with the sand dunes and shrubs in focus and the distant mountains slightly out of focus.</p>\n    <div class=\"feedback-recommendation\">\n      <strong>Recommendation:</strong> Consider using a wider aperture to achieve a shallower depth of field and create a more dramatic effect.\n    </div>\n  </div>\n\n  <div class=\"feedback-card\">\n    <h3>Visual Balance <span class=\"dimension-score\">(8/10)</span></h3>\n    <p class=\"feedback-comment\">The visual balance is well achieved, with the sand dunes and shrubs creating a natural frame for the distant mountains.</p>\n    <div class=\"feedback-recommendation\">\n      <strong>Recommendation:</strong> Consider adding more foreground elements to create a more dynamic and engaging composition.\n    </div>\n  </div>\n\n  <div class=\"feedback-card\">\n    <h3>Emotional Impact <span class=\"dimension-score\">(7/10)</span></h3>\n    <p class=\"feedback-comment\">The emotional impact is strong, with a sense of tranquility and beauty in the desert landscape.</p>\n    <div class=\"feedback-recommendation\">\n      <strong>Recommendation:</strong> Consider adding more vibrant colors to the image to create a more dynamic and engaging composition.\n    </div>\n  </div>\n\n  <h2>Overall Grade</h2>\n  <p><strong>7.4/10</strong></p>\n  <p><strong>Grade Note:</strong> The image was taken with a wide aperture to capture more detail in the sand dunes and shrubs.</p>\n</div>\n</div>\n"
+}
+
+[14:24:25.810] done: {
+  "type": "done",
+  "job_id": "189ad241-974a-431f-96b4-4d57b1406def"
+}
+

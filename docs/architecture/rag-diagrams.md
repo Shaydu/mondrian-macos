@@ -1,4 +1,13 @@
-# [DEPRECATED] See docs/architecture/rag.md for the latest RAG architecture and data flow documentation.
+# [DEPRECATED] RAG Diagrams
+
+> **⚠️ THIS FILE IS DEPRECATED**
+> 
+> This file contains outdated diagrams and information about the RAG system. 
+> The current implementation uses **distribution-based dimensional RAG** with a 2-pass workflow.
+> 
+> **Please refer to [`rag.md`](rag.md) for the current, accurate RAG architecture documentation.**
+> 
+> This file is kept for historical reference only and may contain information that no longer reflects the actual implementation.
 
 ## Current State: Two Parallel RAG Systems
 
