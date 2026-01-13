@@ -4,6 +4,32 @@ Brief overview of how system prompts, advisor prompts, and image analysis flow t
 
 ---
 
+## Configuration & Analysis Modes
+
+Mondrian supports three analysis modes that can be enabled/disabled independently:
+
+### 1. **RAG Mode** (Distribution-Based Retrieval)
+- **What it does**: 2-pass analysis comparing user image to advisor's reference portfolio using dimensional statistics
+- **Enable globally**: Set `RAG_ENABLED = True` in `mondrian/config.py`
+- **Enable per-request**: Pass `enable_rag=true` in upload/analyze API request
+- **Requires**: Indexed reference images in `dimensional_profiles` table (see RAG Preprocessing below)
+
+### 2. **Embeddings Mode** (Visual Similarity)
+- **What it does**: Uses CLIP embeddings for visual similarity matching (separate from dimensional RAG)
+- **Enable globally**: Set environment variable `EMBEDDINGS_ENABLED=true` or edit `config.py`
+- **Enable per-request**: Pass `enable_embeddings=true` in analyze API request
+- **Requires**: Pre-computed embeddings in database
+
+### 3. **Baseline Mode** (No Retrieval)
+- **What it does**: Single-pass analysis using only advisor prompt, no reference comparisons
+- **Enable**: Set both `enable_rag=false` and `enable_embeddings=false`
+- **Default**: When RAG/embeddings are disabled in config and not specified in request
+- **Requires**: Nothing (standalone analysis)
+
+**Note**: RAG and Embeddings can be used together or independently. When both are enabled, the system uses hybrid retrieval combining dimensional and visual similarity.
+
+---
+
 ## System Prompt Storage
 
 **Storage Location:** Database (`config` table)
@@ -352,17 +378,21 @@ This happens **before** any user uploads - it builds the reference database for 
 
 ---
 
-## Key Differences: Baseline vs RAG
+## Key Differences: Baseline vs RAG vs Embeddings
 
-| Aspect | Baseline | RAG |
-|--------|----------|-----|
-| **Passes** | Single-pass | 2-pass |
-| **Prompt** | System + Advisor | System + Advisor + RAG context |
-| **Context** | No reference images | Statistical comparison + representative examples |
-| **Database Queries** | None during analysis | Query dimensional_profiles for statistics |
-| **Analysis Time** | ~5-15 seconds | ~15-30 seconds (2 model calls + DB queries) |
-| **Output** | Standalone analysis | Comparative analysis with references |
-| **Prerequisites** | None | Requires indexed reference images in DB |
+| Aspect | Baseline | RAG (Dimensional) | Embeddings (Visual) |
+|--------|----------|-------------------|---------------------|
+| **Passes** | Single-pass | 2-pass | 1-pass with retrieval |
+| **Prompt** | System + Advisor | System + Advisor + RAG context | System + Advisor + visual examples |
+| **Context** | No reference images | Statistical comparison + representative examples | Visually similar reference images |
+| **Retrieval Method** | None | Dimensional distribution analysis | CLIP embedding similarity |
+| **Database Queries** | None during analysis | Query dimensional_profiles for statistics | Query embeddings table |
+| **Analysis Time** | ~5-15 seconds | ~15-30 seconds (2 model calls + DB queries) | ~10-20 seconds (1 call + embedding search) |
+| **Output** | Standalone analysis | Comparative analysis with references | Analysis with visually similar examples |
+| **Prerequisites** | None | Requires indexed dimensional profiles | Requires pre-computed CLIP embeddings |
+| **Best For** | Quick feedback | Dimensional improvement guidance | Style/composition matching |
+
+**Hybrid Mode**: Both RAG and Embeddings can be enabled together for comprehensive retrieval combining dimensional and visual similarity.
 
 ---
 

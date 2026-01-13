@@ -8,6 +8,29 @@ The RAG system uses a **2-pass analysis workflow**:
 1. **Pass 1**: Extract dimensional profile from user image
 2. **Pass 2**: Compare to advisor's portfolio distribution and generate comparative feedback
 
+## Analysis Modes
+
+Mondrian supports three analysis modes:
+
+### 1. **RAG Mode** (Dimensional Distribution) - Default Enabled
+- 2-pass analysis with statistical comparison to advisor's reference portfolio
+- Enable/disable: `RAG_ENABLED` in `mondrian/config.py` (default: `True`)
+- Per-request control: `enable_rag=true/false` in API calls
+- Requires preprocessed reference images in `dimensional_profiles` table
+
+### 2. **Embeddings Mode** (Visual Similarity) - Default Disabled
+- Uses CLIP embeddings for visual similarity search (complements dimensional RAG)
+- Enable/disable: Set `EMBEDDINGS_ENABLED=true` env var or edit `config.py` (default: `False`)
+- Per-request control: `enable_embeddings=true/false` in API calls
+- Requires pre-computed embeddings in database
+
+### 3. **Baseline Mode** (No Retrieval)
+- Single-pass analysis with advisor prompt only, no reference comparisons
+- Enabled when both `enable_rag=false` and `enable_embeddings=false`
+- Fastest mode (~5-15 seconds vs ~15-30 seconds for RAG)
+
+**Note**: RAG and Embeddings are independent and can be combined for hybrid retrieval.
+
 ---
 
 ## Data Flow Summary
