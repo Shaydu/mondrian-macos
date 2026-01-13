@@ -3,3 +3,4 @@
 mondrian/mondrian.db
 *.db-shm
 *.db-wal
+analysis_output/
