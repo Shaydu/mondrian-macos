@@ -140,11 +140,11 @@ def test_single_score_summary():
     base_url = "http://localhost:5100"
     html = json_to_html(sample_json, similar_images=sample_similar_images, base_url=base_url, advisor_name="Ansel Adams")
     
-    # Look for the "Your Image's Dimensional Scores" section
-    if "Your Image's Dimensional Scores" in html:
-        print("✓ PASS: Found 'Your Image's Dimensional Scores' section")
+    # Look for the "Your Image Scores" section (new heading)
+    if "Your Image Scores" in html:
+        print("✓ PASS: Found 'Your Image Scores' section")
     else:
-        print("✗ FAIL: 'Your Image's Dimensional Scores' section not found")
+        print("✗ FAIL: 'Your Image Scores' section not found")
         return False
     
     # Verify user scores are displayed in the summary

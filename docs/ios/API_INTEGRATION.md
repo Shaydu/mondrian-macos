@@ -226,6 +226,18 @@ func connectToStream(streamUrl: String) {
         }
     }
     
+    // Listen for 'thinking_update' events (NEW! - Real-time LLM feedback)
+    eventSource.addEventListener("thinking_update") { id, event, data in
+        if let data = data?.data(using: .utf8),
+           let event = try? JSONDecoder().decode(ThinkingUpdateEvent.self, from: data) {
+            DispatchQueue.main.async {
+                // Display thinking message that updates every ~5 seconds
+                // Example: "💭 Generating analysis... (150 tokens, 44.1 tps)"
+                self.updateThinkingStatus(event.thinking)
+            }
+        }
+    }
+    
     // Listen for 'analysis_complete' event
     eventSource.addEventListener("analysis_complete") { id, event, data in
         if let data = data?.data(using: .utf8),
@@ -273,7 +285,17 @@ func connectToStream(streamUrl: String) {
 }
 ```
 
-3. **analysis_complete** - Analysis finished with HTML
+3. **thinking_update** - Real-time LLM generation feedback (NEW!)
+Sent every 5 seconds during analysis to show active processing with token count and generation speed.
+```json
+{
+  "type": "thinking_update",
+  "job_id": "abc123-def456-789",
+  "thinking": "Generating analysis... (150 tokens, 44.1 tps)"
+}
+```
+
+4. **analysis_complete** - Analysis finished with HTML
 ```json
 {
   "type": "analysis_complete",
@@ -282,7 +304,7 @@ func connectToStream(streamUrl: String) {
 }
 ```
 
-4. **done** - Stream complete
+5. **done** - Stream complete
 ```json
 {
   "type": "done",
@@ -311,6 +333,12 @@ struct JobData: Decodable {
     let step_phase: String?
 }
 
+struct ThinkingUpdateEvent: Decodable {
+    let type: String
+    let job_id: String
+    let thinking: String  // e.g., "Generating analysis... (150 tokens, 44.1 tps)"
+}
+
 struct AnalysisCompleteEvent: Decodable {
     let type: String
     let job_id: String
@@ -322,6 +350,144 @@ struct DoneEvent: Decodable {
     let job_id: String
 }
 ```
+
+---
+
+### Real-Time "Thinking" Updates (NEW!)
+
+The `thinking_update` event provides real-time feedback showing the LLM's generation progress with token count and speed.
+
+**What You'll Receive:**
+```
+💭 "Generating analysis... (50 tokens, 40.0 tps)"    [at 5 seconds]
+💭 "Generating analysis... (100 tokens, 42.5 tps)"   [at 10 seconds]
+💭 "Generating analysis... (150 tokens, 44.1 tps)"   [at 15 seconds]
+```
+
+**Implementation Example:**
+
+```swift
+@State private var thinkingMessage: String = ""
+@State private var isThinking: Bool = false
+
+// In your SSE listener:
+func updateThinkingStatus(_ thinking: String) {
+    thinkingMessage = thinking
+    isThinking = true
+    
+    // Optional: Auto-fade after 10 seconds if no new updates
+    DispatchQueue.main.asyncAfter(deadline: .now() + 10.0) {
+        if thinkingMessage == thinking {
+            withAnimation {
+                isThinking = false
+            }
+        }
+    }
+}
+
+// In your UI:
+VStack {
+    if isThinking {
+        HStack(spacing: 8) {
+            // Animated thinking indicator
+            Image(systemName: "brain")
+                .font(.title2)
+                .foregroundColor(.blue)
+                .transition(.scale.combined(with: .opacity))
+            
+            Text(thinkingMessage)
+                .font(.body)
+                .foregroundColor(.secondary)
+                .lineLimit(1)
+                .truncationMode(.tail)
+            
+            Spacer()
+        }
+        .padding()
+        .background(Color(.systemGray6))
+        .cornerRadius(8)
+        .transition(.move(edge: .top).combined(with: .opacity))
+    }
+}
+.animation(.easeInOut(duration: 0.3), value: isThinking)
+```
+
+**Metrics Available in the Message:**
+
+The `thinking` string contains:
+- **Token count** - Total tokens generated so far (e.g., `150 tokens`)
+- **Generation speed** - Tokens per second (e.g., `44.1 tps`)
+
+You can parse these values if you want to display them separately:
+
+```swift
+// Parse the thinking message
+func parseThinkingMetrics(_ message: String) -> (tokens: Int, speed: Double)? {
+    // Extract: "Generating analysis... (150 tokens, 44.1 tps)"
+    let pattern = #"\((\d+) tokens,\s*([\d.]+) tps\)"#
+    if let regex = try? NSRegularExpression(pattern: pattern),
+       let match = regex.firstMatch(in: message, range: NSRange(message.startIndex..., in: message)),
+       let tokenRange = Range(match.range(at: 1), in: message),
+       let speedRange = Range(match.range(at: 2), in: message),
+       let tokens = Int(message[tokenRange]),
+       let speed = Double(message[speedRange]) {
+        return (tokens, speed)
+    }
+    return nil
+}
+
+// Use in UI for detailed display
+if let (tokens, speed) = parseThinkingMetrics(thinkingMessage) {
+    HStack(spacing: 12) {
+        VStack(alignment: .leading) {
+            Text("Tokens Generated").font(.caption).foregroundColor(.secondary)
+            Text("\(tokens)").font(.headline)
+        }
+        
+        Divider().frame(height: 24)
+        
+        VStack(alignment: .leading) {
+            Text("Speed").font(.caption).foregroundColor(.secondary)
+            Text(String(format: "%.1f tps", speed)).font(.headline)
+        }
+        
+        Spacer()
+    }
+    .padding()
+    .background(Color(.systemGray6))
+    .cornerRadius(8)
+}
+```
+
+**UI Display Options:**
+
+1. **Simple Status Badge:**
+   ```swift
+   Text(thinkingMessage).font(.caption).foregroundColor(.blue)
+   ```
+
+2. **With Progress Indicator:**
+   ```swift
+   HStack {
+       ProgressView()
+       Text(thinkingMessage)
+   }
+   ```
+
+3. **Animated Subtitle:**
+   ```swift
+   Text(thinkingMessage)
+       .font(.subheadline)
+       .foregroundColor(.secondary)
+       .transition(.opacity)
+   ```
+
+4. **Fade In/Out Effect:**
+   ```swift
+   Text(thinkingMessage)
+       .opacity(isThinking ? 1 : 0.5)
+       .animation(.easeInOut(duration: 0.5), value: thinkingMessage)
+   ```
 
 ---
 
