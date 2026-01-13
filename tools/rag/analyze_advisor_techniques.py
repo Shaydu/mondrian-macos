@@ -97,7 +97,8 @@ def analyze_image_techniques(image_path, advisor_id):
             "advisor": advisor_id,
             "image_path": abs_path,
             "enable_rag": "false",
-            "custom_prompt": technique_prompt  # Override with technique detection
+            "custom_prompt": technique_prompt,  # Override with technique detection
+            "response_format": "json"  # Request raw JSON response
         }
         
         response = requests.post(
@@ -110,26 +111,17 @@ def analyze_image_techniques(image_path, advisor_id):
             print(f"    [✗] Analysis failed: {response.status_code}")
             return None
         
-        # Parse response to extract technique JSON
-        response_text = response.text
-        
-        # Try to extract JSON from response
+        # Parse JSON response directly
         try:
-            # Look for JSON object in response
-            import re
-            json_match = re.search(r'\{[^{}]*"zone_system"[^{}]*\}', response_text, re.DOTALL)
-            if json_match:
-                techniques = json.loads(json_match.group(0))
-                print(f"    [✓] Detected techniques:")
-                print(f"        Zone System: {techniques.get('zone_system')}")
-                print(f"        DOF: {techniques.get('depth_of_field')}")
-                print(f"        Composition: {techniques.get('composition')}")
-                return techniques
-            else:
-                print(f"    [!] Could not parse techniques from response")
-                return None
-        except Exception as e:
-            print(f"    [!] Error parsing techniques: {e}")
+            techniques = response.json()
+            print(f"    [✓] Detected techniques:")
+            print(f"        Zone System: {techniques.get('zone_system')}")
+            print(f"        DOF: {techniques.get('depth_of_field')}")
+            print(f"        Composition: {techniques.get('composition')}")
+            return techniques
+        except json.JSONDecodeError as e:
+            print(f"    [!] Failed to parse JSON response: {e}")
+            print(f"    [!] Response: {response.text[:200]}")
             return None
         
     except Exception as e:

@@ -142,7 +142,44 @@ def analyze_image_with_metadata(image_path, advisor_id, metadata, db_path):
             if not profile_data.get('techniques'):
                 profile_data['techniques'] = yaml_techniques
         
-        # Update the profile with merged metadata
+        # Compute CLIP embedding for visual similarity search (optional feature)
+        try:
+            # Try to import and use CLIP for embeddings
+            # This is optional - if CLIP is not available, indexing continues without embeddings
+            try:
+                import torch
+                import clip
+                from PIL import Image
+                
+                # Check if embeddings are already computed (skip if they are)
+                if not profile_data.get('embedding'):
+                    print(f"  [→] Computing CLIP embedding...")
+                    device = "cuda" if torch.cuda.is_available() else "cpu"
+                    model, preprocess = clip.load("ViT-B/32", device=device)
+                    
+                    # Load and preprocess image
+                    image = preprocess(Image.open(abs_path).convert("RGB")).unsqueeze(0).to(device)
+                    
+                    # Generate embedding
+                    with torch.no_grad():
+                        embedding = model.encode_image(image)
+                        embedding_np = embedding.cpu().numpy().squeeze()
+                    
+                    # Store embedding as bytes
+                    profile_data['embedding'] = embedding_np.tobytes()
+                    print(f"  [✓] Embedding computed ({embedding_np.shape})")
+                else:
+                    print(f"  [→] Embedding already exists, skipping computation")
+            except ImportError:
+                print(f"  [ℹ] CLIP not installed - embeddings will be disabled. Install with: pip install torch clip")
+                # Gracefully continue without embeddings
+            except Exception as e:
+                print(f"  [⚠] Could not compute embedding: {e}")
+                # Gracefully continue without embeddings
+        except Exception as e:
+            print(f"  [⚠] Embedding computation failed: {e}")
+        
+        # Update the profile with merged metadata (and embeddings if computed)
         profile_id = save_dimensional_profile(
             db_path=db_path,
             advisor_id=advisor_id,
