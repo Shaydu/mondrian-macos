@@ -4,3 +4,11 @@ mondrian/mondrian.db
 *.db-shm
 *.db-wal
 analysis_output/
+
+# Massive training data and images
+training/ansel_ocr/the_camera_vol1/*.png
+training/ansel_ocr/the_camera_vol1/ocr_output/
+training/ansel_ocr/extracted_photos/
+training/ansel_ocr/the_print_vol3/
+training/user_images/
+training/datasets/ansel-images/
