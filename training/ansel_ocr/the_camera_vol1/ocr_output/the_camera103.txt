@@ -1,0 +1,45 @@
+See Figure 6-78
+
+88 Shutters
+
+is important, the faster shutter speed reduces the exposure to
+bient light, but is still long enough to admit the entire light output
+of the flash. In these cases, leaf shutters have the advantage over
+focal-plane shutters, since leaf shutters can be synchronized at theif
+fastest speeds. Studio and commercial photographers who
+quently use electronic flash may prefer a camera with leaf shutter
+for this reason.
+Conventional flashbulbs present a different synchronization pro
+Jem, The flashbulb requires a certain amount of time to reach
+peak output after being triggered, so release of the shutter
+be effectively delayed. Without this delay, the shutter would op
+and close before the bulb reaches full output, at least at the fa
+shutter speeds. The most common flashbulb synchronization is
+which refers to medium-speed flashbulbs. In addition, the FP
+is designed for use with focal-plane shutters, primarily the
+types which require a relatively long peak output to provide
+illumination during the time the curtain slit crosses the film,
+The essential point is to be sure the synchronization setting 0
+the camera or shutter matches the flash source in use. Most camer
+have at least M for flashbulbs and X for electronic flash. Wh
+using electronic flash with a focal-plane shutter, remember not
+exceed the maximum speed allowed by the shutter design [1
+1/60 to 1/125—consult the manufacturer's instructions).
+
+Shutter Efficiency
+
+Ideally, a shutter should open instantly, remain open for exactly:
+time interval of the shutter speed setting, and then close instar
+In fact, this is impossible, since the shutter’s mechanical comp
+nents take a certain amount of time to make their opening
+closing movements. With long exposures the opening and clo
+times are inconsequential in relation to the total exposure, but they
+are quite significant at fast speeds, The term efficiency refers to
+shutter’s actual performance compared with a theoretical, pe
+shutter that opens and closes instantly.
+Figure 6-8 graphs the performance of a typical leaf shutter,
+pared with the ideal. The rectangular area an the graph
+an ideal shutter; the left vertical line represents the shutter oper
+instantly, the horizontal line shows the shutter fully open for p
+cisely the total interval of the shutter speed, and the right vertical
+line shows the instantancous closing. A real leaf shutter takes

@@ -1,0 +1,59 @@
+See pane @
+
+192 Appendix
+
+One of the fundamental formulas in optics is the following:
+
+1 1 1
+
+ea aa 2 a
+Using this formula, you can, for instance, figure out the bellows
+extension (v| required to photograph a subject at a certain distance
+{u} with a given lens focal length {F), (In this formula, and all others,
+the units must be identical, If you use the focal length in inches,
+you must convert the subject distance to inches also.| For example,
+if you want to photograph a subject one foot in front of the lens
+using a 4-inch focal length, you would first re-write the formula to
+
+solve for v:
+1
+
+= eis eee &
+vF wu
+
+Then,
+
+eee
+poy 6
+or, v = 6 inches, the distance required from lens nodal plane to film,
+Remember that, for these calculations to be accurate, the distances
+must be measured from the lens nodal plane.
+
+The second basic formula is the following:
+
+ea
+v
+
+al-
+
+1 ¥
+goto )
+‘Thus the magnification of the image is equal to the ratio of image
+and object sizes, which equals the ratio of image and object dis-
+tances. If the image size is 4 inches, with a subject 2 feet (24 inches)
+high, the magnification is given by:
+4 1
+M= = 3 = 0167
+
+‘The magnification will be smaller than 1 if the image is smaller
+than the subject, and greater than 1 if the image is larger |ie.,
+
+Note that these two formulas explain the special conditions that
+prevail when making a life-size (1:1) photograph.< If the image size
+is equal to the subject size, then I + O = 1, the magnification, and,
+from formula (2}, v must also be equal to u, since their ratio is also
+1, Looking at formula (1), you will sce that substituting u for v gives
+
+2 1
+
+uF

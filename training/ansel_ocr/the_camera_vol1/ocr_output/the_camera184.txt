@@ -1,0 +1,48 @@
+Meters and Accessories 169
+
+format cameras, using an adapter attached to the lens, The Hassel-
+blad lens hood accepts 3-inch square gels; for 35 mm cameras the
+inch square gels are usually large enough.
+
+Since a filter is part of the optical system, its quality is important.
+While most glass filters are of very high quality, I suggest avoiding
+bargains since a poor quality filter can defeat the purpose of buying
+superior lenses. By adding elements to the optical system, filters
+can also increase flare and inter-teflections. Many good quality
+glass filters are optically coated to reduce this problem, Whenever
+two or more gel filters are used, it is best to locate one in front of
+the lens and the other behind it (a simple matter with view-camera
+lenses, though not possible with others). Each filter will then face a
+coated lens surface, and the problem of inter-reflections is reduced.
+
+Filters are assigned a filter factor, listed by the manufacturer, un-
+less their density is so small it can be disregarded. The factor indi-
+cates the exposure increase required to compensate for the light lost
+because of the filter. Like other exposure factors,< the filter factor
+is multiplied by the exposure time or converted to f-stops to correct
+the aperture. The factor is usually correct for average daylight.
+During the early morning or late afternoon, when the light is
+warmer {more red}, the factor for a yellow or red filter is less than
+in the middle of the day, and higher factors are required for these
+filters at high altitudes.
+
+‘The polarizer is a unique filter that eliminates certain kinds of
+glare and reflection at the polarizing angle, It is also the only
+means of darkening the sky in color photographs, although its
+effect is dependent on the position of the sun in relation to the sky
+area photographed. The effect of the polarizer changes as the filter
+is rotated, and it should be turned while viewing through it to de-
+termine the optimum orientation for cach subject. The filter factor
+for a polarizer is usually 2.5, it is not correct to assume that the
+‘exposure factor increases as the amount of polarization increases,
+since this would result in overexposure of the non-polarized areas,
+
+Filters are an important part of photography. Since their use
+affects the image values, they will be discussed in greater detail
+in Book 2.
+
+ELECTRONIC FLASH
+
+Advances in technology have made small electronic flash units
+extremely versatile, and at the same time have dramatically re-
+duced their size. Many professional photographers carry small

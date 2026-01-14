@@ -1,0 +1,47 @@
+2, pare 85
+
+mn
+
+Darkroom Design and Equipment 37
+
+that include a pressure bar that firmly clamps the print down along
+the entire cutting edge; this helps prevent the “creeping” of the print
+that is a major cause of non-straight edges, The pressure bar should
+be relatively wide and padded to prevent indentations on print or
+mount board. Check freqently to clear this pad of any particles; there
+is no way to repair a dent on a print! I recommend buying a trimmer
+with a safety bar to prevent accidents
+
+Reflection Densitometer
+
+In Book 2 I described the transmission densitometer used in density
+measurement of negatives. “ For precise evaluation of prints the
+reflection densitometer can be a valuable piece of equipment, and in
+color printing it may be essential. As discussed later, “the reflection
+densitometer is a device that projects a controlled beam of light at
+an angle on a small area of the print, and measures the amount
+reflected, The reflected light is interpreted in the logarithmic values
+of density.
+
+Stabilization Processors
+
+A stabilization processor is a small mechanical unit that permits
+very rapid processing of prints. Special stabilization papers, usually
+available in variable contrast, incorporate developing agents that
+work rapidly as the exposed paper passes through the machine. The
+print emerges slightly damp and “stabilized,” meaning it can be
+viewed under normal light for a moderate length of time. Being sta-
+bilized rather than fixed, the print may last only a matter of months
+without signs of deterioration, for permanence the stabilized print
+must be given conventional fixing and washing. The stabilization
+process is thus potentially useful for making quick proofs or prints
+that are to be used immediately (such as for newspaper engraving or
+proofs for a client). Ihave found, however, that the savings in time
+are minimal unless the photographer is producing a very consider-
+able number of prints for short-term use. I would seldom consider
+it advisable to produce impermanent prints!
+
+PH Meter
+
+Thave used a good pH meter (Beckman Model 3560 Digital} in tests
+and experiments relating to the preparation of this text. It has con-

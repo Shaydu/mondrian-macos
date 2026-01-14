@@ -1,0 +1,52 @@
+See pape 117
+
+180 Special-Purpose Equipment and Techniques
+
+but you should consult the manufacturer's recommendations or
+conduct comparison tests before using this procedure. With a view
+camera, the required extension is usually attained by using the
+standard bellows.
+
+It is worthwhile remembering that, if you wish to obtain 1:1
+fic, life-size) images of a subject, the total extension of the lens
+must be twice its focal length.4 Note also that, if you cannot
+achieve the desired magnification because of insufficent length of
+the bellows or extension tubes, changing to a shorter focal length
+Jens will increase the magnification. However, the short focal
+lengths must be physically closer to the subject, with the result
+that the space available for lighting or adjusting the subject be-
+comes quite small.
+
+‘One unavoidable result of close focusing distances, whether
+achieved using supplementary lenses or focus extenders, is that the
+depth of field becomes extremely shallow, measured in inches or
+fractions of an inch. As the magnification increases, the depth of
+field decreases. It is therefore almost always necessary to use a very
+small aperture with the camera mounted on a tripod or laboratory
+stand, and to be critically selective in focusing.
+
+‘A second reason for using a tripod is that the relatively large mag
+nification of the image also magnifies movement of the camera
+during exposure, just as using a long focal length lens does.¢ Even
+with a tripod, very small mavements, like the vibrations caused by
+the mirror of a single-lens reflex camera, are magnified to the point
+where they can cause image degradation. Many single-lens reflex
+cameras provide a manual means to raise the mirror before ex-
+posure to reduce this effect (vibration caused by the mirror return-
+ing to its viewing position can be ignored, since it occurs after the
+shutter has closed}. This mirror lock-up control should certainly
+be used at high magnifications.
+
+Precise focusing when very close to the subject is best accom-
+plished by moving the entire camera closer to or farther away from
+the subject, rather than by adjusting the lens-to-film distance. When
+working close to the subject, the very shallow depth of field makes
+the camera-to-subject distance critical, and a small adjustment in
+this distance brings different planes of the subject quickly into
+focus.* If we want to alter the magnification, we make a small
+
+‘This operation is the reverse of pormal working procedure, where the depth of focus
+(Le, the distance behind the Jens through which the film ean be moved! without signif
+‘cantly disturbing focus) is the critical clement, Normally, we focus by making emall
+‘changes in the Fenvaovilm diseance, and change the image séze by moving the camera
+cloner to af farther from the subject.

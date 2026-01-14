@@ -1,0 +1,21 @@
+Lenses 77
+
+Astigmatism (Figure 5-28), With an astigmatic lens, an off-axis
+subject point will be imaged as a short line at one focus distance, a
+short line perpendicular to the first at another focus distance, and
+a small disc in between. It is very difficult to fully correct astigma-
+tism over the entire field, so the lens designer works for an accept-
+able compromise, Astigmatism will be seen as the inability to focus
+sharply both horizontal and vertical lines near the edge of the film.
+Stopping down the lens will reduce the effect of astigmatism.
+
+Distortion (Figure 5-29). A simple |single-clement] lens will produce
+distorted image shapes depending on whether it is ahead af or be-
+hind the aperture. With the lens behind the stop, “barrel” distortion
+is introduced, and with the lens ahead of the stop, “pincushion”
+distortion results. It is corrected in lens design by ensuring that the
+distortion introduced by the lens elements behind the aperture off-
+sets that of the elements ahead of the aperture. If present in a lens,
+stopping down will not help. It will be present to some degree when
+the single elements of convertible or symmetrical lenses are used,
+

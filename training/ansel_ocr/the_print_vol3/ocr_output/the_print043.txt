@@ -1,0 +1,50 @@
+See Book 1, pages 36, 69
+
+See page 75
+
+30 Darkroom Design and Equipment
+
+tendency of a lens to change focus when stopped down — some good
+camera lenses show this property when used for enlarging), or it will
+require a readjustment of the focus at the aperture used for exposure.
+
+Coating is very important, since this greatly enhances contrast
+and acutance in the image. An uncoated or dirty lens may demand
+as much as one full paper-grade more contrast for the expected re-
+sults. Flare “and loss of contrast are also caused by reflections within
+the enlarger, reflections from the walls near the enlarger, and light
+leaks from the enlarger itself. All these must be carefully checked
+to avoid degraded print quality. ©
+
+The enlarging lens, like camera lenses, will usually give its opti-
+mum image sharpness if stopped down two to three stops from the
+widest aperture. A quite small aperture may be necessary to main-
+tain overall sharpness if either the negative or paper has a tendency
+to buckle
+
+SAFELIGHTS
+
+‘ee Book 2, page 21
+
+General purpose (graded) photographic papers are intentionally made
+to be sensitive to blue light only (comparable to the earliest photo-
+graphic plates “ so they can be used with relatively bright “yellow”
+safelight filters. Variable-contrast papers, such as Kodak Polycon-
+trast or Ilford Multigrade, are sensitive to a broader range of colors,
+and may require other safelight filters. There are also orthochromatic
+and panchromatic printing materials, and these must not be used
+with yellow safelights. The most common orthochromatic dark-
+room materials are high-contrast “litho” films (such as Kodalith)
+which require use of a red safelight. Panchromatic papers (e.g., Kodak
+Panalure} are made for black-and-white printing from color nega-
+tives; such papers must be handled in total darkness, or under the
+weak dark amber safelight specified (Kodak No. 10).
+
+There are a wide variety of safelight types, from inexpensive plas-
+tic units that screw into an ordinary light fixture to the powerful
+sodium-vapor lamps. I do not consider the “ruby lamps’’ or some
+molded plastic units which purportedly contain the “filter” in the
+glass or plastic itself, to be truly safe. Irecommend instead safelights
+that are designed to accept the Kodak filters, as these filters are
+made to high standards and are given recognized designations that
+can be used to match the filter with the paper or film,

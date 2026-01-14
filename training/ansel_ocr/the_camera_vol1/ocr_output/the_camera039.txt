@@ -1,0 +1,40 @@
+See Figure 3-4
+
+See Figure 3
+
+See page 82
+
+See page 86
+
+7
+
+3-4, Medians-formt &
+
+2, The Hasselbl
+
+24 Medium-Format Cameras
+Single-Lens Reflex Cameras
+
+Most medium-format single-lens reflex cameras resemble the
+Hasselblad in their basic “box” construction, although a few, like
+the Pentax, resemble enlarged 35mm cameras.4 The advantage of
+the box configuration is that it is totally modular: the camera body
+
+contains the reflex viewing mirror and other mechanisms, and the
+photographer attaches film magazines, lenses, and viewfinder sys
+tems as desired. Cameras of this variety are designed as “systems,”
+with a wide selection of interchangeable components.
+
+Unlike 35mm single-lens reflexes, many medium-format cameras
+use a leaf shutter? which is part of the lens assembly, since it is
+difficult to design an efficient focal-plane shutter for the larger
+
+image size of 120 film. The leaf shutter has the advantage of being
+able to synchronize with electronic flash at all shutter speeds,<
+plus the fact that failure of the shutter disables only the attached
+lens, not the entire camera. Since the leaf shutter is located ahead
+of the viewing mirror, its cycle is quite complex: the shutter, which
+is open for viewing, must close as the mirror rises, then open and
+close for the exposure, In addition, there is a light protective blind
+at the film plane which opens just before the shutter gives the
+exposure, unless the mirror performs this function, The mirror is

@@ -1,0 +1,47 @@
+See page 13,
+
+See page St
+
+136 Cameras on Tripods
+Reciprocity Effect
+
+The use of very long exposure times raises another potential prob-
+Jem because of the reciprocity effect (its full title is “failure of the
+Reciprocity Law”}. Since it relates to exposure, the reciprocity effect
+is fully discussed in Book 2, but a few comments should be made
+here. We take for granted the relationship of shutter speeds and
+apertures; a change from 1/60 to 1/30 second is equivalent to open-
+ing the aperture by one stop. The same is not true, however, when.
+exposure times are very long (or very short). Because of the reciproc
+ity effect, if our meter indicates an exposure time of 4 seconds, we
+may actually have to give 10 seconds or so to secure the densities
+‘we expect.
+
+For purposes of this volume, it is sufficient to issue a warning: i
+the indicated correct exposure time is longer than one second, or
+longer than about 1/8 second with some color films, you may
+to adjust the exposure {and filtration, with color film} to compen
+sate for the reciprocity effect, Instructions can be found with the
+film data sheet, or obtained from the manufacturer. Since the cor-
+rection required differs from film to film, compensation is
+indicated on exposure meters, and the photographer must determine
+the adjustment himself. An exception is the Sinarsix focal-plane
+meter, which has, among various dials for special purposes, one
+that indicates reciprocity effect adjustment, However, even this
+should be considered as only a guide for careful experimentation.
+Since the reciprocity effect alters the negative contrast (by
+the low-density areas before the high-density areas), further com-
+pensation is required by reducing film development.
+
+Focus and Aperture
+
+The use of a tripod implies that the photographer will have time:
+make a very careful check of the ground glass or viewfinder image.
+All visual relationships should be carefully examined,
+the relative positioning of different subject areas, location of
+borders, parallax (if any),¢ and, of course, focus and depth of field.
+With subjects of great depth, focus must be adjusted carefully,
+using the principle of focusing about one third of the way from
+nearest to the farthest objects that must be sharp,< Some medium:
+format camera viewing systems include a magnifier that
+very precise examination of focus, with a view camera, I urge you

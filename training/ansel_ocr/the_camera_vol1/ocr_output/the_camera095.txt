@@ -1,0 +1,46 @@
+80 Shutters
+
+The “correct” exposure for any film is always about the same
+total amount of absorbed light energy. Films have different sensi-
+tivity to light, indicated by their ASA index numbers. We measure
+the subject luminances, and then use the aperture and shutter speed
+settings to control the amount of light from the subject that reaches
+the film, so the total “exposure” is the same whether our subject
+is very bright or dim. The formula expressing this exposure rela-
+tionship is;
+
+Exposure = Intensity X Time, or E=It,
+
+In this formula, intensity refers to the light that reaches the film,
+not just the subject luminances, and therefore depends partly on
+the aperture setting. Relating the subject luminances with the film's
+sensitivity, and indicating the aperture and shutter speed that will
+provide optimum exposure is the function of the exposure meter
+(with an additional large measure of human judgment; see Book 2).
+‘Once the desired exposure is known, the formula above shows
+that, if the intensity is reduced, the time must be increased to ob-
+tain the same total exposure. To facilitate such adjustments the
+modem series of shutter speed settings are in geometric progres-
+sion, related by a 1:2 ratio, so that each shutter speed is one half
+or twice the adjacent value: one second, 1/2, 1/4, 1/8, 1/15, 1/30,
+1/60, and so on. The rounded values—1/15 instead of 1/16, 1/60
+instead of 1/64—are well within acceptable tolerance limits.”
+Since this 1:2 relationship exists with both the shutter speeds and
+the apertures, there are always a number of different {-stop/shutter-
+speed combinations that will give the same total exposure to the
+film. For example, if an exposure of 1/2 second at {/22 is correct,
+then any of these other combinations would also be correct: 1/4
+second at £/16, 1/8 at £/11, 1/15 at £/8, 1/30 at £/5.6, and so on.
+In each case the shutter speed is one half the previous value, but
+the aperture is opened one stop to admit twice as much light.
+Most shutters have one or two additional settings for long ex-
+posures: B stands for bulb, which keeps the shutter open for as long
+‘as the shutter release is depressed, and T for time, which opens the
+shutter the first time the release is pressed and closes it the second
+time, or through a separate action such as turning the shutter speed
+dial. The B setting is usually convenient for exposures of one-half
+to several seconds, and T is useful for very long exposures. On
+cameras that have only the B setting, the use of a locking cable
+
+“The accepted early shutter speed sequence was 1, 1/2, 1/5, 1/10, 1/25, 1/50,
+1/100, 1/250—hardly 4 consistent progression!

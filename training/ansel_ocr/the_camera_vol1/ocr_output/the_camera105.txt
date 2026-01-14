@@ -1,0 +1,37 @@
+Figure 6-9. Shutter efficiency
+When the lens is set at »ammall
+
+aperture shutter efficiency is igh
+since the zperture is uncavered
+relatively quickly Compare this
+sequence with Figure 6-3, where
+
+the shutter must uncaver the fall
+lens aperture and efficiency is cor
+dingly lower
+
+90 Shutters
+
+at slower speeds, at one or ¥ second, the efficiency should be over
+95 percent
+In addition, the aperture selected
+
+ters the actual exposure time
+for s given leaf shutter setting, since the blades uncover a small
+aperture more quickly than a large one, Thus the shutter’s efficiency
+increases at small apertures, Its accuracy, however, may be greatest
+at large apertures if the shutter, as is usually the case, has been
+caliby fall aperture. In measuring the effective “speed” of
+leaf shutter settings for view-camera lenses, I select £/16 as the
+pivotal lens stop, Evaluations made at this stop are usually within
+about 10 percent, the equivalent of 1/7 Fstop, a very acceptable
+degree of accuracy
+
+ted for
+
+With a focal-plane shutter, the efficiency and accuracy are not
+affected by aperture. Efficiency is, however, related to the distance
+the shutter curtains from the film plane, and to the speed of
+travel of the curtains. An ideal focal-plane shutter would have the
+curtains exactly at the film plane. The modern focal-plane shutter
+

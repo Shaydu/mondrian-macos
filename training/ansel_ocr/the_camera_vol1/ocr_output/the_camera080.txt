@@ -1,0 +1,42 @@
+Lenses 65
+
+Since the subject is always flat, they are designed to have very flat
+fields¢ at relatively close focusing distances only. To obtain the
+required quality, it is usually necessary to limit the maximum aper-
+ture to about f/8 or f/11, but long exposures are not a problem in
+copy work. There has always been debate whether the use of process
+lenses is advantageous with distant subjects. In comparison with
+modern standard lenses I can see no advantage whatever, and per-
+haps this myth should be laid to rest once and for all. Process lenses
+do have magnificent optical quality, but small apertures are re-
+quired for distant subjects. (One process lens I had showed a definite
+focus shift at about 30 feet from the subject.| Process lenses also do
+not have much coverage. Enlarging lenses, similarly, are not de-
+signed for distant subjects, and must have very flat fields in the
+magnification ranges encountered in photographic enlarging, since
+both the subject (the negative) and the image (on the printing
+paper) are flat.
+
+Perspective-control lenses, First introduced for the Nikon 35mm.
+single-lens reflex camera, these lenses derive their name from the
+fact that they allow certain adjustments with a small-format camera
+similar to the rising, falling, and sliding front assembly of a view
+camera, and they can be used following the same principles.4 A
+more accurate name, in my opinion, would be convergence-control
+lenses.¢ Most such lenses are restricted to a limited “shift” of the
+lens in any one direction, while keeping the lens axis perpendicular
+to the film plane. Some, however, also permit tilting the lens to
+adjust the plane of focus. The ability to shift the lens laterally
+(parallel to the film) is especially useful when photogtaphing archi-
+tecture and other subjects that must be geometrically accurate, or
+nearly so, on the film. Instead of pointing the camera upward or
+sideways to photograph the building, the camera is kept level and
+the lens shifted, thus preserving the rectangular shape of the struc-
+ture. Lenses that provide a tilting adjustment allow the photog-
+tapher to focus on a subject plane that is not parallel to the film,
+such as a landscape with a long receding foreground and important
+distant elements, The bellows construction of the Rolleiflex SL66
+permits some tilt of the lens.
+
+Supplementary and converter lenses. Supplementary lenses attach
+to the front of a lens assembly to permit close focusing distances,

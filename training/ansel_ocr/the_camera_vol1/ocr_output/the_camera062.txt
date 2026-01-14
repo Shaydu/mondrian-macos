@@ -1,0 +1,46 @@
+Lenses 47
+
+a control ring. The series of lens stops used almost universally to-
+day to provide a standard exposure sequence is as follows:
+
+fl 14 2 28 4 56 8 11 16 22 32 45 etc*
+
+These standard aperture numbers are known as major stops, or
+whole stops, and are in geometric sequence. Each stop transmits
+twice or one-half the amount of light of the adjacent value. Larger
+f-stop numbers represent smaller apertures, £/11 smaller num-
+ber than £/16, but admits twice as much light, The aperture scale
+‘on a lens will usually also have intermediate positions between
+the whole-stop divisions, in increments of either one-half stop or
+one-third stop. (One-third stop intervals correspond to a change
+in film speed from one ASA index number to the next; see Book 2.)
+
+When setting the aperture on a lens you should always approach
+the f-stop from the same direction, moving the index mark down
+the scale toward the desired setting, There may be a certain degree
+of slack in the mechanism that can cause slightly different lens
+openings at the same setting, depending on whether the f-stop is
+approached by stopping down from larger apertures or opening up
+from smaller ones.
+
+The f-stop relates exposure to the effective diameter of the lens,
+but disregards certain other factors, primarily the efficiency of the
+lens in its actual transmission of light, Since lenses of many ele-
+ments are less efficient than those of few elements—because of re
+flection of light at each surface and the optical density of the
+glasses—attempts have been made to develop a scale that indicates
+the actual transmission of a lens. A scale of “t-stops” has some-
+times been substituted for f-stops to indicate light transmission,
+These values are seldom seen today, except in some lenses for
+cinematography, primarily because the efficiency of lenses has been
+greatly increased by lens coating techniques. The t-stop values,
+while fine for determining exposure, also distort other mathemat
+cal values that relate directly to the true f-stop, such as depth of
+field and hyperfocal distance.
+
+‘The full aperture designations Include decimals ({/11.3, 622.6, ete|, but these ate
+‘wsually omisted as not of practical significance. Note also that each Fstop number in-
+creases by a factor of 1.414, the square root of 2, since the light transmission depends on
+the azea of the stop. The older European aperture sequence was £/4.5, 16.3, 09, 127,
+18, (725, etc. The numbers are different, but the ratio of the mops t the same.
+

@@ -1,0 +1,41 @@
+188 Special Printing Applications
+Prints for Reproduction
+
+For conventional process-camera photoengraving, I have always
+found it best to make a slightly “soft” print, being sure to maintain
+slightly more detail in the subtle high and low values than I expect
+to be retained in the final reproduction. In my work with George
+Waters in San Francisco (printing, for example, Images 1923-1974")
+we agreed on a 1.50 reflection-density range for the textural range of
+the reproduction print (excluding the deepest blacks or true whites).
+Hence these reproduction prints were somewhat shorter in scale
+than fine display prints. The plate-making and printing were then
+done with fine prints at hand for comparison.
+
+With the laser-scanning method I have found that the reflection-
+density range of the reproduction print can be higher, about 1.80. It
+is therefore frequently possible to use unmounted fine prints for
+scanner reproduction. However, the scanner technician may have
+different ideas on this subject, and it is best to consult with him and
+the pressman if possible prior to making the prints. The maximum.
+print size for scanning is usually 1620 inches, although a few ma-
+chines exist that can take a larger print. The actual image area may
+need to be slightly smaller, as margin space is required for taping the
+print to the cylinder.
+
+Once you are satisfied that your prints are suited to the process,
+be certain they are well spotted with neutral black/gray material.
+Large defects should be left to a professional retoucher, often avail-
+able at the printing shop. The prints must also be free of surface
+defects such as breaks or scratches. Be sure to leave some margin
+around the full image; if you trim the print to exactly the final image
+you want, you may be sure you will loose some image area on each
+edge because of the “window” used in making the plates. Mark crop
+lines precisely in the border area using a ruler and square. If possible,
+provide a trimmed proof print of exactly the cropping you want to
+appear in the reproduction. I have found it most discouraging to
+define the edges of an image most carefully, only to find that the
+photoengraver has overlooked the instructions. By submitting a care-
+fully trimmed proof there can be little excuse for error.
+
+“Published by New York Graphic Society Books, Boston.

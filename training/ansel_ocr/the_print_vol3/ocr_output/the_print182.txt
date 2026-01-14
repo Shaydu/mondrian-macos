@@ -1,0 +1,36 @@
+Chapter 8
+
+Special Printing
+Applications
+
+Several specialized printing applications require modifying the stan-
+dard processing, and we shall consider some of these situations in
+this chapter. Bear in mind that the specific recommendations I make
+may well need to be adjusted to fit your existing circumstances and
+working conditions.
+
+HIGH-VOLUME PRINTING
+
+Seepage 23
+
+I consider high volume to refer to the making of an “edition” of
+about 25 to 100 prints or more of the highest quality, not the mass
+production of prints by machine. It is my conviction that, with clear
+visualization and adequate equipment and procedure, any number
+of perfectly consistent prints can be made to match a first “pilot”
+print, Thave frequently spent much more time getting the pilot print
+just right than making a hundred subsequent prints, Consistency is
+the primary requirement
+
+You must consider several factors to ensure the uniformity of the
+prints:
+
+1, Use the same brand, type, and emulsion number of paper
+
+2. Use a printing or enlarging lamp of consistent intensity, with
+provision for voltage stabilization or, better yet, output stabilization
+such as is provided by the Horowitz unit.<
+
+3. Use the same developer formula throughout, with the same
+dilution, temperature, and additives (such as restrainer), if any. For
+

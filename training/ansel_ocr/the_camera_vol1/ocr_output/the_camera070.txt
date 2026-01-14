@@ -1,0 +1,43 @@
+Figure 5-11. Angle of view end
+conerage. The word coverage is used
+to deseribe the total image circle
+projected by 4 lens. Thus the
+cireular image area represents the
+twtal coverage of the lens shown,
+regardless of what camera or film
+format is wed. The image definition
+and brightness are usually reduced
+‘bear the edge of the circular feld
+
+‘Angle of view miters to the area
+‘seem on the film. Thus the fens
+‘would have s narrower angle of
+‘view if ised with a 4x5 camera than
+‘with an 410 camera, even though
+the tonal ens coverage and image
+‘ize do not change. For view-camere
+sea ben's total coverage must be
+signiBesntly larger than the filzn
+format if adjustinents are to be
+‘wed [ace Chapter 10)
+
+Thus all 90mm lenses have the same angle of view for a given
+film format {assuming they cover the format}, since angle of view
+refers to the subject area projected on the film. But different 90mm
+lenses for 4x5 cameras may have very different coverage (total
+image-circle}, depending on various design factors.
+
+With all 90mm lenses, the size of a given subject will be the same,
+since image size depends on focal length. However, the total area
+‘of the subject projected on the film will increase if the film size
+increases.4 Thus a 90mm lens has a wide angle of view on a 4x5
+camera, but 4 narrow angle when used on the 35mm format. This
+90mm focal length is considered shorter than “normal” for 4x5
+photography, and longer than “normal” for 35mm.
+
+The Normal Lens
+
+‘A “normal’ lens is defined as one whose focal length is about equal
+to the diagonal of the film format. Such a lens will have an angle
+of view of about 50° to 55°, comparable to what we consider normal
+human vision. A 50mm (2-inch) lens is considered normal for

@@ -1,0 +1,55 @@
+Appendix 193
+
+or, u = 28. Thus the subject distance must be equal to twice the
+focal length of the lens, Similar substitution of v for u gives v = 2P,
+the bellows extension required is also equal to twice the focal length.
+
+Formulas (1) and (2) can be combined algebraically to yield two
+others, which facilitate certain calculations:
+
+v= (M+ IF
+and
+
+=(1
+o- (r+ 1)F
+For example, you may need to know what focal length lens to use
+
+to produce a certain image size of a given subject. If you want to
+make a 5-inch-high image of a subject that is 2 inches high, using a
+camera with a maximum bellows extension of 14 inches, what focal
+Jength lens is required?
+
+1 = Sinches
+
+O = 2inches
+
+vy = Minches
+
+F ?
+
+First, solve for M:
+
+we iiget Dd
+sigs Yip Cink)
+
+Then solve the formula y = (M + 1)F for F:
+14 = (25 + IF = 35F
+
+= 4.
+soiled 1 dali
+
+‘Thus the longest focal length you can use is a 4-inch (about 100mm)
+lens.
+As another example, suppose you want to project 35mm slides
+‘on a screen that is 60 inches wide, using a 5-inch lens. How far
+away from the projector must the screen be?
+
+In this case the image size, I, is 60 inches, and the subject is the
+slide, which is about 1.5 inches wide. Thus
+
+I = 60 inches
+O = 1,5inches
+so M = 40,
+
+With a 5-inch lens, the distance from the lens to the image, v, can
+be found by solving

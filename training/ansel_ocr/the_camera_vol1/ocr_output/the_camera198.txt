@@ -1,0 +1,38 @@
+Figure 13-3. Ponorsmic camera. The
+Widetux camera uses 2 moving lens
+‘wo produce an ultrawide feld of
+Wiew. The les is shown here in
+imateyele, swinging from right to
+Jefe during the exposure
+
+Special-Purpose Equipment and Techniques 183
+
+graphing very wide or panoramic fields. The panoramic camera
+has existed in a number of configurations for many decades, usually
+intended for landscape or special function (banquet and group) pho-
+tographs. Some early models, like the famous Cirkut camera of the
+carly 1900s, operated by turning the entire camera during exposure,
+using @ geared platform to move the film behind a slot in precise
+synchronization with the movement of the camera. Such instru-
+ments were able to expose a full 360° field (or more or less if de-
+sired) on a single long strip of film.
+
+The alternate design for panoramic cameras is to pivot the lens
+while keeping the camera body stationary. This design survives
+today in the Widelux, a small-format panoramic with a lens that
+‘swings through an are during the exposure, The film is held in
+place in a semicircular curve at the rear of the camera, and it is
+exposed through a slit shutter that pivots with the lens. The cur-
+rent Widelux is a 35mm camera [a 120 roll-film version, the Panon,
+was made in the 1950s), which has a field of view in the horizontal
+direction of about 140°, It produces an image of roughly 1x2%
+inches, with none of the distortion that would appear if an ex-
+tremely short focus lens were used to approximate its extreme
+field of view.
+
+In using such a camera, itis important that it be precisely leveled
+before exposing. Many panoramic cameras have a level built in,
+and the use of a tripod is usually desirable, However, unusual com-
+positional effects can be obtained by tilting the camera up or down,
+In addition, if the subject moves during the exposure, you can ex-
+pect severe distortion. The subject will be radically compressed if

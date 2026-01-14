@@ -1,0 +1,65 @@
+I Lava, Mauna Loa, Hawaii,
+
+1948). Lava rock is of quit
+although some, like
+bright specular reflections.
+
+the shapes and textures
+Tchese to place the shad-
+‘on the exposure scale
+fall development. Here
+s were placed on
+N#2 development was
+ed the camera back tlt o
+imum depth of fcldjsce
+ptr 10).
+‘son Brovira Grade 3, al-
+ay would probably use
+
+Printing Materials 57
+
+first, gradually building up the dark values as it penetrates into the
+emulsion. Given long development time (up to 8 or 10 minutes) it
+will approach the effect of Dektol in deep black areas, with a rich
+and neutral print color. [use it alone, or combine it with Dektol for
+more subtle contrast control. *
+
+Temperature Effects
+
+The action of a developer solution responds {like most chemical
+reactions) to temperature change. Raising the temperature makes
+the action more rapid, so that less time is required for development,
+lowering the temperature retards the action, so that more time is
+needed. As with film development, “ 68°F (20°C) has been selected
+as the standard print-processing temperature for a variety of reasons,
+including practical developing time and efficiency of solutions. For
+optimum processing, all solutions including the wash water should
+be as close to this temperature as feasible.
+
+The change of activity caused by a temperature change can be
+represented by the temperature coefficient for the developing agent.
+Ina formula containing only one developing agent, a single temper-
+ature coefficient applies, and the relationship between temperature
+and developing time is easily determined. But in a developer that
+contains two or more agents, each may have a different coefficient,
+and it becomes more practical to experiment than to compute.
+
+However, a change of temperature may affect not only the devel-
+opment time, but also the character of the developer, so that the
+print quality changes. For example, with metol the required devel-
+opment time varies uniformly with temperature change over a wide
+range, while the activity of hydroquinone is somewhat irregularly
+affected by temperature variations. Hydroquinone loses much of its
+activity at about 55°F, but has a very high activity at or above 75°F.
+Consequently, a metol/hydroquinone developer, producing normal
+effects at 68°F, gives somewhat softer effects as the temperature is
+lowered and the activity of the hydroquinone is thereby diminished;
+more vigorous effects occur as the temperature is raised and the
+hydroquinone becomes more active. Roughly speaking, a cold metol/
+hydroquinone developer (about 50°-55°F; 1012°C) acts as though
+it were mostly metol. A certain amount of control is possible
+through variations in the temperature of a metol/hydroquinone de-
+veloper, but the results should be judged on the basis of color as well
+as contrast. I became well aware of this effect while trying to get
+good prints in a chilly darkroom during cold winters in Yosemite!
+

@@ -1,0 +1,45 @@
+Lenses 73
+
+Great care must be taken when examining the view-camera
+image for vignetting. We focus with the lens set at maximum
+aperture, but some vignetting may not be visible until the lens is
+stopped down, Thus we must check the ground-glass image at the
+Jens stop used for exposure {the same applies with single-lens reflex
+cameras, where the depth of field preview button allows us to check
+at the aperture used for exposure). One way to check for vignetting
+is to look along the edge of the lens shade through the lens, to see
+if the comers of the ground glass are visible. Or, if the ground glass
+has cut-off corners, we can look through them through the lens to
+sec if the edges of the shade intrude on the picture area. If a mounted
+filter is added between the lens and lens shade, be sure to check for
+vignetting with the filter in place, since its mount may extend the
+shade far enough to cut off the image comers.
+
+IN AND “SHARPNESS”
+
+Some photographic issues seem to defy precise explanation. Visual
+impressions are difficult to assess in verbal form, and we grope for
+words that encompass the qualities of the medium. One such elu-
+sive concept is sharpness, It is worthwhile in this volume to consider
+sharpness and related concepts in physical terms, but in discussing
+mechanical or optical issues we must not lose sight of the much
+greater importance of image content—emotional, aesthetic, or
+literal. I believe there is nothing more disturbing than a sharp image
+of a fuzzy concept!
+
+‘The impression of sharpness of an image is a function of many
+separate factors relating to both the lens and the negative and print
+materials. The term resolution is frequently used to describe a lens's
+ability to produce an image that appears “sharp,” but other consid-
+erations besides actual resolving power are involved. True resolving
+power is the ability of a lens (or a film] to render separate, fine detail
+distinguishably. Closely spaced lines on a test chart are photo-
+graphed with the lens to measure its ability to record these lines
+and spaces as they become narrower. The groups of line pairs are
+arranged both horizontally and vertically, as an indication of the
+Presence of astigmatism.4
+
+Acutance refers to the rendering of a sharp edge in the subject as
+a sharp edge in the photograph. An image may have high acutance
+without necessarily having high resolution, and vice versa. Another
+

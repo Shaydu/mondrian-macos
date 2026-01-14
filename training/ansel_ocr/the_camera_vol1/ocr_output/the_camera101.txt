@@ -1,0 +1,48 @@
+See Figure 6-5
+
+See Figure 6-6
+
+See Figure 6-7A
+
+86 Shutters
+
+For example, assuming a stationary camera and a focal-plane
+ter that moves horizontally, the front edge of a moving
+will be recorded at a different moment than the rear edge, and the
+image will have moved between the times these two areas are
+posed.¢ The result is that the image will be either stretched or com
+pressed, depending on the direction the image moves at the fil
+plane in relation to the direction of shutter curtain travel. Thi
+effect is often most clearly seen in the wheels of a moving vel
+
+which become oval instead of round. If the shutter operates
+zontally, the wheel will be compressed when the shutter and the
+image move in opposite directions, and widened when they
+in the same direction. With a curtain that operates vertically,
+bottom of the image will be recorded at a slightly earlier inst
+than the top, so the wheel would appear elongated, leaning
+ward. When both the camera and the subject are in motion, thi
+effect can be quite bizarre.¢ Since a leaf shutter exposes the entin
+film area at the same instant, this distortion will not occur,
+though a wheel may show movement blur, both rotational an
+directional.
+
+Synchronization with Flash
+
+Synchronizing a shutter with a flash source requires precise
+to ensure that the light from the flash is efficiently used to m
+the exposure. The different types of shutter synchronization
+relate to a specific kind of flash source, whether electronic flat
+(X synchronization] or the various flashbulbs available (M, 5, FP
+and others).
+
+With electronic flash the pulse of light is very brief, in the
+‘of 1/500 to as little as 1/50,000 second, so the flash must be
+gered at the moment the shutter is fully open. This i
+Presents no problem with a leaf shutter, since there is r
+moment when the shutter is fully open, even at the fastest speed
+With a focal-plane shutter, however, the maximum spced that
+be synchronized with electronic flash is the fastest at which
+entire film surface is exposed at the same moment, usually
+to 1/90 second with the curtain-type shutter and 1/125 second
+the metal blade-type. Using electronic flash with a higher

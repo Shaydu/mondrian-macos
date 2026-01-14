@@ -1,0 +1,44 @@
+Pigare 2-5. Parallax. Parallax is
+caused by the difference in posttion
+‘of the viewing lens and the picture:
+‘making lens. One rewalt can be
+incosrect traning of the inaage, al-
+though most rangefinder eyetcm
+have a builtin feld compensator
+‘ corteet the framing. The other
+‘penblem, one that cannot be cor
+
+See Figure 2-5
+
+Small-Format Cameras 13
+
+the viewing area, With some cameras I have been aware of very
+inaccurate indications of the image area.
+
+The greatest single problem with this design is parallax. Parallax
+occurs because the viewfinder lens and the picture-making lens
+occupy different positions, sometimes separated by several inches,
+and thus they do not “see” precisely the same image, Most range-
+finder cameras have built-in field compensation (often erroneously
+called parallax correction}, which adjusts the framing of the image
+area of the viewfinder when the camera is focused at short distances.
+This compensation, however, does not take into account the rela-
+tionship of nearby objects seen against more distant ones. It is
+impossible for the viewfinder lens to sce these relationships in
+precisely the same way as the camera lens, since they are scparated
+by one or more inches.¢
+
+When precise juxtaposition of two objects at different distances
+is desired, the camera must be moved, after composing the image in
+the viewfinder, to bring the camera lens into the same position
+during exposure that the viewfinder lens occupied during compos-
+ing. If the front viewfinder clement is directly above the lens, for
+example, the camera must be raised before exposing by an amount
+equal to the distance from the center of the camera lens to the
+center of the viewfinder lens. If the viewfinder has the automatic
+framing adjustment mentioned above, the picture should be com-
+posed with focus set at infinity, and the parallax managed by mov-
+ing the lens to the position of the finder objective prior to exposure.
+
+High-quality viewfinder cameras, such as the Leica, can be
+equipped for interchanging lenses, each lens having a ground rear

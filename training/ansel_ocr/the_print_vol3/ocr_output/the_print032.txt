@@ -1,0 +1,53 @@
+‘Seepayss 2-23
+
+Darkroom Design and Equipment 19
+
+and fairly “fast.” Shifting clouds caused grave troubles, of course,
+but thick fog or heavy overcast gave surprisingly consistent results
+over fairly long periods.
+
+Today, tungsten bulbs are the most common light source. These
+may be adequate for small negatives, but other lighting systems are
+often preferable, especially for 4 x5 or larger sizes. I use “cold light”
+mercury vapor lamps “ for enlarging all my negatives, from 35mm
+to 8X10; I find the print quality superior with such illumination
+{diffusion dichroic color heads available with some enlargers have
+qualities similar to cold-light sources)
+
+The optical system also has a significant effect on the character-
+istics of the final enlargement. A condenser system focuses the light
+ina collimated beam above the negative, while a diffusion system,
+as its name implies, delivers diffused, uncollimated light on the neg-
+ative. The condenser system provides high image acutance, but it
+also tends to emphasize grain, dust, or physical defects on the neg-
+ative. Contrast is relatively high with a condenser enlarger, and there
+is often a loss of separation above Value VII caused by the Callier
+effect.
+
+The Callier effect relates the amount of light “scattered” by the
+particulate silver emulsion with the density present. With the col-
+limated beam from a condenser enlarger, the light will pass relatively
+undisturbed through a low-density negative area, but higher density
+causes a larger proportion of the light to be scattered (in addition to
+the light absorbed in a normal manner by the density}. As a result,
+a negative often will show “blocked” high values when enlarged
+with a condenser system.
+
+This effect is minimized with diffused-light enlargers (or with
+contact prints made by either collimated or diffused light). In a dif-
+fused-source enlarger, the light will be about equally diffuse whether
+it passes through a high- or a low-density area, and the scatter caused
+by high negative density produces no significant effect.
+
+Thus with collimated light the high densities of the negative be-
+come, in effect, even higher, and the contrast of the projected image
+is increased compared with the image produced by diffuse illumi-
+nation. This suggests that negatives which are to be enlarged with
+condenser light should be developed to a lower contrast (thereby
+having a lower density range) than negatives to be enlarged with
+diffuse light. However, the reduced development needed to improve
+the separation of high values with a condenser enlarger causes some
+Joss of separation in lower values.
+
+It is difficult to give specific rules on this effect because of the
+design differences from one enlarger to another, and because of the

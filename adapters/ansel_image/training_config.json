@@ -1,0 +1,11 @@
+{
+  "advisor_id": "ansel",
+  "model_path": "mlx-community/Qwen3-VL-4B-Instruct-4bit",
+  "rank": 8,
+  "alpha": 0.1,
+  "dropout": 0.1,
+  "learning_rate": 5e-05,
+  "epochs": 10,
+  "batch_size": 1,
+  "num_examples": 21
+}

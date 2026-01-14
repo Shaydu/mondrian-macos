@@ -1,0 +1,45 @@
+24 Darkroom Design and Equipment
+Negative Carriers
+
+The negative carrier usually consists of two flat metal pieces with
+an opening the size of the image. For 8 x 10 negatives I use a negative
+carrier that sandwiches the negative between two sheets of glass to
+hold it flat. For 4x5 or smaller negatives I recommend a glassless
+negative carrier, which avoids several potential problems of the glass
+variety. For one thing, the two glasses provide four surfaces (in ad-
+dition to the two sides of the negative) on which dust can collect.
+All surfaces must be carefully cleaned each time a negative is placed
+in the carvier.
+
+Another annoying problem that may occur with a glass negative
+carrier is the appearance of Newton’s rings when the film is pressed
+against the glass. These are concentric rings of irregular shape that
+resemble the iridescent patterns of an oil slick on wet pavement.
+They are caused by the interference effect of light reflecting within
+the extremely smalll space between the glass and the negative base
+This does not occur between the glass and the emulsion side of the
+negative. Changing the pressure between glass and film may elimi-
+nate them, since with totally uniform contact between negative and
+glass, no rings occur. Newton's rings are aggravated by high humid-
+ity, and thus slightly heating the glass may help. I have found that
+the “anti-Newton-ring” glasses may give a slight textural effect that
+is disturbing.
+
+STRUCTURE AND ALIGNMENT OF ENLARGERS
+
+After installing any enlarger it is very important to be sure that it is
+precisely aligned. The negative plane must be parallel to the base
+board, and the lens axis must be perpendicular to both {meaning, in
+practical terms, that the lensboard must be parallel to them]. It is
+too often assumed that enlargers arrive precisely aligned and remain
+that way, but such may not be the case; there are several possible
+reasons for misalignment, including sloppy assembly at the factory
+or the strains of shipping and use.
+
+You can discover misalignments and estimate their severity using
+a good protractor level, which has the advantage of allowing the
+degree of error to be determined. Omega makes an adjustable level
+designed specifically for checking enlarger alignment. Correcting the
+alignment is another matter, and may require the attention of a good
+mechanic, although often simply adjusting and tightening all struc-
+tural screws can solve the problem. The alignment should be

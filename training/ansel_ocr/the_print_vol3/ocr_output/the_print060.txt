@@ -1,0 +1,52 @@
+2 pate 18
+
+Printing Materials 47
+
+extreme are the devotees who think the tonal scale of contact-print-
+ing papers is superior to the enlarging papers; I do not. I have used
+enlarging papers for both contact printing and enlarging for many
+years with success. Chloride papers have always toned more readily
+than most enlarging papers, but otherwise I have found the enlarging
+papers to give superior quality.
+
+Numerous enlarging papers are available today. They are designed
+to work at manageable exposure times under typical enlarging illu-
+mination levels. Various systems for rating a paper's sensitivity to
+light (its “speed” have been advanced over the years. The “ASAP""
+code specified by the American National Standards Institute (ANSI)
+uses a numerical system comparable to ASA speeds for films. “ Paper
+speed ratings are of limited value without a darkroom photo-
+meter, however, and it is difficult to specify a print value to use for
+comparing speeds. I do not use any such system in my work.
+
+Both Kodak and Ilford are currently making papers that include a
+developing agent in the emulsion layer. These papers, including
+most current Kodak RC papers, are designed to develop very rap-
+idly — typically in 30 seconds to one minute, rather than the two to.
+three minutes otherwise often required. Unfortunately, though, al-
+most no development control is possible, since these papers develop
+fully so rapidly. This becomes a problem if factorial development or
+other controls are to be applied. “
+
+If you are using one of these papers and wish to have some control
+of development, Kodak recommends using their Ektonol developer.
+Apparently the lower pH of this developer does not trigger the de~
+veloping agents within the emulsion, so development proceeds in a
+more normal manner. Most developers using borax as the accelerator
+should be appropriate for developing these papers conventionally,
+while the developers containing carbonate, being more alkaline, will
+provide rapid development [this includes Dektol and most other con-
+ventional developers}. Of the fiber-based papers, few, if any, have
+developing agents incorporated at the present time. Consult the
+manufacturer's “tip sheet” or catalogue if in doubt
+
+We are naturally less concerned with data and the chemistry of a
+paper's emulsion than with its practical printing characteristics. 1,
+for one, consider it impossible to be certain of the various properties
+of speed, contrast, developer response, and susceptibility to toning
+until I have tested a paper for its visual qualities.
+
+Paper Grades
+
+In principle, the exposure range of a paper must match the density
+range of the negative in order that all negative values may be fully

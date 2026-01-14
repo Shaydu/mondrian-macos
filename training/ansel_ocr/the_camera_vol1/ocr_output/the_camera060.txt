@@ -1,0 +1,27 @@
+Figure 5-8. Lens focal length. Light
+from a subject point at infinity peo-
+doces patallel rays, which are
+selracted by the lens to focus at
+single point. The distance from the
+‘eas to this point te the focal
+length of the fens.
+
+It is important to understand that all lenses of the same focal
+length give images of the same size for a given subject and subject
+distance. If a 4-inch lens produces an image one inch high of a
+certain subject, the image size will remain one inch regardless of
+whether the lens is on a 35mm camera or a 4x5 camera. However,
+on the 35mm camera, the one-inch image will fill the frame [about
+Ix1% inches), while it will occupy only about one quarter the
+height of the 4x5 film.¢ Thus this subject will be isolated on 35mm
+film, while it will appear in the midst of its surroundings in the
+4x5 format.
+
+We should also understand that image size is proportional to
+focal length. 1f, while making a photograph, you change to a lens
+of double the focal length of the first, each object will double in
+size in the image. At the same time the total width of subject area
+covered by the longer lens will be half that of the shorter lens, Thus
+when you change from a 6-inch lens to a 12-inch lens with a 4x5
+camera, or from a 50mm lens to a 100mm lens with a 35mm
+

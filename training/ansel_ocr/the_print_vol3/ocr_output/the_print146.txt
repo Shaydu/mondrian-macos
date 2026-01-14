@@ -1,0 +1,51 @@
+page 121
+
+Final Processing; Sensitometry 133
+
+The toning requires 1 to 10 minutes or more, depending on the
+toner strength and paper, with continuous agitation. I have some-
+times achieved beautiful results with only 1 minute’s toning, a dif-
+ferent paper might demand as much as 10 minutes with the same
+toner concentration. Occasionally, prolonged toning reduces tone,
+or stops toning and then intensifies the image. You should monitor
+the progress of the toning by having a bright light over the toner tray.
+It is very helpful to have an untoned reject print nearby in a tray of
+water for comparison purposes. It is important to agitate constantly
+in all solutions to assure thorough chemical action and to avoid
+unequal areas of toning.
+
+Just before the prints reach the degree of toning you desire, im-
+merge them in plain hypo-clearing solution for 3 minutes. The ton-
+ing activity continues for a short time after the print is removed
+from the toner, and the print must be agitated in the hypo-clearing
+bath to fully arrest the process, never allow the print to stand in the
+hypo-clearing bath without agitation, or uneven toning may result.
+Then rinse and wash the prints as described below
+
+Temperature is not critical, but all solutions should be about nor-
+mal (68°F, 20°C}, except the toning bath, which I have found should
+be somewhat higher — about 75°-80°F. If the wash water were of
+higher temperature than the toning solution, some of the tone might
+be reduced or lost. The reason the tone can be lost is, I understand,
+that the selenium reacts with the emulsion in two ways, by forming
+a silver-selenium compound or by attaching to the surface of the
+silver grain. In the latter case the selenium can dissipate in solution
+or can actually be wiped off the wet print. Both situations assure
+archival protection, when dry, the selenium is firmly associated with
+the silver grain in either case.
+
+Occasionally “split toning” occurs. The middle to low values may
+respond to the toner with added density and color, while the higher
+values do not respond at all. As noted, this is especially likely to
+occur with papers that contain a mixture of emulsions, such as vari-
+able-contrast papers. “ The result is seldom agreeable: a greenish
+color prevails in the high values while a cool brown color appears in
+the low values. (However, there are photographers who make use of
+
+will be quite short with some papers if you are to avoid excessive change in color,
+and I prefer the higher dilutions because of the greater control possible. In addition,
+Thave recently been advised by scientists at Eastman Kodak that there may be no
+advantage to mixing Hypo Clearing Agent, instead of plain water, with the selenium
+toner, However, since this was previously considered the preferred method, | am.
+continuing with the use of Hypo Clearing Agent; I have used this system for many
+years with apparent success.

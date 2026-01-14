@@ -1,0 +1,47 @@
+182. Special-Purpose Equipment and Techniques
+
+process or enlarging lenses‘ to provide the flat fleld necessary for
+optimum copying of flat originals.
+
+Copy camera systems also include lighting, usually arranged in
+banks on cither side of the baseboard for even illumination, The
+lights should be directed at the copy subject at a 45° angle, so that
+any specular glare from the surface is reflected to the side, away
+from the lens. It is extremely important to check for even distri-
+bution of the illumination, since any unevenness will be visible in
+the copy, An incident light meter can be used to make readings
+from the corners and center of the subject area, and these readings
+should match precisely, If no incident meter is available, make re-
+flected light readings from a gray card or clean white sheet of paper
+in the same areas, holding the meter as near the lens axis as possible.
+
+Conventional reflector floodlights are usually brightest in their
+central areas, and fall off toward the edges of the field. By directing
+this bright spot at the far edge of the copy camera base, you can
+ensure that the area closest to the lamp receives light from the
+weaker borders of the light’s cone, thus helping balance the illumi-
+nation. Do not trust your eyes to judge the uniformity of illumina-
+tion, but make careful measurements with a meter.
+
+Persistent glare problems require careful lighting. Changing the
+angle of the lighting may help, but the even distribution of
+light must not be disturbed. Difficult subjects may require cross-
+polarization—polarizing filters placed at one orientation over cach
+light, and a polarizer rotated 90° from these placed over the lens.
+Ihave found that cross-polarization is useful with nearly all copy
+subjects.
+
+The Polaroid MP-4 Multipurpose camera is an excellent copy
+system, in addition to being adaptable to many other applications.
+‘The basic camera is mounted on a vertical stand equipped with
+baseboard and lights. A number of interchangeable lenses are avail-
+able, and different backs can be attached for using Polaroid or con-
+ventional film. Accessories adapt the camera for use with a
+microscope or other instruments, or for conventional photography
+and enlarging.
+
+PANORAMIC AND ULTRAWIDE-ANGLE PHOTOGRAPHY
+
+In addition to the short focal length lenses a ble for most cam-
+eras, certain equipment has been designed specifically for photo-
+

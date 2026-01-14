@@ -1,0 +1,169 @@
+# Advisor Image Metadata
+# Downloaded from Wikimedia Commons with automatic metadata extraction
+# Updated with additional images
+# Total images: 13
+
+images:
+- filename: Adams_The_Tetons_and_the_Snake_River.jpg
+  title: Adams The Tetons and the Snake River
+  date_taken: '1942'
+  description: Ansel Adams The Tetons and the Snake River (1942) Grand Teton National
+    Park, Wyoming. National Archives and Records Administration, Records of the National
+    Park Service.  (79-AAG-1)
+  location: Grand Teton National Park, Wyoming
+  significance: One of Adams' most iconic landscape photographs, demonstrating his mastery of large-format photography and the Zone System
+  techniques: []
+  source:
+    commons_url: https://commons.wikimedia.org/wiki/File:Adams The Tetons and the
+      Snake River.jpg
+    artist: Ansel Adams
+    license: Public domain
+- filename: Ansel_Adams_-_National_Archives_79-AA-Q04.jpg
+  title: Ansel Adams - National Archives 79-AA-Q04
+  date_taken: '1941'
+  description: '"At Taos Pueblo [National Historic Landmark]." New Mexico;
+
+    From the series Ansel Adams Photographs of National Parks and Monuments, compiled
+    1941 - 1942, documenting the period ca. 1933 - 1942.'
+  location: ''
+  significance: ''
+  techniques: []
+  source:
+    commons_url: https://commons.wikimedia.org/wiki/File:Ansel Adams - National Archives
+      79-AA-Q04.jpg
+    artist: Ansel Adams
+    license: Public domain
+    credit: This tag does not indicate the copyright status of the attached work.
+      <span style="white-space:nowrap">A normal <a href="//commons.wikimedia.org/wiki/Special:MyLanguage/Commons:Copyright_tags"
+      title="Special:MyLanguage/Commons:Copyright tags">copyright tag</a> is still
+      required.</span> <span style="white-space:nowrap">See <a href="//commons.wikimedia.org/wiki/Special:MyLanguage/Commons:Licensing"
+      title="Special:MyLanguage/Commons:Licensing">Commons:Licensing</a>.</span>
+- filename: Ansel_Adams_-_National_Archives_79-AAB-02.jpg
+  title: Ansel Adams - National Archives 79-AAB-02
+  date_taken: '1941'
+  description: 'Photograph of Electrical Wires of the Boulder Dam Power Units;
+
+    From the series Ansel Adams Photographs of National Parks and Monuments, compiled
+    1941 - 1942, documenting the period ca. 1933 - 1942.'
+  location: Boulder Dam (Hoover Dam), Nevada-Arizona Border
+  significance: Documents industrial infrastructure in the American West, showcasing Adams' versatility beyond landscape photography
+  techniques: []
+  source:
+    commons_url: https://commons.wikimedia.org/wiki/File:Ansel Adams - National Archives
+      79-AAB-02.jpg
+    artist: Ansel Adams
+    license: Public domain
+- filename: Ansel_Adams_-_National_Archives_79-AA-G01.jpg
+  title: Ansel Adams - National Archives 79-AA-G01
+  date_taken: '1942'
+  description: '"The Tetons - Snake River," Grand Teton National Park, Wyoming;
+
+    From the series Ansel Adams Photographs of National Parks and Monuments, compiled
+    1941 - 1942, documenting the period ca. 1933 - 1942.'
+  location: ''
+  significance: ''
+  techniques: []
+  source:
+    commons_url: https://commons.wikimedia.org/wiki/File:Ansel Adams - National Archives
+      79-AA-G01.jpg
+    artist: Ansel Adams
+    license: Public domain
+    credit: This tag does not indicate the copyright status of the attached work.
+      <span style="white-space:nowrap">A normal <a href="//commons.wikimedia.org/wiki/Special:MyLanguage/Commons:Copyright_tags"
+      title="Special:MyLanguage/Commons:Copyright tags">copyright tag</a> is still
+      required.</span> <span style="white-space:nowrap">See <a href="//commons.wikimedia.org/wiki/Special:MyLanguage/Commons:Licensing"
+      title="Special:MyLanguage/Commons:Licensing">Commons:Licensing</a>.</span>
+- filename: Ansel_Adams_-_National_Archives_79-AA-G06.jpg
+  title: Ansel Adams - National Archives 79-AA-G06
+  date_taken: '1941'
+  description: '[Jackson Lake in foreground, with Teton Range in background, view
+    looking southwest from north end of the lake.], Grand Teton National Park, Wyoming.;
+
+    From the series Ansel Adams Photographs of National Parks and Monuments, compiled
+    1941 - 1942, documenting the period ca. 1933 - 1942.'
+  location: Grand Teton National Park, Wyoming
+  significance: Part of Adams' commissioned work documenting America's National Parks for the Department of the Interior
+  techniques: []
+  source:
+    commons_url: https://commons.wikimedia.org/wiki/File:Ansel Adams - National Archives
+      79-AA-G06.jpg
+    artist: Ansel Adams
+    license: Public domain
+- filename: 1.jpg
+  title: Ansel Adams Landscape Study 1
+  date_taken: '1940'
+  description: Classic Ansel Adams landscape photography demonstrating his mastery of light and composition
+  location: Western United States
+  significance: Example of Adams' landscape work from the 1940s
+  techniques: []
+- filename: 2.jpg
+  title: Ansel Adams Landscape Study 2
+  date_taken: '1940'
+  description: Ansel Adams landscape photograph showcasing his technical precision and artistic vision
+  location: Western United States
+  significance: Representative work from Adams' peak creative period
+  techniques: []
+- filename: 2_orig.jpg
+  title: Ansel Adams Landscape Study 2 (Original)
+  date_taken: '1940'
+  description: Original version of Ansel Adams landscape photograph
+  location: Western United States
+  significance: Early print demonstrating Adams' printing techniques
+  techniques: []
+- filename: 3.jpg
+  title: Ansel Adams Landscape Study 3
+  date_taken: '1940'
+  description: Ansel Adams landscape featuring dramatic natural formations and lighting
+  location: Western United States
+  significance: Exemplifies Adams' zone system and attention to tonal range
+  techniques: []
+- filename: ansel-old-faithful-geyser-1944.png
+  title: Old Faithful Geyser
+  date_taken: '1944'
+  description: Classic image of Old Faithful Geyser erupting in Yellowstone National Park. Original photograph negative from 1944 by Ansel Adams.
+  location: Yellowstone National Park, Wyoming
+  significance: Iconic photograph demonstrating Adams' mastery of capturing dynamic natural phenomena with perfect timing and exposure
+  techniques: []
+  source:
+    artist: Ansel Adams
+    license: Public domain
+- filename: ansel-moonrise-and-half-dome-yosemite-n-p-1960.png
+  title: Moon and Half Dome, Yosemite National Park
+  date_taken: '1960'
+  description: Original photograph negative from 1960 by Ansel Adams capturing the moon rising over Half Dome in Yosemite National Park.
+  location: Yosemite National Park, California
+  significance: Iconic Yosemite composition showcasing Adams' mastery of celestial and geological subjects
+  techniques: []
+  source:
+    artist: Ansel Adams
+    license: Public domain
+- filename: ansel-white-house-ruin-1947.png
+  title: White House Ruin
+  date_taken: '1947'
+  description: Original photograph negative from 1947 by Ansel Adams of the White House Ruin cliff dwelling.
+  location: Canyon de Chelly National Monument, Arizona
+  significance: Historic documentation of ancient Ancestral Puebloan architecture showcasing Adams' architectural photography skills
+  techniques: []
+  source:
+    artist: Ansel Adams
+    license: Public domain
+- filename: ansel-northern-california-coast-redwoods-1960.png
+  title: Northern California Coast Redwoods
+  date_taken: '1960'
+  description: Original photograph negative from 1960 by Ansel Adams capturing the majestic coastal redwood forests.
+  location: Northern California Coast
+  significance: Exemplifies Adams' dedication to conservation and documenting ancient forest ecosystems
+  techniques: []
+  source:
+    artist: Ansel Adams
+    license: Public domain
+- filename: ansel-frozen-lake-and-cliffs-1932.png
+  title: Frozen Lake and Cliffs
+  date_taken: '1932'
+  description: Original photograph negative from 1932 by Ansel Adams capturing a frozen alpine lake with dramatic cliff formations.
+  location: High Sierra, California
+  significance: Early example of Adams' high-altitude landscape photography showcasing his emerging mastery of the Zone System
+  techniques: []
+  source:
+    artist: Ansel Adams
+    license: Public domain

@@ -1,0 +1,50 @@
+Final Processing; Sensitometry 143
+
+exposures are | second and 25 seconds; we then have a paper expo-
+sure range of 1:25. By converting to logarithms, we arrive at a log
+exposure range of 1.40 required with this paper to achieve a full scale
+from black to white.
+
+In practice, the range of exposures a paper receives is determined
+by the density scale of a negative. A negative with opacity range
+(arithmetic] of 1:25 has a density range (logarithmic) of 1.40. In prin-
+ciple, such a negative should be an ideal match for this paper, yield-
+ing the appropriate range of exposures to achieve a full range of print
+values. Note, however, that we may require a “softer” or “harder”
+paper for expressive reasons; if so we are not violating sensitometric
+principles, but merely adapting them to informational or aesthetic
+objectives
+
+‘The usefulness of graded papers lies in their ability to produce full-
+range prints from negatives of differing density ranges. If we have a
+‘lat’ negative, we will want a paper with a fairly “steep” curve so
+the short exposure range provided by this negative will still translate
+into a full scale of densities. This is the situation when we choose
+a higher-than-normal paper grade for printing a low-contrast nega-
+tive. Similarly, when printing a contrasty negative, we will need a
+paper with a much flatter curve, so that the extremes of the print
+density scale will be reached over the longer exposure range provided
+by this negative.
+
+In determining their paper grades from print curves, most manu-
+facturers exclude the extreme ends of the scale — the toe and shoul-
+der of the paper curve —as these extremes are not considered within
+the “useful” response of the emulsion. Actually, the subtleties of
+the lightest and darkest tones involve the entire range of the paper's
+sensitivity, and often the qualities characterizing a truly fine print
+may be found in the delicate variations of the extremely light and
+dark values.
+
+‘Thus the designations of paper grades are often confusing if we
+attempt to understand them in sensitometric terms. There is little
+standardization among manufacturers as to the sensitometric re~
+sponse of each grade, Even among the products of one manufacturer
+the contrast-grade indications for different types of paper may not be
+alike, Furthermore, the characteristic curves of various papers are
+often dissimilar, some having a longer toe or shoulder than others,
+and such qualities are not conveyed in the paper-grade designation
+It is for these reasons that I do not consider paper sensitometry as
+important as practical tests and the visual evaluation of print ma-
+terials and image qualities. Remember, the print is a “performance,””
+not a literal translation, of the negative “score.”
+

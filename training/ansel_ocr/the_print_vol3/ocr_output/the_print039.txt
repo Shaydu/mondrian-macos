@@ -1,0 +1,44 @@
+See page 48
+
+26 Darkroom Design and Equipment
+
+The enlarger itself may be prone to sway slightly, and the period
+of vibration can be rather long. When the negative is inserted or
+other operation performed, a vibration can be set up. We must be
+sure that once we have focused and clamped the adjustments in
+place, the vibration is allowed to die down before the exposure is
+made. My method with the horizontal enlarger is as follows: After
+focusing, I lean a dark card against the enlarger lens, blocking the
+light path. To begin the exposure I pick up the card but hold it in
+front of the lens a few moments to allow any vibration to die down
+I then move the card quickly from the light path, and replace it when
+the exposure including all burning and dodging} has been completed.
+Iam very careful not to touch the enlarger, its support, or the easel
+at any time during the exposure.
+
+For years I have used a Beseler 4x5 enlarger, and I find it very
+satisfactory. Its frame and construction are quite strong, and the head
+assembly can be tilted for horizontal projection when making very
+large prints. I have the condenser head (which I use infrequently for
+small negatives}, an Aristo cold-light head, a Beseler point source,
+and modified version of the Ferrante ‘‘Codelite.” The Codelite con-
+sists of two grids, one of which gives a greenish light and the other
+a bluish light, with each grid controlled by a rheostat. Thus when
+printing with variable-contrast papers, “the contrast of the print can
+be controlled by adjusting the output from the two lamp grids; the
+green light gives the softest result, and the blue light provides max-
+imum contrast. Intermediate contrast is achieved by combining the
+two in various settings. Blue light alone is used with conventional
+graded papers. Since I now seldom use variable-contrast papers, I
+have had the Codelite adapted so that both tubes are blue, with only
+their intensities adjustable. I have also had a special oversize lamp
+unit made to ensure uniform coverage. Note that the Horowitz sta-
+bilizer is not usable with the variable-contrast Codelite system.
+
+THE 8 x 10 ENLARGER
+
+For negatives larger than 4 x 5 Ihave had built a horizontal enlarger
+from an old 11 x 14 studio portrait camera, It is often far more eco-
+nomical to build an 8 x 10 enlarger than to purchase one, since the
+basic structure can be an 8X 10 or 11 x 14 camera (without impairing
+its use as a camera). The camera and lamp assembly can rest hori-

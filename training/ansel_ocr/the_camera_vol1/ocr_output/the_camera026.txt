@@ -1,0 +1,36 @@
+Small-Format Cameras 11
+Viewfinder Cameras
+
+The most basic viewfinder cameras have only a simple optical sys-
+tem to allow the photographer to see the approximate picture area.
+There may be no provision for focusing, or a simple scale for setting
+the estimated distance to the subject. The lens that makes the image
+on film is entirely separate from the viewing system, which is al-
+ways “in focus."
+
+More sophisticated cameras include a rangefinder, a separate
+optical system coupled to the lens focus setting. The rangefinder
+forms two separate images of the subject from two positions on the
+
+See Figure 2-3 camera,4 and is linked to the focus setting in such a way that, when
+the two images of a subject coincide in the viewfinder, the lens is
+focused. With many early 35mm cameras, the rangefinder was
+separate from the viewfinder. The photographer looked through one
+eyepiece for focusing and a separate one for viewing and composing
+
+With current cameras, the rangefinder image is superimposed with:
+in the viewfinder image
+
+As with all camera designs, there are favorable and unfavorable
+aspects of the viewfinder/rangefinder camera type, Such cameras
+are usually very compact and quiet to operate, since there is no
+moving mirror or prism of the kind needed for single-lens reflex
+cameras. The viewing image is usually bright, making precise fo
+
+cusing casy even in dim light situations or with “slow” lenses.
+In low-light conditions it is also easier to focus a wide-angle lens
+with a rangefinder than with a single-lens reflex camera, since the
+focus is relatively uncritical and hard to see with a reflex system,
+
+Figare 2-2. Simm rangefinder
+

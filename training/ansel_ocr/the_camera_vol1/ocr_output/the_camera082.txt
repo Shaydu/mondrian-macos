@@ -1,0 +1,32 @@
+Figure 5-18, Galibruting apertares
+‘The most direct procedure with a
+4x5 camera is to use a focal-plane
+‘meter like the Sinanix. The probe
+reads only a small circular area
+very close to the plane of the
+sound glass, and iv usually posi-
+tamed at the center of the field to
+make readings as the aperture is
+changed.
+
+Lenses 67
+
+stop value, Focus the lens at infinity, since you do not want any
+texture focused. Adjust the angle of the card or the lens focus pasi-
+tion, if necessary, until the meter needle falls precisely on a high
+number of the scale, and then check that the needle moves exactly
+‘one unit for each stop closed down. For example, if the meter reads
+17 at £/8, then it should read exactly 16 at £/11, 15 at £/16, 14.at£/22,
+and so on. If it does not, make a small pencil mark on the aperture
+scale for the position that does produce the expected reading. These
+
+marks will represent the new calibration of the aperture; they
+should be permanently marked only after verifying the results of
+the meter test through a serics of actual exposures, or by precise
+calibration by a competent camera technician. With a small camera,
+apertures can be calibrated by making test exposures, or by a camera
+technician.
+
+As stated carlicr in this chapter, the lens must be moved farther
+from the film plane as the subject distance decreases, As the lens
+is moved farther from the film, the intensity of light on the film

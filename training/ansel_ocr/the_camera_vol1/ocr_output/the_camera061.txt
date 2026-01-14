@@ -1,0 +1,42 @@
+46 Lenses
+
+camera, you can anticipate that each part of the subject will double
+in size in the image,
+
+It should also be clear that a Ginch lens used with a 4x5 camera
+will “see” the same subject area as 2 12-inch lens used with an 8x10
+camera, the image size is doubled with the longer lens, but each
+dimension of the format is also doubled. (Do not confuse linear
+dimensions with area, Going from a 4x5 negative to an 8x10 nega-
+tive doubles the linear dimension of cach side of the format, but
+the total area is quadrupled. Linear dimensions are used in photog:
+raphy when considering magnification and image size, We will
+return to these concepts related to focal length after discussing
+other basic principles of the lens.
+
+APERTURE
+
+The lens aperture is simply the diameter of the lens opening, ex-
+pressed as a fraction of its focal length. Thus a lens of 4-inch focal
+length with a diameter of one inch has a relative aperture of 4/1,
+or 4. The aperture designation is expressed as £/4, indicating that
+the aperture is the focal length/4, Another 4-inch lens that has a
+diameter of ¥3 inch would be an £/8 lens.
+
+‘The aperture indicates the amount of light that the lens will
+transmit to the film. Since the aperture is expressed as a fraction
+of the focal length, all lenses set at f/8 (or any other aperture) trans-
+mit the same intensity of light to the film. This amount of light is
+proportional to the area of the lens aperture (and therefore to the
+square of the diameter], the £/4 lens described is twice the diameter
+of the £/8 lens, but transmits four times as much light.
+
+‘The aperture inscribed on the front of the lens mount is the
+largest for that lens. For practical photography we necd a means
+of reducing the aperture to give us control of the intensity of the
+light reaching the film. In early days, a metal plate or separate
+tabs with holes of different diameters, known as Watethouse stops,
+were frequently provided. By sliding the plate or exchanging tabs,
+different lens openings could be selected. The adjustable aperture
+today takes the form of an iris diaphragm, a series of metal blades
+that make different size lens openings depending on the setting of

@@ -1,0 +1,46 @@
+54 Lenses
+
+be marked on a view camera bed. Infrared filters isolate the
+wave-lengths, but do not correct the focus. Some lenses are fully”
+corrected into the infrared region, and thus require no refocusing.
+
+I would like to remind you again that the above descriptions of
+focus and depth of field relate to very important properties of the
+lens, Their practical applications depend on the character of the
+work being done and the degree of precision required, Experimenta-
+tion is very important, we can learn to “feel” the effects of depth of
+field and other optical properties. Try to develop a sense for the way
+the lens acts in three dimensions, as well as in relation to two-
+dimensional “framing.”
+
+ANGLE OF VIEW AND COVERAGE
+
+See Figure 5-11
+
+The terms angle of view and coverage are frequently confused
+through different usage by small-format and large-format photogra-
+phers, With a small camera we are concerned only with the angle
+of view, that is, the angle of subject area projected on the film. This
+value is related to the focal length of the lens, and is usually ex-
+pressed in degrees measured cither along the film diagonal or the
+longer border. Small-format photographers thus use the term wide-
+angle lens to refer to one with a shorter than normal focal length,
+since it projects a wide subject area on the film,
+
+With a view camera there is another important measure, namely,
+the size of the total image-circle projected by the lens, All lenses,
+regardless of format, project a circular image, and the rectangular
+film format must fit within this image-circle. With a small camera,
+a high-quality image is required only within the film area, and the
+remainder of the image-circle is disregarded. A view camera, on the
+other hand, requires an image-circle considerably larger than the
+film area, to allow freedom to use the camera adjustments,¢ A lens’s
+covering power or coverage refers to this total image-circle, it is a
+fixed quantity, regardless of the film format, and is not a function
+of focal length. A lens whose image-circle just covers an 8x10 area
+can be used with an 8x10 camera, but without the capability of
+using adjustments. The same lens would provide ample coverage
+for using adjustments on a 4x5 camera, Large-format photographers
+frequently use the term wide angle to refer to a lens of great cover-
+age, regardless of its angle of view within the film area,
+

@@ -1,0 +1,46 @@
+148 View-Camera Adjustments
+
+3) if uniform densities are desired. In carly days the picture-taking
+lens was often used as the enlarging lens, so that the illumination
+fall-off recorded during the exposure would be counteracted during
+enlarging. This system worked quite well in many instances, but
+the final image quality is superior if enlarging is done with a lens
+designed specifically for that purpose. If poor edge sharpness is a
+problem, it may help to use the lens well stopped down. With a lens
+of limited coverage or poor cdge definition, it is advisable to use
+swings and tilts at the camera back, rather than at the front, to
+take advantage of the improved image quality near the center of
+the lens’s field.
+
+BACK SWINGS AND TILTS
+
+We have already discussed the rule governing convergence of par’
+allel lines: if we want to photograph them without convergence,
+we must keep the camera back parallel to the lines. The general
+rule for all subjects, with or without parallel lines, is that if we
+want to photograph without geometric distortion, we must keep
+the camera back parallel to the plane of the subject. In the case af
+
+See page 142 the building discussed earlier,¢ we keep the back vertical to avoid
+vertical convergence, and we must align it parallel to the horizontal
+lines of the building to avoid horizontal convergence. In short, if
+we keep the plane of the camera back parallel to the plane of the
+building facade we will achieve a geometrically accurate rendering
+of the facade.
+
+‘The reason the back alignment is so important can be seen by
+considering what happens to the image-forming light as it travels
+from the lens to the film plane. If two subjects of equal height are
+imaged at different distances behind the lens, the image that travels
+farther from lens to film will be larger, and the image formed closer
+to the lens will be smaller. If we change these distances by tilting
+or swinging the back, we will change the sizes accordingly. The rear
+swings and tilts thus give us considerable freedom to alter the ap-
+parent shape of our subject.
+
+Consider again the case of the tall rectangular building photo-
+graphed head-on from ground level, We know that the top of the
+building is equal in width to the bottom, but the top appears smaller,
+being farther away. In correcting convergence, we orient the camera
+back in such a way that the top and bottom of the building are of
+

@@ -1,0 +1,28 @@
+Seepage 169
+
+‘The Fine Print: Control of Values 97
+
+of a key print area, and multiplying it by a development factor to
+determine the total developing time.
+
+It may seem awkward at first, but this system offers a number of
+advantages besides subtle control of print contrast, It helps to com-
+pensate for changes of temperature or dilution, or (to a degree) de-
+veloper “fatigue”, if the developer activity changes for any of these
+reasons, the emergence time will change, but the factor does not.
+‘Thus if we multiply the new emergence time by the original factor
+to determine the new total development time, we should obtain a
+print that is indistinguishable from the earlier one.
+
+We can use the factor to determine the appropriate developing
+time to compensate for a change of the developer dilution. Once the
+factor is known, the developer can be diluted to yield a much longer
+total development time (this is a decided advantage when developing
+a number of prints at one time}. @ The new emergence time multi-
+plied by the original factor will yield a new development time ap-
+propriate for the change in dilution, and all the prints should be
+identical,
+
+Note also that the factorial method can be helpful when the de-
+veloper must be replaced. You simply mix fresh developer (of the
+

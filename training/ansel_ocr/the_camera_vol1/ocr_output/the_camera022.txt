@@ -1,0 +1,67 @@
+Figure 1-6, The elements of
+camera. The coaponents common
+to all cameras include:
+
+1A) The lens. Like the image
+from « pinhole, the image formed
+by the lens is inverted on the lm
+
+(B) The fim plane. The film
+smuse be held flat at exactly the
+tight distance bebind the leas for
+‘pceise focus. If roll film is used, the
+amen will contain a lm advance
+
+[C Focus mechanise, By moving
+the lens chaser to or farther from
+the film, focus can he obtained at
+diferent sdjece distances.
+
+[D} The diaphragm. The photos-
+sapher adjusts the diaphragm to
+eontrol the amount of Light ad-
+imited by the lens, in effec redue-
+‘ng the dlameter of the lens.
+
+[E) The shutter. Used in canjune-
+tion with the diaphragm, the
+sbutter controls the amount of
+tdme light is admitted vo the film.
+
+IF] The viewfinder, A viewfinder
+for other viewing system is required
+to indicate to the photographer
+‘what area will be shown in the
+final picture.
+
+‘These components are housed in
+‘or om the camera body, a light-tight
+supporting structure.
+
+Seepage 4
+
+See Chapter 6
+
+thus the image is many times brighter, with correspondingly
+shorter exposures. Because of its property of focusing the light
+from the subject, the lens also makes possible a much sharper
+image. A single-element lens of the type shown in Figure 1-6 is
+only partially successful in producing a sharp image on the film
+because of inherent aberrations.¢ Thus all cameras except the most
+basic use compound lenses, in which the aberrations can be cor-
+rected to a far greater degree than with a single-element lens. A lens
+also requires a mechanism for focusing on subjects at different
+distances.¢
+
+With a pinhole, a simple cap (or even a piece of tape) suffices for
+opening and covering the pinhole to control exposure times. With
+the much shorter exposures encountered with a lens, however, a
+shutter is required to provide accurate exposures of fractions of a
+second, In a basic camera, the shutter may be only a simple spring
+and lever arrangement with a single setting. More advanced shut-
+ters are highly complex, and allow precise control of the exposure
+time over a range of, typically, one second to 1/500 second, or
+more.
+
+‘The next major component added to the camera is a means of
+controlling the intensity of light reaching the film, called the dia-

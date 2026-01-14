@@ -1,0 +1,49 @@
+‘See Figure 5-7
+
+‘SO Lenses
+
+“point” on the film. If the subject is not exactly in the plane of
+critical focus, however, this image becomes a small blurred disc,
+called a circle of confusion." The size of any circle of confusion
+becomes smaller as the aperture is reduced, making the image ap-
+pear sharper, We define limits of the size of these circles of con-
+fusion that we consider to be acceptably sharp focus, even though
+they are not quite as sharp as at the critical focus plane, If, by
+stopping down the lens, we make the blur-circle of a point smaller
+than this defined size which is considered “acceptably sharp,”
+then the point now falls within the depth of ficld range at that
+aperture. Changing to a shorter focal length lens, or increasing the
+subject distance, has a similar effect on the size of the blur-circles,
+reducing them throughout the photograph and bringing a greater
+area into acceptably sharp focus. The most commonly accepted
+standard for circle of confusion size is about 1/100 to 1/200 inch
+in the final print; obviously, it must be smaller in the negative if
+enlargement is planned. For the 35mm format, the circle of con-
+fusion on the negative must be about 1/1000 inch,
+
+Depth of Field Scales
+
+Depth of field scales are engraved on the barrel of most small
+camera lenses, and tables are available for estimating the depth of
+field with any lens, The scale on # lens barrel is made up of pairs
+of index marks, one pair for each f-stop.¢ If you have set {/22 as
+your stop, find the pair of lines that correspond to £/22. The dis-
+tances on the focusing scale that lie between this pair of lines will
+be “acceptably sharp” (according to the definition of sharpness
+used to create the scale}.
+
+You can also use the scales to work “backwards” to find what
+fstop you need to encompass a certain depth of field range. If, for
+example, your important subject areas are all between 6 and 15
+feet from the camera, find the two index lines on either side of
+center that span this range of distances on the focusing scale, and
+set the f-stop that corresponds to these marks.
+
+You will note from examining such a scale that the near limit
+of depth of field is always a shorter distance in front of the primary
+
+“Even with the finest optics there is no such thlag a1 4 “point” image. The image of 4
+‘ue point Is always a minute clzcle because of Inevitable difftaction effects of the lens
+However, « lens of fine definition gives a minuscule circle or disc which we accept as
+2 “point”
+

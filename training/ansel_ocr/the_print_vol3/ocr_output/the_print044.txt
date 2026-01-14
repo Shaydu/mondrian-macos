@@ -1,0 +1,47 @@
+Darkroom Design and Equipment 31
+
+The standard Kodak filter for black-and-white contact and en-
+larging papers, including Kodak's variable contrast papers, is the
+light amber filter designated OC. Most papers from other manufac-
+turers are compatible with this filter, but you should check the man-
+ufacturer’s specifications, particularly with variable-contrast paper.
+The filter is designed to be used with a 15-watt bulb, and located at
+least four feet from the paper. If the safelight is used indirectly, by
+bouncing off walls or ceiling, a 25-watt bulb may be used. Using a
+bulb stronger than recommended is likely to cause fogging, and the
+heat may also damage the safelight unit.
+
+For large darkrooms, several safelights may be installed at con-
+venient locations. One should be in the vicinity of the enlarger, po-
+sitioned so that the shadow of the enlarger (or your own shadow) is
+not cast upon the easel, and another one or more over the sinks. It
+can be convenient to have a safelight directly over the developer
+tray, but in that case I recommend that it be on a separate switch of
+the “pull cord” type, so it can be turned off to avoid possible safelight
+fog when developing times are long; such pull-cords must contain
+electrical insulators for safety.
+
+A high general level of illumination can also be obtained with a
+sodium-vapor lamp, such as the one manufactured by Thomas In-
+struments. These lamps make use of a bulb that emits almost ex-
+clusively wavelengths that do not affect a blue-sensitive emulsion.
+They can consequently be quite strong, and a single Thomas unit is
+often sufficient for an entire darkroom. The lamp is suspended from
+the ceiling and directs light upward, so it is reflected and distributed
+throughout the room (the ceiling must be white or very light gray).
+I must advise caution, however, I have found that this light does
+cause fogging with some papers if the illumination level is too high
+or with prolonged exposure of the paper. You may need to be espe-
+cially careful with variable-contrast papers. Be sure to test before
+printing
+
+Safelight Fog
+
+One of the most common causes of “depressed” high values, first
+noticeable in very high values or highlights (the pure white
+areas of the image], is safelights that are too strong, or otherwise not
+“safe.”’ Safelight filters can deteriorate over time without visible
+change and begin passing some actinic light. The disintegration is
+hastened by over-strong or too-hot lamps. You should discard any
+safelight that shows signs of uneven density or other deterioration.
+In addition, safelights near enlarger and sinks should not be too close

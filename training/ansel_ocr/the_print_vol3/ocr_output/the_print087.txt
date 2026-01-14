@@ -1,0 +1,52 @@
+See page 69
+
+See page 95
+
+See page 23
+
+See page 23
+
+74 Proofs and Work Prints
+
+amine the image again with the grain magnifier at the working ap-
+erture, and adjust the focus as necessary.
+
+The procedure for making a test print is the same as in contact
+printing. “ A. half sheet or a 2- or 3-inch-wide strip of paper may
+suffice for the initial test print, provided that you position it carefully
+to include important high and low values. We then expose successive
+portions of the paper at specific time intervals to “bracket” the an-
+ticipated correct exposure. Be sure to note the exposure sequence
+and other details in soft pencil on the back of the test print: my
+notations include enlarger height, lens focal length and aperture,
+paper brand and grade, developer and dilution, developing factor, “
+and exposure sequence
+
+The test print should be developed immediately using the pro-
+cesses described below. If processing must be delayed, the print
+can be stored in a light-tight container (such as an empty paper box)
+to protect it from excessive exposure to the safelights. Do not store
+exposed prints for more than a day before processing,
+
+Possible Problems in Enlarging
+
+Intensity of enlarging light. Unless a stabilizer or other monitoring
+system is used, there is always the possibility of changes in the light
+intensity. Sometimes a change in electrical use within the building
+(such as turning on a heavy appliance} can lower the voltage, and
+thus the intensity of the enlarging light. Some enlargers are equipped
+with a meter that allows the voltage to be checked for variation,
+although it does not correct voltage. The “cold-light” illuminants
+require a certain warm-up time to reach full output, “ and thus they
+should be left on, or “cycled” on and off regularly, throughout the
+printing session. I now use the Horowitz cold-light stabilizer unit,
+which provides remarkably stable light output regardless of changes
+in voltage or tube temperature
+
+Vibration. The enlarger must be entirely steady during the exposure.
+Impact of the body against the worktable, or vibrations due to other
+causes (such as a darkroom exhaust fan} may reduce the definition,
+especially with enlargements of high magnification. Such vibrations
+can often be detected by viewing the grain through a high-power
+focusing magnifier, the grain should be steady and sharp in the
+viewer.

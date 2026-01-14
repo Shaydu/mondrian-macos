@@ -1,0 +1,41 @@
+Shutters 91
+
+is capable of very high accuracy and efficiency. A graph of its per-
+formance would be somewhat similar in shape to that of a leaf
+shutter, with the efficiency increasing as the curtain-to-film dis-
+tance decreases, and as the curtain speed increases. Like the leaf
+shutter, the focal-plane shutter has highest efficiency at slower
+speeds,
+
+iG THE SHUTTER
+
+‘The way the shutter is released can affect the definition of the final
+image, since any movement of the camera during exposure reduces
+the sharpness, It is important never to jab or poke the shutter re-
+Jease button. Give it steady pressure with the ball of the finger,
+squeezing until the shutter trips. Many recent cametas have a ring
+or cup surrounding the release button, a help in applying steady
+pressure. Whenever possible, the thumb should rest against the
+bottom or rear of the camera, so the thumb and forefinger can act
+in a “pinching” manner, exerting opposing pressures that equalize
+each other, Failure to use a smooth, steady pressure can have dire
+consequences for image sharpness.
+
+Cable release. The flexible cable release greatly reduces the risk of
+jarring the camera during shutter release. It consists of a cable
+within a tube, which screws into a socket in the camera, Since the
+release pressure is entirely equalized at the camera, the risk of dis-
+turbing the camera during exposure is greatly reduced. The cable
+release must be as flexible as possible, since vibrations can be trans-
+mitted through the cable itself, and must be held in a relaxed loop
+without tension, Cameras that use an electric cable release rather
+than a mechanical one are much better isolated from vibration.
+Most mechanical cable releases also include a lock or clamp, which
+can be used to keep the shutter open for time exposures using the
+B setting if no time setting is provided in the shutter {if this lock
+is not tightly secured, the shutter can malfunction, ruining the
+exposure}.
+
+Bulb and air hose, This is a very dependable way of operating the
+shutter, A gentle squeeze of the air bulb provides vibrationless
+

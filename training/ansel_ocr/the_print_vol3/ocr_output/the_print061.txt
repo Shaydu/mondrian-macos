@@ -1,0 +1,62 @@
+Sce pages M4
+
+See page 22-23
+
+See page 20
+
+See page 142
+
+See page 26
+
+See pages 30-31
+
+See Book 2, pages 41-12
+
+48 Printing Materials
+
+revealed in the print. Hence papers are given numbers indicating
+their contrast in terms of paper grades. The softest papers are Grade
+O or 1, and the hardest are Grade 5 or 6, depending on the manufac-
+turer’s system. A-contrasty negative will require a paper of long ex-
+posure scale for printing, Grade 0 or 1; a flat, low-contrast negative
+requires a shorter-scale paper, perhaps Grade 4, 5, or even 6. Do not
+confuse this exposure scale of the paper with its potential scale of
+reflection densities; “ a contrasty negative printed on a Grade 0 or
+1 paper should yield about the same full range of print densities
+{values} as a flat negative printed on a high-contrast paper.
+
+Although the grades differ widely from one manufacturer to an-
+other (and even from one batch to another of the same paper!), I
+standardize my printing on a Grade 2, using a diffused-light en-
+larger. “I resort to other grades only when required to compensate
+for different negative scales or for particular image requirements,
+Some small-format workers prefer to standardize on a Grade 3, and
+thus they plan a somewhat “softer” negative. © It should also be
+understood that two papers that have the same overall exposure scale
+may produce prints of quite different quality; the progression of val-
+ues within the scale is determined by the properties of the paper
+expressed in its characteristic curve. ©
+
+The alternative to graded papers is variable-contrast material, such
+as Kodak’s Polycontrast and Ilford Multigrade. Such papers yield
+different exposure scale depending on the color of the enlarging light.
+Filters or a variable-color light source “ can thus be used in printing
+to control image contrast, giving the benefit of different grades from
+asingle paper. This capability is achieved by combining two different
+emulsions, one low in contrast and one higher, each sensitized toa
+different color of light, usually the high-contrast emulsion is sensi-
+tive to blue light and the lower-contrast emulsion is green-sensitive,
+Because these papers respond to a broader spectrum band than graded
+papers, be sure to follow the manufacturer's instructions regarding
+choice of safelight filters. *
+
+‘There are a few papers that are available only in a single contrast
+grade. These papers are produced for use by studio portrait photog:
+raphers, who can control the negative contrast through adjustments
+of lighting and development.
+
+‘The Reciprocity Effect
+
+Exposures with paper emulsions are subject to the reciprocity
+effect. ° Our most recent testing indicates that exposures of 5 min:
+utes may cause a loss of paper speed by 2.or 3 times, compared with

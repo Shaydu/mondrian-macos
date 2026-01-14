@@ -1,0 +1,72 @@
+Reciprocity Effect
+
+In testing for the effec of very long
+‘exposures, our data showed a signif
+‘ant loss of emulsion speed. However,
+‘no measurable change of contrast o¢-
+‘curred. The exposures used for this
+test were 18 seconds, 144 seconds
+‘with ND 0,90 newtral-density filer
+‘on, and 288 seconds with ND 1.20.
+Calibrated neutral density filters were
+used instead of simply changing aper-
+ture to ensure the greatest possible ac-
+ceuracy. The paper was ord Gallerie
+Grade 2
+
+Effect of Selenium Toning
+
+‘Identical test prints were toncd in
+Kodak Rapid Selenium Toner diluted
+1:10 with Kodak Hypo Clearing Agent
+(working strength}. Note that the scale
+has been extended — the low values
+are darker — as a result of the toning.
+The paper was Ilford Gallerie Grade 2.
+
+200 Appendix
+
+Net
+Density
+
+240
+
+210
+
+180
+
+18 Seconds 288 Seconds
+
+144 Seconds.
+
+0.20
+0.60
+0.30
+0.00 —< A |
+
+000 030 060 080 120 10 180 21 240 270 300 Relaie
+
+Log
+Exposure
+
+Net
+Density
+ee:
+
+270 |
+
+|2Min | 8 Min,
+240 if
+
+210
+
+180
+
+020
+060
+020
+
+0.00 =<
+
+0.00 030 060 090 120 150 180 2m 240 270 300 Relative
+

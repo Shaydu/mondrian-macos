@@ -1,0 +1,51 @@
+See Book 2, pages 233-234
+
+64 Proofs and Work Prints
+
+these low-density areas, note where full detail begins, and where
+there is only slight texture or none at all. It is extremely helpful to
+recall the visualization, perhaps making reference to the Exposure
+Record or notes made at the time of exposure; misreading of the
+meter, faults in exposure placement or development, wrong filter or
+lens extension factors can often be diagnosed by reference to accurate
+notes. In this way we can begin to relate the appearance of the neg-
+ative with the remembered and recorded values of the subject, and
+with the anticipated print values. Look also at the borders of the
+negative to check the minimum density level (filmbase-plus-fog den=
+sity], if you encounter a negative that has a high minimum density
+compared with other negatives (either visually or measured with a
+densitometer), you should look for possible causes of negative fog.
+
+Then visually evaluate the middle and high densities of the neg-
+ative. The high densities should show separation and detail through
+all important image areas. The character of the lighting can be fur:
+ther evaluated by examining the appearance of the highlights: if
+small and crisp, the source may be sunlight or distant artificial light;
+if broad and diffused, the source may be open sky or diffused artificial
+light. You should also attempt at this point to estimate the overall
+contrast of the negative, By considering the negative in this way, you
+will better understand what you may expect to have in the print.
+
+It should be noted that the color of the negative can have an effect,
+on its printing contrast. Some developing agents, like pyro or pyro-
+catechin, “ produce a ‘stain’ on the negative image that is propor-
+tional to the density. The stain is usually yellow in color, so it acts
+as a blue-absorbing “filter.” Since papers are sensitized to blue light,
+the yellow stain functions like a higher density in printing than is
+evident to the eye. Thus a negative produced by a staining developer
+can be expected to print with higher contrast than visual evaluation
+suggests, provided the staining effect is proportional to the silver
+density (a uniform all-over stain would simply increase the required
+printing exposure time). The difference in contrast caused by stain-
+ing developers can be quite surprising — sometimes more than one
+paper grade.
+
+The recently introduced chromogenic films, such as Ilford XP-1
+and Agfa Vario-XL, are color-dye materials that yield a black-and-
+white negative. The XP-1 negative has a reddish cast, so it prints
+with higher contrast than we might expect — especially with vapor-
+tube light sources —a similar effect to that of a staining developer.
+
+As the final step in evaluating the negative, I repeat that it is best
+to use a soft grade of paper to make a proof or first print. The print
+may be visually flat, but the purpose is to reveal all the information

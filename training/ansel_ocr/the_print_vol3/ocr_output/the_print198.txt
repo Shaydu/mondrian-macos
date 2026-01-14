@@ -1,0 +1,82 @@
+Figure 8-9. Trailer Camp Children,
+Richmond, California (1944). This
+photograph was made for a wartime
+project at the shipyards at Richmond
+Jn which Dorothea Lange and I were
+engaged. The boy was caring for his
+sisters while both father and mother
+‘worked in the shipyards. He was being
+interviewed and was obviously con-
+comed. At the time { was using only
+‘my view camera, for this I borrowed
+Dorothea’s twin-Iens Rolleiflex and
+‘made this negative [only one, a8 she
+needed the camera), Iti a diffeult
+‘negative to print. The camera lens was
+uncoated (and probably dusty) and the
+negative shows considerable all-over
+flare. The lighting was very uneven
+and both cropping and dodging were
+critical.
+
+“The negative contrast varies exten
+sively. The faces require careful dodg-
+Ing with a small wand, Other arcas—
+pars of clothing, hands, arms, near
+oor jam — were in patches of sun-
+light against areas of deep shadow, and
+thus demand precise burning. This is 2
+pad example of correcting an uncon-
+trolled negative. In faet, I was fortun-
+atctogct any negative for acceptable
+print) a alll The subject was vital co
+the story, and fleeting the visualiza-
+‘ion was only “general”
+
+Special Printing Applications 185
+Photoengraving
+
+The original photograph to be reproduced must be recorded on film,
+usually in halftone dots. The photoengraver’s negative is exposed in
+a process camera through a contact screen that introduces the dots.
+This negative is then used to expose the press plate, which ulti-
+mately transmits the positive image in ink to the paper.
+
+In the past engraving materials had too short an exposure range to
+handle the full scale of a fine print. There has always been discussion
+on what the reflection-density range of the print should be to match
+the scale of the negative/printing-plate system. In newspaper pho-
+tography, the values of the optimum print were described as “black
+and white, plus two or three grays at most in between.” Engravers
+were trained to expose their negatives to hold all possible shadow
+detail in the print to be reproduced. This usually resulted in the high
+values being overexposed and “burned out” in the reproduction
+
+‘The current state of the art in photoengraving makes use of the
+laser scanner, originally designed for reproducing color images but
+superbly suited for black-and-white reproduction with duotone
+printing, To use this device, the unmounted print is attached to a
+drum, which rotates in front of a fine beam of light. The light beam
+scans the image, and the light reflected is translated through a com-
+puter into exposure information for the negatives (one for each plate),
+which are then automatically exposed by laser beams
+
+The result is exceptional image resolution and greater control of
+the tonalities. The dot pattern created by the laser beam is distinctly
+sharper than that of a contact screen in a process camera. The scan-
+ner also permits selective enhancement of values; it is possible to
+reveal subtle separation of values at either end of the scale which
+may even exceed those attained by the photographer in the original
+print! Of course, the result is subject to the skill and taste of the
+operator, and, if possible, the photographer should be available to
+suggest appropriate value controls during the ¢ngraving and printing
+
+Duotone
+
+It is impossible with a single lithographic plate to have full control
+of the ink deposited on the paper. With a single plate the image
+typically will have weak low values and/or harsh high values. Thus
+a second plate may be used in reproducing full-scale photographs,
+primarily to reinforce the dark areas. The ink used on the second
+printing plate may also differ from the ink on the primary plate, to
+provide subtle control of the image “color.” The techniques used in

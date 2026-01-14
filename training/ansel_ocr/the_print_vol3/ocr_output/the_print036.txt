@@ -1,0 +1,83 @@
+Figure2-8, Rodi, California. This
+represents atypical enhancement of
+values Bodie isa ghost town and a
+‘ery hoe place, with shimmering bleak
+sunlight, A realist image of this sub-
+Jeet would show a saturation of light,
+and the effect would be rather drab. 1
+several choiees of visualizatio
+soft, high-key interpretation, a
+aighforwacd “literal” photograph,
+a fallscale composition of values
+from black to white. The last appealed
+mie most.
+placed the stairwell (center) on
+1 bur the strong orange-red fil
+[NNo.23A} lowered it to Zone Land
+ow. A faint tree ofthe stairway is
+len the fine print. The glaring
+te wall is aecentuated by the
+ny black “holes” of the windows,
+the midafternoon light aeeen-
+ted textures, The clapboard wall is
+ally aweather-beaten light gray
+fll on Zone Vii, with normal
+yment given the negative. A
+liane prin is obtained on Koda-
+‘Grade 4 or Oriental Seagull
+3 papers.
+feamera was a 4%5 view camera
+inch Dapor lens. I used Super-
+Jnthe 54-inch Graflex rol-film
+(po longer available), and de~
+itn DK-50 in a decp tank.
+
+Darkroom Design and Equipment 23
+
+Dr. Paul Horowitz, a physicist at Harvard University who designed
+the cold-light stabilizer discussed below, that many solid state di
+ital timers cannot be used safely with cold-light sources because the
+high voltages tend to produce surges of current that can damage the
+timer; I suggest contacting the timer manufacturer if you plan to use
+such a timer with a cold-light source.
+
+Even the best cold-light tubes are sensitive to voltage changes and
+to temperature, and it is difficult to maintain constant output over
+aperiod of time. After turning on the light, its output usually reaches
+a maximum in about 5 minutes, and thereafter it will gradually di-
+minish as the temperature rises. We therefore must follow a plan of
+allowing a cold lamp to warm up for several minutes, and then turn-
+ing the light off and on every few minutes (at regular intervals}
+throughout the printing session to be sure of consistent output.
+
+‘A device that greatly improves the stability of cold-light units was
+developed by Dr. Horowitz. It is a light-output stabilizer that mon-
+itors the lamp intensity and automatically adjusts it. Unlike voltage
+stabilizers, which monitor and adjust the incoming line voltage
+without regard for the actual light intensity, this unit achieves nearly
+perfect stability of the light output itself. I have found that it vastly
+improves the repeatability of exposures when making multiple
+prints or applying test exposure times. The stabilizer unit, which
+can be adapted to most cold-light heads, is sold through Zone VI
+Studios (Newfane, Vermont}.
+
+Excellent diffused illumination can also be obtained with tungsten
+lamps, by using appropriate diffusing material between lamp and
+negative. Or the lamp may be placed in an “integrating sphere” re-
+flector above the negative; the lamp itself is shiclded by a small
+diffusing disc, and a sheet of diffusing material is usually located
+above the negative to ensure an even field of illumination. Note,
+however, that tungsten lamps produce heat which, if excessive, can
+damage the negative or occasionally even crack condenser lenses and
+glass sheets. Any diffusing materials added to a tungsten lighting
+system must be capable of withstanding a certain amount of heat,
+and, of course, adequate ventilation for the lamp housing is essential.
+‘The heat produced by tungsten lamps frequently causes larger neg-
+atives to “buckle” and go out of focus; refocusing after the negative
+has buckled will be necessary.
+
+‘A conventional voltage stabilizer can be a very useful addition to
+a tungsten lighting system — especially if it is to be used for color
+printing, where a change of voltage produces a marked change in the
+color temperature of the light output.
+

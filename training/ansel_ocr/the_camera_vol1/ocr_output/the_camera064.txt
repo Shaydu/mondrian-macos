@@ -1,0 +1,59 @@
+Figure 5-6, Depth of field. The
+images of three subjece points at
+different disunces come into focus
+at different distances bebind the
+lens 1 focus is set at poiat a, dhe
+more distant point B comes énto
+focus in front of the film plane,
+and the light “cone” forms a small
+disc on che film tastead of a point.
+has b is pot in focus on the film.
+Simialy, the image of point c,
+cdaver to the camera, focus be-
+Inn the film plane, and thus i also
+‘ota point but a small disc.
+
+(Al Wien the entire lems area is
+‘weed [te at maximum aperturel,
+the discs [called citeles of confu-
+sion) are relatively Large.
+
+1B) By stopping dow the lens 10
+‘smaller aperture, the size of the
+tinces of contusion is reduced. I
+the circles become small enough t9
+appear as points, the images are
+‘connideted i focus, and points b
+snd c fall within the depth of feld
+‘of the lens 4¢ that aperture
+
+‘See Chapter 10
+
+the subject to increase depth of field), These three factors, aperture,
+lens focal length, and subject distance, give us considerable flexi-
+bility in managing depth of field. In addition, the lens and film
+plane adjustments of a view camera,4 while they do not actually
+change the basic depth of field, do permit us to align the plane of
+sharp focus to coincide with the most important plane of the
+subject.
+
+The factors affecting depth of field are governed by the follow-
+ing principles: (1] The depth of field doubles if the f-number is
+doubled (e.g., from £/8 to £/ 16}. (2) If you double the subject distance,
+the depth of field increases by four times, triple the distance, the
+depth of field increases by nine times (depth of field is proportional
+to the square of the distance], (3} If you reduce the focal length by
+one half, the depth of field increases by four times (depth of field
+is inversely proportional to the square of the focal length).
+
+‘We must remember that the depth of field relates to an acceptable
+degree of sharpness; in actuality, only the plane focused upon is
+truly sharp, Acceptable sharpness is also affected by the degree of
+enlargement of the negative and the distance from which the final
+print is viewed, An enlargement that looks well at 5 feet might
+be definitely unsharp at reading distance. Standard depth of field
+tables and scales are all based on certain assumptions regarding
+these factors.
+
+The reason smaller apertures increase depth of field is shown in
+Figure 5-6, The image of a “point” in the subject should be a

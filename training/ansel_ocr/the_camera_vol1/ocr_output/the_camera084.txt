@@ -1,0 +1,43 @@
+Lenses 69
+
+Macro lenses for small-format cameras usually include @ scale
+for adjusting the exposure depending on the lens extension, and
+bellows or extension rings are accompanied by scales or tables for
+correction. (Some lenses give better performance when reversed for
+mounting on a bellows, so the rear element faces the subject; check
+the manufacturer's instructions, You can also determine the total
+extension with any lens by measuring the distance the lens is ex:
+tended from its infinity focus position and adding that figure to
+the focal length,
+
+Note that the resulting quotient is a factor by which the indicated
+exposure must be multiplied to get the correct exposure. A factor
+can be multiplied by the shutter speed to obtain a corrected shutter
+speed, or it can be converted to f-stops to correct the aperture set-
+ting. For example, if we are using a 6-inch lens on a view camera,
+and the measured distance from the lens to the film plane is 8¥2
+inches, the factor would be 8.5* + 6°, or about 2, If the indicated.
+shutter speed is 1/30 second, multiplying by 2 gives 2/30 second,
+or 1/15, To correct the aperture we would convert the factor to
+f-stops, or one stop (since one stop produces a 2x exposure
+change).¢ We would thus open the lens one stop from the indicated
+aperture, achieving the same exposure increase as changing from
+1/30 to 1/15 second. You can adjust either the aperture or the
+shutter speed in this way, but don’t do both! Even the most ex-
+perienced professional will sometimes overlook this extension fac-
+tor, I have done so many times, with resulting underexposure.
+
+‘One situation that often arises in close-up photography is making
+a 1:1 (life-size) copy of an object [although obtaining precisely 1:1
+magnification is very difficult}. This is a special case where, for
+optical reasons,® the lens-to-subject and lens-to-film distances are
+both equal to twice the focal length of the lens, and the extension
+factor is always 4, or two stops.
+
+In the days before lens coating was perfected, each air-to-glass sur-
+face in a lens wasted about 4 to 5 percent of the light striking it
+because of reflection. For a lens of 6 air-to-glass surfaces, this meant
+that less than 80 percent of the light was transmitted. With current
+optical coatings, a lens of 12 air-to-glass surfaces transmits more
+light and creates less flare than an uncoated lens of 4 surfaces.
+

@@ -1,0 +1,41 @@
+92 Shutters
+
+action, and the air hose can be of any reasonable length. Although
+not as precise as a cable releasc—building up air pressure gives a
+slight lag to the shutter action—there is almost no risk of trané
+mitting vibration to the camera, provided the air hose is not under
+tension.
+
+Self-timer. The self-timer, designed to trip the shutter after a mea-
+sured interval, can be effective for making exposures with minimum
+tisk of jarring the camera when no cable or air bulb release is
+available, The time delay can be as long as 10 seconds, during that
+time any vibrations from touching the camera will die down. How>
+ever, since the precise moment of exposure is not known, this
+method is useful only with stationary subjects.
+
+Remote controls, In addition to the air bulb, which can be used
+with a very long hose if necessary, there are various means of mak-
+ing exposures through electronic remote controls. Cameras for use
+with such systems must include a motor drive for advancing the
+film and resetting the shutter if more than one exposure is to
+be made.
+
+CALIBRATION OF SHUTTERS
+
+A shutter may be of good design, but, because of age, wear, or im-
+proper calibration, still inaccurate. It is important to know what
+the true shutter speeds are, They will usually be quite accurate as
+marked in the middle of the speed range, but may be considerably.
+off at the slowest and fastest speeds. If a shutter set at 1/125 second
+actually gives a 1/100-second exposure, you are safe using 1/100
+second in exposure calculations, provided the error is consistent.
+If erratic readings are found when a shutter is tested, however, the
+‘unit must be overhauled or replaced.
+
+Electronic shutter testers, such as the Bogen and Sig-Tec, are
+available at moderate cost, but these may not be accurate with
+focal-plane shutters at fast speeds. A professional photographer may
+find it worthwhile to have such an instrument, since it will permit
+frequent checking of shutter performance, A camera technician can
+evaluate and calibrate a shutter with great accuracy.

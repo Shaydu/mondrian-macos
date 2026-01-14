@@ -1,0 +1,29 @@
+Lenses 75
+
+able cost, There are a total of seven lens aberrations to contend
+with; while there is little the photographer can do about their pres-
+ence in a lens (except to avoid large apertures}, it is helpful to be
+aware of them.
+
+Spherical aberration (Figure 5-24), Light passing through the edges
+of lens is actually focused closer to the lens than the light passing
+through the central area, resulting in a soft image lacking contrast.
+Some portrait and soft-focus lenses make use of uncorrected spheri-
+cal aberration to deliberately reduce image sharpness, but in most
+lenses it is undesirable. It may be reduced by stopping down the
+Jens, but a focus shift? usually results, A lens known to have spheri-
+cal aberration must be refocused at the working aperture,
+
+Chromatic aberration (Figure 5-25). There are two varieties of
+chromatic, or color, aberration, both resulting from the fact that
+light of different wavelengths [ic., different colors} undergoes dif-
+ferent degrees of refraction as it passes through a lens, Thus an
+uncorrected Jens is not able to bring light of different colors into
+focus at the same point, or it produces images of slightly different
+size depending on the color of the light. The result can be color
+fringes around objects photographed in color, or a loss of sharpness
+in black-and-white. The terms achromat and apochromat are some-
+times applied to lenses corrected for two and three different wave-
+lengths, respectively; moder lenses are usually well corrected, and
+these terms are not always used. The variety of chromatic aber-
+

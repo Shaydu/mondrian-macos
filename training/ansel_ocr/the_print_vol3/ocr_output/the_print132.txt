@@ -1,0 +1,49 @@
+The Fine Print: Control of Values 119
+
+what, more so than potassium bromide, but this effect may depend
+on the paper and developer used.
+
+‘The use of both these chemicals effectively reduces the speed of
+the papers, and thus requires an increase in exposure. They may also
+lengthen the emergence time of the image in the developer, and
+some papers may therefore require lower than normal development
+factors. With contemporary papers benzotriazole will cause a dis-
+tinct “cooling” of the image color, and potassium bromide will in-
+crease its “warmth.”
+
+WATER-BATH AND TWO-SOLUTION DEVELOPMENT
+
+Book, page 229
+
+An unusually difficult problem of excessive contrast can sometimes
+be managed by transferring the print from the developer to a deep
+tray of water and allowing it to stand without agitation for a minute
+or two; the print is then returned to the developer, and the cycle is
+repeated as many times as required. The principle is the same as for
+water-bath processing of negatives: in the water, the dark areas of
+the print will soon exhaust the developer retained there, while the
+high values continue developing, and thus the high values receive
+proportionally greater development. The result is an increased rev-
+elation of the high-value qualities, and a somewhat restricted de-
+velopment of the low and middle tones of the print. If water-bath
+processing is found to yield weak low values, the print can be given
+a final immersion in the developer before being transferred to the
+stop bath. Remember that prints that are exposed to safelights for
+extended periods, such as when lying in a water bath, may show fog;
+shield the print or tun off the safelight over the tray for most of the
+developing and water-bath time
+
+‘There is no way to give a precise formula for this process; it re-
+quires testing and experimentation. In particular you must be aware
+of the possibility of mottle appearing in smooth, textureless areas of
+about Value V-VI, such as cloudless sky. Water-bath development
+is generally best suited to textured subjects, where slight unevenness
+will be less apparent. There are two procedures than can help elim-
+inate mottle: during the water bath, a slight agitation can be given.
+Tipping the tray gently every 30 seconds, both to one side and to the
+back or front, reduced mottle problems in our test examples, but it
+also reduces the water-bath effect.
+
+We have also found that replacing the water bath with a 10 percent
+sodium carbonate solution reduced the problem. This is analogous to
+
