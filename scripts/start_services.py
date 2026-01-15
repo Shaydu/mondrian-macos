@@ -22,7 +22,7 @@ except ImportError:
 
 
 # Default services (will be configured based on mode)
-def get_services_for_mode(mode="base", lora_path=None):
+def get_services_for_mode(mode="base", lora_path=None, model=None):
     """
     Get service configurations based on mode.
     
@@ -38,6 +38,10 @@ def get_services_for_mode(mode="base", lora_path=None):
     
     # Configure AI Advisor Service based on mode
     ai_advisor_cmd = [sys.executable, "mondrian/ai_advisor_service.py", "--port", "5100"]
+    
+    # Add model if specified
+    if model:
+        ai_advisor_cmd.extend(["--model", model])
     
     if mode == "base":
         # Base mode: default settings (no special flags)
@@ -657,12 +661,18 @@ def main():
     # Parse mode argument
     mode = "base"  # Default mode
     lora_path = None
+    model_arg = None
+    all_services = False
     
     for arg in sys.argv:
         if arg.startswith("--mode="):
             mode = arg.split("=", 1)[1]
         elif arg.startswith("--lora-path="):
             lora_path = arg.split("=", 1)[1]
+        elif arg.startswith("--model="):
+            model_arg = arg.split("=", 1)[1]
+        elif arg == "--all-services" or arg == "--full":
+            all_services = True
     
     # Show usage if --help
     if '--help' in sys.argv or '-h' in sys.argv:
@@ -790,7 +800,7 @@ Examples:
         env['PYTHONPATH'] = working_dir
 
     # Get services for the selected mode
-    services = get_services_for_mode(mode, lora_path)
+    services = get_services_for_mode(mode, lora_path, model_arg)
     
     print("\n" + "=" * 60)
     print(f"Starting Mondrian services in {mode.upper()} mode")

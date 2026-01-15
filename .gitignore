@@ -1,9 +1,43 @@
-# Ignore SQLite database files
-# Database files
+# Environment & Virtual Environments
+venv/
+env/
+.venv/
+*.egg-info/
+dist/
+build/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+
+# SQLite database files
 mondrian/mondrian.db
 *.db-shm
 *.db-wal
+
+# Documentation & Analysis Output
 analysis_output/
+analysis/
+docs/
+advisor_output_review/
+preview/
+
+# Large training data and model artifacts
+training/
+adapters/
+uploads/
+thumbnails/
 
 # Massive training data and images
 training/ansel_ocr/the_camera_vol1/*.png
@@ -12,3 +46,20 @@ training/ansel_ocr/extracted_photos/
 training/ansel_ocr/the_print_vol3/
 training/user_images/
 training/datasets/ansel-images/
+
+# Logs
+logs/
+*.log
+debug_job_latest.html
+test_embedding_output.html
+test_rag_output.html
+test_score_table_consolidation_output.html
+phase1_output2.html
+
+# Test and temporary files
+retest.txt
+TEST_CREATION_SUMMARY.txt
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Job Service for Mondrian on Linux
-Manages background processing of analysis jobs
+Manages background processing of analysis jobs with AI Advisor integration
 """
 
 import os
@@ -14,8 +14,11 @@ from datetime import datetime
 import sqlite3
 from typing import Optional, Dict, Any
 import uuid
+import threading
+import time
+import requests
 
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Response
 from flask_cors import CORS
 
 # Configure logging
@@ -26,6 +29,9 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
+# AI Advisor service URL
+AI_ADVISOR_URL = "http://127.0.0.1:5100"
+
 class JobDatabase:
     """Simple job tracking database"""
     
@@ -34,22 +40,9 @@ class JobDatabase:
         self._init_db()
     
     def _init_db(self):
-        """Initialize database schema"""
-        with sqlite3.connect(self.db_path) as conn:
-            conn.execute("""
-                CREATE TABLE IF NOT EXISTS jobs (
-                    id TEXT PRIMARY KEY,
-                    created_at TEXT,
-                    updated_at TEXT,
-                    status TEXT,
-                    advisor TEXT,
-                    mode TEXT,
-                    image_path TEXT,
-                    result JSON,
-                    error TEXT
-                )
-            """)
-            conn.commit()
+        """Initialize database schema - uses existing schema"""
+        # Database is expected to exist; we don't create it
+        pass
     
     def create_job(self, advisor: str, mode: str, image_path: str) -> str:
         """Create a new job"""
@@ -58,9 +51,9 @@ class JobDatabase:
         
         with sqlite3.connect(self.db_path) as conn:
             conn.execute("""
-                INSERT INTO jobs (id, created_at, updated_at, status, advisor, mode, image_path)
+                INSERT INTO jobs (id, filename, advisor, mode, status, created_at, last_activity)
                 VALUES (?, ?, ?, ?, ?, ?, ?)
-            """, (job_id, now, now, 'pending', advisor, mode, image_path))
+            """, (job_id, image_path, advisor, mode, 'pending', now, now))
             conn.commit()
         
         logger.info(f"Created job {job_id}")
@@ -70,7 +63,7 @@ class JobDatabase:
         """Get job details"""
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.execute(
-                "SELECT id, created_at, updated_at, status, advisor, mode, image_path, result, error FROM jobs WHERE id = ?",
+                "SELECT id, filename, status, advisor, mode, created_at, current_step, progress_percentage, enable_rag FROM jobs WHERE id = ?",
                 (job_id,)
             )
             row = cursor.fetchone()
@@ -80,26 +73,25 @@ class JobDatabase:
         
         return {
             'id': row[0],
-            'created_at': row[1],
-            'updated_at': row[2],
-            'status': row[3],
-            'advisor': row[4],
-            'mode': row[5],
-            'image_path': row[6],
-            'result': json.loads(row[7]) if row[7] else None,
-            'error': row[8]
+            'filename': row[1],
+            'status': row[2],
+            'advisor': row[3],
+            'mode': row[4],
+            'created_at': row[5],
+            'current_step': row[6],
+            'progress_percentage': row[7],
+            'enable_rag': bool(row[8])
         }
     
     def update_job(self, job_id: str, status: str, result: Optional[Dict] = None, error: Optional[str] = None):
         """Update job status"""
         now = datetime.now().isoformat()
-        result_json = json.dumps(result) if result else None
         
         with sqlite3.connect(self.db_path) as conn:
             conn.execute("""
-                UPDATE jobs SET updated_at = ?, status = ?, result = ?, error = ?
+                UPDATE jobs SET status = ?, last_activity = ?
                 WHERE id = ?
-            """, (now, status, result_json, error, job_id))
+            """, (status, now, job_id))
             conn.commit()
         
         logger.info(f"Updated job {job_id} to status {status}")
@@ -108,7 +100,7 @@ class JobDatabase:
         """List recent jobs"""
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.execute("""
-                SELECT id, created_at, updated_at, status, advisor, mode FROM jobs
+                SELECT id, filename, status, advisor, mode, created_at FROM jobs
                 ORDER BY created_at DESC LIMIT ?
             """, (limit,))
             rows = cursor.fetchall()
@@ -116,11 +108,11 @@ class JobDatabase:
         return [
             {
                 'id': row[0],
-                'created_at': row[1],
-                'updated_at': row[2],
-                'status': row[3],
-                'advisor': row[4],
-                'mode': row[5]
+                'filename': row[1],
+                'status': row[2],
+                'advisor': row[3],
+                'mode': row[4],
+                'created_at': row[5]
             }
             for row in rows
         ]
@@ -158,6 +150,105 @@ def health():
     }), 200
 
 
+@app.route('/advisors', methods=['GET'])
+def get_advisors():
+    """Get list of available advisors"""
+    try:
+        db_path = job_db.db_path if job_db else "mondrian.db"
+        with sqlite3.connect(db_path) as conn:
+            conn.row_factory = sqlite3.Row
+            cursor = conn.execute(
+                "SELECT id, name, bio, focus_areas FROM advisors ORDER BY id"
+            )
+            rows = cursor.fetchall()
+        
+        advisors = []
+        for row in rows:
+            advisor = {
+                "id": row["id"],
+                "name": row["name"],
+                "bio": row["bio"] if row["bio"] else "",
+                "focus_areas": []
+            }
+            
+            # Parse focus_areas JSON if it exists
+            if row["focus_areas"]:
+                try:
+                    advisor["focus_areas"] = json.loads(row["focus_areas"])
+                except (json.JSONDecodeError, TypeError):
+                    advisor["focus_areas"] = []
+            
+            advisors.append(advisor)
+        
+        return jsonify({
+            "advisors": advisors,
+            "count": len(advisors),
+            "timestamp": datetime.now().isoformat()
+        }), 200
+    
+    except Exception as e:
+        logger.error(f"Error fetching advisors: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/upload', methods=['POST'])
+def upload_image():
+    """Upload image and queue for analysis"""
+    if not job_db:
+        return jsonify({"error": "Database not initialized"}), 503
+    
+    try:
+        # Get file - iOS uses 'image' field name, curl might use 'file'
+        file = None
+        if 'image' in request.files:
+            file = request.files['image']
+        elif 'file' in request.files:
+            file = request.files['file']
+        
+        if not file or file.filename == '':
+            return jsonify({"error": "No file provided"}), 400
+        
+        advisor = request.form.get('advisor', 'ansel')
+        mode = request.form.get('mode', 'baseline')
+        enable_rag = request.form.get('enable_rag', 'false').lower() in ('true', '1', 'yes')
+        auto_analyze = request.form.get('auto_analyze', 'false').lower() in ('true', '1', 'yes')
+        
+        # Save file - extract just the basename to avoid path traversal issues
+        import uuid
+        from os.path import basename
+        safe_filename = basename(file.filename)  # Extract just the filename, not the path
+        unique_filename = f"{uuid.uuid4()}_{safe_filename}"
+        upload_dir = Path("uploads")
+        upload_dir.mkdir(exist_ok=True)
+        filepath = upload_dir / unique_filename
+        file.save(str(filepath))
+        
+        # Create job
+        job_id = job_db.create_job(advisor, mode, str(filepath))
+        
+        # Format response - keep job_id clean for URLs, add mode to display_id
+        display_job_id = f"{job_id} ({mode})"
+        base_url = f"http://{request.host.split(':')[0]}:5005"
+        
+        return jsonify({
+            "job_id": job_id,
+            "display_job_id": display_job_id,
+            "filename": file.filename,
+            "advisor": advisor,
+            "advisors_used": [advisor],
+            "status": "queued",
+            "mode": mode,
+            "enable_rag": enable_rag,
+            "status_url": f"{base_url}/status/{job_id}",
+            "stream_url": f"{base_url}/stream/{job_id}",
+            "analysis_url": f"{base_url}/analysis/{job_id}"
+        }), 201
+    
+    except Exception as e:
+        logger.error(f"Error uploading file: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
 @app.route('/jobs', methods=['GET'])
 def list_jobs():
     """List recent jobs"""
@@ -165,13 +256,193 @@ def list_jobs():
         return jsonify({"error": "Database not initialized"}), 503
     
     limit = request.args.get('limit', 100, type=int)
+    format_type = request.args.get('format', 'json').lower()
     jobs = job_db.list_jobs(limit=limit)
     
-    return jsonify({
-        "jobs": jobs,
-        "count": len(jobs),
-        "timestamp": datetime.now().isoformat()
-    }), 200
+    # Return JSON by default
+    if format_type != 'html':
+        return jsonify({
+            "jobs": jobs,
+            "count": len(jobs),
+            "timestamp": datetime.now().isoformat()
+        }), 200
+    
+    # Return HTML format
+    html = """
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Mondrian Jobs</title>
+        <style>
+            * { margin: 0; padding: 0; box-sizing: border-box; }
+            body { 
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+                background: #f5f5f5;
+                padding: 20px;
+            }
+            .container { max-width: 1400px; margin: 0 auto; }
+            h1 { color: #333; margin-bottom: 20px; font-size: 28px; }
+            .stats { display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
+            .stat-card {
+                background: white;
+                padding: 15px 20px;
+                border-radius: 8px;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                flex: 1;
+                min-width: 150px;
+            }
+            .stat-label { color: #999; font-size: 12px; text-transform: uppercase; }
+            .stat-value { font-size: 24px; font-weight: bold; color: #333; margin-top: 5px; }
+            table {
+                width: 100%;
+                border-collapse: collapse;
+                background: white;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                border-radius: 8px;
+                overflow: hidden;
+            }
+            thead {
+                background: #f8f8f8;
+                border-bottom: 2px solid #e0e0e0;
+            }
+            th {
+                padding: 12px 15px;
+                text-align: left;
+                font-weight: 600;
+                color: #333;
+                font-size: 13px;
+                text-transform: uppercase;
+            }
+            td {
+                padding: 12px 15px;
+                border-bottom: 1px solid #f0f0f0;
+                color: #666;
+            }
+            tbody tr:hover { background: #fafafa; }
+            .status-badge {
+                display: inline-block;
+                padding: 4px 8px;
+                border-radius: 4px;
+                font-size: 11px;
+                font-weight: 600;
+                text-transform: uppercase;
+            }
+            .status-pending { background: #fff3cd; color: #856404; }
+            .status-running { background: #cfe2ff; color: #084298; }
+            .status-completed { background: #d1e7dd; color: #0f5132; }
+            .status-failed { background: #f8d7da; color: #842029; }
+            .mode-badge {
+                display: inline-block;
+                padding: 4px 8px;
+                border-radius: 4px;
+                font-size: 11px;
+                font-weight: 600;
+                background: #e7f3ff;
+                color: #0056b3;
+            }
+            .progress-bar {
+                width: 100%;
+                height: 6px;
+                background: #e0e0e0;
+                border-radius: 3px;
+                overflow: hidden;
+            }
+            .progress-fill {
+                height: 100%;
+                background: #4CAF50;
+                transition: width 0.3s;
+            }
+            .timestamp { font-size: 12px; color: #999; }
+            .job-id { font-family: monospace; font-size: 11px; color: #999; }
+            .empty { text-align: center; padding: 40px; color: #999; }
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>Mondrian Job Management</h1>
+            
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-label">Total Jobs</div>
+                    <div class="stat-value">""" + str(len(jobs)) + """</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Completed</div>
+                    <div class="stat-value">""" + str(sum(1 for j in jobs if j.get('status') == 'completed')) + """</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Running</div>
+                    <div class="stat-value">""" + str(sum(1 for j in jobs if j.get('status') == 'running')) + """</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-label">Failed</div>
+                    <div class="stat-value">""" + str(sum(1 for j in jobs if j.get('status') == 'failed')) + """</div>
+                </div>
+            </div>
+            
+            """
+    
+    if not jobs:
+        html += '<div class="empty">No jobs found</div>'
+    else:
+        html += """
+            <table>
+                <thead>
+                    <tr>
+                        <th>Job ID</th>
+                        <th>Filename</th>
+                        <th>Advisor</th>
+                        <th>Mode</th>
+                        <th>Status</th>
+                        <th>Progress</th>
+                        <th>Created</th>
+                    </tr>
+                </thead>
+                <tbody>
+        """
+        for job in jobs:
+            status = job.get('status', 'unknown')
+            mode = job.get('mode', 'standard')
+            progress = job.get('progress_percentage', 0)
+            created = job.get('created_at', 'N/A')
+            if created != 'N/A':
+                created = created.split('.')[0]  # Remove milliseconds
+            
+            html += f"""
+                    <tr>
+                        <td><span class="job-id">{job.get('id', 'N/A')[:8]}...</span></td>
+                        <td>{job.get('filename', 'N/A')}</td>
+                        <td>{job.get('advisor', 'N/A')}</td>
+                        <td><span class="mode-badge">{mode}</span></td>
+                        <td><span class="status-badge status-{status}">{status}</span></td>
+                        <td>
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: {progress}%"></div>
+                            </div>
+                            <span style="font-size: 11px; color: #999;">{progress}%</span>
+                        </td>
+                        <td><span class="timestamp">{created}</span></td>
+                    </tr>
+            """
+        
+        html += """
+                </tbody>
+            </table>
+        """
+    
+    html += """
+        </div>
+        <script>
+            // Auto-refresh every 3 seconds
+            setInterval(function() {
+                location.reload();
+            }, 3000);
+        </script>
+    </body>
+    </html>
+    """
+    
+    return Response(html, mimetype='text/html')
 
 
 @app.route('/jobs/<job_id>', methods=['GET'])
@@ -186,6 +457,117 @@ def get_job(job_id: str):
         return jsonify({"error": "Job not found"}), 404
     
     return jsonify(job), 200
+
+
+@app.route('/status/<job_id>', methods=['GET'])
+def get_job_status(job_id: str):
+    """Get job status - alias for /jobs/<job_id> for backwards compatibility"""
+    return get_job(job_id)
+
+
+@app.route('/stream/<job_id>', methods=['GET'])
+def stream_job_updates(job_id: str):
+    """Stream job updates via Server-Sent Events (SSE)"""
+    if not job_db:
+        return jsonify({"error": "Database not initialized"}), 503
+    
+    job = job_db.get_job(job_id)
+    if not job:
+        return jsonify({"error": "Job not found"}), 404
+    
+    def generate():
+        """Generator function that yields SSE events"""
+        import time
+        from datetime import datetime
+        
+        last_status = job.get('status')
+        last_progress = job.get('progress_percentage', 0)
+        
+        while True:
+            job_data = job_db.get_job(job_id)
+            if not job_data:
+                break
+            
+            current_status = job_data.get('status')
+            current_progress = job_data.get('progress_percentage', 0)
+            
+            # Send status update if changed
+            if current_status != last_status or current_progress != last_progress:
+                event_data = {
+                    'status': current_status,
+                    'progress_percentage': current_progress,
+                    'current_step': job_data.get('current_step', ''),
+                    'llm_thinking': job_data.get('llm_thinking', '')
+                }
+                yield f"data: {json.dumps(event_data)}\n\n"
+                last_status = current_status
+                last_progress = current_progress
+            
+            # Check if job is complete
+            if current_status in ['completed', 'failed']:
+                # Send final event
+                final_event = {
+                    'type': 'done',
+                    'status': current_status,
+                    'job_id': job_id,
+                    'analysis_html': job_data.get('analysis_html', ''),
+                    'advisor_bio': job_data.get('advisor_bio', '')
+                }
+                yield f"data: {json.dumps(final_event)}\n\n"
+                break
+            
+            time.sleep(1)  # Check every second
+    
+    return app.response_class(
+        generate(),
+        mimetype="text/event-stream",
+        headers={
+            'Cache-Control': 'no-cache',
+            'X-Accel-Buffering': 'no',
+            'Connection': 'keep-alive'
+        }
+    )
+
+
+@app.route('/analysis/<job_id>', methods=['GET'])
+def get_analysis(job_id: str):
+    """Get analysis results for a job"""
+    if not job_db:
+        return jsonify({"error": "Database not initialized"}), 503
+    
+    job = job_db.get_job(job_id)
+    
+    if not job:
+        return jsonify({"error": "Job not found"}), 404
+    
+    return {
+        'job_id': job_id,
+        'status': job.get('status'),
+        'analysis_html': job.get('analysis_html', ''),
+        'advisor_bio': job.get('advisor_bio', ''),
+        'summary_html': job.get('summary_html', '')
+    }
+
+
+@app.route('/summary/<job_id>', methods=['GET'])
+def get_summary(job_id: str):
+    """
+    Get a critical recommendations summary (transparent proxy to summary service on port 5006).
+    Returns HTML view of only the most important recommendations.
+    """
+    try:
+        # Forward request to summary service on port 5006
+        summary_url = f"http://127.0.0.1:5006/generate/{job_id}"
+        resp = requests.get(summary_url, timeout=30)
+        # Return response with same status code and content type
+        return Response(
+            resp.content,
+            status=resp.status_code,
+            headers={'Content-Type': resp.headers.get('Content-Type', 'text/html; charset=utf-8')}
+        )
+    except Exception as e:
+        logger.error(f"[ERROR] Summary service proxy failed: {e}")
+        raise
 
 
 @app.route('/jobs', methods=['POST'])
@@ -254,6 +636,102 @@ def clear_jobs():
     }), 200
 
 
+def process_job_worker(db_path: str):
+    """Background worker that processes pending jobs"""
+    logger.info("Job processor started")
+    
+    while True:
+        try:
+            with sqlite3.connect(db_path) as conn:
+                # Find pending jobs
+                cursor = conn.execute("""
+                    SELECT id, filename, advisor, mode FROM jobs 
+                    WHERE status IN ('pending', 'queued')
+                    LIMIT 1
+                """)
+                job = cursor.fetchone()
+                
+                if not job:
+                    time.sleep(1)
+                    continue
+                
+                job_id, filename, advisor, mode = job
+                logger.info(f"Processing job {job_id}: {advisor} ({mode})")
+                
+                # Update job status
+                conn.execute("""
+                    UPDATE jobs SET status = ?, last_activity = ?
+                    WHERE id = ?
+                """, ('analyzing', datetime.now().isoformat(), job_id))
+                conn.commit()
+                
+                # Call AI Advisor service
+                try:
+                    with open(filename, 'rb') as f:
+                        response = requests.post(
+                            f"{AI_ADVISOR_URL}/analyze",
+                            files={'image': f},
+                            data={
+                                'advisor': advisor,
+                                'mode': mode,
+                                'enable_rag': 'false'
+                            },
+                            timeout=300,
+                            stream=True
+                        )
+                    
+                    if response.status_code == 200:
+                        analysis_data = response.json()
+                        
+                        # Extract analysis and thinking
+                        analysis_html = analysis_data.get('analysis_html', '')
+                        advisor_bio = analysis_data.get('advisor_bio', '')
+                        thinking = analysis_data.get('llm_thinking', '')
+                        
+                        # Update job with results
+                        conn.execute("""
+                            UPDATE jobs SET status = ?, analysis_html = ?, 
+                                           advisor_bio = ?, llm_thinking = ?,
+                                           last_activity = ?
+                            WHERE id = ?
+                        """, ('completed', analysis_html, advisor_bio, thinking,
+                              datetime.now().isoformat(), job_id))
+                        conn.commit()
+                        logger.info(f"Job {job_id} completed successfully")
+                    else:
+                        error_msg = f"AI Advisor returned {response.status_code}"
+                        conn.execute("""
+                            UPDATE jobs SET status = ?, error = ?, last_activity = ?
+                            WHERE id = ?
+                        """, ('failed', error_msg, datetime.now().isoformat(), job_id))
+                        conn.commit()
+                        logger.error(f"Job {job_id} failed: {error_msg}")
+                        
+                except Exception as e:
+                    error_msg = str(e)
+                    conn.execute("""
+                        UPDATE jobs SET status = ?, error = ?, last_activity = ?
+                        WHERE id = ?
+                    """, ('failed', error_msg, datetime.now().isoformat(), job_id))
+                    conn.commit()
+                    logger.error(f"Job {job_id} error: {e}")
+                    
+        except Exception as e:
+            logger.error(f"Worker error: {e}")
+            time.sleep(1)
+
+
+def start_job_processor(db_path: str):
+    """Start background job processor thread"""
+    processor = threading.Thread(
+        target=process_job_worker,
+        args=(db_path,),
+        daemon=True
+    )
+    processor.start()
+    return processor
+
+
 @app.errorhandler(500)
 def handle_error(e):
     """Handle errors"""
@@ -276,6 +754,10 @@ def main():
     logger.info(f"Database: {args.db}")
     
     init_db(args.db)
+    
+    # Start background job processor
+    start_job_processor(args.db)
+    logger.info("Background job processor started")
     
     logger.info(f"Starting Flask server on {args.host}:{args.port}")
     app.run(host=args.host, port=args.port, debug=args.debug)
