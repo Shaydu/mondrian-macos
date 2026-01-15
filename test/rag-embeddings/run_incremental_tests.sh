@@ -1,0 +1,216 @@
+#!/bin/bash
+# Incremental Mode Test Runner
+# Runs all four modes sequentially and reports which ones pass/fail
+
+set -e
+
+# Colors
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+BLUE='\033[0;34m'
+NC='\033[0m' # No Color
+
+# Configuration
+PROJECT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../.." && pwd)"
+TEST_DIR="$PROJECT_DIR/test/rag-embeddings"
+LOG_DIR="$PROJECT_DIR/logs/tests"
+RESULT_FILE="$LOG_DIR/incremental_test_results.txt"
+
+# Test configurations (mode, mode_arg1, mode_arg2, description)
+TESTS=(
+    "baseline,--mode=base,,Base model only"
+    "rag,--mode=rag,,Base model with RAG"
+    "lora,--mode=lora,--lora-path=./adapters/ansel,Base model with LoRA"
+    "lora_rag,--mode=lora+rag,--lora-path=./adapters/ansel,LoRA model with RAG"
+)
+
+# Test results
+declare -A RESULTS
+declare -a PASSED_TESTS
+declare -a FAILED_TESTS
+
+# Helper functions
+print_header() {
+    echo ""
+    echo -e "${BLUE}════════════════════════════════════════════════════════════════${NC}"
+    echo -e "${BLUE}$1${NC}"
+    echo -e "${BLUE}════════════════════════════════════════════════════════════════${NC}"
+    echo ""
+}
+
+print_step() {
+    echo -e "${YELLOW}→ $1${NC}"
+}
+
+print_success() {
+    echo -e "${GREEN}✓ $1${NC}"
+}
+
+print_fail() {
+    echo -e "${RED}✗ $1${NC}"
+}
+
+print_info() {
+    echo -e "${BLUE}ℹ $1${NC}"
+}
+
+# Create log directory
+mkdir -p "$LOG_DIR"
+
+# Start
+print_header "INCREMENTAL MODE TEST SUITE"
+echo "Project: $PROJECT_DIR"
+echo "Test directory: $TEST_DIR"
+echo "Results will be saved to: $RESULT_FILE"
+echo ""
+
+# Clear results file
+> "$RESULT_FILE"
+
+# Change to project directory
+cd "$PROJECT_DIR"
+
+# Ensure venv is activated
+if [ -z "$VIRTUAL_ENV" ]; then
+    print_info "Activating virtual environment..."
+    source mondrian/venv/bin/activate
+fi
+
+print_step "Stopping any running services..."
+./mondrian.sh --stop 2>/dev/null || true
+sleep 3
+
+# Run each test
+for test_config in "${TESTS[@]}"; do
+    IFS=',' read -r mode mode_arg1 mode_arg2 description <<< "$test_config"
+    
+    print_header "TEST: $description"
+    echo "Test: $mode"
+    
+    {
+        echo ""
+        echo "========== $mode ($(date)) =========="
+        echo "Description: $description"
+        echo ""
+    } >> "$RESULT_FILE"
+    
+    # Build command
+    restart_cmd="./mondrian.sh --restart $mode_arg1"
+    if [ -n "$mode_arg2" ]; then
+        restart_cmd="$restart_cmd $mode_arg2"
+    fi
+    
+    # Start service
+    print_step "Starting service: $restart_cmd"
+    if $restart_cmd >> "$RESULT_FILE" 2>&1; then
+        print_success "Service started"
+    else
+        print_fail "Service failed to start"
+        RESULTS[$mode]="FAILED (startup)"
+        FAILED_TESTS+=("$mode")
+        {
+            echo "Status: FAILED (startup)"
+            echo ""
+        } >> "$RESULT_FILE"
+        continue
+    fi
+    
+    # Wait for services to initialize
+    print_step "Waiting for services to initialize..."
+    sleep 5
+    
+    # Run test
+    print_step "Running test..."
+    test_script="$TEST_DIR/test_mode_${mode}.py"
+    
+    if [ ! -f "$test_script" ]; then
+        print_fail "Test script not found: $test_script"
+        RESULTS[$mode]="FAILED (script not found)"
+        FAILED_TESTS+=("$mode")
+        {
+            echo "Status: FAILED (script not found)"
+            echo ""
+        } >> "$RESULT_FILE"
+        continue
+    fi
+    
+    if python3 "$test_script" >> "$RESULT_FILE" 2>&1; then
+        print_success "Test passed"
+        RESULTS[$mode]="PASSED"
+        PASSED_TESTS+=("$mode")
+        {
+            echo "Status: PASSED"
+            echo ""
+        } >> "$RESULT_FILE"
+    else
+        print_fail "Test failed"
+        RESULTS[$mode]="FAILED"
+        FAILED_TESTS+=("$mode")
+        {
+            echo "Status: FAILED"
+            echo ""
+        } >> "$RESULT_FILE"
+    fi
+    
+    # Stop service for next test
+    print_step "Stopping service..."
+    ./mondrian.sh --stop 2>/dev/null || true
+    sleep 3
+done
+
+# Print summary
+print_header "TEST SUMMARY"
+
+echo "Passed: ${#PASSED_TESTS[@]}"
+for test in "${PASSED_TESTS[@]}"; do
+    print_success "$test"
+done
+
+if [ ${#FAILED_TESTS[@]} -gt 0 ]; then
+    echo ""
+    echo "Failed: ${#FAILED_TESTS[@]}"
+    for test in "${FAILED_TESTS[@]}"; do
+        print_fail "$test"
+    done
+fi
+
+# Print to results file
+{
+    echo ""
+    echo "========== SUMMARY =========="
+    echo "Total tests: ${#TESTS[@]}"
+    echo "Passed: ${#PASSED_TESTS[@]}"
+    echo "Failed: ${#FAILED_TESTS[@]}"
+    echo ""
+    echo "Passed tests:"
+    for test in "${PASSED_TESTS[@]}"; do
+        echo "  ✓ $test"
+    done
+    echo ""
+    echo "Failed tests:"
+    for test in "${FAILED_TESTS[@]}"; do
+        echo "  ✗ $test"
+    done
+} >> "$RESULT_FILE"
+
+print_step "Results saved to: $RESULT_FILE"
+echo ""
+
+# Determine exit code
+if [ ${#FAILED_TESTS[@]} -eq 0 ]; then
+    print_header "ALL TESTS PASSED ✓"
+    echo -e "${GREEN}All modes are working!${NC}"
+    echo ""
+    exit 0
+else
+    print_header "SOME TESTS FAILED ✗"
+    echo -e "${RED}${#FAILED_TESTS[@]} mode(s) failed.${NC}"
+    echo ""
+    echo "Next steps:"
+    echo "1. Check logs/ai_advisor_service_*.log for crash details"
+    echo "2. Review results: cat $RESULT_FILE"
+    echo "3. Test individual modes manually if needed"
+    echo ""
+    exit 1
+fi

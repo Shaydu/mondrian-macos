@@ -1,0 +1,736 @@
+
+========== baseline (Thu Jan 15 06:59:44 MST 2026) ==========
+Description: Base model only
+
+Using venv Python: /Users/shaydu/dev/mondrian-macos/mondrian/venv/bin/python3
+Virtual environment activated
+============================================================
+Restarting Mondrian services in BASE mode...
+============================================================
+No Mondrian service processes found to stop.
+All service ports are now free.
+Waiting for processes to terminate...
+All ports are free. Starting services...
+[MODE] Base model only (no RAG, no LoRA)
+
+============================================================
+Starting Mondrian services in BASE mode
+============================================================
+
+Starting: /Users/shaydu/dev/mondrian-macos/mondrian/venv/bin/python3 mondrian/job_service_v2.3.py --port 5005
+  Logging to: /Users/shaydu/dev/mondrian-macos/logs/job_service_v2.3_1768485587.log
+✓ Started job_service_v2.3 (PID: 13299)
+
+Starting: /Users/shaydu/dev/mondrian-macos/mondrian/venv/bin/python3 mondrian/ai_advisor_service.py --port 5100
+  Logging to: /Users/shaydu/dev/mondrian-macos/logs/ai_advisor_service_1768485588.log
+✓ Started ai_advisor_service (PID: 13300)
+
+============================================================
+All services started successfully in BASE mode
+============================================================
+
+Checking process health...
+
+Waiting for services to initialize...
+
+Verifying service health...
+[0s] ✓ Job Service is ready
+[0s] AI Advisor: Starting Flask server...
+[2s] AI Advisor: ready - Base model ready (no LoRA) (100%)
+[2s] ✓ AI Advisor is ready
+
+============================================================
+✓ All services are healthy!
+============================================================
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+
+✓ GPU acceleration active: Device(gpu, 0)
+
+Database status:
+  No active jobs
+
+Starting health monitoring (Ctrl+C to stop)...
+
+Monitoring services & jobs (Ctrl+C to exit)...
+============================================================
+[06:59:56] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:00:01] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:00:06] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:00:11] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:00:16] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:00:21] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:00:26] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:00:31] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:00:36] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:00:41] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:00:46] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:00:51] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:00:56] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:01:01] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:01:06] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:01:11] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:01:16] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:01:21] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:01:26] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:01:31] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:01:36] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:01:41] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:01:46] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:01:51] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:01:56] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:02:01] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:02:07] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:02:12] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:02:17] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:02:22] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:02:27] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:02:32] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:02:37] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:02:42] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:02:47] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:02:52] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:02:57] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:03:02] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:03:07] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:03:12] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:03:17] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:03:22] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:03:27] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:03:32] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:03:37] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:03:42] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:03:47] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:03:52] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:03:57] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:04:02] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:04:07] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:04:12] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:04:17] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:04:22] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:04:27] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:04:32] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:04:37] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:04:42] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:04:47] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:04:52] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:04:57] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:05:02] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:05:07] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:05:12] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:05:17] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:05:22] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:05:28] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:05:33] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:05:38] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:05:43] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:05:48] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:05:53] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:05:58] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:06:03] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:06:08] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:06:13] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:06:18] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:06:23] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:06:28] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:06:33] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:06:38] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:06:43] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:06:48] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:06:53] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:06:58] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:07:03] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:07:08] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:07:13] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:07:18] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:07:23] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:07:28] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:07:33] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:07:38] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:07:43] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:07:48] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:07:53] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J[07:07:58] Service Health Status:
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+✓ All services healthy
+
+Job Queue Status:
+  Queue: 201 total | 0 pending | 0 queued | 0 processing | 0 analyzing | 174 done | 27 error
+[8A[J

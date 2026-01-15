@@ -172,9 +172,53 @@ def check_rag_lora_availability():
     print_header("RAG+LoRA Availability Check")
     
     print_test("Mode Availability")
-    print_skip("Availability check deferred (will test during analysis)")
-    print_info("If RAG+LoRA is unavailable, the service will automatically fallback to the next available mode")
-    return True  # Proceed with tests; fallback is automatic
+    
+    if not TEST_IMAGE_PATH.exists():
+        print_fail(f"Test image not found: {TEST_IMAGE_PATH}")
+        return False
+    
+    try:
+        with open(TEST_IMAGE_PATH, 'rb') as f:
+            files = {'image': f}
+            data = {
+                'advisor': ADVISOR,
+                'mode': 'rag_lora',
+                'response_format': 'json'
+            }
+            
+            response = requests.post(
+                f"{AI_SERVICE_URL}/analyze",
+                files=files,
+                data=data,
+                timeout=60
+            )
+        
+        if response.status_code != 200:
+            print_fail(f"RAG+LoRA unavailable (HTTP {response.status_code})")
+            logger.error(f"RAG+LoRA availability check failed: {response.status_code}")
+            logger.error(f"Response: {response.text[:500]}")
+            return False
+        
+        result = response.json()
+        mode_used = result.get('mode_used')
+        
+        if mode_used != 'rag_lora':
+            print_fail(f"RAG+LoRA mode not available. Service returned: {mode_used}")
+            logger.error(f"Expected mode 'rag_lora', but service returned: {mode_used}")
+            logger.error(f"This indicates RAG+LoRA is unavailable or the service has fallen back to another mode.")
+            return False
+        
+        print_pass("RAG+LoRA mode is available")
+        return True
+        
+    except requests.exceptions.Timeout:
+        print_fail("Availability check timeout - service may be unresponsive")
+        logger.error("RAG+LoRA availability check timed out")
+        return False
+    except Exception as e:
+        print_fail(f"Error checking RAG+LoRA availability: {e}")
+        logger.error(f"RAG+LoRA availability check failed: {type(e).__name__}: {e}")
+        return False
 
 
 def test_rag_lora_basic_workflow():
@@ -231,6 +275,15 @@ def test_rag_lora_basic_workflow():
         
         result = response.json()
         logger.info(f"Response keys: {list(result.keys())}")
+        
+        # Verify mode FIRST - fail if RAG+LoRA not used
+        mode_used = result.get('mode_used')
+        if mode_used != 'rag_lora':
+            logger.error(f"Expected 'rag_lora' mode, but got: {mode_used}")
+            print_fail(f"RAG+LoRA not used. Service returned mode: {mode_used}")
+            test_results["failed"].append("Basic workflow - wrong mode")
+            return False
+        
         print_pass(f"Duration: {duration:.2f}s")
         
         # Verify response
@@ -245,15 +298,6 @@ def test_rag_lora_basic_workflow():
             return False
         
         print_pass("All required fields present")
-        
-        # Verify mode
-        print_test("Mode verification")
-        if result.get('mode_used') == 'rag_lora':
-            print_pass("Correct mode in response")
-        else:
-            print_fail(f"Expected 'rag_lora', got '{result.get('mode_used')}'")
-            test_results["failed"].append("Basic workflow - wrong mode")
-            return False
         
         # Verify dimensional analysis
         print_test("Dimensional analysis")
@@ -337,20 +381,16 @@ def test_rag_lora_with_embeddings():
             return False
         
         result = response.json()
-        print_pass(f"Duration: {duration:.2f}s")
         
-        # Verify response
-        print_subheader("Response Validation")
-        
-        print_test("Mode verification")
-        if result.get('mode_used') == 'rag_lora':
-            print_pass()
-        else:
-            print_fail(f"Expected 'rag_lora', got '{result.get('mode_used')}'")
+        # Verify mode FIRST - fail if RAG+LoRA not used
+        mode_used = result.get('mode_used')
+        if mode_used != 'rag_lora':
+            logger.error(f"Expected 'rag_lora' mode, but got: {mode_used}")
+            print_fail(f"RAG+LoRA not used. Service returned mode: {mode_used}")
             test_results["failed"].append("With embeddings - wrong mode")
             return False
         
-        print_test("Analysis completeness")
+        print_pass(f"Duration: {duration:.2f}s")
         dim_analysis = result.get('dimensional_analysis', {})
         
         if len(dim_analysis) >= 8:
@@ -418,6 +458,15 @@ def test_rag_lora_metadata():
             return False
         
         result = response.json()
+        
+        # Verify mode FIRST - fail if RAG+LoRA not used
+        mode_used = result.get('mode_used')
+        if mode_used != 'rag_lora':
+            logger.error(f"Expected 'rag_lora' mode, but got: {mode_used}")
+            print_fail(f"RAG+LoRA not used. Service returned mode: {mode_used}")
+            test_results["failed"].append("Metadata check - wrong mode")
+            return False
+        
         print_pass()
         
         print_subheader("Metadata Validation")
@@ -499,6 +548,15 @@ def test_rag_lora_dimensional_scores():
             return False
         
         result = response.json()
+        
+        # Verify mode FIRST - fail if RAG+LoRA not used
+        mode_used = result.get('mode_used')
+        if mode_used != 'rag_lora':
+            logger.error(f"Expected 'rag_lora' mode, but got: {mode_used}")
+            print_fail(f"RAG+LoRA not used. Service returned mode: {mode_used}")
+            test_results["failed"].append("Dimensional scores - wrong mode")
+            return False
+        
         print_pass()
         
         print_subheader("Score Range Validation")
@@ -586,9 +644,10 @@ def test_rag_lora_vs_rag_comparison():
             )
         
         if response.status_code != 200:
-            print_skip(f"RAG mode unavailable (HTTP {response.status_code})")
-            test_results["skipped"].append("Mode comparison")
-            return True
+            print_fail(f"RAG mode unavailable (HTTP {response.status_code})")
+            logger.error(f"RAG mode unavailable during comparison test: {response.status_code}")
+            test_results["failed"].append("Mode comparison - RAG mode unavailable")
+            return False
         
         rag_result = response.json()
         print_pass()
@@ -612,11 +671,20 @@ def test_rag_lora_vs_rag_comparison():
             )
         
         if response.status_code != 200:
-            print_skip(f"RAG+LoRA mode unavailable")
-            test_results["skipped"].append("Mode comparison")
-            return True
+            print_fail(f"RAG+LoRA mode unavailable (HTTP {response.status_code})")
+            logger.error(f"RAG+LoRA mode unavailable during comparison test: {response.status_code}")
+            test_results["failed"].append("Mode comparison - RAG+LoRA mode unavailable")
+            return False
         
         rag_lora_result = response.json()
+        
+        # Verify RAG+LoRA mode is actually used
+        if rag_lora_result.get('mode_used') != 'rag_lora':
+            print_fail(f"RAG+LoRA not used. Service returned mode: {rag_lora_result.get('mode_used')}")
+            logger.error(f"Expected 'rag_lora' mode, but got: {rag_lora_result.get('mode_used')}")
+            test_results["failed"].append("Mode comparison - RAG+LoRA wrong mode")
+            return False
+        
         print_pass()
         
         print_subheader("Comparison Analysis")
@@ -728,7 +796,11 @@ def main():
         print("  ./start_mondrian.sh")
         return 1
     
-    check_rag_lora_availability()
+    # Check RAG+LoRA availability (required - no fallback)
+    if not check_rag_lora_availability():
+        print(f"\n{RED}RAG+LoRA mode is not available. Cannot proceed with tests.{NC}")
+        logger.error("TEST EXECUTION ABORTED: RAG+LoRA mode is unavailable")
+        return 1
     
     # Run tests
     print_header("Running Tests")

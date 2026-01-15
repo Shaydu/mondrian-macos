@@ -31,8 +31,8 @@ AI Advisor Service starting up...
 [INFO] First load - model cache is empty, will download and load
 [INFO] Testing Metal GPU access...
 [INFO] ✓ Metal GPU is available and working
-Fetching 14 files:   0%|          | 0/14 [00:00<?, ?it/s]Fetching 14 files: 100%|██████████| 14/14 [00:00<00:00, 145707.83it/s]
-[INFO] MLX model loaded in 2.90s using GPU backend and cached
+Fetching 14 files:   0%|          | 0/14 [00:00<?, ?it/s]Fetching 14 files: 100%|██████████| 14/14 [00:00<00:00, 179025.17it/s]
+[INFO] MLX model loaded in 2.50s using GPU backend and cached
 [INFO] MLX default device: Device(gpu, 0)
 [INFO] ✓ GPU acceleration confirmed active
 [INFO] Service initialized successfully. Fine-tuned: False
@@ -55,7 +55,7 @@ AI Advisor Service running on port 5100...
 
 [AI SERVICE RESPONSE] ✅ 200 GET /model-status
 
-127.0.0.1 - - [15/Jan/2026 06:20:52] "GET /model-status HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:26:09] "GET /model-status HTTP/1.1" 200 -
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
@@ -64,7 +64,7 @@ AI Advisor Service running on port 5100...
 
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:20:52] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:26:09] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
@@ -73,7 +73,7 @@ AI Advisor Service running on port 5100...
 
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:20:52] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:26:09] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
@@ -82,106 +82,7 @@ AI Advisor Service running on port 5100...
 
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:20:55] "GET /health HTTP/1.1" 200 -
-
-====================================================================================================
-
-====================================================================================================
-[AI SERVICE REQUEST] GET /health
-[AI SERVICE REQUEST] No parameters
-====================================================================================================
-
-[AI SERVICE RESPONSE] ✅ 200 GET /health
-
-127.0.0.1 - - [15/Jan/2026 06:20:55] "GET /health HTTP/1.1" 200 -
-[AI SERVICE REQUEST] GET /health
-[AI SERVICE REQUEST] No parameters
-====================================================================================================
-
-[AI SERVICE RESPONSE] ✅ 200 GET /health
-
-127.0.0.1 - - [15/Jan/2026 06:20:55] "GET /health HTTP/1.1" 200 -
-
-====================================================================================================
-[AI SERVICE REQUEST] GET /health
-[AI SERVICE REQUEST] No parameters
-====================================================================================================
-
-[AI SERVICE RESPONSE] ✅ 200 GET /health
-
-127.0.0.1 - - [15/Jan/2026 06:20:57] "GET /health HTTP/1.1" 200 -
-
-====================================================================================================
-[AI SERVICE REQUEST] GET /health
-[AI SERVICE REQUEST] No parameters
-====================================================================================================
-
-[AI SERVICE RESPONSE] ✅ 200 GET /health
-
-127.0.0.1 - - [15/Jan/2026 06:21:00] "GET /health HTTP/1.1" 200 -
-
-====================================================================================================
-[AI SERVICE REQUEST] GET /health
-[AI SERVICE REQUEST] No parameters
-====================================================================================================
-
-
-====================================================================================================
-[AI SERVICE RESPONSE] ✅ 200 GET /health
-
-127.0.0.1 - - [15/Jan/2026 06:21:00] "GET /health HTTP/1.1" 200 -
-[AI SERVICE REQUEST] GET /health
-[AI SERVICE REQUEST] No parameters
-====================================================================================================
-
-[AI SERVICE RESPONSE] ✅ 200 GET /health
-
-127.0.0.1 - - [15/Jan/2026 06:21:00] "GET /health HTTP/1.1" 200 -
-
-====================================================================================================
-[AI SERVICE REQUEST] GET /health
-[AI SERVICE REQUEST] No parameters
-====================================================================================================
-
-[AI SERVICE RESPONSE] ✅ 200 GET /health
-
-127.0.0.1 - - [15/Jan/2026 06:21:02] "GET /health HTTP/1.1" 200 -
-
-====================================================================================================
-[AI SERVICE REQUEST] GET /health
-[AI SERVICE REQUEST] No parameters
-====================================================================================================
-
-
-====================================================================================================
-
-====================================================================================================
-[AI SERVICE REQUEST] GET /health
-[AI SERVICE REQUEST] No parameters
-====================================================================================================
-
-[AI SERVICE REQUEST] GET /health
-[AI SERVICE REQUEST] No parameters
-====================================================================================================
-
-[AI SERVICE RESPONSE] ✅ 200 GET /health
-
-127.0.0.1 - - [15/Jan/2026 06:21:05] "GET /health HTTP/1.1" 200 -
-[AI SERVICE RESPONSE] ✅ 200 GET /health
-
-127.0.0.1 - - [15/Jan/2026 06:21:05] "GET /health HTTP/1.1" 200 -
-[AI SERVICE RESPONSE] ✅ 200 GET /health
-
-127.0.0.1 - - [15/Jan/2026 06:21:05] "GET /health HTTP/1.1" 200 -
-
-====================================================================================================
-[AI SERVICE REQUEST] GET /health
-[AI SERVICE REQUEST] No parameters
-====================================================================================================
-
-[AI SERVICE RESPONSE] ✅ 200 GET /health
-
-127.0.0.1 - - [15/Jan/2026 06:21:07] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:26:10] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
@@ -196,19 +97,10 @@ AI Advisor Service running on port 5100...
 
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:21:10] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:26:10] "GET /health HTTP/1.1" 200 -
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-
-====================================================================================================
-[AI SERVICE REQUEST] GET /health
-127.0.0.1 - - [15/Jan/2026 06:21:10] "GET /health HTTP/1.1" 200 -
-[AI SERVICE REQUEST] No parameters
-====================================================================================================
-
-[AI SERVICE RESPONSE] ✅ 200 GET /health
-
-127.0.0.1 - - [15/Jan/2026 06:21:10] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:26:10] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
@@ -217,7 +109,7 @@ AI Advisor Service running on port 5100...
 
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:21:12] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:26:14] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
@@ -226,7 +118,34 @@ AI Advisor Service running on port 5100...
 
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:21:13] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:26:15] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 06:26:15] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 06:26:15] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 06:26:15] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
 [AI SERVICE REQUEST] POST /analyze
@@ -236,9 +155,9 @@ AI Advisor Service running on port 5100...
 [INFO] Waiting for GPU availability (max 1 concurrent request)...
 [INFO] GPU lock acquired - processing request
 [DEBUG] === AI ADVISOR SERVICE REQUEST START ===
-[DEBUG] Timestamp: 1768483273.939716
+[DEBUG] Timestamp: 1768483575.7367182
 [DEBUG] Received analyze request
-[DEBUG] Content-Type: multipart/form-data; boundary=377762b30027095ceafafda69b05e99e
+[DEBUG] Content-Type: multipart/form-data; boundary=aee93871e5b554c1e63cde551819fc84
 [DEBUG] Request method: POST
 [DEBUG] Processing multipart form data
 [iOS DEBUG] MONDRIAN_API_BASE_URL not provided in request - will use job_service_url fallback
@@ -310,38 +229,11 @@ AI Advisor Service running on port 5100...
 [INFO] First load - model cache is empty, will download and load
 [INFO] Testing Metal GPU access...
 [INFO] ✓ Metal GPU is available and working
-Fetching 14 files:   0%|          | 0/14 [00:00<?, ?it/s]Fetching 14 files: 100%|██████████| 14/14 [00:00<00:00, 98523.92it/s]
-
-====================================================================================================
-[AI SERVICE REQUEST] GET /health
-[AI SERVICE REQUEST] No parameters
-====================================================================================================
-
-
-====================================================================================================
-[AI SERVICE REQUEST] GET /health
-[AI SERVICE REQUEST] No parameters
-====================================================================================================
-
-[AI SERVICE RESPONSE] ✅ 200 GET /health
-
-127.0.0.1 - - [15/Jan/2026 06:21:16] "GET /health HTTP/1.1" 200 -
-
-====================================================================================================
-[AI SERVICE RESPONSE] ✅ 200 GET /health
-
-127.0.0.1 - - [15/Jan/2026 06:21:16] "GET /health HTTP/1.1" 200 -
-[AI SERVICE REQUEST] GET /health
-[AI SERVICE REQUEST] No parameters
-====================================================================================================
-
-[AI SERVICE RESPONSE] ✅ 200 GET /health
-
-127.0.0.1 - - [15/Jan/2026 06:21:16] "GET /health HTTP/1.1" 200 -
-[INFO] MLX model loaded in 2.88s using GPU backend and cached
+Fetching 14 files:   0%|          | 0/14 [00:00<?, ?it/s]Fetching 14 files: 100%|██████████| 14/14 [00:00<00:00, 24476.97it/s]
+[INFO] MLX model loaded in 3.12s using GPU backend and cached
 [INFO] MLX default device: Device(gpu, 0)
 [INFO] ✓ GPU acceleration confirmed active
-Fetching 14 files:   0%|          | 0/14 [00:00<?, ?it/s]Fetching 14 files: 100%|██████████| 14/14 [00:00<00:00, 101241.82it/s]
+Fetching 14 files:   0%|          | 0/14 [00:00<?, ?it/s]Fetching 14 files: 100%|██████████| 14/14 [00:00<00:00, 112061.56it/s]
 [INFO] Processing with image: /var/folders/px/96clcbr56vv3kyv2vzvblhqh0000gn/T/analyze_image_temp.jpg
 [INFO] Running MLX generation (timeout handling disabled to preserve GPU access)...
 [INFO] GPU Device: Device(gpu, 0)
@@ -353,35 +245,35 @@ AI Advisor Service running on port 5100...
 
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:21:17] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:26:19] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
+====================================================================================================
+
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
 ====================================================================================================
 
-====================================================================================================
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 06:26:20] "GET /health HTTP/1.1" 200 -
+[AI SERVICE RESPONSE] ✅ 200 GET /health
 
+127.0.0.1 - - [15/Jan/2026 06:26:20] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
 ====================================================================================================
-
-[AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:21:21] "GET /health HTTP/1.1" 200 -
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:21:21] "GET /health HTTP/1.1" 200 -
-[AI SERVICE RESPONSE] ✅ 200 GET /health
+127.0.0.1 - - [15/Jan/2026 06:26:20] "GET /health HTTP/1.1" 200 -
 
-127.0.0.1 - - [15/Jan/2026 06:21:21] "GET /health HTTP/1.1" 200 -
-
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
@@ -389,34 +281,34 @@ AI Advisor Service running on port 5100...
 
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:21:22] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:26:24] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
+[AI SERVICE REQUEST] GET /health
 
 ====================================================================================================
-[AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
-====================================================================================================
 
+====================================================================================================
 [AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
-
 ====================================================================================================
-[AI SERVICE REQUEST] GET /health
+
 ====================================================================================================
 
+[AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
 ====================================================================================================
 
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:21:26] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:26:25] "GET /health HTTP/1.1" 200 -
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:21:26] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:26:25] "GET /health HTTP/1.1" 200 -
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:21:26] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:26:25] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
@@ -425,34 +317,34 @@ AI Advisor Service running on port 5100...
 
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:21:27] "GET /health HTTP/1.1" 200 -
-
-====================================================================================================
+127.0.0.1 - - [15/Jan/2026 06:26:29] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
-====================================================================================================
-
-[AI SERVICE REQUEST] GET /health
 
 ====================================================================================================
-[AI SERVICE REQUEST] GET /health
-[AI SERVICE REQUEST] No parameters
 ====================================================================================================
 
+[AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
 ====================================================================================================
 
+
+====================================================================================================
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:21:31] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:26:30] "GET /health HTTP/1.1" 200 -
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:21:31] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:26:30] "GET /health HTTP/1.1" 200 -
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:21:31] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:26:30] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
@@ -461,34 +353,34 @@ AI Advisor Service running on port 5100...
 
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:21:32] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:26:34] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
+
+====================================================================================================
 ====================================================================================================
 
+[AI SERVICE REQUEST] GET /health
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
 ====================================================================================================
 
-[AI SERVICE RESPONSE] ✅ 200 GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
 
-127.0.0.1 - - [15/Jan/2026 06:21:36] "GET /health HTTP/1.1" 200 -
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:21:36] "GET /health HTTP/1.1" 200 -
-
-====================================================================================================
-[AI SERVICE REQUEST] GET /health
-[AI SERVICE REQUEST] No parameters
-====================================================================================================
+127.0.0.1 - - [15/Jan/2026 06:26:35] "GET /health HTTP/1.1" 200 -
+[AI SERVICE RESPONSE] ✅ 200 GET /health
 
+127.0.0.1 - - [15/Jan/2026 06:26:35] "GET /health HTTP/1.1" 200 -
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:21:36] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:26:35] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
@@ -497,34 +389,34 @@ AI Advisor Service running on port 5100...
 
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:21:37] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:26:39] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
-
-====================================================================================================
 
 ====================================================================================================
-[AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
+====================================================================================================
+
 [AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
 ====================================================================================================
 
-====================================================================================================
 
-[AI SERVICE REQUEST] No parameters
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:21:41] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:26:40] "GET /health HTTP/1.1" 200 -
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:21:41] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:26:40] "GET /health HTTP/1.1" 200 -
+[AI SERVICE REQUEST] No parameters
 ====================================================================================================
 
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:21:41] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:26:40] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
@@ -533,12 +425,9 @@ AI Advisor Service running on port 5100...
 
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:21:42] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:26:44] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
-
-====================================================================================================
-[AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
 
@@ -549,18 +438,21 @@ AI Advisor Service running on port 5100...
 [AI SERVICE REQUEST] No parameters
 ====================================================================================================
 
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
 ====================================================================================================
 
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:21:46] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:26:46] "GET /health HTTP/1.1" 200 -
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:21:46] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:26:46] "GET /health HTTP/1.1" 200 -
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:21:46] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:26:46] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
@@ -569,34 +461,34 @@ AI Advisor Service running on port 5100...
 
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:21:47] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:26:49] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
-====================================================================================================
 
-
 ====================================================================================================
-[AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:21:51] "GET /health HTTP/1.1" 200 -
-
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
 ====================================================================================================
 
-[AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
 ====================================================================================================
+
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
 
+127.0.0.1 - - [15/Jan/2026 06:26:51] "GET /health HTTP/1.1" 200 -
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:21:51] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:26:51] "GET /health HTTP/1.1" 200 -
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:21:51] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:26:51] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
@@ -605,34 +497,34 @@ AI Advisor Service running on port 5100...
 
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:21:52] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:26:54] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
-====================================================================================================
-
 
 ====================================================================================================
+====================================================================================================
 
+
 ====================================================================================================
+[AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
 ====================================================================================================
 
-[AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
 ====================================================================================================
 
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
+127.0.0.1 - - [15/Jan/2026 06:26:56] "GET /health HTTP/1.1" 200 -
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
+127.0.0.1 - - [15/Jan/2026 06:26:56] "GET /health HTTP/1.1" 200 -
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:21:57] "GET /health HTTP/1.1" 200 -
-127.0.0.1 - - [15/Jan/2026 06:21:57] "GET /health HTTP/1.1" 200 -
-127.0.0.1 - - [15/Jan/2026 06:21:57] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:26:56] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
@@ -641,34 +533,34 @@ AI Advisor Service running on port 5100...
 
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:21:57] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:26:59] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
-[AI SERVICE REQUEST] No parameters
-====================================================================================================
 
-
 ====================================================================================================
-[AI SERVICE RESPONSE] ✅ 200 GET /health
-
-127.0.0.1 - - [15/Jan/2026 06:22:02] "GET /health HTTP/1.1" 200 -
 [AI SERVICE REQUEST] GET /health
 
 ====================================================================================================
-[AI SERVICE REQUEST] No parameters
 [AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
 [AI SERVICE REQUEST] No parameters
 ====================================================================================================
 
+[AI SERVICE REQUEST] No parameters
 ====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
 
+127.0.0.1 - - [15/Jan/2026 06:27:01] "GET /health HTTP/1.1" 200 -
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:22:02] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:27:01] "GET /health HTTP/1.1" 200 -
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:22:02] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:27:01] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
@@ -677,34 +569,34 @@ AI Advisor Service running on port 5100...
 
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:22:02] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:27:04] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
+====================================================================================================
+
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
-[AI SERVICE REQUEST] No parameters
-====================================================================================================
+[AI SERVICE RESPONSE] ✅ 200 GET /health
 
+127.0.0.1 - - [15/Jan/2026 06:27:06] "GET /health HTTP/1.1" 200 -
+[AI SERVICE REQUEST] No parameters
 ====================================================================================================
 
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
-====================================================================================================
-
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:22:07] "GET /health HTTP/1.1" 200 -
-[AI SERVICE RESPONSE] ✅ 200 GET /health
+127.0.0.1 - - [15/Jan/2026 06:27:06] "GET /health HTTP/1.1" 200 -
+====================================================================================================
 
-127.0.0.1 - - [15/Jan/2026 06:22:07] "GET /health HTTP/1.1" 200 -
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:22:07] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:27:06] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
@@ -713,34 +605,34 @@ AI Advisor Service running on port 5100...
 
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:22:07] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:27:09] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
-
-====================================================================================================
 [AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
 
 ====================================================================================================
-[AI SERVICE REQUEST] No parameters
-[AI SERVICE REQUEST] GET /health
-[AI SERVICE REQUEST] No parameters
 ====================================================================================================
 
 [AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
 ====================================================================================================
 
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
 ====================================================================================================
 
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:22:12] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:27:11] "GET /health HTTP/1.1" 200 -
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:22:12] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:27:11] "GET /health HTTP/1.1" 200 -
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:22:12] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:27:11] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
@@ -749,19 +641,19 @@ AI Advisor Service running on port 5100...
 
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:22:13] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:27:14] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
-====================================================================================================
-
+[AI SERVICE REQUEST] GET /health
 
 ====================================================================================================
-[AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
+====================================================================================================
+
 ====================================================================================================
 
 [AI SERVICE REQUEST] GET /health
@@ -770,13 +662,13 @@ AI Advisor Service running on port 5100...
 
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:22:17] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:27:16] "GET /health HTTP/1.1" 200 -
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:22:17] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:27:16] "GET /health HTTP/1.1" 200 -
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:22:17] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:27:16] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
@@ -785,7 +677,7 @@ AI Advisor Service running on port 5100...
 
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:22:18] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:27:19] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
@@ -794,6 +686,9 @@ AI Advisor Service running on port 5100...
 
 
 ====================================================================================================
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 06:27:21] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
@@ -806,13 +701,10 @@ AI Advisor Service running on port 5100...
 
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:22:23] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:27:21] "GET /health HTTP/1.1" 200 -
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:22:23] "GET /health HTTP/1.1" 200 -
-[AI SERVICE RESPONSE] ✅ 200 GET /health
-
-127.0.0.1 - - [15/Jan/2026 06:22:23] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:27:21] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
@@ -821,13 +713,9 @@ AI Advisor Service running on port 5100...
 
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:22:23] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:27:24] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
-
-====================================================================================================
-[AI SERVICE REQUEST] GET /health
-[AI SERVICE REQUEST] No parameters
 [AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
 ====================================================================================================
@@ -838,32 +726,30 @@ AI Advisor Service running on port 5100...
 [AI SERVICE REQUEST] No parameters
 ====================================================================================================
 
-
-====================================================================================================
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:22:28] "GET /health HTTP/1.1" 200 -
-====================================================================================================
+127.0.0.1 - - [15/Jan/2026 06:27:26] "GET /health HTTP/1.1" 200 -
 
+====================================================================================================
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:22:28] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:27:26] "GET /health HTTP/1.1" 200 -
 [AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
 ====================================================================================================
-
-[AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:22:28] "GET /health HTTP/1.1" 200 -
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:22:28] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:27:26] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
 ====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
 
+127.0.0.1 - - [15/Jan/2026 06:27:30] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
@@ -878,243 +764,174 @@ AI Advisor Service running on port 5100...
 
 
 ====================================================================================================
-[AI SERVICE RESPONSE] ✅ 200 GET /health
-
-127.0.0.1 - - [15/Jan/2026 06:22:33] "GET /health HTTP/1.1" 200 -
 [AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
 ====================================================================================================
 
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:22:33] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:27:31] "GET /health HTTP/1.1" 200 -
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
+127.0.0.1 - - [15/Jan/2026 06:27:31] "GET /health HTTP/1.1" 200 -
 [AI SERVICE RESPONSE] ✅ 200 GET /health
-
-127.0.0.1 - - [15/Jan/2026 06:22:33] "GET /health HTTP/1.1" 200 -
-127.0.0.1 - - [15/Jan/2026 06:22:33] "GET /health HTTP/1.1" 200 -
 
-====================================================================================================
-
-====================================================================================================
-[AI SERVICE REQUEST] GET /health
-[AI SERVICE REQUEST] GET /health
-[AI SERVICE REQUEST] No parameters
+127.0.0.1 - - [15/Jan/2026 06:27:31] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
-====================================================================================================
-
 [AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
 ====================================================================================================
 
-[AI SERVICE REQUEST] No parameters
-====================================================================================================
+[AI SERVICE RESPONSE] ✅ 200 GET /health
 
+127.0.0.1 - - [15/Jan/2026 06:27:35] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
-[AI SERVICE RESPONSE] ✅ 200 GET /health
-
-127.0.0.1 - - [15/Jan/2026 06:22:38] "GET /health HTTP/1.1" 200 -
 [AI SERVICE REQUEST] No parameters
 ====================================================================================================
-
-[AI SERVICE RESPONSE] ✅ 200 GET /health
-
-127.0.0.1 - - [15/Jan/2026 06:22:38] "GET /health HTTP/1.1" 200 -
-[AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:22:38] "GET /health HTTP/1.1" 200 -
-[AI SERVICE RESPONSE] ✅ 200 GET /health
-
-127.0.0.1 - - [15/Jan/2026 06:22:38] "GET /health HTTP/1.1" 200 -
-
-====================================================================================================
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
-[AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
 ====================================================================================================
 
+[AI SERVICE RESPONSE] ✅ 200 GET /health
 
-====================================================================================================
+127.0.0.1 - - [15/Jan/2026 06:27:36] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
-[AI SERVICE REQUEST] GET /health
-[AI SERVICE REQUEST] No parameters
 [AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
-====================================================================================================
-
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:22:43] "GET /health HTTP/1.1" 200 -
-[AI SERVICE REQUEST] No parameters
+127.0.0.1 - - [15/Jan/2026 06:27:36] "GET /health HTTP/1.1" 200 -
 ====================================================================================================
 
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:22:43] "GET /health HTTP/1.1" 200 -
-====================================================================================================
+127.0.0.1 - - [15/Jan/2026 06:27:36] "GET /health HTTP/1.1" 200 -
 
-[AI SERVICE RESPONSE] ✅ 200 GET /health
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
 
-127.0.0.1 - - [15/Jan/2026 06:22:43] "GET /health HTTP/1.1" 200 -
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:22:43] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:27:40] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] GET /health
+
+====================================================================================================
 [AI SERVICE REQUEST] No parameters
+[AI SERVICE REQUEST] GET /health
 ====================================================================================================
 
 [AI SERVICE REQUEST] No parameters
+[AI SERVICE REQUEST] No parameters
 ====================================================================================================
 
-
 ====================================================================================================
 
-====================================================================================================
-[AI SERVICE REQUEST] GET /health
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
+127.0.0.1 - - [15/Jan/2026 06:27:41] "GET /health HTTP/1.1" 200 -
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:22:48] "GET /health HTTP/1.1" 200 -
-[AI SERVICE REQUEST] GET /health
-127.0.0.1 - - [15/Jan/2026 06:22:48] "GET /health HTTP/1.1" 200 -
-[AI SERVICE REQUEST] No parameters
-====================================================================================================
+127.0.0.1 - - [15/Jan/2026 06:27:41] "GET /health HTTP/1.1" 200 -
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 06:27:41] "GET /health HTTP/1.1" 200 -
 
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
 ====================================================================================================
-
-[AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:22:48] "GET /health HTTP/1.1" 200 -
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:22:48] "GET /health HTTP/1.1" 200 -
-
-====================================================================================================
+127.0.0.1 - - [15/Jan/2026 06:27:45] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
-[AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
-
-====================================================================================================
 
 ====================================================================================================
-[AI SERVICE REQUEST] No parameters
 ====================================================================================================
 
-[AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] GET /health
-[AI SERVICE REQUEST] No parameters
-[AI SERVICE REQUEST] No parameters
-[AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:22:54] "GET /health HTTP/1.1" 200 -
 ====================================================================================================
-
+[AI SERVICE REQUEST] No parameters
 ====================================================================================================
 
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
 ====================================================================================================
 
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:22:54] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:27:46] "GET /health HTTP/1.1" 200 -
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:22:54] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:27:46] "GET /health HTTP/1.1" 200 -
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:22:54] "GET /health HTTP/1.1" 200 -
-
-====================================================================================================
+127.0.0.1 - - [15/Jan/2026 06:27:46] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
-[AI SERVICE REQUEST] GET /health
 ====================================================================================================
 
+[AI SERVICE RESPONSE] ✅ 200 GET /health
 
-====================================================================================================
+127.0.0.1 - - [15/Jan/2026 06:27:50] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
-[AI SERVICE REQUEST] No parameters
 ====================================================================================================
 
-====================================================================================================
 
+====================================================================================================
 [AI SERVICE REQUEST] GET /health
-[AI SERVICE RESPONSE] ✅ 200 GET /health
-
-[AI SERVICE RESPONSE] ✅ 200 GET /health
-
-127.0.0.1 - - [15/Jan/2026 06:22:59] "GET /health HTTP/1.1" 200 -
-[AI SERVICE RESPONSE] ✅ 200 GET /health
-
-127.0.0.1 - - [15/Jan/2026 06:22:59] "GET /health HTTP/1.1" 200 -
 [AI SERVICE REQUEST] No parameters
-127.0.0.1 - - [15/Jan/2026 06:22:59] "GET /health HTTP/1.1" 200 -
-====================================================================================================
-
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:22:59] "GET /health HTTP/1.1" 200 -
-
-====================================================================================================
-
+127.0.0.1 - - [15/Jan/2026 06:27:52] "GET /health HTTP/1.1" 200 -
 ====================================================================================================
-[AI SERVICE REQUEST] GET /health
 
-====================================================================================================
 
 ====================================================================================================
-[AI SERVICE REQUEST] GET /health
-[AI SERVICE REQUEST] No parameters
 [AI SERVICE REQUEST] GET /health
-[AI SERVICE REQUEST] No parameters
-====================================================================================================
+[AI SERVICE RESPONSE] ✅ 200 GET /health
 
+127.0.0.1 - - [15/Jan/2026 06:27:52] "GET /health HTTP/1.1" 200 -
 [AI SERVICE REQUEST] No parameters
 ====================================================================================================
 
-====================================================================================================
+[AI SERVICE RESPONSE] ✅ 200 GET /health
 
+127.0.0.1 - - [15/Jan/2026 06:27:52] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
 [AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
-[AI SERVICE RESPONSE] ✅ 200 GET /health
-
-127.0.0.1 - - [15/Jan/2026 06:23:05] "GET /health HTTP/1.1" 200 -
 ====================================================================================================
-
-[AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:23:05] "GET /health HTTP/1.1" 200 -
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:23:05] "GET /health HTTP/1.1" 200 -
-[AI SERVICE RESPONSE] ✅ 200 GET /health
-
-127.0.0.1 - - [15/Jan/2026 06:23:05] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:27:55] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
-
-====================================================================================================
-[AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
 ====================================================================================================
@@ -1124,73 +941,67 @@ AI Advisor Service running on port 5100...
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
-[AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
-[AI SERVICE REQUEST] No parameters
 ====================================================================================================
 
+[AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
 ====================================================================================================
 
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:23:10] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:27:57] "GET /health HTTP/1.1" 200 -
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:23:10] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:27:57] "GET /health HTTP/1.1" 200 -
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:23:10] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:27:57] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
 ====================================================================================================
 
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:23:10] "GET /health HTTP/1.1" 200 -
-
-====================================================================================================
+127.0.0.1 - - [15/Jan/2026 06:28:01] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
-[AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
-[AI SERVICE REQUEST] No parameters
 ====================================================================================================
-
 
-====================================================================================================
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
-====================================================================================================
+[AI SERVICE RESPONSE] ✅ 200 GET /health
 
-[AI SERVICE REQUEST] GET /health
+127.0.0.1 - - [15/Jan/2026 06:28:02] "GET /health HTTP/1.1" 200 -
 ====================================================================================================
 
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
 ====================================================================================================
-
-[AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:23:15] "GET /health HTTP/1.1" 200 -
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:23:15] "GET /health HTTP/1.1" 200 -
 [AI SERVICE RESPONSE] ✅ 200 GET /health
-
-[AI SERVICE RESPONSE] ✅ 200 GET /health
-
-127.0.0.1 - - [15/Jan/2026 06:23:15] "GET /health HTTP/1.1" 200 -
-127.0.0.1 - - [15/Jan/2026 06:23:15] "GET /health HTTP/1.1" 200 -
 
-====================================================================================================
-[AI SERVICE REQUEST] GET /health
+127.0.0.1 - - [15/Jan/2026 06:28:02] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:28:02] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
 ====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
 
+127.0.0.1 - - [15/Jan/2026 06:28:06] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
 
@@ -1199,13 +1010,10 @@ AI Advisor Service running on port 5100...
 [AI SERVICE REQUEST] No parameters
 ====================================================================================================
 
-[AI SERVICE RESPONSE] ✅ 200 GET /health
 
+====================================================================================================
 [AI SERVICE REQUEST] GET /health
-127.0.0.1 - - [15/Jan/2026 06:23:21] "GET /health HTTP/1.1" 200 -
-[AI SERVICE RESPONSE] ✅ 200 GET /health
-
-127.0.0.1 - - [15/Jan/2026 06:23:21] "GET /health HTTP/1.1" 200 -
+[AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
 ====================================================================================================
 
@@ -1214,82 +1022,85 @@ AI Advisor Service running on port 5100...
 
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:23:21] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:28:07] "GET /health HTTP/1.1" 200 -
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:23:21] "GET /health HTTP/1.1" 200 -
-
-====================================================================================================
+127.0.0.1 - - [15/Jan/2026 06:28:07] "GET /health HTTP/1.1" 200 -
+[AI SERVICE RESPONSE] ✅ 200 GET /health
 
-====================================================================================================
-[AI SERVICE REQUEST] GET /health
-[AI SERVICE REQUEST] GET /health
+127.0.0.1 - - [15/Jan/2026 06:28:07] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
 ====================================================================================================
 
+[AI SERVICE RESPONSE] ✅ 200 GET /health
 
+127.0.0.1 - - [15/Jan/2026 06:28:12] "GET /health HTTP/1.1" 200 -
+
 ====================================================================================================
-[AI SERVICE REQUEST] No parameters
-[AI SERVICE REQUEST] No parameters
 [AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
-====================================================================================================
 
 ====================================================================================================
-
-[AI SERVICE RESPONSE] ✅ 200 GET /health
-
-127.0.0.1 - - [15/Jan/2026 06:23:26] "GET /health HTTP/1.1" 200 -
 ====================================================================================================
 
-[AI SERVICE RESPONSE] ✅ 200 GET /health
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
 
-127.0.0.1 - - [15/Jan/2026 06:23:26] "GET /health HTTP/1.1" 200 -
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:23:26] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:28:12] "GET /health HTTP/1.1" 200 -
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:23:26] "GET /health HTTP/1.1" 200 -
-
-====================================================================================================
+127.0.0.1 - - [15/Jan/2026 06:28:12] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
-[AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
 
+127.0.0.1 - - [15/Jan/2026 06:28:12] "GET /health HTTP/1.1" 200 -
+
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
 ====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
 
+127.0.0.1 - - [15/Jan/2026 06:28:17] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
+[AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
 ====================================================================================================
 
-====================================================================================================
+[AI SERVICE RESPONSE] ✅ 200 GET /health
 
+127.0.0.1 - - [15/Jan/2026 06:28:17] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
 [AI SERVICE REQUEST] GET /health
-[AI SERVICE RESPONSE] ✅ 200 GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
 
-127.0.0.1 - - [15/Jan/2026 06:23:32] "GET /health HTTP/1.1" 200 -
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:23:32] "GET /health HTTP/1.1" 200 -
-[AI SERVICE RESPONSE] ✅ 200 GET /health
+127.0.0.1 - - [15/Jan/2026 06:28:17] "GET /health HTTP/1.1" 200 -
 
-127.0.0.1 - - [15/Jan/2026 06:23:32] "GET /health HTTP/1.1" 200 -
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
 ====================================================================================================
 
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:23:32] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:28:17] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
 
@@ -1298,157 +1109,159 @@ AI Advisor Service running on port 5100...
 [AI SERVICE REQUEST] No parameters
 ====================================================================================================
 
+
+====================================================================================================
 [AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
 ====================================================================================================
 
 
 ====================================================================================================
-
-====================================================================================================
 [AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
 [AI SERVICE REQUEST] GET /health
-127.0.0.1 - - [15/Jan/2026 06:23:37] "GET /health HTTP/1.1" 200 -
-[AI SERVICE REQUEST] No parameters
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:23:37] "GET /health HTTP/1.1" 200 -
-====================================================================================================
-
+127.0.0.1 - - [15/Jan/2026 06:28:23] "GET /health HTTP/1.1" 200 -
 [AI SERVICE REQUEST] No parameters
+127.0.0.1 - - [15/Jan/2026 06:28:23] "GET /health HTTP/1.1" 200 -
 ====================================================================================================
 
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:23:37] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:28:23] "GET /health HTTP/1.1" 200 -
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:23:37] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:28:23] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
-
-====================================================================================================
-
-====================================================================================================
 [AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
-[AI SERVICE REQUEST] No parameters
+
+====================================================================================================
 [AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
-====================================================================================================
 
 ====================================================================================================
-
 [AI SERVICE REQUEST] GET /health
 ====================================================================================================
 
+====================================================================================================
+
+[AI SERVICE REQUEST] No parameters
 [AI SERVICE REQUEST] No parameters
 ====================================================================================================
 
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:23:43] "GET /health HTTP/1.1" 200 -
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
+127.0.0.1 - - [15/Jan/2026 06:28:29] "GET /health HTTP/1.1" 200 -
+====================================================================================================
+
+127.0.0.1 - - [15/Jan/2026 06:28:29] "GET /health HTTP/1.1" 200 -
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:23:43] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:28:29] "GET /health HTTP/1.1" 200 -
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:23:43] "GET /health HTTP/1.1" 200 -
-127.0.0.1 - - [15/Jan/2026 06:23:43] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:28:29] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
 ====================================================================================================
-
 
-====================================================================================================
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
 ====================================================================================================
 
-[AI SERVICE REQUEST] GET /health
-[AI SERVICE REQUEST] No parameters
-====================================================================================================
 
+====================================================================================================
 
 ====================================================================================================
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-[AI SERVICE RESPONSE] ✅ 200 GET /health
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
 
-127.0.0.1 - - [15/Jan/2026 06:23:48] "GET /health HTTP/1.1" 200 -
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:23:48] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:28:35] "GET /health HTTP/1.1" 200 -
 [AI SERVICE REQUEST] GET /health
-127.0.0.1 - - [15/Jan/2026 06:23:48] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:28:35] "GET /health HTTP/1.1" 200 -
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 06:28:35] "GET /health HTTP/1.1" 200 -
 [AI SERVICE REQUEST] No parameters
 ====================================================================================================
 
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:23:48] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:28:35] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
 
 ====================================================================================================
-[AI SERVICE REQUEST] GET /health
-[AI SERVICE REQUEST] No parameters
+
+====================================================================================================
 [AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
 ====================================================================================================
 
-====================================================================================================
 
-
 ====================================================================================================
-
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
 ====================================================================================================
+
 [AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
 ====================================================================================================
 
-[AI SERVICE RESPONSE] ✅ 200 GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
 
-127.0.0.1 - - [15/Jan/2026 06:23:54] "GET /health HTTP/1.1" 200 -
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:23:54] "GET /health HTTP/1.1" 200 -
-[AI SERVICE REQUEST] No parameters
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:23:54] "GET /health HTTP/1.1" 200 -
-====================================================================================================
+[AI SERVICE RESPONSE] ✅ 200 GET /health
 
+127.0.0.1 - - [15/Jan/2026 06:28:42] "GET /health HTTP/1.1" 200 -
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:23:54] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:28:42] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:28:42] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:28:42] "GET /health HTTP/1.1" 200 -
 
 ====================================================================================================
 
 ====================================================================================================
 [AI SERVICE REQUEST] GET /health
+
+====================================================================================================
 [AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
 ====================================================================================================
 
+[AI SERVICE REQUEST] No parameters
 
 ====================================================================================================
-
 ====================================================================================================
+
 [AI SERVICE REQUEST] GET /health
-[AI SERVICE REQUEST] No parameters
 [AI SERVICE REQUEST] GET /health
 [AI SERVICE REQUEST] No parameters
 ====================================================================================================
@@ -1456,20 +1269,18 @@ AI Advisor Service running on port 5100...
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
 [AI SERVICE REQUEST] No parameters
-127.0.0.1 - - [15/Jan/2026 06:24:00] "GET /health HTTP/1.1" 200 -
-====================================================================================================
-
-====================================================================================================
-
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:24:00] "GET /health HTTP/1.1" 200 -
 [AI SERVICE RESPONSE] ✅ 200 GET /health
+
+====================================================================================================
 
-127.0.0.1 - - [15/Jan/2026 06:24:00] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:28:50] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:28:50] "GET /health HTTP/1.1" 200 -
 [AI SERVICE RESPONSE] ✅ 200 GET /health
 
-127.0.0.1 - - [15/Jan/2026 06:24:00] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:28:50] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [15/Jan/2026 06:28:50] "GET /health HTTP/1.1" 200 -
 libc++abi: terminating due to uncaught exception of type std::runtime_error: [METAL] Command buffer execution failed: Insufficient Memory (00000008:kIOGPUCommandBufferCallbackErrorOutOfMemory)
 /Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/multiprocessing/resource_tracker.py:254: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown
   warnings.warn('resource_tracker: There appear to be %d '

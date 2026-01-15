@@ -1,0 +1,8 @@
+cd /Users/shaydu/dev/mondrian-macos
+source mondrian/venv/bin/activate
+./mondrian.sh --restart --mode=lora --lora-path=./adapters/ansel
+
+t2
+cd /Users/shaydu/dev/mondrian-macos
+source mondrian/venv/bin/activate
+python3 test/rag-embeddings/test_rag_lora_e2e.py
