@@ -180,8 +180,24 @@ for test_config in "${TESTS[@]}"; do
     
     # Run test with verbose output to see progress
     print_info "Test output:"
-    test_output=$(python3 "$test_script" --verbose 2>&1)
+    test_output=$(timeout 330 python3 "$test_script" --verbose 2>&1)
     test_exit_code=$?
+    
+    # Check if timeout occurred (exit code 124 means timeout)
+    if [ $test_exit_code -eq 124 ]; then
+        print_fail "Test timed out after 330 seconds (model inference may be stuck)"
+        RESULTS[$mode]="FAILED"
+        FAILED_TESTS+=("$mode")
+        {
+            echo "Status: FAILED (timeout)"
+            echo "Model inference appears to be stuck - this is a known issue with MLX streaming on macOS"
+            echo ""
+        } >> "$RESULT_FILE"
+        # Kill any remaining AI Advisor processes
+        ./mondrian.sh --stop 2>/dev/null || true
+        sleep 2
+        continue
+    fi
     
     echo "$test_output" | tee -a "$RESULT_FILE"
     

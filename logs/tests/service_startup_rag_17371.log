@@ -1,0 +1,49 @@
+Using venv Python: /Users/shaydu/dev/mondrian-macos/mondrian/venv/bin/python3
+Virtual environment activated
+============================================================
+Restarting Mondrian services in RAG mode...
+============================================================
+No Mondrian service processes found to stop.
+All service ports are now free.
+Waiting for processes to terminate...
+All ports are free. Starting services...
+[MODE] Base model with RAG enabled
+
+============================================================
+Starting Mondrian services in RAG mode
+============================================================
+
+Starting: /Users/shaydu/dev/mondrian-macos/mondrian/venv/bin/python3 mondrian/job_service_v2.3.py --port 5005
+  Logging to: /Users/shaydu/dev/mondrian-macos/logs/job_service_v2.3_1768486746.log
+✓ Started job_service_v2.3 (PID: 17520)
+
+Starting: /Users/shaydu/dev/mondrian-macos/mondrian/venv/bin/python3 mondrian/ai_advisor_service.py --port 5100
+  Logging to: /Users/shaydu/dev/mondrian-macos/logs/ai_advisor_service_1768486747.log
+✓ Started ai_advisor_service (PID: 17523)
+
+============================================================
+All services started successfully in RAG mode
+============================================================
+
+Checking process health...
+
+Waiting for services to initialize...
+
+Verifying service health...
+[0s] ✓ Job Service is ready
+[0s] AI Advisor: Starting Flask server...
+[2s] AI Advisor: ready - Base model ready (no LoRA) (100%)
+[2s] ✓ AI Advisor is ready
+
+============================================================
+✓ All services are healthy!
+============================================================
+  ✓ UP Job Service (5005) - 2.3-DB-FIXED
+  ✓ UP AI Advisor (5100) - 2.0-JSON
+
+✓ GPU acceleration active: Device(gpu, 0)
+
+Database status:
+  No active jobs
+
+Services started successfully. Exiting to allow tests to proceed.
