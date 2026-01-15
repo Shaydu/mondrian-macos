@@ -74,8 +74,8 @@ fi
 # Detect platform and use appropriate services script
 OS_NAME=$(uname -s)
 if [[ "$OS_NAME" == "Linux" ]]; then
-    SERVICES_SCRIPT="$SCRIPT_DIR/scripts/start_services_linux.py"
-    echo "Detected Linux - using Linux/CUDA services"
+    SERVICES_SCRIPT="$SCRIPT_DIR/scripts/start_services.py"
+    echo "Detected Linux - using PyTorch/CUDA services"
 elif [[ "$OS_NAME" == "Darwin" ]]; then
     SERVICES_SCRIPT="$SCRIPT_DIR/scripts/start_services.py"
     echo "Detected macOS - using MLX services"

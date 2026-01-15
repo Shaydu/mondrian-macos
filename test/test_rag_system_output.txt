@@ -1,5 +1,0 @@
-# Test RAG System Output (Canonical)
-
-This is the canonical RAG system output log, moved from mondrian/test/test_rag_system_output.txt as part of project consolidation. All output is preserved.
-
-[...existing content from mondrian/test/test_rag_system_output.txt...]

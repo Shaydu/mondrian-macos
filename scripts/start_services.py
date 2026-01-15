@@ -36,8 +36,12 @@ def get_services_for_mode(mode="base", lora_path=None, model=None):
         [sys.executable, "mondrian/job_service_v2.3.py", "--port", "5005"],
     ]
     
-    # Configure AI Advisor Service based on mode
-    ai_advisor_cmd = [sys.executable, "mondrian/ai_advisor_service.py", "--port", "5100"]
+    # Configure AI Advisor Service based on mode and platform
+    import platform
+    if platform.system() == "Linux":
+        ai_advisor_cmd = [sys.executable, "mondrian/ai_advisor_service_linux.py", "--port", "5100"]
+    else:
+        ai_advisor_cmd = [sys.executable, "mondrian/ai_advisor_service.py", "--port", "5100"]
     
     # Add model if specified
     if model:
@@ -62,7 +66,10 @@ def get_services_for_mode(mode="base", lora_path=None, model=None):
             print("ERROR: --lora-path required for lora mode")
             print("Example: ./mondrian.sh --restart --mode=lora --lora-path=./models/qwen3-vl-4b-lora-ansel")
             sys.exit(1)
-        ai_advisor_cmd.extend(["--lora_path", lora_path, "--model_mode", "fine_tuned"])
+        if platform.system() == "Linux":
+            ai_advisor_cmd.extend(["--adapter", lora_path, "--load_in_4bit"])
+        else:
+            ai_advisor_cmd.extend(["--lora_path", lora_path, "--model_mode", "fine_tuned"])
         
     elif mode == "lora+rag":
         # Combined mode: LoRA with RAG
@@ -71,7 +78,10 @@ def get_services_for_mode(mode="base", lora_path=None, model=None):
             print("ERROR: --lora-path required for lora+rag mode")
             print("Example: ./mondrian.sh --restart --mode=lora+rag --lora-path=./models/qwen3-vl-4b-lora-ansel")
             sys.exit(1)
-        ai_advisor_cmd.extend(["--lora_path", lora_path, "--model_mode", "fine_tuned"])
+        if platform.system() == "Linux":
+            ai_advisor_cmd.extend(["--adapter", lora_path, "--load_in_4bit"])
+        else:
+            ai_advisor_cmd.extend(["--lora_path", lora_path, "--model_mode", "fine_tuned"])
         
     elif mode == "ab-test":
         # A/B testing mode: randomly split between base and LoRA
@@ -466,7 +476,7 @@ def monitor_services(duration=None, interval=5):
         return True
 
 
-def verify_services_on_startup(max_wait=60, check_interval=2):
+def verify_services_on_startup(max_wait=120, check_interval=2):
     """
     Verify that all services are healthy on startup.
     For AI Advisor, poll /model-status to show loading progress.

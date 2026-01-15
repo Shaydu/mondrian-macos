@@ -39,7 +39,7 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 class QwenAdvisor:
-    """AI Advisor using Qwen2-VL models with LoRA adapter"""
+    """AI Advisor using Qwen2-VL or Qwen3-VL models with LoRA adapter"""
     
     def __init__(self, model_name: str = "Qwen/Qwen2-VL-7B-Instruct", 
                  load_in_4bit: bool = True, device: Optional[str] = None,
@@ -90,14 +90,30 @@ class QwenAdvisor:
     def _load_model(self):
         """Load the Qwen model, processor, and optional LoRA adapter"""
         try:
-            from transformers import Qwen2VLForConditionalGeneration, AutoProcessor
+            from transformers import AutoProcessor, AutoModelForCausalLM
             
             logger.info("Loading model...")
             
             # Load processor
             self.processor = AutoProcessor.from_pretrained(self.model_name)
             
-            # Load model with quantization if requested
+            # Detect if this is a vision-language model (Qwen2-VL, Qwen3-VL, etc.)
+            # Vision-language models require AutoModelForVision2Seq instead of AutoModelForCausalLM
+            is_vision_model = "VL" in self.model_name or "vision" in self.model_name.lower()
+            
+            if is_vision_model:
+                try:
+                    from transformers import AutoModelForVision2Seq
+                    model_loader = AutoModelForVision2Seq
+                    logger.info("Detected vision-language model, using AutoModelForVision2Seq")
+                except ImportError:
+                    # Fallback to AutoModelForCausalLM if Vision2Seq not available
+                    model_loader = AutoModelForCausalLM
+                    logger.warning("AutoModelForVision2Seq not available, falling back to AutoModelForCausalLM")
+            else:
+                model_loader = AutoModelForCausalLM
+            
+            # Use appropriate loader for model type
             if self.load_in_4bit and self.device == 'cuda':
                 from transformers import BitsAndBytesConfig
                 
@@ -108,7 +124,7 @@ class QwenAdvisor:
                     bnb_4bit_quant_type="nf4"
                 )
                 
-                self.model = Qwen2VLForConditionalGeneration.from_pretrained(
+                self.model = model_loader.from_pretrained(
                     self.model_name,
                     quantization_config=quantization_config,
                     device_map="auto",
@@ -117,7 +133,7 @@ class QwenAdvisor:
                     trust_remote_code=True
                 )
             else:
-                self.model = Qwen2VLForConditionalGeneration.from_pretrained(
+                self.model = model_loader.from_pretrained(
                     self.model_name,
                     torch_dtype=torch.float16 if self.device == 'cuda' else torch.float32,
                     device_map="auto" if self.device == 'cuda' else None,

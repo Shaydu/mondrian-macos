@@ -40,6 +40,7 @@ class VisionLanguageDataset(Dataset):
     def __init__(self, data_path, processor, max_length=2048):
         self.processor = processor
         self.max_length = max_length
+        self.data_path = data_path
         
         # Load training data
         if os.path.isdir(data_path):
@@ -52,13 +53,28 @@ class VisionLanguageDataset(Dataset):
                         if self._validate_item(item):
                             self.data.append(item)
         elif os.path.isfile(data_path):
-            # Load from single JSON file
+            # Load from single JSON or JSONL file
             with open(data_path, 'r') as f:
-                data = json.load(f)
-                if isinstance(data, list):
-                    self.data = [item for item in data if self._validate_item(item)]
+                # Check if it's JSONL format (each line is a JSON object)
+                first_line = f.readline()
+                f.seek(0)  # Reset to beginning
+                
+                if data_path.endswith('.jsonl'):
+                    # JSONL format: one JSON object per line
+                    self.data = []
+                    for line in f:
+                        line = line.strip()
+                        if line:
+                            item = json.loads(line)
+                            if self._validate_item(item):
+                                self.data.append(item)
                 else:
-                    self.data = [data] if self._validate_item(data) else []
+                    # Regular JSON format
+                    data = json.load(f)
+                    if isinstance(data, list):
+                        self.data = [item for item in data if self._validate_item(item)]
+                    else:
+                        self.data = [data] if self._validate_item(data) else []
         else:
             raise ValueError(f"Data path not found: {data_path}")
         
@@ -66,8 +82,25 @@ class VisionLanguageDataset(Dataset):
     
     def _validate_item(self, item):
         """Validate that item has required fields"""
-        required = ['image_path', 'prompt', 'response']
-        return all(key in item for key in required) and os.path.exists(item['image_path'])
+        # Support both formats: messages or prompt/response
+        has_messages = 'messages' in item and len(item['messages']) >= 2
+        has_legacy = 'prompt' in item and 'response' in item
+        
+        if not (has_messages or has_legacy):
+            return False
+        
+        # Check image path exists
+        if 'image_path' not in item:
+            return False
+        
+        # Handle relative paths from training data location
+        image_path = item['image_path']
+        if not os.path.isabs(image_path):
+            # Try relative to data file directory
+            data_dir = os.path.dirname(os.path.abspath(self.data_path)) if hasattr(self, 'data_path') else os.getcwd()
+            image_path = os.path.join(data_dir, image_path)
+        
+        return os.path.exists(image_path)
     
     def __len__(self):
         return len(self.data)
@@ -75,13 +108,27 @@ class VisionLanguageDataset(Dataset):
     def __getitem__(self, idx):
         item = self.data[idx]
         
+        # Resolve image path
+        image_path = item['image_path']
+        if not os.path.isabs(image_path):
+            data_dir = os.path.dirname(os.path.abspath(self.data_path))
+            image_path = os.path.join(data_dir, image_path)
+        
         # Load image
         from PIL import Image
-        image = Image.open(item['image_path']).convert('RGB')
+        image = Image.open(image_path).convert('RGB')
         
-        # Format prompt and response
-        prompt = item['prompt']
-        response = item['response']
+        # Extract prompt and response from messages or legacy format
+        if 'messages' in item:
+            messages = item['messages']
+            # Find user and assistant messages
+            user_msg = next((m['content'] for m in messages if m['role'] == 'user'), '')
+            assistant_msg = next((m['content'] for m in messages if m['role'] == 'assistant'), '')
+            prompt = user_msg.replace('<image>', '').strip()
+            response = assistant_msg
+        else:
+            prompt = item['prompt']
+            response = item['response']
         
         # Create conversation format
         messages = [
@@ -135,6 +182,7 @@ def load_model_and_processor(model_name, use_4bit=True, device_map="auto"):
             bnb_4bit_quant_type="nf4",
             bnb_4bit_compute_dtype=torch.float16,
             bnb_4bit_use_double_quant=True,
+            llm_int8_enable_fp32_cpu_offload=True
         )
     else:
         bnb_config = None
@@ -142,13 +190,14 @@ def load_model_and_processor(model_name, use_4bit=True, device_map="auto"):
     # Load processor
     processor = AutoProcessor.from_pretrained(model_name, trust_remote_code=True)
     
-    # Load model
+    # Load model - use AutoModelForCausalLM for automatic model class detection (supports Qwen2-VL and Qwen3-VL)
     model = AutoModelForCausalLM.from_pretrained(
         model_name,
         quantization_config=bnb_config,
         device_map=device_map,
         trust_remote_code=True,
-        torch_dtype=torch.float16 if use_4bit else torch.float32
+        low_cpu_mem_usage=True,
+        max_memory={0: "10GB", "cpu": "30GB"}
     )
     
     # Prepare for k-bit training
@@ -233,7 +282,7 @@ def train(
         warmup_steps=warmup_steps,
         logging_steps=logging_steps,
         save_steps=save_steps,
-        evaluation_strategy="steps",
+        eval_strategy="steps",
         eval_steps=save_steps,
         save_total_limit=3,
         load_best_model_at_end=True,
@@ -242,7 +291,7 @@ def train(
         fp16=True,
         bf16=False,
         dataloader_pin_memory=False,
-        report_to="tensorboard",
+        report_to="none",
         logging_dir=f"{output_dir}/logs",
     )
     
