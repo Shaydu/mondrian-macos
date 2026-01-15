@@ -1,0 +1,877 @@
+[INFO] Job Service v2.3-DB-FIXED starting...
+[INFO] Database connection management fixed for real-time status updates
+[INIT] AI_SERVICE_URL: http://127.0.0.1:5100/analyze
+[INIT] Port: 5005
+[INIT] Database: /Users/shaydu/dev/mondrian-macos/mondrian/mondrian.db
+[INIT] Debug mode: False
+[INIT] Created directories
+[INIT] Initializing database...
+[INIT] Database schema OK
+[INIT] RAG Default: ENABLED (from RAG_ENABLED env var)
+============================================================
+Starting Job Service v2.3-DB-FIXED on port 5005...
+Host: 0.0.0.0:5005
+AI Service: http://127.0.0.1:5100/analyze
+============================================================
+ * Serving Flask app 'job_service_v2.3'
+ * Debug mode: off
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5005
+ * Running on http://10.0.0.131:5005
+[33mPress CTRL+C to quit[0m
+127.0.0.1 - - [14/Jan/2026 19:42:49] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:43:01] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:43:02] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:43:07] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:43:12] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:43:17] "GET /health HTTP/1.1" 200 -
+10.0.0.152 - - [14/Jan/2026 19:43:20] "GET /advisors HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:43:23] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:43:28] "GET /health HTTP/1.1" 200 -
+10.0.0.152 - - [14/Jan/2026 19:43:30] "[35m[1mPOST /upload HTTP/1.1[0m" 201 -
+10.0.0.152 - - [14/Jan/2026 19:43:30] "GET /stream/103882d4-01ee-40ca-b4ac-bd0d1b0f5a41%20(rag+lora) HTTP/1.1" 200 -
+10.0.0.152 - - [14/Jan/2026 19:43:31] "GET /status/103882d4-01ee-40ca-b4ac-bd0d1b0f5a41%20(rag+lora) HTTP/1.1" 200 -
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /advisors
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /advisors
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] POST /upload
+[API REQUEST] Form: {'advisor': '<str>', 'auto_analyze': '<str>', 'mode': '<str>'} | Files: {'image': '<photo-DB991183-78E9-436F-994B-CCF3D2336E23.jpg>'}
+====================================================================================================
+
+[UPLOAD] enable_rag parameter not provided, using env var default: True
+[UPLOAD] ✓ Final enable_rag value: True (will be stored in database and passed to AI service)
+[UPLOAD] Mode parameter from request: 'rag+lora'
+[UPLOAD] ✓ Final mode value: rag+lora (will be stored in database and passed to AI service)
+[UPLOAD] ========== JOB QUEUED ==========
+[UPLOAD] Job ID: 103882d4-01ee-40ca-b4ac-bd0d1b0f5a41
+[UPLOAD] Mode: rag+lora
+[UPLOAD] Enable RAG: True
+[UPLOAD] Advisors: ['ansel']
+[UPLOAD] =====================================
+[API RESPONSE] ✅ 201 POST /upload
+
+
+================================================================================
+[JOB] ========== PROCESS_JOB STARTED ==========
+[JOB] Job ID: 103882d4-01ee-40ca-b4ac-bd0d1b0f5a41
+[JOB] Filename: photo-DB991183-78E9-436F-994B-CCF3D2336E23-09d65cbb.jpg
+[JOB] Advisors: ['ansel']
+[JOB] Mode: rag+lora
+[JOB] Enable RAG: True
+[JOB] Host URL: http://10.0.0.131:5005
+[JOB] Flow: RAG + DEFAULT MODEL
+[JOB] ====================================
+================================================================================
+
+[JOB] Setting status to processing for job 103882d4-01ee-40ca-b4ac-bd0d1b0f5a41
+[JOB] Checking source path: /Users/shaydu/dev/mondrian-macos/source/photo-DB991183-78E9-436F-994B-CCF3D2336E23-09d65cbb.jpg
+
+====================================================================================================
+[API REQUEST] GET /stream/103882d4-01ee-40ca-b4ac-bd0d1b0f5a41 (rag+lora)
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /stream/103882d4-01ee-40ca-b4ac-bd0d1b0f5a41 (rag+lora)
+
+
+====================================================================================================
+[API REQUEST] GET /status/103882d4-01ee-40ca-b4ac-bd0d1b0f5a41 (rag+lora)
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /status/103882d4-01ee-40ca-b4ac-bd0d1b0f5a41 (rag+lora)
+
+[INFO] Resized image for display: photo-DB991183-78E9-436F-994B-CCF3D2336E23-09d65cbb.jpg (4032x3024 -> 1320x990)
+[JOB] Generated optimized image: /Users/shaydu/dev/mondrian-macos/thumbnails/photo-DB991183-78E9-436F-994B-CCF3D2336E23-09d65cbb.jpg
+[DEBUG] get_advisor_from_db called with db_path=/Users/shaydu/dev/mondrian-macos/mondrian/mondrian.db, advisor_id=ansel
+10.0.0.152 - - [14/Jan/2026 19:43:32] "GET /summary/103882d4-01ee-40ca-b4ac-bd0d1b0f5a41%20(rag+lora) HTTP/1.1" 200 -
+10.0.0.152 - - [14/Jan/2026 19:43:32] "GET /summary/103882d4-01ee-40ca-b4ac-bd0d1b0f5a41%20(rag+lora) HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:43:33] "GET /health HTTP/1.1" 200 -
+10.0.0.152 - - [14/Jan/2026 19:43:34] "GET /advisor_image/ansel.jpg HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:43:38] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:43:43] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:43:48] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:43:53] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:43:59] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:44:04] "GET /health HTTP/1.1" 200 -
+[DEBUG] raw row fetched for advisor_id=ansel: ('ansel', 'Ansel Adams', 'Ansel Adams (1902-1984) was an American landscape photographer and environmentalist known for his black-and-white images of the American West, especially Yosemite National Park. He helped found the photography group f/64, developed the Zone System for achieving perfect exposure and tonal range, and was a pioneering advocate for environmental conservation through his art.', '1902-1984', "You are Ansel Adams, master of black-and-white landscape photography. You revolutionized photography through your Zone System, which gave photographers unprecedented control over exposure and tonal range.\n\nYour approach to evaluating an image:\n\n1. **Tonal Range & Zone System** - Analyze the full spectrum from Zone 0 (pure black) to Zone X (pure white). Look for:\n   - Rich blacks with detail in shadows (Zones II-III)\n   - Pure whites that aren't blown out (Zone VIII-IX)\n   - Full midtone gradation (Zones IV-VI)\n   - Proper exposure that preserves detail across the entire tonal range\n\n2. **Composition & Perspective** - Examine the geometric structure:\n   - Leading lines that draw the eye through the frame\n   - Rule of thirds and golden ratio placement\n   - Foreground, midground, and background layering\n   - Balance between elements\n   - Use of natural frames\n\n3. **Technical Excellence** - Assess the craft:\n   - Critical sharpness and focus (f/64 philosophy)\n   - Depth of field appropriate to the subject\n   - Proper exposure (not too dark, not too light)\n   - Clean, well-printed negative equivalent\n\n4. **Light & Shadow** - Evaluate the interplay:\n   - Direction and quality of light\n   - Dramatic use of shadows to create depth\n   - Texture revealed through sidelight\n   - Time of day considerations (golden hour, blue hour)\n\n5. **Emotional Impact** - Consider the feeling:\n   - Sense of scale and majesty\n   - Connection to the natural world\n   - Drama and atmosphere\n   - Timeless quality\n\nWhen providing feedback, be specific and constructive. Reference the Zone System and technical aspects while also addressing the emotional impact. Encourage the photographer to see beyond the literal and capture the feeling of being present in that moment.", '[{"title": "Tonal Range & Zone System", "description": "Master of the full spectrum from pure black to pure white, using his Zone System to achieve perfect exposure and tonal gradation in every image."}, {"title": "Composition & Perspective", "description": "Precise framing that emphasizes geometric elements, leading lines, and careful positioning to create powerful visual impact."}, {"title": "Technical Excellence", "description": "Perfect sharpness, focus, and exposure achieved through large-format cameras and meticulous darkroom work."}, {"title": "Landscape Drama", "description": "Captures the majesty and drama of natural landscapes with emphasis on light, shadow, and texture."}]', 'Photographer', 'https://en.wikipedia.org/wiki/Ansel_Adams', 'https://commons.wikimedia.org/wiki/Category:Ansel_Adams', 'baseline') (cols: ['id', 'name', 'bio', 'years', 'prompt', 'focus_areas', 'category', 'wikipedia_url', 'commons_url', 'prompt_type'])
+[JOB] Calling AI service for advisor ansel: http://127.0.0.1:5100/analyze
+[JOB] ✓ Sending request to AI service with mode='rag+lora', enable_rag='true' (boolean: True)
+[JOB] Full request data: {'advisor': 'ansel', 'job_id': '103882d4-01ee-40ca-b4ac-bd0d1b0f5a41', 'job_service_url': 'http://10.0.0.131:5005', 'enable_rag': 'true', 'mode': 'rag+lora'}
+[JOB] AI service response status: 500
+[ERROR] AI service HTTP error for job 103882d4-01ee-40ca-b4ac-bd0d1b0f5a41, advisor ansel: 500 Server Error: INTERNAL SERVER ERROR for url: http://127.0.0.1:5100/analyze
+
+Response: 
+        <html><body style="font-family: sans-serif; padding: 20px;">
+        <h1 style="color: #d32f2f;">Analysis Error</h1>
+        <p><strong>Mode:</strong> rag+lora</p>
+        <p><strong>Advisor:</strong> ansel</p>
+        <p><strong>Error:</strong> Unknown mode: rag+lora. Valid modes: ['baseline', 'rag', 'lora', 'rag_lora']</p>
+        <details style="margin-top: 20px;">
+            <summary>Stack Trace</summary>
+            <pre style="background: #f5f5f5; padding: 10px; overflow-x: auto;
+[ERROR] Status code: 500
+[JOB] Completed advisor ansel (1/1)
+[JOB] All advisors processed (1/1)
+[DEBUG] Job 103882d4-01ee-40ca-b4ac-bd0d1b0f5a41 completed
+
+====================================================================================================
+[API REQUEST] GET /summary/103882d4-01ee-40ca-b4ac-bd0d1b0f5a41 (rag+lora)
+[API REQUEST] No parameters
+====================================================================================================
+
+
+====================================================================================================
+[API REQUEST] GET /summary/103882d4-01ee-40ca-b4ac-bd0d1b0f5a41 (rag+lora)
+[API REQUEST] No parameters
+====================================================================================================
+
+[DEBUG] Parsing critical_recommendations for job 103882d4-01ee-40ca-b4ac-bd0d1b0f5a41 (rag+lora)
+[DEBUG] critical_recommendations value: {}
+[API RESPONSE] ✅ 200 GET /summary/103882d4-01ee-40ca-b4ac-bd0d1b0f5a41 (rag+lora)
+
+[DEBUG] Parsing critical_recommendations for job 103882d4-01ee-40ca-b4ac-bd0d1b0f5a41 (rag+lora)
+[DEBUG] critical_recommendations value: {}
+[API RESPONSE] ✅ 200 GET /summary/103882d4-01ee-40ca-b4ac-bd0d1b0f5a41 (rag+lora)
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /advisor_image/ansel.jpg
+[API REQUEST] No parameters
+====================================================================================================
+
+[OK] Serving advisor image: ansel (673547 bytes)
+[API RESPONSE] ✅ 200 GET /advisor_image/ansel.jpg
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+127.0.0.1 - - [14/Jan/2026 19:44:10] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:44:15] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:44:21] "GET /health HTTP/1.1" 200 -
+10.0.0.152 - - [14/Jan/2026 19:44:21] "GET /advisors HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:44:26] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:44:31] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:44:37] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:44:42] "GET /health HTTP/1.1" 200 -
+10.0.0.152 - - [14/Jan/2026 19:44:46] "[35m[1mPOST /upload HTTP/1.1[0m" 201 -
+10.0.0.152 - - [14/Jan/2026 19:44:46] "GET /stream/b8e26bc1-d632-4e83-b6a9-6892f9dae49a%20(lora) HTTP/1.1" 200 -
+10.0.0.152 - - [14/Jan/2026 19:44:47] "GET /status/b8e26bc1-d632-4e83-b6a9-6892f9dae49a%20(lora) HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:44:47] "GET /health HTTP/1.1" 200 -
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /advisors
+[API REQUEST] No parameters
+====================================================================================================
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+[API RESPONSE] ✅ 200 GET /advisors
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] POST /upload
+[API REQUEST] Form: {'advisor': '<str>', 'auto_analyze': '<str>', 'mode': '<str>'} | Files: {'image': '<photo-053FECE3-9EFB-4BEC-AE2F-382C212C0F8C.jpg>'}
+====================================================================================================
+
+[UPLOAD] enable_rag parameter not provided, using env var default: True
+[UPLOAD] ✓ Final enable_rag value: True (will be stored in database and passed to AI service)
+[UPLOAD] Mode parameter from request: 'lora'
+[UPLOAD] ✓ Final mode value: lora (will be stored in database and passed to AI service)
+[UPLOAD] ========== JOB QUEUED ==========
+[UPLOAD] Job ID: b8e26bc1-d632-4e83-b6a9-6892f9dae49a
+[UPLOAD] Mode: lora
+[UPLOAD] Enable RAG: True
+[UPLOAD] Advisors: ['ansel']
+[UPLOAD] =====================================
+[API RESPONSE] ✅ 201 POST /upload
+
+
+================================================================================
+[JOB] ========== PROCESS_JOB STARTED ==========
+[JOB] Job ID: b8e26bc1-d632-4e83-b6a9-6892f9dae49a
+[JOB] Filename: photo-053FECE3-9EFB-4BEC-AE2F-382C212C0F8C-02b21a94.jpg
+[JOB] Advisors: ['ansel']
+[JOB] Mode: lora
+[JOB] Enable RAG: True
+[JOB] Host URL: http://10.0.0.131:5005
+[JOB] Flow: RAG + LORA
+[JOB] ====================================
+================================================================================
+
+[JOB] Setting status to processing for job b8e26bc1-d632-4e83-b6a9-6892f9dae49a
+
+====================================================================================================
+[API REQUEST] GET /stream/b8e26bc1-d632-4e83-b6a9-6892f9dae49a (lora)
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /stream/b8e26bc1-d632-4e83-b6a9-6892f9dae49a (lora)
+
+[JOB] Checking source path: /Users/shaydu/dev/mondrian-macos/source/photo-053FECE3-9EFB-4BEC-AE2F-382C212C0F8C-02b21a94.jpg
+
+====================================================================================================
+[API REQUEST] GET /status/b8e26bc1-d632-4e83-b6a9-6892f9dae49a (lora)
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /status/b8e26bc1-d632-4e83-b6a9-6892f9dae49a (lora)
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+[INFO] Resized image for display: photo-053FECE3-9EFB-4BEC-AE2F-382C212C0F8C-02b21a94.jpg (4032x3024 -> 1320x990)
+[JOB] Generated optimized image: /Users/shaydu/dev/mondrian-macos/thumbnails/photo-053FECE3-9EFB-4BEC-AE2F-382C212C0F8C-02b21a94.jpg
+[DEBUG] get_advisor_from_db called with db_path=/Users/shaydu/dev/mondrian-macos/mondrian/mondrian.db, advisor_id=ansel
+10.0.0.131 - - [14/Jan/2026 19:44:51] "PUT /job/b8e26bc1-d632-4e83-b6a9-6892f9dae49a/thinking HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:44:53] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:44:58] "GET /health HTTP/1.1" 200 -
+10.0.0.131 - - [14/Jan/2026 19:45:04] "PUT /job/b8e26bc1-d632-4e83-b6a9-6892f9dae49a/thinking HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:45:06] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:45:11] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:45:16] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:45:21] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:45:26] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:45:31] "GET /health HTTP/1.1" 200 -
+10.0.0.152 - - [14/Jan/2026 19:45:34] "GET /status/b8e26bc1-d632-4e83-b6a9-6892f9dae49a%20(lora) HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:45:36] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:45:41] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:45:46] "GET /health HTTP/1.1" 200 -
+[DEBUG] raw row fetched for advisor_id=ansel: ('ansel', 'Ansel Adams', 'Ansel Adams (1902-1984) was an American landscape photographer and environmentalist known for his black-and-white images of the American West, especially Yosemite National Park. He helped found the photography group f/64, developed the Zone System for achieving perfect exposure and tonal range, and was a pioneering advocate for environmental conservation through his art.', '1902-1984', "You are Ansel Adams, master of black-and-white landscape photography. You revolutionized photography through your Zone System, which gave photographers unprecedented control over exposure and tonal range.\n\nYour approach to evaluating an image:\n\n1. **Tonal Range & Zone System** - Analyze the full spectrum from Zone 0 (pure black) to Zone X (pure white). Look for:\n   - Rich blacks with detail in shadows (Zones II-III)\n   - Pure whites that aren't blown out (Zone VIII-IX)\n   - Full midtone gradation (Zones IV-VI)\n   - Proper exposure that preserves detail across the entire tonal range\n\n2. **Composition & Perspective** - Examine the geometric structure:\n   - Leading lines that draw the eye through the frame\n   - Rule of thirds and golden ratio placement\n   - Foreground, midground, and background layering\n   - Balance between elements\n   - Use of natural frames\n\n3. **Technical Excellence** - Assess the craft:\n   - Critical sharpness and focus (f/64 philosophy)\n   - Depth of field appropriate to the subject\n   - Proper exposure (not too dark, not too light)\n   - Clean, well-printed negative equivalent\n\n4. **Light & Shadow** - Evaluate the interplay:\n   - Direction and quality of light\n   - Dramatic use of shadows to create depth\n   - Texture revealed through sidelight\n   - Time of day considerations (golden hour, blue hour)\n\n5. **Emotional Impact** - Consider the feeling:\n   - Sense of scale and majesty\n   - Connection to the natural world\n   - Drama and atmosphere\n   - Timeless quality\n\nWhen providing feedback, be specific and constructive. Reference the Zone System and technical aspects while also addressing the emotional impact. Encourage the photographer to see beyond the literal and capture the feeling of being present in that moment.", '[{"title": "Tonal Range & Zone System", "description": "Master of the full spectrum from pure black to pure white, using his Zone System to achieve perfect exposure and tonal gradation in every image."}, {"title": "Composition & Perspective", "description": "Precise framing that emphasizes geometric elements, leading lines, and careful positioning to create powerful visual impact."}, {"title": "Technical Excellence", "description": "Perfect sharpness, focus, and exposure achieved through large-format cameras and meticulous darkroom work."}, {"title": "Landscape Drama", "description": "Captures the majesty and drama of natural landscapes with emphasis on light, shadow, and texture."}]', 'Photographer', 'https://en.wikipedia.org/wiki/Ansel_Adams', 'https://commons.wikimedia.org/wiki/Category:Ansel_Adams', 'baseline') (cols: ['id', 'name', 'bio', 'years', 'prompt', 'focus_areas', 'category', 'wikipedia_url', 'commons_url', 'prompt_type'])
+[JOB] Calling AI service for advisor ansel: http://127.0.0.1:5100/analyze
+[JOB] ✓ Sending request to AI service with mode='lora', enable_rag='true' (boolean: True)
+[JOB] Full request data: {'advisor': 'ansel', 'job_id': 'b8e26bc1-d632-4e83-b6a9-6892f9dae49a', 'job_service_url': 'http://10.0.0.131:5005', 'enable_rag': 'true', 'mode': 'lora'}
+
+====================================================================================================
+[API REQUEST] PUT /job/b8e26bc1-d632-4e83-b6a9-6892f9dae49a/thinking
+[API REQUEST] JSON: {'thinking': 'Preparing analysis model...'}
+====================================================================================================
+
+[API RESPONSE] ✅ 200 PUT /job/b8e26bc1-d632-4e83-b6a9-6892f9dae49a/thinking
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] PUT /job/b8e26bc1-d632-4e83-b6a9-6892f9dae49a/thinking
+[API REQUEST] JSON: {'thinking': 'Generating analysis...'}
+====================================================================================================
+
+[API RESPONSE] ✅ 200 PUT /job/b8e26bc1-d632-4e83-b6a9-6892f9dae49a/thinking
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /status/b8e26bc1-d632-4e83-b6a9-6892f9dae49a (lora)
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /status/b8e26bc1-d632-4e83-b6a9-6892f9dae49a (lora)
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+127.0.0.1 - - [14/Jan/2026 19:45:51] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:45:57] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:46:02] "GET /health HTTP/1.1" 200 -
+10.0.0.152 - - [14/Jan/2026 19:46:04] "GET /status/b8e26bc1-d632-4e83-b6a9-6892f9dae49a%20(lora) HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:46:07] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:46:12] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:46:18] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:46:23] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:46:28] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:46:34] "GET /health HTTP/1.1" 200 -
+10.0.0.152 - - [14/Jan/2026 19:46:34] "GET /status/b8e26bc1-d632-4e83-b6a9-6892f9dae49a%20(lora) HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:46:39] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:46:44] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:46:49] "GET /health HTTP/1.1" 200 -
+10.0.0.152 - - [14/Jan/2026 19:46:52] "GET /summary/b8e26bc1-d632-4e83-b6a9-6892f9dae49a%20(lora) HTTP/1.1" 200 -
+10.0.0.152 - - [14/Jan/2026 19:46:52] "GET /summary/b8e26bc1-d632-4e83-b6a9-6892f9dae49a%20(lora) HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:46:54] "GET /health HTTP/1.1" 200 -
+10.0.0.152 - - [14/Jan/2026 19:46:54] "GET /advisor_image/ansel.jpg HTTP/1.1" 200 -
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /status/b8e26bc1-d632-4e83-b6a9-6892f9dae49a (lora)
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /status/b8e26bc1-d632-4e83-b6a9-6892f9dae49a (lora)
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /status/b8e26bc1-d632-4e83-b6a9-6892f9dae49a (lora)
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /status/b8e26bc1-d632-4e83-b6a9-6892f9dae49a (lora)
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+[JOB] AI service response status: 200
+[DEBUG] Response content-type: application/json
+[JOB] Received JSON response for ansel:
+[JOB]   HTML length: 7491 characters
+[JOB]   Mode used: lora
+[JOB]   Metadata: {'mode_used': 'lora', 'requested_mode': 'lora', 'effective_mode': 'lora', 'fallback_occurred': False, 'overall_grade': 'B-', 'advisor_id': 'ansel'}
+[JOB] Completed advisor ansel (1/1)
+[JOB] All advisors processed (1/1)
+[DEBUG] Extracting recommendations for advisor: ansel
+[DEBUG] Extracted HTML from new JSON format for ansel
+[DEBUG] Found 5 feedback cards for ansel
+[DEBUG] Added recommendation for Composition: score=7.0, has_rec=True
+[DEBUG] Added recommendation for Lighting: score=7.0, has_rec=True
+[DEBUG] Added recommendation for Color Harmony: score=6.0, has_rec=True
+[DEBUG] Added recommendation for Visual Balance: score=8.0, has_rec=True
+[DEBUG] Added recommendation for Emotional Impact: score=7.0, has_rec=True
+[DEBUG] RAG mode: User profile not found, falling back to score-based sorting
+[DEBUG] Extracted 3 recommendations for ansel
+[DEBUG] Job b8e26bc1-d632-4e83-b6a9-6892f9dae49a completed
+
+====================================================================================================
+[API REQUEST] GET /summary/b8e26bc1-d632-4e83-b6a9-6892f9dae49a (lora)
+[API REQUEST] No parameters
+====================================================================================================
+
+
+====================================================================================================
+[API REQUEST] GET /summary/b8e26bc1-d632-4e83-b6a9-6892f9dae49a (lora)
+[API REQUEST] No parameters
+====================================================================================================
+
+[DEBUG] Parsing critical_recommendations for job b8e26bc1-d632-4e83-b6a9-6892f9dae49a (lora)
+[DEBUG] critical_recommendations value: {"ansel": [{"dimension": "Color Harmony", "comment": "", "recommendation": "Balance the warm and cool tones for a more harmonious palette.", "dimension_score": 6.0}, {"dimension": "Composition", "comment": "", "recommendation": "Balance the elements more evenly across the frame.", "dimension_score": 7.0}, {"dimension": "Lighting", "comment": "", "recommendation": "Use the light to your advantage, it's the most valuable element in the scene.", "dimension_score": 7.0}]}
+[DEBUG] Parsing critical_recommendations for job b8e26bc1-d632-4e83-b6a9-6892f9dae49a (lora)
+[DEBUG] critical_recommendations value: {"ansel": [{"dimension": "Color Harmony", "comment": "", "recommendation": "Balance the warm and cool tones for a more harmonious palette.", "dimension_score": 6.0}, {"dimension": "Composition", "comment": "", "recommendation": "Balance the elements more evenly across the frame.", "dimension_score": 7.0}, {"dimension": "Lighting", "comment": "", "recommendation": "Use the light to your advantage, it's the most valuable element in the scene.", "dimension_score": 7.0}]}
+[API RESPONSE] ✅ 200 GET /summary/b8e26bc1-d632-4e83-b6a9-6892f9dae49a (lora)
+
+[API RESPONSE] ✅ 200 GET /summary/b8e26bc1-d632-4e83-b6a9-6892f9dae49a (lora)
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /advisor_image/ansel.jpg
+[API REQUEST] No parameters
+====================================================================================================
+
+[OK] Serving advisor image: ansel (673547 bytes)
+[API RESPONSE] ✅ 200 GET /advisor_image/ansel.jpg
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+127.0.0.1 - - [14/Jan/2026 19:46:59] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:47:04] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:47:10] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:47:15] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:47:21] "GET /health HTTP/1.1" 200 -
+10.0.0.152 - - [14/Jan/2026 19:47:25] "GET /analysis/b8e26bc1-d632-4e83-b6a9-6892f9dae49a%20(lora) HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:47:26] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:47:31] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:47:36] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:47:41] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:47:46] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:47:52] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:47:57] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:48:02] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:48:07] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:48:12] "GET /health HTTP/1.1" 200 -
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /analysis/b8e26bc1-d632-4e83-b6a9-6892f9dae49a (lora)
+[API REQUEST] No parameters
+====================================================================================================
+
+[DEBUG] /analysis endpoint: Getting advisor info for 'ansel', DB_PATH: /Users/shaydu/dev/mondrian-macos/mondrian/mondrian.db
+[DEBUG] get_advisor_from_db called with db_path=/Users/shaydu/dev/mondrian-macos/mondrian/mondrian.db, advisor_id=ansel
+[DEBUG] raw row fetched for advisor_id=ansel: ('ansel', 'Ansel Adams', 'Ansel Adams (1902-1984) was an American landscape photographer and environmentalist known for his black-and-white images of the American West, especially Yosemite National Park. He helped found the photography group f/64, developed the Zone System for achieving perfect exposure and tonal range, and was a pioneering advocate for environmental conservation through his art.', '1902-1984', "You are Ansel Adams, master of black-and-white landscape photography. You revolutionized photography through your Zone System, which gave photographers unprecedented control over exposure and tonal range.\n\nYour approach to evaluating an image:\n\n1. **Tonal Range & Zone System** - Analyze the full spectrum from Zone 0 (pure black) to Zone X (pure white). Look for:\n   - Rich blacks with detail in shadows (Zones II-III)\n   - Pure whites that aren't blown out (Zone VIII-IX)\n   - Full midtone gradation (Zones IV-VI)\n   - Proper exposure that preserves detail across the entire tonal range\n\n2. **Composition & Perspective** - Examine the geometric structure:\n   - Leading lines that draw the eye through the frame\n   - Rule of thirds and golden ratio placement\n   - Foreground, midground, and background layering\n   - Balance between elements\n   - Use of natural frames\n\n3. **Technical Excellence** - Assess the craft:\n   - Critical sharpness and focus (f/64 philosophy)\n   - Depth of field appropriate to the subject\n   - Proper exposure (not too dark, not too light)\n   - Clean, well-printed negative equivalent\n\n4. **Light & Shadow** - Evaluate the interplay:\n   - Direction and quality of light\n   - Dramatic use of shadows to create depth\n   - Texture revealed through sidelight\n   - Time of day considerations (golden hour, blue hour)\n\n5. **Emotional Impact** - Consider the feeling:\n   - Sense of scale and majesty\n   - Connection to the natural world\n   - Drama and atmosphere\n   - Timeless quality\n\nWhen providing feedback, be specific and constructive. Reference the Zone System and technical aspects while also addressing the emotional impact. Encourage the photographer to see beyond the literal and capture the feeling of being present in that moment.", '[{"title": "Tonal Range & Zone System", "description": "Master of the full spectrum from pure black to pure white, using his Zone System to achieve perfect exposure and tonal gradation in every image."}, {"title": "Composition & Perspective", "description": "Precise framing that emphasizes geometric elements, leading lines, and careful positioning to create powerful visual impact."}, {"title": "Technical Excellence", "description": "Perfect sharpness, focus, and exposure achieved through large-format cameras and meticulous darkroom work."}, {"title": "Landscape Drama", "description": "Captures the majesty and drama of natural landscapes with emphasis on light, shadow, and texture."}]', 'Photographer', 'https://en.wikipedia.org/wiki/Ansel_Adams', 'https://commons.wikimedia.org/wiki/Category:Ansel_Adams', 'baseline') (cols: ['id', 'name', 'bio', 'years', 'prompt', 'focus_areas', 'category', 'wikipedia_url', 'commons_url', 'prompt_type'])
+[DEBUG] /analysis endpoint: Advisor info retrieved - True
+[API RESPONSE] ✅ 200 GET /analysis/b8e26bc1-d632-4e83-b6a9-6892f9dae49a (lora)
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+127.0.0.1 - - [14/Jan/2026 19:48:17] "GET /health HTTP/1.1" 200 -
