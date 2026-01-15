@@ -1,0 +1,14 @@
+[2026-01-15 06:20:47,560] INFO: ================================================================================
+[2026-01-15 06:20:47,560] INFO: TEST SESSION STARTED
+[2026-01-15 06:20:47,560] INFO: ================================================================================
+[2026-01-15 06:20:47,560] INFO: Log file: /Users/shaydu/dev/mondrian-macos/logs/tests/test_rag_lora_e2e_1768483247.log
+[2026-01-15 06:20:47,560] INFO: Project root: /Users/shaydu/dev/mondrian-macos
+[2026-01-15 06:20:47,560] INFO: Python version: 3.12.2 (v3.12.2:6abddd9f6a, Feb  6 2024, 17:02:06) [Clang 13.0.0 (clang-1300.0.29.30)]
+[2026-01-15 06:20:47,560] INFO: Timestamp: 2026-01-15T06:20:47.560480
+[2026-01-15 06:20:47,560] INFO: AI Service URL: http://localhost:5100
+[2026-01-15 06:20:47,560] INFO: Test image: /Users/shaydu/dev/mondrian-macos/source/photo-B371453D-558B-40C5-910D-72940700046C-8d4c2233.jpg
+[2026-01-15 06:20:47,560] INFO: Advisor: ansel
+[2026-01-15 06:20:47,567] DEBUG: Starting new HTTP connection (1): localhost:5100
+[2026-01-15 06:20:47,567] ERROR: TEST FAILED: Cannot connect: HTTPConnectionPool(host='localhost', port=5100): Max retries exceeded with url: /health (Caused by NewConnectionError("HTTPConnection(host='localhost', port=5100): Failed to establish a new connection: [Errno 61] Connection refused"))
+[2026-01-15 06:20:47,568] DEBUG: Starting new HTTP connection (1): localhost:5005
+[2026-01-15 06:20:47,569] DEBUG: http://localhost:5005 "GET /health HTTP/1.1" 200 132

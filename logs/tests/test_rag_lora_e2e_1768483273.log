@@ -1,0 +1,23 @@
+[2026-01-15 06:21:13,922] INFO: ================================================================================
+[2026-01-15 06:21:13,922] INFO: TEST SESSION STARTED
+[2026-01-15 06:21:13,923] INFO: ================================================================================
+[2026-01-15 06:21:13,923] INFO: Log file: /Users/shaydu/dev/mondrian-macos/logs/tests/test_rag_lora_e2e_1768483273.log
+[2026-01-15 06:21:13,923] INFO: Project root: /Users/shaydu/dev/mondrian-macos
+[2026-01-15 06:21:13,923] INFO: Python version: 3.12.2 (v3.12.2:6abddd9f6a, Feb  6 2024, 17:02:06) [Clang 13.0.0 (clang-1300.0.29.30)]
+[2026-01-15 06:21:13,923] INFO: Timestamp: 2026-01-15T06:21:13.923087
+[2026-01-15 06:21:13,923] INFO: AI Service URL: http://localhost:5100
+[2026-01-15 06:21:13,923] INFO: Test image: /Users/shaydu/dev/mondrian-macos/source/photo-B371453D-558B-40C5-910D-72940700046C-8d4c2233.jpg
+[2026-01-15 06:21:13,923] INFO: Advisor: ansel
+[2026-01-15 06:21:13,929] DEBUG: Starting new HTTP connection (1): localhost:5100
+[2026-01-15 06:21:13,930] DEBUG: http://localhost:5100 "GET /health HTTP/1.1" 200 438
+[2026-01-15 06:21:13,931] DEBUG: Starting new HTTP connection (1): localhost:5005
+[2026-01-15 06:21:13,932] DEBUG: http://localhost:5005 "GET /health HTTP/1.1" 200 132
+[2026-01-15 06:21:13,932] WARNING: TEST SKIPPED: Availability check deferred (will test during analysis)
+[2026-01-15 06:21:13,932] INFO: INFO: If RAG+LoRA is unavailable, the service will automatically fallback to the next available mode
+[2026-01-15 06:21:13,933] INFO: Starting basic workflow test
+[2026-01-15 06:21:13,933] INFO: Image path: /Users/shaydu/dev/mondrian-macos/source/photo-B371453D-558B-40C5-910D-72940700046C-8d4c2233.jpg
+[2026-01-15 06:21:13,933] INFO: Image size: 1939443 bytes
+[2026-01-15 06:21:13,933] INFO: Request timestamp: 2026-01-15T06:21:13.933092
+[2026-01-15 06:21:13,933] DEBUG: POST request to: http://localhost:5100/analyze
+[2026-01-15 06:21:13,933] DEBUG: Data: {'advisor': 'ansel', 'mode': 'rag_lora', 'response_format': 'json'}
+[2026-01-15 06:21:13,935] DEBUG: Starting new HTTP connection (1): localhost:5100

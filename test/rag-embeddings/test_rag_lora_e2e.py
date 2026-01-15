@@ -23,12 +23,39 @@ import json
 import time
 import argparse
 import requests
+import logging
 from pathlib import Path
 from datetime import datetime
 
 # Add project root to path
 PROJECT_ROOT = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(PROJECT_ROOT / "mondrian"))
+
+# ============================================================================
+# LOGGING SETUP
+# ============================================================================
+LOG_DIR = PROJECT_ROOT / "logs" / "tests"
+LOG_DIR.mkdir(parents=True, exist_ok=True)
+LOG_FILE = LOG_DIR / f"test_rag_lora_e2e_{int(time.time())}.log"
+
+# Configure logging
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='[%(asctime)s] %(levelname)s: %(message)s',
+    handlers=[
+        logging.FileHandler(LOG_FILE),
+        logging.StreamHandler()
+    ]
+)
+logger = logging.getLogger(__name__)
+
+logger.info("=" * 80)
+logger.info("TEST SESSION STARTED")
+logger.info("=" * 80)
+logger.info(f"Log file: {LOG_FILE}")
+logger.info(f"Project root: {PROJECT_ROOT}")
+logger.info(f"Python version: {sys.version}")
+logger.info(f"Timestamp: {datetime.now().isoformat()}")
 
 # Configuration
 AI_SERVICE_URL = "http://localhost:5100"
@@ -37,6 +64,10 @@ AI_SERVICE_HEALTH = f"{AI_SERVICE_URL}/health"
 JOB_SERVICE_HEALTH = f"{JOB_SERVICE_URL}/health"
 TEST_IMAGE_PATH = PROJECT_ROOT / "source" / "photo-B371453D-558B-40C5-910D-72940700046C-8d4c2233.jpg"
 ADVISOR = "ansel"
+
+logger.info(f"AI Service URL: {AI_SERVICE_URL}")
+logger.info(f"Test image: {TEST_IMAGE_PATH}")
+logger.info(f"Advisor: {ADVISOR}")
 
 # Color codes
 GREEN = '\033[0;32m'
@@ -85,18 +116,21 @@ def print_pass(msg=""):
 
 def print_fail(msg=""):
     """Print fail result."""
+    logger.error(f"TEST FAILED: {msg}")
     print(f"{RED}✗ FAIL{NC} {msg}")
     return False
 
 
 def print_skip(msg=""):
     """Print skip result."""
+    logger.warning(f"TEST SKIPPED: {msg}")
     print(f"{YELLOW}⊘ SKIP{NC} {msg}")
     return True
 
 
 def print_info(msg):
     """Print info message."""
+    logger.info(f"INFO: {msg}")
     print(f"{CYAN}ℹ{NC} {msg}")
 
 
@@ -155,7 +189,12 @@ def test_rag_lora_basic_workflow():
         return False
     
     try:
+        logger.info(f"Starting basic workflow test")
+        logger.info(f"Image path: {TEST_IMAGE_PATH}")
+        logger.info(f"Image size: {TEST_IMAGE_PATH.stat().st_size} bytes")
+        
         start_time = time.time()
+        logger.info(f"Request timestamp: {datetime.now().isoformat()}")
         
         with open(TEST_IMAGE_PATH, 'rb') as f:
             files = {'image': f}
@@ -165,22 +204,33 @@ def test_rag_lora_basic_workflow():
                 'response_format': 'json'
             }
             
+            logger.debug(f"POST request to: {AI_SERVICE_URL}/analyze")
+            logger.debug(f"Data: {data}")
+            
             response = requests.post(
                 f"{AI_SERVICE_URL}/analyze",
                 files=files,
                 data=data,
                 timeout=300
             )
+            
+            logger.info(f"Response status: {response.status_code}")
+            logger.info(f"Response headers: {dict(response.headers)}")
+            logger.debug(f"Response text length: {len(response.text)}")
         
         duration = time.time() - start_time
         timing_data['basic_workflow'] = duration
+        logger.info(f"Request duration: {duration:.2f}s")
         
         if response.status_code != 200:
+            logger.error(f"HTTP error {response.status_code}")
+            logger.error(f"Response: {response.text[:500]}")
             print_fail(f"HTTP {response.status_code}")
             test_results["failed"].append("Basic workflow")
             return False
         
         result = response.json()
+        logger.info(f"Response keys: {list(result.keys())}")
         print_pass(f"Duration: {duration:.2f}s")
         
         # Verify response
@@ -233,10 +283,16 @@ def test_rag_lora_basic_workflow():
         return True
         
     except requests.exceptions.Timeout:
+        logger.error("Request TIMEOUT after 300 seconds")
+        logger.error("This likely indicates the service crashed or is unresponsive")
         print_fail("Request timeout")
         test_results["failed"].append("Basic workflow - timeout")
         return False
     except Exception as e:
+        logger.error(f"Request EXCEPTION: {type(e).__name__}: {e}")
+        logger.error(f"Exception details: {repr(e)}")
+        import traceback
+        logger.error(f"Traceback: {traceback.format_exc()}")
         print_fail(f"Error: {e}")
         test_results["failed"].append(f"Basic workflow - {str(e)}")
         return False
