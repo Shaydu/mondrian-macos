@@ -1,0 +1,4 @@
+Traceback (most recent call last):
+  File "/Users/shaydu/dev/mondrian-macos/mondrian/job_service_v2.3.py", line 42, in <module>
+    import cv2
+ModuleNotFoundError: No module named 'cv2'

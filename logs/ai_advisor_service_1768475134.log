@@ -1,0 +1,1327 @@
+[INFO] Python executable: /Library/Frameworks/Python.framework/Versions/3.12/bin/python3
+[INFO] Python version: 3.12.2
+[INFO] Working directory: /Users/shaydu/dev/mondrian-macos
+[INFO] Environment variables:
+[INFO]   MLX_USE_CPU=<not set>
+[INFO]   CUDA_VISIBLE_DEVICES=<not set>
+[INFO]   PYTORCH_ENABLE_MPS_FALLBACK=<not set>
+[INFO] MLX default device explicitly set to: Device(gpu, 0)
+[INFO] MLX configured to use GPU backend (Metal)
+[INFO] MLX backend initialized successfully (GPU mode)
+[INFO] AI Advisor Service v2.0-JSON starting...
+[INFO] Using JSON output format (converted to HTML for backward compatibility)
+[INFO] Using base64 encoding for all images
+[INFO] Using MLX backend for vision analysis
+[INFO] MLX Mode: ENABLED
+[INFO] MLX Model: mlx-community/Qwen3-VL-4B-Instruct-4bit
+[INFO] Model timeout: 300s
+[INFO] RAG Service URL: http://127.0.0.1:5400
+[INFO] RAG Default: ENABLED (from RAG_ENABLED env var)
+[INFO] System prompt loaded from database (2751 characters)
+AI Advisor Service starting up...
+  Port: 5100
+  DB Path: /Users/shaydu/dev/mondrian-macos/mondrian/mondrian.db
+  MLX Model: mlx-community/Qwen3-VL-4B-Instruct-4bit
+  Job service URL: http://127.0.0.1:5005
+  Current working directory: /Users/shaydu/dev/mondrian-macos
+  Image Encoding: BASE64 (all platforms)
+[INFO] Initializing service with model_mode=fine_tuned
+[INFO] Model Strategy: FINE-TUNED
+[INFO] Loading LoRA adapter from: ./adapters/ansel
+[INFO] Loading MLX model: mlx-community/Qwen3-VL-4B-Instruct-4bit...
+[INFO] Testing Metal GPU access...
+[INFO] ✓ Metal GPU is available and working
+Fetching 14 files:   0%|          | 0/14 [00:00<?, ?it/s]Fetching 14 files: 100%|██████████| 14/14 [00:00<00:00, 138818.57it/s]
+[INFO] MLX model loaded in 2.99s using GPU backend and cached
+[INFO] MLX default device: Device(gpu, 0)
+[INFO] ✓ GPU acceleration confirmed active
+[INFO] Loading LoRA adapter from: ./adapters/ansel
+[INFO] LoRA Config: rank=None, alpha=None, dropout=None
+[INFO] Applying LoRA adapter from: ./adapters/ansel
+#trainable params: 16.515072 M || all params: 4022.468096 M || trainable%: 0.411%
+[INFO] LoRA adapter successfully applied to model
+[INFO] Service initialized successfully. Fine-tuned: True
+[INFO] Model Strategy: fine_tuned
+[INFO] Fine-Tuned: True
+[INFO] Service ready on http://0.0.0.0:5100
+AI Advisor Service running on port 5100...
+ * Serving Flask app 'ai_advisor_service'
+ * Debug mode: off
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5100
+ * Running on http://10.0.0.131:5100
+[33mPress CTRL+C to quit[0m
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /model-status
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /model-status
+
+127.0.0.1 - - [15/Jan/2026 04:05:44] "GET /model-status HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:05:44] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:05:45] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:05:50] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:05:55] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:06:00] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:06:05] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:06:10] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:06:15] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:06:20] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:06:25] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:06:30] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:06:35] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:06:40] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:06:45] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:06:50] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:06:55] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:07:00] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:07:05] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:07:10] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:07:15] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:07:20] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:07:25] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:07:30] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:07:35] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:07:40] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:07:45] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:07:50] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:07:55] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:08:00] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:08:05] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:08:10] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:08:16] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:08:21] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:08:26] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:08:31] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:08:36] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:08:41] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:08:46] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:08:51] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:08:56] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:09:01] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:09:06] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:09:11] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:09:16] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:09:21] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:09:26] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:09:31] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:09:36] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:09:41] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:09:46] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:09:51] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:09:56] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:10:01] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:10:06] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:10:11] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:10:12] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] POST /analyze
+[AI SERVICE REQUEST] Form: {'advisor': '<str>', 'job_id': '<str>', 'job_service_url': '<str>', 'enable_rag': '<str>', 'mode': 'baseline'} | Files: {'image': '<mike-shrub-2ed79d19.jpg>'}
+====================================================================================================
+
+[DEBUG] === AI ADVISOR SERVICE REQUEST START ===
+[DEBUG] Timestamp: 1768475412.481722
+[DEBUG] Received analyze request
+[DEBUG] Content-Type: multipart/form-data; boundary=eee39be6777e6a4c5181dfa72f50c505
+[DEBUG] Request method: POST
+[DEBUG] Processing multipart form data
+[iOS DEBUG] MONDRIAN_API_BASE_URL not provided in request - will use job_service_url fallback
+[AI SERVICE] enable_rag from request: 'true' → True
+[AI SERVICE] enable_embeddings not in request, using env var default: False
+[AI SERVICE] Mode parameter from request: 'baseline'
+[AI SERVICE] ✓ Final mode value: baseline (strategy mode: baseline)
+[AI SERVICE] ✓ Received request - advisor: ansel, job_id: 79a253aa-acb5-4416-bfe5-427209464b10, mode: baseline, enable_rag: True, enable_embeddings: False
+[AI SERVICE] Full form data - job_service_url: http://127.0.0.1:5005
+[AI SERVICE] Response format: html
+[DEBUG] Image file - filename: mike-shrub-2ed79d19.jpg
+[DEBUG] Saving image to temp path: /var/folders/px/96clcbr56vv3kyv2vzvblhqh0000gn/T/analyze_image_79a253aa-acb5-4416-bfe5-427209464b10.jpg
+[DEBUG] Image saved successfully, size: 133279 bytes
+[INFO] Analysis using model_mode=fine_tuned, fine_tuned=True
+
+================================================================================
+[STRATEGY] ========== ANALYSIS STARTED ==========
+[STRATEGY] Mode: baseline
+[STRATEGY] Advisor: ansel
+[STRATEGY] Image: /var/folders/px/96clcbr56vv3kyv2vzvblhqh0000gn/T/analyze_image_79a253aa-acb5-4416-bfe5-427209464b10.jpg
+[STRATEGY] Job ID: 79a253aa-acb5-4416-bfe5-427209464b10
+[STRATEGY] Job Service URL: http://127.0.0.1:5005
+[STRATEGY] Response Format: html
+[STRATEGY] ==========================================
+================================================================================
+
+[Context] Using requested mode: baseline
+[STRATEGY] ✓ Using requested mode: baseline
+[STRATEGY] Executing analysis with baseline strategy...
+[STRATEGY] enable_embeddings: False
+[INFO] Python executable: /Library/Frameworks/Python.framework/Versions/3.12/bin/python3
+[INFO] Python version: 3.12.2
+[INFO] Working directory: /Users/shaydu/dev/mondrian-macos
+[INFO] Environment variables:
+[INFO]   MLX_USE_CPU=<not set>
+[INFO]   CUDA_VISIBLE_DEVICES=<not set>
+[INFO]   PYTORCH_ENABLE_MPS_FALLBACK=<not set>
+[INFO] MLX default device explicitly set to: Device(gpu, 0)
+[INFO] MLX configured to use GPU backend (Metal)
+[INFO] MLX backend initialized successfully (GPU mode)
+[INFO] AI Advisor Service v2.0-JSON starting...
+[INFO] Using JSON output format (converted to HTML for backward compatibility)
+[INFO] Using base64 encoding for all images
+[INFO] Using MLX backend for vision analysis
+[INFO] MLX Mode: ENABLED
+[INFO] MLX Model: mlx-community/Qwen3-VL-4B-Instruct-4bit
+[INFO] Model timeout: 300s
+[INFO] RAG Service URL: http://127.0.0.1:5400
+[INFO] RAG Default: ENABLED (from RAG_ENABLED env var)
+[INFO] System prompt loaded from database (2751 characters)
+[DEBUG] get_advisor_from_db called with db_path=/Users/shaydu/dev/mondrian-macos/mondrian/mondrian.db, advisor_id=ansel
+[DEBUG] raw row fetched for advisor_id=ansel: ('ansel', 'Ansel Adams', 'Ansel Adams (1902-1984) was an American landscape photographer and environmentalist known for his black-and-white images of the American West, especially Yosemite National Park. He helped found the photography group f/64, developed the Zone System for achieving perfect exposure and tonal range, and was a pioneering advocate for environmental conservation through his art.', '1902-1984', "You are Ansel Adams, master of black-and-white landscape photography. You revolutionized photography through your Zone System, which gave photographers unprecedented control over exposure and tonal range.\n\nYour approach to evaluating an image:\n\n1. **Tonal Range & Zone System** - Analyze the full spectrum from Zone 0 (pure black) to Zone X (pure white). Look for:\n   - Rich blacks with detail in shadows (Zones II-III)\n   - Pure whites that aren't blown out (Zone VIII-IX)\n   - Full midtone gradation (Zones IV-VI)\n   - Proper exposure that preserves detail across the entire tonal range\n\n2. **Composition & Perspective** - Examine the geometric structure:\n   - Leading lines that draw the eye through the frame\n   - Rule of thirds and golden ratio placement\n   - Foreground, midground, and background layering\n   - Balance between elements\n   - Use of natural frames\n\n3. **Technical Excellence** - Assess the craft:\n   - Critical sharpness and focus (f/64 philosophy)\n   - Depth of field appropriate to the subject\n   - Proper exposure (not too dark, not too light)\n   - Clean, well-printed negative equivalent\n\n4. **Light & Shadow** - Evaluate the interplay:\n   - Direction and quality of light\n   - Dramatic use of shadows to create depth\n   - Texture revealed through sidelight\n   - Time of day considerations (golden hour, blue hour)\n\n5. **Emotional Impact** - Consider the feeling:\n   - Sense of scale and majesty\n   - Connection to the natural world\n   - Drama and atmosphere\n   - Timeless quality\n\nWhen providing feedback, be specific and constructive. Reference the Zone System and technical aspects while also addressing the emotional impact. Encourage the photographer to see beyond the literal and capture the feeling of being present in that moment.", '[{"title": "Tonal Range & Zone System", "description": "Master of the full spectrum from pure black to pure white, using his Zone System to achieve perfect exposure and tonal gradation in every image."}, {"title": "Composition & Perspective", "description": "Precise framing that emphasizes geometric elements, leading lines, and careful positioning to create powerful visual impact."}, {"title": "Technical Excellence", "description": "Perfect sharpness, focus, and exposure achieved through large-format cameras and meticulous darkroom work."}, {"title": "Landscape Drama", "description": "Captures the majesty and drama of natural landscapes with emphasis on light, shadow, and texture."}]', 'Photographer', 'https://en.wikipedia.org/wiki/Ansel_Adams', 'https://commons.wikimedia.org/wiki/Category:Ansel_Adams', 'baseline') (cols: ['id', 'name', 'bio', 'years', 'prompt', 'focus_areas', 'category', 'wikipedia_url', 'commons_url', 'prompt_type'])
+[DEBUG] Sending thinking update to http://127.0.0.1:5005/job/79a253aa-acb5-4416-bfe5-427209464b10/thinking
+[DEBUG] Thinking update sent successfully
+[DEBUG] === STARTING MLX PYTHON API CALL ===
+[DEBUG] MLX Model: mlx-community/Qwen3-VL-4B-Instruct-4bit
+[DEBUG] Image path: /var/folders/px/96clcbr56vv3kyv2vzvblhqh0000gn/T/analyze_image_79a253aa-acb5-4416-bfe5-427209464b10.jpg
+[DEBUG] Prompt length: 4545 chars
+[INFO] Loading MLX model: mlx-community/Qwen3-VL-4B-Instruct-4bit...
+[INFO] Testing Metal GPU access...
+[INFO] ✓ Metal GPU is available and working
+Fetching 14 files:   0%|          | 0/14 [00:00<?, ?it/s]Fetching 14 files: 100%|██████████| 14/14 [00:00<00:00, 81555.91it/s]
+[INFO] MLX model loaded in 3.50s using GPU backend and cached
+[INFO] MLX default device: Device(gpu, 0)
+[INFO] ✓ GPU acceleration confirmed active
+Fetching 14 files:   0%|          | 0/14 [00:00<?, ?it/s]Fetching 14 files: 100%|██████████| 14/14 [00:00<00:00, 75670.43it/s]
+[INFO] Processing with image: /var/folders/px/96clcbr56vv3kyv2vzvblhqh0000gn/T/analyze_image_79a253aa-acb5-4416-bfe5-427209464b10.jpg
+[INFO] Running MLX generation (timeout handling disabled to preserve GPU access)...
+[INFO] GPU Device: Device(gpu, 0)
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:10:16] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:10:21] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:10:26] "GET /health HTTP/1.1" 200 -
+[DEBUG] Token update: Generating analysis... (1 tokens, 738.1 tps)
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:10:31] "GET /health HTTP/1.1" 200 -
+[DEBUG] Token update: Generating analysis... (196 tokens, 39.0 tps)
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:10:36] "GET /health HTTP/1.1" 200 -
+[DEBUG] Token update: Generating analysis... (407 tokens, 40.5 tps)
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:10:41] "GET /health HTTP/1.1" 200 -
+[DEBUG] Token update: Generating analysis... (631 tokens, 41.9 tps)
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:10:46] "GET /health HTTP/1.1" 200 -
+[DEBUG] Token update: Generating analysis... (846 tokens, 42.2 tps)
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:10:51] "GET /health HTTP/1.1" 200 -
+[INFO] GPU operations synchronized
+[DEBUG] MLX generation completed in 36.58s
+[DEBUG] Response type: <class 'str'>
+[DEBUG] Response length: 4262 chars
+[DEBUG] Response preview (first 500 chars): {
+  "image_description": "The photograph captures a serene desert landscape at golden hour, with soft light illuminating white sand dunes and sparse vegetation, while distant mountains bask in warm tones under a clear blue sky.",
+  "dimensions": [
+    {
+      "name": "Composition",
+      "score": 8,
+      "comment": "The foreground plants and dune ridges create a strong leading line toward the mountains, and the horizon is balanced with ample negative space. The golden hour light enhances the na
+[DEBUG] Response appears to start with JSON structure
+[BASELINE DEBUG] Raw model response length: 4262 chars
+[BASELINE DEBUG] Raw response (first 1000 chars): {
+  "image_description": "The photograph captures a serene desert landscape at golden hour, with soft light illuminating white sand dunes and sparse vegetation, while distant mountains bask in warm tones under a clear blue sky.",
+  "dimensions": [
+    {
+      "name": "Composition",
+      "score": 8,
+      "comment": "The foreground plants and dune ridges create a strong leading line toward the mountains, and the horizon is balanced with ample negative space. The golden hour light enhances the natural frame of the dunes.",
+      "recommendation": "Consider adjusting the angle slightly to emphasize the dune’s texture and the mountain’s silhouette for a more dramatic contrast."
+    },
+    {
+      "name": "Lighting",
+      "score": 7,
+      "comment": "The lighting is warm and directional, revealing texture in the sand and vegetation, but the shadows are slightly soft, reducing the dramatic contrast that would enhance the Zone System’s tonal range.",
+      "recommendation": "Increase the c
+[BASELINE DEBUG] Raw response (last 500 chars): nd saturation of the shadows and highlights to create a more dynamic and dramatic effect.",
+    "Adjust the color balance to cool the mountain tones slightly and warm the sand dunes more, creating a more balanced tonal spectrum."
+  ],
+  "technical_notes": "The exposure is well-controlled, with a clean negative equivalent. The focus is sharp, and the depth of field is appropriate for the subject. The lighting is warm and directional, enhancing the texture and detail of the sand and vegetation."
+}
+[JSON PARSER] Strategy 1 (as-is) succeeded
+[BASELINE DEBUG] Parsed JSON keys: ['image_description', 'dimensions', 'overall_score', 'key_strengths', 'priority_improvements', 'technical_notes']
+[BASELINE DEBUG] dimensions type: <class 'list'>
+[BASELINE DEBUG] dimensions length: 7
+[BASELINE DEBUG] First dimension: {
+  "name": "Composition",
+  "score": 8,
+  "comment": "The foreground plants and dune ridges create a strong leading line toward the mountains, and the horizon is balanced with ample negative space. The golden hour light enhances the natural frame of the dunes.",
+  "recommendation": "Consider adjusting the angle slightly to emphasize the dune\u2019s texture and the mountain\u2019s silhouette for a more dramatic contrast."
+}
+[STRATEGY] ✓ Analysis complete. Overall grade: N/A
+[STRATEGY] ✓ Mode used in result: baseline
+[_result_to_html] Converting dimensional_analysis to dimensions array
+[_result_to_html] dimensional_analysis keys: ['composition', 'lighting', 'focus_&_sharpness', 'color_harmony', 'depth_&_perspective', 'visual_balance', 'emotional_impact']
+[_result_to_html]   Added dimension: Composition (score: 8)
+[_result_to_html]   Added dimension: Lighting (score: 7)
+[_result_to_html]   Added dimension: Color Harmony (score: 6)
+[_result_to_html]   Added dimension: Visual Balance (score: 8)
+[_result_to_html]   Added dimension: Emotional Impact (score: 7)
+[_result_to_html] Total dimensions extracted: 5
+[_result_to_html] Generated HTML length: 8422 characters
+[STRATEGY] Returning JSON with HTML and metadata (mode_used=baseline)
+[AI SERVICE RESPONSE] ✅ 200 POST /analyze
+
+127.0.0.1 - - [15/Jan/2026 04:10:52] "POST /analyze HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:10:56] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] POST /analyze
+[AI SERVICE REQUEST] Form: {'advisor': '<str>', 'job_id': '<str>', 'job_service_url': '<str>', 'enable_rag': '<str>', 'mode': 'rag'} | Files: {'image': '<mike-shrub-e874745c.jpg>'}
+====================================================================================================
+
+[DEBUG] === AI ADVISOR SERVICE REQUEST START ===
+[DEBUG] Timestamp: 1768475459.8482502
+[DEBUG] Received analyze request
+[DEBUG] Content-Type: multipart/form-data; boundary=7ad08f8e38d7980a363a1b3a4f9b22df
+[DEBUG] Request method: POST
+[DEBUG] Processing multipart form data
+[iOS DEBUG] MONDRIAN_API_BASE_URL not provided in request - will use job_service_url fallback
+[AI SERVICE] enable_rag from request: 'true' → True
+[AI SERVICE] enable_embeddings not in request, using env var default: False
+[AI SERVICE] Mode parameter from request: 'rag'
+[AI SERVICE] ✓ Final mode value: rag (strategy mode: rag)
+[AI SERVICE] ✓ Received request - advisor: ansel, job_id: ac4984ba-2b61-489a-9206-2f1667aad0bd, mode: rag, enable_rag: True, enable_embeddings: False
+[AI SERVICE] Full form data - job_service_url: http://127.0.0.1:5005
+[AI SERVICE] Response format: html
+[DEBUG] Image file - filename: mike-shrub-e874745c.jpg
+[DEBUG] Saving image to temp path: /var/folders/px/96clcbr56vv3kyv2vzvblhqh0000gn/T/analyze_image_ac4984ba-2b61-489a-9206-2f1667aad0bd.jpg
+[DEBUG] Image saved successfully, size: 133279 bytes
+[INFO] Analysis using model_mode=fine_tuned, fine_tuned=True
+
+================================================================================
+[STRATEGY] ========== ANALYSIS STARTED ==========
+[STRATEGY] Mode: rag
+[STRATEGY] Advisor: ansel
+[STRATEGY] Image: /var/folders/px/96clcbr56vv3kyv2vzvblhqh0000gn/T/analyze_image_ac4984ba-2b61-489a-9206-2f1667aad0bd.jpg
+[STRATEGY] Job ID: ac4984ba-2b61-489a-9206-2f1667aad0bd
+[STRATEGY] Job Service URL: http://127.0.0.1:5005
+[STRATEGY] Response Format: html
+[STRATEGY] ==========================================
+================================================================================
+
+[Context] Using requested mode: rag
+[STRATEGY] ✓ Using requested mode: rag
+[STRATEGY] Executing analysis with rag strategy...
+[STRATEGY] enable_embeddings: False
+
+================================================================================
+[RAG] ========== RAG ANALYSIS STARTED ==========
+[RAG] Advisor: ansel
+[RAG] Image: /var/folders/px/96clcbr56vv3kyv2vzvblhqh0000gn/T/analyze_image_ac4984ba-2b61-489a-9206-2f1667aad0bd.jpg
+[RAG] ==========================================
+================================================================================
+
+[RAG PASS 1] Extracting dimensional profile from user image...
+[DEBUG] Sending thinking update to http://127.0.0.1:5005/job/ac4984ba-2b61-489a-9206-2f1667aad0bd/thinking
+[DEBUG] Thinking update sent successfully
+[DEBUG] === STARTING MLX PYTHON API CALL ===
+[DEBUG] MLX Model: mlx-community/Qwen3-VL-4B-Instruct-4bit
+[DEBUG] Image path: /var/folders/px/96clcbr56vv3kyv2vzvblhqh0000gn/T/analyze_image_ac4984ba-2b61-489a-9206-2f1667aad0bd.jpg
+[DEBUG] Prompt length: 6114 chars
+Fetching 14 files:   0%|          | 0/14 [00:00<?, ?it/s]Fetching 14 files: 100%|██████████| 14/14 [00:00<00:00, 152125.02it/s]
+[INFO] Processing with image: /var/folders/px/96clcbr56vv3kyv2vzvblhqh0000gn/T/analyze_image_ac4984ba-2b61-489a-9206-2f1667aad0bd.jpg
+[INFO] Running MLX generation (timeout handling disabled to preserve GPU access)...
+[INFO] GPU Device: Device(gpu, 0)
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:11:01] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:11:06] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:11:11] "GET /health HTTP/1.1" 200 -
+[DEBUG] Token update: Generating analysis... (1 tokens, 212.3 tps)
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:11:16] "GET /health HTTP/1.1" 200 -
+[DEBUG] Token update: Generating analysis... (197 tokens, 39.2 tps)
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:11:22] "GET /health HTTP/1.1" 200 -
+[DEBUG] Token update: Generating analysis... (406 tokens, 40.4 tps)
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:11:27] "GET /health HTTP/1.1" 200 -
+[DEBUG] Token update: Generating analysis... (601 tokens, 39.9 tps)
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:11:32] "GET /health HTTP/1.1" 200 -
+[DEBUG] Token update: Generating analysis... (799 tokens, 39.8 tps)
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:11:37] "GET /health HTTP/1.1" 200 -
+[DEBUG] Token update: Generating analysis... (960 tokens, 38.3 tps)
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:11:42] "GET /health HTTP/1.1" 200 -
+[INFO] GPU operations synchronized
+[DEBUG] MLX generation completed in 44.78s
+[DEBUG] Response type: <class 'str'>
+[DEBUG] Response length: 4480 chars
+[DEBUG] Response preview (first 500 chars): {
+  "dimensional_analysis": {
+    "composition": {
+      "score": 6.5,
+      "comment": "Frame feels cluttered. Horizon is dead-center (50/50)—creates visual tension.",
+      "improvement_steps": [
+        "Move horizon to rule-of-thirds: 1/3 from top (emphasize sky) or 1/3 from bottom (emphasize foreground).",
+        "Add a leading line (path, fence, river) to guide the viewer's eye through the frame.",
+        "Strengthen foreground: add an object or person to create depth layers."
+      ]
+  
+[DEBUG] Response appears to start with JSON structure
+[RAG PASS 1] Model call completed in 44.94s
+[JSON PARSER] Strategy 1 (as-is) succeeded
+[RAG PASS 1] ✓ Successfully parsed dimensional data
+[EXTRACT] Found dimensional_analysis object
+[EXTRACT] ✓ composition: 6.5
+[EXTRACT] ✓ lighting: 7.5
+[EXTRACT] ✓ focus_sharpness: 4.0
+[EXTRACT] ✓ color_harmony: 7.0
+[EXTRACT] ✓ subject_isolation: 5.5
+[EXTRACT] ✓ depth_perspective: 6.0
+[EXTRACT] ✓ visual_balance: 7.5
+[EXTRACT] ✓ emotional_impact: 6.0
+[EXTRACT] ✓ Extracted techniques: ['zone_system', 'depth_of_field', 'composition', 'lighting', 'foreground_anchoring']
+[EXTRACT] ✓ Extracted 8 dimensional scores from dimensional_analysis
+[RAG PASS 1] ✓ Extracted dimensional data
+[RAG PASS 1] Dimensional scores: {'composition_score': 6.5, 'lighting_score': 7.5, 'focus_sharpness_score': 4.0, 'color_harmony_score': 7.0, 'subject_isolation_score': 5.5, 'depth_perspective_score': 6.0, 'visual_balance_score': 7.5, 'emotional_impact_score': 6.0}
+[RAG] ✓ Saved new dimensional profile 86cb5358-b5a7-4bc3-a660-6b24ef1ccd52 for 'analyze_image_ac4984ba-2b61-489a-9206-2f1667aad0bd.jpg'
+[RAG PASS 1] ✓ Profile saved to database: 86cb5358-b5a7-4bc3-a660-6b24ef1ccd52
+[RAG QUERY] Comparing user scores to Ansel Adams's portfolio distribution...
+[DEBUG] Sending thinking update to http://127.0.0.1:5005/job/ac4984ba-2b61-489a-9206-2f1667aad0bd/thinking
+[DEBUG] Thinking update sent successfully
+[RAG QUERY] User scores extracted: {'composition': 6.5, 'lighting': 7.5, 'focus_sharpness': 4.0, 'color_harmony': 7.0, 'subject_isolation': 5.5, 'depth_perspective': 6.0, 'visual_balance': 7.5, 'emotional_impact': 6.0}
+[STATS] Calculated statistics for 8 dimensions
+[REP] Dimension composition needs improvement (user: 6.5, advisor mean: 10.0)
+[REP] Selected best teaching example for composition: ansel-old-faithful-geyser-1944.png (score: 10.0, gap: 3.5)
+[REP] Found representative image for composition: ansel-old-faithful-geyser-1944.png (score: 10.0)
+[REP] Dimension lighting needs improvement (user: 7.5, advisor mean: 10.0)
+[REP] Selected best teaching example for lighting: ansel-moonrise-and-half-dome-yosemite-n-p-1960.png (score: 10.0, gap: 2.5)
+[REP] Found representative image for lighting: ansel-moonrise-and-half-dome-yosemite-n-p-1960.png (score: 10.0)
+[REP] Dimension focus_sharpness needs improvement (user: 4.0, advisor mean: 10.0)
+[REP] Selected best teaching example for focus_sharpness: Adams_The_Tetons_and_the_Snake_River.jpg (score: 10.0, gap: 6.0)
+[REP] Found representative image for focus_sharpness: Adams_The_Tetons_and_the_Snake_River.jpg (score: 10.0)
+[REP] Dimension color_harmony needs improvement (user: 7.0, advisor mean: 10.0)
+[REP] Selected best teaching example for color_harmony: ansel-northern-california-coast-redwoods-1960.png (score: 10.0, gap: 3.0)
+[REP] Found representative image for color_harmony: ansel-northern-california-coast-redwoods-1960.png (score: 10.0)
+[REP] Dimension subject_isolation needs improvement (user: 5.5, advisor mean: 10.0)
+[REP] Selected best teaching example for subject_isolation: ansel-frozen-lake-and-cliffs-1932.png (score: 10.0, gap: 4.5)
+[REP] Found representative image for subject_isolation: ansel-frozen-lake-and-cliffs-1932.png (score: 10.0)
+[REP] Dimension depth_perspective needs improvement (user: 6.0, advisor mean: 10.0)
+[REP] Selected best teaching example for depth_perspective: Ansel_Adams_-_National_Archives_79-AA-G06.jpg (score: 10.0, gap: 4.0)
+[REP] Found representative image for depth_perspective: Ansel_Adams_-_National_Archives_79-AA-G06.jpg (score: 10.0)
+[REP] Dimension visual_balance needs improvement (user: 7.5, advisor mean: 10.0)
+[REP] Selected best teaching example for visual_balance: ansel-white-house-ruin-1947.png (score: 10.0, gap: 2.5)
+[REP] Found representative image for visual_balance: ansel-white-house-ruin-1947.png (score: 10.0)
+[REP] Dimension emotional_impact needs improvement (user: 6.0, advisor mean: 10.0)
+[REP] Selected best teaching example for emotional_impact: Ansel_Adams_-_National_Archives_79-AAB-02.jpg (score: 10.0, gap: 4.0)
+[REP] Found representative image for emotional_impact: Ansel_Adams_-_National_Archives_79-AAB-02.jpg (score: 10.0)
+[REP] Found 8 representative images for dimensions needing improvement
+[RAG QUERY] Completed in 0.03s
+[RAG QUERY] ✓ Found 8 representative images
+[RAG QUERY]   composition: ansel-old-faithful-geyser-1944.png
+[RAG QUERY]   lighting: ansel-moonrise-and-half-dome-yosemite-n-p-1960.png
+[RAG QUERY]   focus_sharpness: Adams_The_Tetons_and_the_Snake_River.jpg
+[RAG QUERY]   color_harmony: ansel-northern-california-coast-redwoods-1960.png
+[RAG QUERY]   subject_isolation: ansel-frozen-lake-and-cliffs-1932.png
+[RAG QUERY]   depth_perspective: Ansel_Adams_-_National_Archives_79-AA-G06.jpg
+[RAG QUERY]   visual_balance: ansel-white-house-ruin-1947.png
+[RAG QUERY]   emotional_impact: Ansel_Adams_-_National_Archives_79-AAB-02.jpg
+[DEBUG] Sending thinking update to http://127.0.0.1:5005/job/ac4984ba-2b61-489a-9206-2f1667aad0bd/thinking
+[DEBUG] Thinking update sent successfully
+[RAG] Augmenting prompt with retrieved reference images...
+[RAG] ✓ Prompt augmented (4788 chars)
+[RAG PASS 2] Running full analysis with augmented prompt...
+[DEBUG] Sending thinking update to http://127.0.0.1:5005/job/ac4984ba-2b61-489a-9206-2f1667aad0bd/thinking
+[DEBUG] Thinking update sent successfully
+[DEBUG] === STARTING MLX PYTHON API CALL ===
+[DEBUG] MLX Model: mlx-community/Qwen3-VL-4B-Instruct-4bit
+[DEBUG] Image path: /var/folders/px/96clcbr56vv3kyv2vzvblhqh0000gn/T/analyze_image_ac4984ba-2b61-489a-9206-2f1667aad0bd.jpg
+[DEBUG] Prompt length: 7570 chars
+Fetching 14 files:   0%|          | 0/14 [00:00<?, ?it/s]Fetching 14 files: 100%|██████████| 14/14 [00:00<00:00, 229376.00it/s]
+[INFO] Processing with image: /var/folders/px/96clcbr56vv3kyv2vzvblhqh0000gn/T/analyze_image_ac4984ba-2b61-489a-9206-2f1667aad0bd.jpg
+[INFO] Running MLX generation (timeout handling disabled to preserve GPU access)...
+[INFO] GPU Device: Device(gpu, 0)
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:11:47] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:11:52] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:11:57] "GET /health HTTP/1.1" 200 -
+[DEBUG] Token update: Generating analysis... (1 tokens, 133.7 tps)
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:12:02] "GET /health HTTP/1.1" 200 -
+[DEBUG] Token update: Generating analysis... (139 tokens, 27.6 tps)
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:12:07] "GET /health HTTP/1.1" 200 -
+[DEBUG] Token update: Generating analysis... (301 tokens, 29.9 tps)
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:12:12] "GET /health HTTP/1.1" 200 -
+[DEBUG] Token update: Generating analysis... (452 tokens, 30.0 tps)
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:12:17] "GET /health HTTP/1.1" 200 -
+[DEBUG] Token update: Generating analysis... (606 tokens, 30.2 tps)
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:12:22] "GET /health HTTP/1.1" 200 -
+[DEBUG] Token update: Generating analysis... (750 tokens, 29.9 tps)
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:12:27] "GET /health HTTP/1.1" 200 -
+[DEBUG] Token update: Generating analysis... (895 tokens, 29.7 tps)
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:12:32] "GET /health HTTP/1.1" 200 -
+[INFO] GPU operations synchronized
+[DEBUG] MLX generation completed in 47.93s
+[DEBUG] Response type: <class 'str'>
+[DEBUG] Response length: 4727 chars
+[DEBUG] Response preview (first 500 chars): {
+  "image_description": "The photograph captures a serene desert landscape at golden hour, with soft, warm light illuminating undulating white sand dunes and sparse desert vegetation. In the distance, a rugged mountain range bathed in the same warm glow creates a powerful sense of scale and majesty against a clear blue sky.",
+  "dimensions": [
+    {
+      "name": "Composition",
+      "score": 8,
+      "comment": "The image uses strong foreground anchoring with the desert shrubs and leading line
+[DEBUG] Response appears to start with JSON structure
+[RAG PASS 2] Model call completed in 48.12s
+[JSON PARSER] Strategy 1 (as-is) succeeded
+[RAG PASS 2] ✓ Successfully parsed final analysis
+[RAG DEBUG] Parsed JSON keys: ['image_description', 'dimensions', 'overall_score', 'key_strengths', 'priority_improvements', 'technical_notes']
+[RAG DEBUG] dimensions type: <class 'list'>
+[RAG DEBUG] dimensions length: 7
+[DEBUG] Sending thinking update to http://127.0.0.1:5005/job/ac4984ba-2b61-489a-9206-2f1667aad0bd/thinking
+[DEBUG] Thinking update sent successfully
+[RAG] ✓ RAG analysis complete in 93.09s total
+[STRATEGY] ✓ Analysis complete. Overall grade: B-
+[STRATEGY] ✓ Mode used in result: rag
+[_result_to_html] Converting dimensional_analysis to dimensions array
+[_result_to_html] dimensional_analysis keys: ['composition', 'lighting', 'focus_and_sharpness', 'color_harmony', 'depth_and_perspective', 'visual_balance', 'emotional_impact']
+[_result_to_html]   Added dimension: Composition (score: 8)
+[_result_to_html]   Added dimension: Lighting (score: 7)
+[_result_to_html]   Added dimension: Color Harmony (score: 6)
+[_result_to_html]   Added dimension: Visual Balance (score: 8)
+[_result_to_html]   Added dimension: Emotional Impact (score: 7)
+[_result_to_html] Total dimensions extracted: 5
+[_result_to_html] Generated HTML length: 17441 characters
+[_result_to_html] Included 8 reference images in HTML
+[STRATEGY] Returning JSON with HTML and metadata (mode_used=rag)
+[AI SERVICE RESPONSE] ✅ 200 POST /analyze
+
+127.0.0.1 - - [15/Jan/2026 04:12:33] "POST /analyze HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:12:37] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] POST /analyze
+[AI SERVICE REQUEST] Form: {'advisor': '<str>', 'job_id': '<str>', 'job_service_url': '<str>', 'enable_rag': '<str>', 'mode': 'lora'} | Files: {'image': '<mike-shrub-1bfd381c.jpg>'}
+====================================================================================================
+
+[DEBUG] === AI ADVISOR SERVICE REQUEST START ===
+[DEBUG] Timestamp: 1768475558.654499
+[DEBUG] Received analyze request
+[DEBUG] Content-Type: multipart/form-data; boundary=22015900e2ece44967805c5503fee993
+[DEBUG] Request method: POST
+[DEBUG] Processing multipart form data
+[iOS DEBUG] MONDRIAN_API_BASE_URL not provided in request - will use job_service_url fallback
+[AI SERVICE] enable_rag from request: 'true' → True
+[AI SERVICE] enable_embeddings not in request, using env var default: False
+[AI SERVICE] Mode parameter from request: 'lora'
+[AI SERVICE] ✓ Final mode value: lora (strategy mode: lora)
+[AI SERVICE] ✓ Received request - advisor: ansel, job_id: b40bbcab-6703-416d-bb15-b84573c0600d, mode: lora, enable_rag: True, enable_embeddings: False
+[AI SERVICE] Full form data - job_service_url: http://127.0.0.1:5005
+[AI SERVICE] Response format: html
+[DEBUG] Image file - filename: mike-shrub-1bfd381c.jpg
+[DEBUG] Saving image to temp path: /var/folders/px/96clcbr56vv3kyv2vzvblhqh0000gn/T/analyze_image_b40bbcab-6703-416d-bb15-b84573c0600d.jpg
+[DEBUG] Image saved successfully, size: 133279 bytes
+[INFO] Analysis using model_mode=fine_tuned, fine_tuned=True
+
+================================================================================
+[STRATEGY] ========== ANALYSIS STARTED ==========
+[STRATEGY] Mode: lora
+[STRATEGY] Advisor: ansel
+[STRATEGY] Image: /var/folders/px/96clcbr56vv3kyv2vzvblhqh0000gn/T/analyze_image_b40bbcab-6703-416d-bb15-b84573c0600d.jpg
+[STRATEGY] Job ID: b40bbcab-6703-416d-bb15-b84573c0600d
+[STRATEGY] Job Service URL: http://127.0.0.1:5005
+[STRATEGY] Response Format: html
+[STRATEGY] ==========================================
+================================================================================
+
+[Context] Using requested mode: lora
+[STRATEGY] ✓ Using requested mode: lora
+[STRATEGY] Executing analysis with lora strategy...
+[STRATEGY] enable_embeddings: False
+[DEBUG] Sending thinking update to http://127.0.0.1:5005/job/b40bbcab-6703-416d-bb15-b84573c0600d/thinking
+[DEBUG] Thinking update sent successfully
+[LoRA] Loading base model: mlx-community/Qwen3-VL-4B-Instruct-4bit
+Fetching 14 files:   0%|          | 0/14 [00:00<?, ?it/s]Fetching 14 files: 100%|██████████| 14/14 [00:00<00:00, 16990.81it/s]
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:12:42] "GET /health HTTP/1.1" 200 -
+[LoRA] Applying adapter from: /Users/shaydu/dev/mondrian-macos/adapters/ansel
+#trainable params: 16.515072 M || all params: 4022.468096 M || trainable%: 0.411%
+[DEBUG] Sending thinking update to http://127.0.0.1:5005/job/b40bbcab-6703-416d-bb15-b84573c0600d/thinking
+[DEBUG] Thinking update sent successfully
+Fetching 14 files:   0%|          | 0/14 [00:00<?, ?it/s]Fetching 14 files: 100%|██████████| 14/14 [00:00<00:00, 56899.47it/s]
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+
+====================================================================================================
+====================================================================================================
+
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:13:03] "GET /health HTTP/1.1" 200 -
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:13:03] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:13:08] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:13:14] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:13:19] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:13:25] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:13:30] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:13:36] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:13:41] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:13:47] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[AI SERVICE REQUEST] GET /health
+[AI SERVICE REQUEST] No parameters
+====================================================================================================
+
+[AI SERVICE RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [15/Jan/2026 04:13:53] "GET /health HTTP/1.1" 200 -
+libc++abi: terminating due to uncaught exception of type std::runtime_error: [METAL] Command buffer execution failed: Insufficient Memory (00000008:kIOGPUCommandBufferCallbackErrorOutOfMemory)
+/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/multiprocessing/resource_tracker.py:254: UserWarning: resource_tracker: There appear to be 1 leaked semaphore objects to clean up at shutdown
+  warnings.warn('resource_tracker: There appear to be %d '

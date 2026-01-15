@@ -13,22 +13,24 @@ This guide covers all available end-to-end tests for the Mondrian iOS API. These
 
 This guide documents **three** complementary iOS E2E test suites:
 
-1. **[test_lora_e2e.py](../test_lora_e2e.py)** - Standalone LoRA test with mode verification (new in this update)
-2. **[test/test_ios_e2e_three_mode_comparison.py](test_ios_e2e_three_mode_comparison.py)** - Auto-restart capable test (new in this update)
-3. **[test/test_ios_e2e_four_modes.py](test_ios_e2e_four_modes.py)** - Comprehensive 4-mode comparison
+1. **[test_lora_e2e.py](../test_lora_e2e.py)** - Standalone LoRA test with mode verification
+2. **[test/test_ios_e2e_three_mode_comparison.py](test_ios_e2e_three_mode_comparison.py)** - Auto-restart capable test
+3. **[test/rag-embeddings/test_ios_e2e_four_modes.py](rag-embeddings/test_ios_e2e_four_modes.py)** - Comprehensive 4-mode comparison
+
+**Note:** The 4-mode test and embedding tests have been moved to `test/rag-embeddings/`. See [rag-embeddings-test-guide.md](rag-embeddings/rag-embeddings-test-guide.md) for details.
 
 ## Choosing the Right Test
 
 | Test File | Best For | Modes Supported | Auto-Restart | Mode Verification |
 |-----------|----------|-----------------|--------------|-------------------|
-| [test/test_ios_e2e_four_modes.py](test_ios_e2e_four_modes.py) | Complete multi-mode comparison | base, rag, lora, rag_lora | No | No |
+| [rag-embeddings/test_ios_e2e_four_modes.py](rag-embeddings/test_ios_e2e_four_modes.py) | Complete multi-mode comparison | base, rag, lora, rag_lora | No | **Yes** |
 | [test_lora_e2e.py](../test_lora_e2e.py) | Quick LoRA testing with verification | baseline, rag, lora | No | **Yes** |
-| [test/test_ios_e2e_three_mode_comparison.py](test_ios_e2e_three_mode_comparison.py) | Testing with service restarts | base, rag, lora, lora+rag | **Yes** | **Yes** |
+| [test_ios_e2e_three_mode_comparison.py](test_ios_e2e_three_mode_comparison.py) | Testing with service restarts | base, rag, lora, lora+rag | **Yes** | **Yes** |
 
 **Quick Decision:**
 - **Need to verify LoRA mode actually works?** → Use `test_lora_e2e.py`
 - **Want automatic service restarts?** → Use `test_ios_e2e_three_mode_comparison.py`
-- **Want comprehensive 4-mode side-by-side comparison?** → Use `test_ios_e2e_four_modes.py`
+- **Want comprehensive 4-mode side-by-side comparison + text diffs?** → Use `test_ios_e2e_four_modes.py`
 
 ## Quick Start
 
@@ -190,80 +192,140 @@ python3 test/test_ios_e2e_three_mode_comparison.py --mode=lora --lora-path=./ada
 
 ## Test 3: Four-Mode Comprehensive Test (test_ios_e2e_four_modes.py)
 
-**Location:** `test/test_ios_e2e_four_modes.py`
+**Location:** `test/rag-embeddings/test_ios_e2e_four_modes.py`
 
-**Best For:** Complete side-by-side comparison of all four analysis modes.
+**Best For:** Complete side-by-side comparison of all four analysis modes with full debugging.
+
+> **See also:** [rag-embeddings-test-guide.md](rag-embeddings/rag-embeddings-test-guide.md) for detailed call/data flow diagrams.
+
+### Changing the Source Image
+
+Edit the constant at line ~57 in the test file:
+```python
+TEST_IMAGE = "source/mike-shrub.jpg"  # Change to your image path
+```
+
+Or use any image in the `source/` directory.
 
 ### Run All Four Modes (Default)
 
 ```bash
-python3 test/test_ios_e2e_four_modes.py
+python3 test/rag-embeddings/test_ios_e2e_four_modes.py
 ```
 
 ### Run Specific Mode
 
 ```bash
 # Baseline (no prep needed)
-python3 test/test_ios_e2e_four_modes.py --mode=base
+python3 test/rag-embeddings/test_ios_e2e_four_modes.py --mode=base
 
 # RAG (needs dimensional profiles)
-python3 test/test_ios_e2e_four_modes.py --mode=rag
+python3 test/rag-embeddings/test_ios_e2e_four_modes.py --mode=rag
 
 # LoRA (needs trained adapter)
-python3 test/test_ios_e2e_four_modes.py --mode=lora --lora-path=./adapters/ansel
+python3 test/rag-embeddings/test_ios_e2e_four_modes.py --mode=lora --lora-path=./adapters/ansel
 
 # RAG+LoRA (needs both adapter AND profiles)
-python3 test/test_ios_e2e_four_modes.py --mode=rag_lora --lora-path=./adapters/ansel
+python3 test/rag-embeddings/test_ios_e2e_four_modes.py --mode=rag_lora --lora-path=./adapters/ansel
 ```
 
 ### Run Specific Tests (Legacy API)
 
 ```bash
 # Baseline only
-python3 test/test_ios_e2e_four_modes.py --baseline
+python3 test/rag-embeddings/test_ios_e2e_four_modes.py --baseline
 
 # RAG only
-python3 test/test_ios_e2e_four_modes.py --rag
+python3 test/rag-embeddings/test_ios_e2e_four_modes.py --rag
 
 # LoRA only
-python3 test/test_ios_e2e_four_modes.py --lora
+python3 test/rag-embeddings/test_ios_e2e_four_modes.py --lora
 
 # RAG+LoRA only
-python3 test/test_ios_e2e_four_modes.py --rag-lora
+python3 test/rag-embeddings/test_ios_e2e_four_modes.py --rag-lora
 
 # Multiple modes
-python3 test/test_ios_e2e_four_modes.py --baseline --rag --lora --rag-lora
+python3 test/rag-embeddings/test_ios_e2e_four_modes.py --baseline --rag --lora --rag-lora
 ```
 
-## What Each Test Does
+---
 
-### Test Flow (Per Mode)
+## Call/Data Flow Summary (Four-Mode Test)
 
-1. **Upload Image** - Simulate iOS app uploading image with specified mode
-2. **Monitor Progress** - Stream SSE updates or poll status
-3. **Fetch Results** - Get HTML analysis output
-4. **Save Outputs** - Store analysis details, summary, advisor bio, SSE logs, metadata
+### Per-Mode Flow
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ 1. verify_service_mode(mode)                                        │
+│    → GET /health on AI Advisor (port 5100)                          │
+│    → Saves health snapshot for metadata                             │
+├─────────────────────────────────────────────────────────────────────┤
+│ 2. upload_image(mode, output_dir)                                   │
+│    → POST /upload on Job Service (port 5005)                        │
+│    → Logs request/response to api_requests.log                      │
+│    → Returns job_id, stream_url                                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ 3. stream_sse_updates(stream_url)                                   │
+│    → GET stream_url (SSE connection)                                │
+│    → Logs events to sse_stream.log, sse_events.json                 │
+├─────────────────────────────────────────────────────────────────────┤
+│ 4. get_analysis_html(job_id)                                        │
+│    → GET /analysis/{job_id}                                         │
+│    → Returns full HTML                                              │
+├─────────────────────────────────────────────────────────────────────┤
+│ 5. save_outputs(...)                                                │
+│    → GET /summary/{job_id} → analysis_summary.html                  │
+│    → GET /advisor/{advisor} → advisor_bio.html                      │
+│    → Saves all files + metadata.json with health snapshot           │
+└─────────────────────────────────────────────────────────────────────┘
+```
+
+### Post-Test Flow (When 2+ Modes Complete)
+
+```
+┌─────────────────────────────────────────────────────────────────────┐
+│ 6. create_four_mode_comparison_html(dirs...)                        │
+│    → Generates ios_e2e_four_mode_TIMESTAMP.html                     │
+├─────────────────────────────────────────────────────────────────────┤
+│ 7. create_text_diff_comparison(mode_dirs)                           │
+│    → Extracts text from each summary HTML                           │
+│    → Generates mode_diff_TIMESTAMP.html with side-by-side diff      │
+└─────────────────────────────────────────────────────────────────────┘
+```
 
 ### Outputs Per Mode
 
-Each mode generates:
-- `analysis_detailed.html` - Full dimensional feedback
-- `analysis_summary.html` - Top 3 recommendations
-- `advisor_bio.html` - Advisor background
-- `sse_stream.log` - Raw SSE event stream
-- `sse_events.json` - Parsed SSE events
-- `status_polling.log` - Polling updates (if SSE unavailable)
-- `metadata.json` - Timing, job ID, mode used
+Each mode directory (`ios_e2e_{mode}_{timestamp}/`) contains:
 
-### Comparison View
+| File | Description |
+|------|-------------|
+| `analysis_summary.html` | Top 3 recommendations |
+| `analysis_detailed.html` | Full dimensional feedback |
+| `advisor_bio.html` | Advisor profile/background |
+| `sse_stream.log` | Raw SSE event stream |
+| `sse_events.json` | Parsed SSE events |
+| `api_requests.log` | API request/response log |
+| `metadata.json` | Job info + service health snapshot |
 
-When running 2+ modes, a four-way comparison HTML is generated showing:
-- Side-by-side advisor bio HTML
-- Side-by-side analysis summary
-- Side-by-side full analysis details
-- Links to all supporting files
+### Comparison Files (in `analysis_output/`)
 
-Example: `analysis_output/ios_e2e_four_mode_20260114_152345.html`
+| File | Description |
+|------|-------------|
+| `ios_e2e_four_mode_TIMESTAMP.html` | Side-by-side iframe comparison |
+| `mode_diff_TIMESTAMP.html` | Text diff between mode outputs |
+
+### Browser Viewing
+
+After tests complete, view results in browser:
+
+```bash
+# Start HTTP server
+cd analysis_output && python3 -m http.server 8080
+
+# Open in browser
+open http://localhost:8080/ios_e2e_four_mode_TIMESTAMP.html
+open http://localhost:8080/mode_diff_TIMESTAMP.html
+```
 
 ## Requirements & Prerequisites
 
@@ -358,27 +420,18 @@ analysis_output/
 │   ├── analysis_detailed.html
 │   ├── analysis_summary.html
 │   ├── advisor_bio.html
+│   ├── sse_stream.log
 │   ├── sse_events.json
-│   └── metadata.json
+│   ├── api_requests.log          ← API request/response log
+│   └── metadata.json             ← Includes service health snapshot
 ├── ios_e2e_rag_20260114_152400/
-│   ├── analysis_detailed.html
-│   ├── analysis_summary.html
-│   ├── advisor_bio.html
-│   ├── sse_events.json
-│   └── metadata.json
+│   └── ... (same structure)
 ├── ios_e2e_lora_20260114_152425/
-│   ├── analysis_detailed.html
-│   ├── analysis_summary.html
-│   ├── advisor_bio.html
-│   ├── sse_events.json
-│   └── metadata.json
+│   └── ... (same structure)
 ├── ios_e2e_rag_lora_20260114_152450/
-│   ├── analysis_detailed.html
-│   ├── analysis_summary.html
-│   ├── advisor_bio.html
-│   ├── sse_events.json
-│   └── metadata.json
-└── ios_e2e_four_mode_20260114_152500.html  ← Comparison view
+│   └── ... (same structure)
+├── ios_e2e_four_mode_20260114_152500.html  ← Side-by-side comparison
+└── mode_diff_20260114_152500.html          ← Text diff between modes
 ```
 
 ## Metadata Example (metadata.json)
@@ -396,7 +449,15 @@ analysis_output/
     "analysis_detailed_html": "analysis_detailed.html",
     "sse_stream_log": "sse_stream.log",
     "sse_events_json": "sse_events.json",
+    "api_requests_log": "api_requests.log",
     "status_polling_log": "status_polling.log"
+  },
+  "service_health": {
+    "status": "healthy",
+    "model_mode": "fine_tuned",
+    "lora_enabled": true,
+    "lora_path": "./adapters/ansel",
+    "advisor": "ansel"
   }
 }
 ```
@@ -445,7 +506,7 @@ python3 test_lora_e2e.py --image source/mike-shrub.jpg --advisor ansel --mode ba
 **For test_ios_e2e_four_modes.py:**
 ```bash
 # Either train adapter or don't request LoRA mode
-python3 test/test_ios_e2e_four_modes.py --baseline --rag
+python3 test/rag-embeddings/test_ios_e2e_four_modes.py --baseline --rag
 ```
 
 ### "Dimensional profiles not found" Warning
@@ -529,7 +590,7 @@ set -e
 sleep 10
 
 # Run all four modes
-python3 test/test_ios_e2e_four_modes.py --all
+python3 test/rag-embeddings/test_ios_e2e_four_modes.py --all
 
 # Generate report from comparison HTML
 echo "✓ Test complete. View results at:"
@@ -592,7 +653,7 @@ python3 test/test_ios_e2e_three_mode_comparison.py --mode=rag
 ./mondrian.sh --restart
 
 # Run all four modes and generate comparison
-python3 test/test_ios_e2e_four_modes.py
+python3 test/rag-embeddings/test_ios_e2e_four_modes.py
 
 # View side-by-side comparison
 open analysis_output/ios_e2e_four_mode_*.html
@@ -706,5 +767,5 @@ for img in "${IMAGES[@]}"; do
 done
 
 # Or use four-mode test for comprehensive comparison
-python3 test/test_ios_e2e_four_modes.py --all
+python3 test/rag-embeddings/test_ios_e2e_four_modes.py --all
 ```

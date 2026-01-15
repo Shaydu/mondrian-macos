@@ -1,3 +1,0 @@
-# Placeholder for __pycache__
-
-This file ensures the __pycache__ directory is tracked in version control after consolidation.

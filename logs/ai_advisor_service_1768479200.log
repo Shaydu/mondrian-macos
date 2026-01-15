@@ -1,0 +1,11 @@
+[INFO] Python executable: /Users/shaydu/dev/mondrian-macos/mondrian/venv/bin/python3
+[INFO] Python version: 3.12.2
+[INFO] Working directory: /Users/shaydu/dev/mondrian-macos
+[INFO] Environment variables:
+[INFO]   MLX_USE_CPU=<not set>
+[INFO]   CUDA_VISIBLE_DEVICES=<not set>
+[INFO]   PYTORCH_ENABLE_MPS_FALLBACK=<not set>
+Traceback (most recent call last):
+  File "/Users/shaydu/dev/mondrian-macos/mondrian/ai_advisor_service.py", line 35, in <module>
+    from flask import Flask, request, Response, jsonify
+ModuleNotFoundError: No module named 'flask'

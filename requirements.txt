@@ -1,27 +1,43 @@
 # Mondrian macOS - Core Dependencies
 
 # Web framework
-Flask==3.0.0
-Flask-CORS==4.0.0
+Flask>=3.0.0
+Flask-CORS>=4.0.0
 
 # Image processing
-Pillow==10.1.0
+Pillow>=10.3.0
+opencv-python>=4.9.0
 
 # YAML support (for metadata)
-PyYAML==6.0.1
+PyYAML>=6.0.1
 
 # HTTP requests
-requests==2.31.0
+requests>=2.31.0
 
 # Database
 # (using built-in sqlite3)
 
-# MLX and ML dependencies
-mlx==0.18.0
-mlx-lm==0.18.0
+# MLX and ML dependencies (Apple Silicon)
+mlx>=0.30.3
+mlx-lm>=0.30.2
+mlx-vlm>=0.3.9
+transformers==5.0.0rc1
+huggingface-hub>=0.23.0
+
+# PyTorch and vision processing (required for image preprocessing in transformers)
+# NOTE: These packages are linked from system Python to venv to avoid SSL certificate issues with pip
+# If you need to reinstall torch/torchvision:
+#   1. First install certs: /Applications/Python\ 3.12/Install\ Certificates.command
+#   2. Install to system Python: /Library/Frameworks/Python.framework/Versions/3.12/bin/python3 -m pip install torch torchvision
+#   3. Link to venv: ln -sf /Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/torch mondrian/venv/lib/python3.12/site-packages/
+torch>=2.0.0
+torchvision>=0.15.0
+
+# Process management
+psutil>=5.9.0
 
 # Optional: For development/testing
-pytest==7.4.3
+pytest>=7.4.3
 
 
 

@@ -24,6 +24,25 @@ Usage:
     python3 test/test_ios_e2e_four_modes.py --lora
     python3 test/test_ios_e2e_four_modes.py --rag-lora
     python3 test/test_ios_e2e_four_modes.py --baseline --rag --lora --rag-lora
+
+Browser Viewing:
+    After running tests, view comparison in browser:
+    
+    1. Start HTTP server:
+       cd analysis_output && python3 -m http.server 8080
+    
+    2. Open in browser:
+       http://localhost:8080/ios_e2e_four_mode_TIMESTAMP.html
+       http://localhost:8080/mode_diff_TIMESTAMP.html
+
+Output Files (per mode directory):
+    - analysis_summary.html     Top 3 recommendations
+    - analysis_detailed.html    Full analysis
+    - advisor_bio.html          Advisor profile
+    - sse_stream.log            SSE event stream
+    - sse_events.json           Parsed SSE events
+    - api_requests.log          API request/response log
+    - metadata.json             Job info + service health snapshot
 """
 
 import requests
@@ -93,6 +112,28 @@ def print_warning(text):
     """Print warning message"""
     print(f"{YELLOW}⚠{NC} {text}")
 
+def log_api_request(output_dir, endpoint, method, data=None, files=None, response=None):
+    """Log API request and response details"""
+    api_log_file = output_dir / "api_requests.log"
+    
+    with open(api_log_file, 'a') as f:
+        timestamp = datetime.now().strftime("%H:%M:%S.%f")[:-3]
+        f.write(f"\n{'='*60}\n")
+        f.write(f"[{timestamp}] {method} {endpoint}\n")
+        
+        if data:
+            f.write(f"Request Data: {json.dumps(data, indent=2)}\n")
+        if files:
+            f.write(f"Files: {list(files.keys())}\n")
+        
+        if response:
+            f.write(f"Status: {response.status_code}\n")
+            f.write(f"Headers: {dict(response.headers)}\n")
+            try:
+                f.write(f"Response: {json.dumps(response.json(), indent=2)}\n")
+            except:
+                f.write(f"Response: {response.text[:1000]}\n")
+
 def check_services(expected_mode=None, lora_path=None, auto_restart=False):
     """Check that all required services are running"""
     print_step(1, "Checking Services")
@@ -131,6 +172,44 @@ def check_services(expected_mode=None, lora_path=None, auto_restart=False):
     print()
     print_success("All required services are running")
     print()
+
+def verify_service_mode(expected_mode):
+    """Verify the AI Advisor service is running in the expected mode"""
+    print_step("1b", f"Verifying Service Mode: {expected_mode}")
+    
+    try:
+        resp = requests.get(f"{AI_ADVISOR_URL}/health", timeout=5)
+        if resp.status_code == 200:
+            health = resp.json()
+            actual_mode = health.get('model_mode', 'unknown')
+            lora_enabled = health.get('lora_enabled', False)
+            lora_path = health.get('lora_path', None)
+            
+            print_info(f"Server model_mode: {actual_mode}")
+            print_info(f"LoRA enabled: {lora_enabled}")
+            if lora_path:
+                print_info(f"LoRA path: {lora_path}")
+            
+            # Verify mode matches expectation
+            mode_ok = False
+            if expected_mode == "baseline":
+                mode_ok = actual_mode == "base" and not lora_enabled
+            elif expected_mode == "rag":
+                mode_ok = actual_mode == "base"  # RAG uses base model
+            elif expected_mode == "lora":
+                mode_ok = lora_enabled
+            elif expected_mode == "rag_lora":
+                mode_ok = lora_enabled
+            
+            if mode_ok:
+                print_success(f"Mode verified: {expected_mode}")
+                return True, health
+            else:
+                print_warning(f"Mode mismatch! Expected {expected_mode}, got mode={actual_mode}, lora={lora_enabled}")
+                return False, health
+    except Exception as e:
+        print_error(f"Could not verify mode: {e}")
+        return False, None
 
 def check_lora_adapter():
     """Check if LoRA adapter is available"""
@@ -173,7 +252,7 @@ def check_dimensional_profiles():
         print_warning(f"Could not check dimensional profiles: {e}")
         return False
 
-def upload_image(mode="baseline"):
+def upload_image(mode="baseline", output_dir=None):
     """Upload image and start analysis (simulates iOS upload)"""
     mode_display = mode.upper()
     print_step(2, f"Uploading Image ({mode_display} mode)")
@@ -195,7 +274,12 @@ def upload_image(mode="baseline"):
         }
 
         try:
-            resp = requests.post(f"{JOB_SERVICE_URL}/upload", files=files, data=data, timeout=30)
+            endpoint = f"{JOB_SERVICE_URL}/upload"
+            resp = requests.post(endpoint, files=files, data=data, timeout=30)
+
+            # Log API request/response if output_dir provided
+            if output_dir:
+                log_api_request(output_dir, endpoint, "POST", data=data, files=files, response=resp)
 
             if resp.status_code in [200, 201]:
                 result = resp.json()
@@ -386,7 +470,7 @@ def get_advisor_bio_html(advisor_id):
         print_error(f"Failed to fetch advisor bio: {e}")
         return None
 
-def save_outputs(full_html, job_id, mode, output_dir, advisor_id=None):
+def save_outputs(full_html, job_id, mode, output_dir, advisor_id=None, health_snapshot=None):
     """Save HTML outputs and metadata"""
     print_step(5, "Saving Output Files")
 
@@ -428,9 +512,14 @@ def save_outputs(full_html, job_id, mode, output_dir, advisor_id=None):
             'analysis_detailed_html': str(full_html_file.name),
             'sse_stream_log': 'sse_stream.log',
             'sse_events_json': 'sse_events.json',
+            'api_requests_log': 'api_requests.log',
             'status_polling_log': 'status_polling.log'
         }
     }
+    
+    # Add health snapshot if provided
+    if health_snapshot:
+        metadata['service_health'] = health_snapshot
 
     metadata_file = output_dir / "metadata.json"
     with open(metadata_file, 'w') as f:
@@ -754,8 +843,13 @@ def run_e2e_test(mode="baseline", use_sse=True):
     output_dir.mkdir(parents=True, exist_ok=True)
     print_info(f"Output directory: {output_dir}")
 
+    # Verify service mode
+    mode_ok, health_snapshot = verify_service_mode(mode)
+    if not mode_ok:
+        print_warning("Mode verification failed - continuing anyway")
+
     # Upload and analyze
-    job_id, stream_url = upload_image(mode=mode)
+    job_id, stream_url = upload_image(mode=mode, output_dir=output_dir)
 
     # Monitor progress
     if use_sse:
@@ -776,13 +870,67 @@ def run_e2e_test(mode="baseline", use_sse=True):
         print_error("Failed to get results")
         return None, None
 
-    # Save outputs
-    detailed_file, summary_file, advisor_bio_file = save_outputs(html, job_id, mode, output_dir, advisor_id=ADVISOR)
+    # Save outputs (include health snapshot for debugging)
+    detailed_file, summary_file, advisor_bio_file = save_outputs(html, job_id, mode, output_dir, advisor_id=ADVISOR, health_snapshot=health_snapshot)
 
     print_success(f"{mode.upper()} test complete!")
     print()
 
     return output_dir, html
+
+def create_text_diff_comparison(mode_dirs):
+    """Create text diff comparison between mode outputs"""
+    from difflib import unified_diff, HtmlDiff
+    import re
+    
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    diff_file = Path("analysis_output") / f"mode_diff_{timestamp}.html"
+    
+    # Extract text content from each mode's summary HTML
+    mode_texts = {}
+    for mode, dir_path in mode_dirs.items():
+        if dir_path and (dir_path / "analysis_summary.html").exists():
+            with open(dir_path / "analysis_summary.html", 'r') as f:
+                # Strip HTML tags to get plain text
+                html = f.read()
+                text = re.sub(r'<[^>]+>', '', html)
+                text = re.sub(r'\s+', ' ', text).strip()
+                mode_texts[mode] = text
+    
+    # Generate HTML diff
+    html_diff = HtmlDiff()
+    diff_html = """<!DOCTYPE html>
+<html><head><title>Mode Comparison Diff</title>
+<style>
+body { font-family: monospace; background: #1c1c1e; color: #fff; padding: 20px; }
+.diff_add { background: #1a4d1a; }
+.diff_sub { background: #4d1a1a; }
+.diff_chg { background: #4d4d1a; }
+table { border-collapse: collapse; width: 100%; }
+td { padding: 2px 8px; border: 1px solid #333; }
+h1, h2 { color: #007AFF; }
+</style></head><body>
+<h1>Mode Comparison Diff</h1>
+"""
+    
+    # Compare each pair
+    modes = list(mode_texts.keys())
+    for i, mode1 in enumerate(modes):
+        for mode2 in modes[i+1:]:
+            diff_html += f"<h2>{mode1.upper()} vs {mode2.upper()}</h2>"
+            diff_html += html_diff.make_table(
+                mode_texts[mode1].split('. '),
+                mode_texts[mode2].split('. '),
+                fromdesc=mode1, todesc=mode2
+            )
+    
+    diff_html += "</body></html>"
+    
+    with open(diff_file, 'w') as f:
+        f.write(diff_html)
+    
+    print_success(f"Diff comparison saved to: {diff_file}")
+    return diff_file
 
 def main():
     """Main test flow"""
@@ -967,9 +1115,22 @@ Examples:
 
     # Create comparison view
     comparison_file = None
+    diff_file = None
     num_completed = sum([baseline_dir is not None, rag_dir is not None, lora_dir is not None, rag_lora_dir is not None])
     if num_completed >= 2:
         comparison_file = create_four_mode_comparison_html(baseline_dir, rag_dir, lora_dir, rag_lora_dir)
+        
+        # Create text diff comparison
+        mode_dirs = {
+            'baseline': baseline_dir,
+            'rag': rag_dir,
+            'lora': lora_dir,
+            'rag_lora': rag_lora_dir
+        }
+        # Filter out None values
+        mode_dirs = {k: v for k, v in mode_dirs.items() if v is not None}
+        if len(mode_dirs) >= 2:
+            diff_file = create_text_diff_comparison(mode_dirs)
 
     # Final summary
     print_header("TEST COMPLETE")
@@ -993,10 +1154,18 @@ Examples:
         print(f"  RAG+LoRA:     {rag_lora_dir}/")
     if comparison_file:
         print(f"  Comparison:   {comparison_file}")
+    if diff_file:
+        print(f"  Diff:         {diff_file}")
     print()
-    if comparison_file:
+    if comparison_file or diff_file:
         print(f"{BOLD}View in browser:{NC}")
-        print(f"  file://{comparison_file.absolute()}")
+        print(f"  1. Start HTTP server:")
+        print(f"     cd analysis_output && python3 -m http.server 8080")
+        print(f"  2. Open in browser:")
+        if comparison_file:
+            print(f"     http://localhost:8080/{comparison_file.name}")
+        if diff_file:
+            print(f"     http://localhost:8080/{diff_file.name}")
         print()
 
 if __name__ == "__main__":

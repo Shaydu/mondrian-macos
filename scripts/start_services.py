@@ -380,15 +380,16 @@ def format_job_queue_display(status_counts, active_jobs):
     """Format job queue status for display"""
     output = []
     
-    # Queue summary
+    # Queue summary - show breakdown of all statuses
     total = sum(status_counts.values())
+    pending = status_counts.get("pending", 0)
     queued = status_counts.get("queued", 0)
     processing = status_counts.get("processing", 0)
     analyzing = status_counts.get("analyzing", 0)
     done = status_counts.get("done", 0)
     error = status_counts.get("error", 0)
     
-    output.append(f"  Queue: {total} total | {queued} queued | {processing} processing | {analyzing} analyzing")
+    output.append(f"  Queue: {total} total | {pending} pending | {queued} queued | {processing} processing | {analyzing} analyzing | {done} done | {error} error")
     
     # Show active jobs
     if active_jobs:
@@ -599,6 +600,59 @@ def show_active_jobs():
         print(f"  Could not fetch active jobs: {e}")
 
 
+def cleanup_stale_jobs_on_restart():
+    """
+    Clean up stale jobs from previous runs immediately on restart.
+    This marks jobs that are in an intermediate state ('pending', 'started', 'processing', 
+    'analyzing', 'finalizing') as errors, since their processing services were killed.
+    """
+    try:
+        try:
+            from mondrian.config import DATABASE_PATH
+        except ImportError:
+            script_dir = os.path.dirname(os.path.abspath(__file__))
+            project_root = os.path.dirname(script_dir)
+            DATABASE_PATH = os.path.join(project_root, "mondrian", "mondrian.db")
+        
+        if not os.path.exists(DATABASE_PATH):
+            return  # Database doesn't exist yet, nothing to clean
+        
+        conn = sqlite3.connect(DATABASE_PATH, timeout=5)
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        
+        # Find jobs in intermediate states (they were killed when we stopped services)
+        cursor.execute("""
+            SELECT COUNT(*) as count
+            FROM jobs
+            WHERE status IN ('pending', 'started', 'processing', 'analyzing', 'finalizing', 'queued')
+        """)
+        
+        result = cursor.fetchone()
+        stale_count = result['count'] if result else 0
+        
+        if stale_count > 0:
+            print(f"\nCleaning up {stale_count} stale job(s) from previous run...")
+            
+            # Mark them as error
+            cursor.execute("""
+                UPDATE jobs
+                SET status = 'error',
+                    current_step = 'Cancelled - services restarted',
+                    completed_at = CURRENT_TIMESTAMP,
+                    last_activity = CURRENT_TIMESTAMP
+                WHERE status IN ('pending', 'started', 'processing', 'analyzing', 'finalizing', 'queued')
+            """)
+            
+            conn.commit()
+            print(f"✓ Marked {stale_count} stale job(s) as error")
+        
+        conn.close()
+    
+    except Exception as e:
+        print(f"  Warning: Could not cleanup stale jobs: {e}")
+
+
 def main():
     # Parse mode argument
     mode = "base"  # Default mode
@@ -681,6 +735,9 @@ Examples:
         stop_services()
         print("Waiting for processes to terminate...")
         time.sleep(3)
+        
+        # Clean up stale jobs from the previous run
+        cleanup_stale_jobs_on_restart()
 
         # Verify ports are free before starting
         service_ports = [5005, 5100]
