@@ -1,4 +1,41 @@
 
-========== baseline (Thu Jan 15 07:21:26 MST 2026) ==========
+========== baseline (Thu Jan 15 07:25:01 MST 2026) ==========
 Description: Base model only
 
+test/rag-embeddings/run_incremental_tests.sh: line 183: timeout: command not found
+Status: FAILED
+
+
+========== rag (Thu Jan 15 07:25:07 MST 2026) ==========
+Description: Base model with RAG
+
+test/rag-embeddings/run_incremental_tests.sh: line 183: timeout: command not found
+Status: FAILED
+
+
+========== lora (Thu Jan 15 07:25:12 MST 2026) ==========
+Description: Base model with LoRA
+
+test/rag-embeddings/run_incremental_tests.sh: line 183: timeout: command not found
+Status: FAILED
+
+
+========== lora_rag (Thu Jan 15 07:25:17 MST 2026) ==========
+Description: LoRA model with RAG
+
+test/rag-embeddings/run_incremental_tests.sh: line 183: timeout: command not found
+Status: FAILED
+
+
+========== SUMMARY ==========
+Total tests: 4
+Passed: 0
+Failed: 4
+
+Passed tests:
+
+Failed tests:
+  ✗ baseline
+  ✗ rag
+  ✗ lora
+  ✗ lora_rag

@@ -789,6 +789,22 @@ Examples:
     else:
         env['PYTHONPATH'] = working_dir
 
+    # Set ANALYSIS_MODE environment variable based on the selected mode
+    # This tells the AI Advisor service what mode to operate in
+    # Supported modes: base, rag, lora, rag_lora (internally used)
+    mode_to_analysis = {
+        "base": "baseline",      # Base model only
+        "rag": "rag",           # Base model with RAG
+        "lora": "lora",         # Fine-tuned model only
+        "lora+rag": "rag_lora", # Fine-tuned model with RAG
+        "ab-test": "baseline",  # A/B testing uses baseline as default
+    }
+    env['ANALYSIS_MODE'] = mode_to_analysis.get(mode, "baseline")
+    print(f"[ENV] ANALYSIS_MODE set to: {env['ANALYSIS_MODE']}")
+    print(f"[DEBUG] Full environment for services:")
+    for key in ['ANALYSIS_MODE', 'RAG_ENABLED', 'MLX_USE_CPU', 'PYTHONPATH']:
+        print(f"  {key}={env.get(key, 'NOT SET')}")
+
     # Get services for the selected mode
     services = get_services_for_mode(mode, lora_path)
     
