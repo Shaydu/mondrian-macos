@@ -3,18 +3,84 @@
 # Test script that mimics the exact iOS app API flow
 # This exercises the same endpoints in the same order as the iOS app
 # Now includes RAG (Retrieval-Augmented Generation) endpoints
+# Supports mode switching for comparing different configurations
 
 BASE_URL="http://127.0.0.1:5005"
 RAG_URL="http://127.0.0.1:5400"
-ADVISOR="${1:-ansel}"  # Default to ansel, or use first argument
-TEST_IMAGE="${2:-test_image.png}"  # Use provided image or default
+AI_ADVISOR_URL="http://127.0.0.1:5100"
 
-echo "🎨 Mondrian iOS API Flow Test (with RAG)"
-echo "========================================"
+# Parse command line arguments
+MODE=""
+LORA_PATH=""
+AUTO_RESTART=false
+ADVISOR="ansel"
+TEST_IMAGE="test_image.png"
+
+while [[ $# -gt 0 ]]; do
+    case $1 in
+        --mode=*)
+            MODE="${1#*=}"
+            shift
+            ;;
+        --lora-path=*)
+            LORA_PATH="${1#*=}"
+            shift
+            ;;
+        --auto-restart)
+            AUTO_RESTART=true
+            shift
+            ;;
+        --advisor=*)
+            ADVISOR="${1#*=}"
+            shift
+            ;;
+        --image=*)
+            TEST_IMAGE="${1#*=}"
+            shift
+            ;;
+        --help|-h)
+            echo "Usage: $0 [OPTIONS]"
+            echo ""
+            echo "Options:"
+            echo "  --mode=<mode>          Service mode: base, rag, lora, lora+rag, ab-test"
+            echo "  --lora-path=<path>     Path to LoRA adapter (required for lora modes)"
+            echo "  --auto-restart         Automatically restart services if mode doesn't match"
+            echo "  --advisor=<name>       Advisor to use (default: ansel)"
+            echo "  --image=<path>         Test image path (default: test_image.png)"
+            echo "  --help, -h             Show this help"
+            echo ""
+            echo "Examples:"
+            echo "  $0 --mode=base"
+            echo "  $0 --mode=rag"
+            echo "  $0 --mode=lora --lora-path=./models/qwen3-vl-4b-lora-ansel --auto-restart"
+            echo "  $0 --mode=lora+rag --lora-path=./models/qwen3-vl-4b-lora-ansel"
+            exit 0
+            ;;
+        *)
+            # Legacy: positional arguments for backward compatibility
+            if [[ -z "$ADVISOR" || "$ADVISOR" == "ansel" ]]; then
+                ADVISOR="$1"
+            elif [[ -z "$TEST_IMAGE" || "$TEST_IMAGE" == "test_image.png" ]]; then
+                TEST_IMAGE="$1"
+            fi
+            shift
+            ;;
+    esac
+done
+
+echo "🎨 Mondrian iOS API Flow Test (with Mode Support)"
+echo "=================================================="
 echo "Job Service URL: $BASE_URL"
+echo "AI Advisor URL: $AI_ADVISOR_URL"
 echo "RAG Service URL: $RAG_URL"
 echo "Advisor: $ADVISOR"
 echo "Test Image: $TEST_IMAGE"
+if [[ -n "$MODE" ]]; then
+    echo "Mode: $MODE"
+fi
+if [[ -n "$LORA_PATH" ]]; then
+    echo "LoRA Path: $LORA_PATH"
+fi
 echo ""
 
 # Colors for output
@@ -22,7 +88,107 @@ RED='\033[0;31m'
 GREEN='\033[0;32m'
 BLUE='\033[0;34m'
 YELLOW='\033[1;33m'
+CYAN='\033[0;36m'
+MAGENTA='\033[0;35m'
 NC='\033[0m' # No Color
+
+# Function to check and optionally restart services with mode
+check_and_restart_services() {
+    if [[ -z "$MODE" ]]; then
+        return  # No mode specified, skip check
+    fi
+    
+    echo -e "${CYAN}🔍 Checking service mode...${NC}"
+    
+    # Check AI Advisor Service health
+    HEALTH_RESPONSE=$(curl -s "$AI_ADVISOR_URL/health" 2>/dev/null)
+    
+    if [[ $? -ne 0 ]]; then
+        echo -e "${RED}❌ AI Advisor Service is not running${NC}"
+        
+        if [[ "$AUTO_RESTART" == true ]]; then
+            echo -e "${YELLOW}🔄 Auto-restarting services in $MODE mode...${NC}"
+            restart_services
+            return
+        else
+            echo -e "${YELLOW}To start services: ./mondrian.sh --restart --mode=$MODE${NC}"
+            if [[ -n "$LORA_PATH" ]]; then
+                echo -e "${YELLOW}                    --lora-path=$LORA_PATH${NC}"
+            fi
+            exit 1
+        fi
+    fi
+    
+    # Parse current mode
+    CURRENT_MODE=$(echo "$HEALTH_RESPONSE" | python3 -c "import json, sys; data=json.load(sys.stdin); print(data.get('model_mode', 'base'))" 2>/dev/null)
+    IS_FINE_TUNED=$(echo "$HEALTH_RESPONSE" | python3 -c "import json, sys; data=json.load(sys.stdin); print(data.get('fine_tuned', False))" 2>/dev/null)
+    
+    echo "Current mode: $CURRENT_MODE, Fine-tuned: $IS_FINE_TUNED"
+    
+    # Check if mode matches
+    MODE_MATCHES=false
+    case "$MODE" in
+        base)
+            [[ "$CURRENT_MODE" == "base" ]] && MODE_MATCHES=true
+            ;;
+        rag)
+            # RAG doesn't change service mode
+            MODE_MATCHES=true
+            ;;
+        lora|lora+rag)
+            [[ "$CURRENT_MODE" == "fine_tuned" && "$IS_FINE_TUNED" == "True" ]] && MODE_MATCHES=true
+            ;;
+        ab-test)
+            [[ "$CURRENT_MODE" == "ab_test" ]] && MODE_MATCHES=true
+            ;;
+    esac
+    
+    if [[ "$MODE_MATCHES" == false ]]; then
+        echo -e "${YELLOW}⚠️  Service mode mismatch: expected $MODE, got $CURRENT_MODE${NC}"
+        
+        if [[ "$AUTO_RESTART" == true ]]; then
+            echo -e "${YELLOW}🔄 Auto-restarting services in $MODE mode...${NC}"
+            restart_services
+        else
+            echo -e "${YELLOW}Tip: Add --auto-restart to automatically restart services${NC}"
+            echo -e "${YELLOW}Or manually run: ./mondrian.sh --restart --mode=$MODE${NC}"
+            if [[ -n "$LORA_PATH" ]]; then
+                echo -e "${YELLOW}                 --lora-path=$LORA_PATH${NC}"
+            fi
+        fi
+    else
+        echo -e "${GREEN}✅ Service mode matches: $MODE${NC}"
+    fi
+    echo ""
+}
+
+restart_services() {
+    echo -e "${CYAN}================================${NC}"
+    echo -e "${CYAN}Restarting Services in $MODE Mode${NC}"
+    echo -e "${CYAN}================================${NC}"
+    
+    # Build restart command
+    RESTART_CMD="./mondrian.sh --restart --mode=$MODE"
+    if [[ -n "$LORA_PATH" ]]; then
+        RESTART_CMD="$RESTART_CMD --lora-path=$LORA_PATH"
+    fi
+    
+    echo "Running: $RESTART_CMD"
+    
+    # Execute restart
+    if eval "$RESTART_CMD"; then
+        echo -e "${GREEN}✅ Services restarted successfully${NC}"
+        echo "Waiting for services to be ready..."
+        sleep 5
+    else
+        echo -e "${RED}❌ Failed to restart services${NC}"
+        exit 1
+    fi
+    echo ""
+}
+
+# Check services and restart if needed
+check_and_restart_services
 
 # Step 1: Fetch Advisors (like AdvisorSelectionView does)
 echo -e "${BLUE}📋 Step 1: Fetching available advisors...${NC}"
@@ -327,6 +493,8 @@ Test Date: $(date)
 Job ID: $JOB_ID
 Advisor: $ADVISOR
 Test Image: $TEST_IMAGE
+Mode: ${MODE:-default}
+$([ -n "$LORA_PATH" ] && echo "LoRA Path: $LORA_PATH")
 
 Test Results:
 -------------
@@ -355,6 +523,10 @@ SUMMARY_END
 
 echo "Summary:"
 echo "  Job ID: $JOB_ID"
+echo "  Mode: ${MODE:-default}"
+if [[ -n "$LORA_PATH" ]]; then
+    echo "  LoRA Path: $LORA_PATH"
+fi
 echo "  Final Status: $STATUS"
 echo "  Analysis Source: $([ "$RECEIVED_ANALYSIS" == true ] && echo "SSE analysis_complete event" || echo "API /analysis endpoint")"
 echo "  Analysis Length: $ANALYSIS_LENGTH chars"

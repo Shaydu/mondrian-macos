@@ -15,7 +15,7 @@ Mondrian is a photography composition analysis system that uses **local MLX visi
 │   iOS Client    │  (SwiftUI App)
 │   Mac Client    │  (curl/API)
 └────────┬────────┘
-         │ HTTP
+         │ HTTP (mode: baseline/rag/lora)
          ▼
 ┌──────────────────────────────────────────────────────────┐
 │                   macOS Server (localhost)               │
@@ -24,11 +24,27 @@ Mondrian is a photography composition analysis system that uses **local MLX visi
 │  │  Job Service     │────────►│ AI Advisor Service   │  │
 │  │  Port: 5005      │  HTTP   │ Port: 5100           │  │
 │  │                  │         │                      │  │
-│  │ - Job tracking   │         │ - Prompt assembly    │  │
-│  │ - Image optimize │         │ - MLX inference      │  │
-│  │ - Status mgmt    │         │ - HTML formatting    │  │
-│  │ - SSE streaming  │         │ - Model caching      │  │
+│  │ - Job tracking   │         │ - Strategy selection │  │
+│  │ - Image optimize │         │ - Fallback chain     │  │
+│  │ - Status mgmt    │         │ - Prompt assembly    │  │
+│  │ - SSE streaming  │         │ - HTML formatting    │  │
 │  └────────┬─────────┘         └───────────┬──────────┘  │
+│           │                               │             │
+│           │                               ▼             │
+│           │                   ┌──────────────────────┐  │
+│           │                   │ Analysis Strategies  │  │
+│           │                   │   (user selects)     │  │
+│           │                   │                      │  │
+│           │                   │ • LoRA Strategy      │  │
+│           │                   │   (Fine-tuned)       │  │
+│           │                   │                      │  │
+│           │                   │ • RAG Strategy       │  │
+│           │                   │   (w/ Retrieval)     │  │
+│           │                   │                      │  │
+│           │                   │ • Baseline Strategy  │  │
+│           │                   │   (Prompt only)      │  │
+│           │                   │                      │  │
+│           │                   └───────────┬──────────┘  │
 │           │                               │             │
 │           │                               ▼             │
 │           │                   ┌──────────────────────┐  │
@@ -39,6 +55,7 @@ Mondrian is a photography composition analysis system that uses **local MLX visi
 │           │                   │ - mlx_vlm library    │  │
 │           │                   │ - Metal acceleration │  │
 │           │                   │ - Cached in memory   │  │
+│           │                   │ - LoRA adapters      │  │
 │           │                   └──────────────────────┘  │
 │           │                                             │
 │           │                   ┌──────────────────────┐  │
@@ -68,10 +85,11 @@ Mondrian is a photography composition analysis system that uses **local MLX visi
 │  │ - Job status     │         │  analysis/*.html(out)│  │
 │  │ - Advisors       │         │  prompts/*.md (cfg)  │  │
 │  │ - Focus areas    │         │  thumbnails/ (1320px)│  │
-│  │ - LLM outputs    │         │                      │  │
+│  │ - LLM outputs    │         │  adapters/ (LoRA)    │  │
 │  │ - Status history │         │                      │  │
 │  │ - Image captions │◄────────┤  (RAG integration)   │  │
 │  │ - Embeddings     │         │                      │  │
+│  │ - Dim. profiles  │         │                      │  │
 │  └──────────────────┘         └──────────────────────┘  │
 │                                                          │
 │  ┌──────────────────┐                                    │
@@ -265,13 +283,203 @@ python3 mondrian/ai_advisor_service_v1.13.py \
 
 ---
 
-### 4. RAG System (v2.4) - Image Semantic Search
+### 4. Analysis Strategies ([mondrian/strategies/](../mondrian/strategies/))
+
+**Purpose**: Implement three analysis modes using Strategy Pattern for flexible, extensible analysis approaches.
+
+**Architecture**: Three independent strategies that clients can select based on their needs.
+
+#### Strategy Overview
+
+| Strategy | Description | Availability | Use Case |
+|----------|-------------|--------------|----------|
+| **Baseline** | Single-pass with prompt only | Always available | Default, fast analysis |
+| **RAG** | Two-pass with retrieval context | Requires dimensional profiles | Comparative analysis with reference images |
+| **LoRA** | Single-pass with fine-tuned adapter | Requires trained adapter | Domain-specific, learned preferences |
+
+#### 4a. BaselineStrategy ([baseline.py](../mondrian/strategies/baseline.py))
+
+**Mode**: `baseline`
+
+**Description**: Traditional single-pass analysis using only the advisor prompt and system instructions.
+
+**Workflow**:
+1. Load advisor prompt from database
+2. Compose full prompt with system instructions
+3. Run MLX model inference
+4. Parse JSON response
+5. Return `AnalysisResult`
+
+**Availability**: Always available (no prerequisites)
+
+**Performance**: 20-40s per analysis (fastest mode)
+
+#### 4b. RAGStrategy ([rag.py](../mondrian/strategies/rag.py))
+
+**Mode**: `rag`
+
+**Description**: Two-pass analysis that retrieves similar reference images and their dimensional profiles to provide comparative context.
+
+**Workflow**:
+1. Load advisor prompt from database
+2. **First pass**: Quick analysis to get dimensional scores
+3. **Retrieve**: Find similar images using dimensional similarity
+4. **Augment**: Enhance prompt with dimensional profiles of similar images
+5. **Second pass**: Generate analysis with comparative context
+6. Parse JSON response
+7. Return `AnalysisResult` with similarity metadata
+
+**Availability**: Requires dimensional profiles in database for the advisor
+
+**Database Requirement**:
+```sql
+SELECT COUNT(*) FROM dimensional_profiles
+WHERE advisor_id = 'ansel'
+```
+
+**Performance**: 40-80s per analysis (two model passes)
+
+#### 4c. LoRAStrategy ([lora.py](../mondrian/strategies/lora.py))
+
+**Mode**: `lora`
+
+**Description**: Single-pass analysis using a fine-tuned LoRA adapter that has learned the advisor's aesthetic preferences from reference images.
+
+**Workflow**:
+1. Check if adapter exists for advisor (`adapters/{advisor_id}/adapters.safetensors`)
+2. Load base model + apply LoRA adapter (cached after first use)
+3. Compose full prompt
+4. Run inference with fine-tuned model
+5. Parse JSON response
+6. Return `AnalysisResult` with adapter metadata
+
+**Availability**: Requires trained adapter file
+
+**Adapter Structure**:
+```
+adapters/
+├── ansel/
+│   ├── adapters.safetensors    # LoRA weights (~150MB)
+│   └── adapter_config.json      # Configuration
+├── okeefe/
+│   └── ...
+└── mondrian/
+    └── ...
+```
+
+**Model Loading**:
+```python
+from mlx_vlm import load
+from mlx_vlm.trainer.utils import apply_lora_layers
+
+# Load base model
+model, processor = load("lmstudio-community/Qwen3-VL-4B-Instruct-MLX-4bit")
+
+# Apply LoRA adapter
+model = apply_lora_layers(model, "adapters/ansel")
+```
+
+**Caching**: LoRA models are cached globally per advisor (avoids reloading on each request)
+
+**Performance**: 25-45s per analysis (slightly slower than baseline due to adapter overhead)
+
+#### AnalysisResult Structure
+
+All strategies return a standardized `AnalysisResult` dataclass:
+
+```python
+@dataclass
+class AnalysisResult:
+    dimensional_analysis: Dict[str, Any]  # 8 dimensions with scores and comments
+    overall_grade: str                     # Letter grade (A+, A, A-, B+, etc.)
+    mode_used: str                         # Actual mode used ("baseline", "rag", or "lora")
+    advisor_id: str                        # Advisor identifier
+    metadata: Dict[str, Any]               # Strategy-specific metadata
+```
+
+**Example Response**:
+```json
+{
+  "dimensional_analysis": {
+    "composition": {"score": 8, "comment": "..."},
+    "lighting": {"score": 7, "comment": "..."},
+    ...
+  },
+  "overall_grade": "A-",
+  "mode_used": "rag",
+  "advisor_id": "ansel",
+  "metadata": {
+    "similar_images_count": 5,
+    "raw_response_length": 2847
+  }
+}
+```
+
+#### AnalysisContext ([context.py](../mondrian/strategies/context.py))
+
+**Purpose**: Manages strategy selection and execution.
+
+**Usage**:
+```python
+from mondrian.strategies import AnalysisContext
+
+# Create context
+context = AnalysisContext()
+
+# Set strategy (user-selected mode)
+context.set_strategy("rag", "ansel")
+
+# Execute analysis
+result = context.analyze(
+    image_path="source/photo.jpg",
+    advisor_id="ansel",
+    thinking_callback=lambda msg: print(f"[Thinking] {msg}")
+)
+
+# Access results
+print(f"Grade: {result.overall_grade}")
+print(f"Mode: {result.mode_used}")
+```
+
+**API Integration**:
+```python
+POST /analyze
+{
+  "image": "<base64>",
+  "advisor_id": "ansel",
+  "mode": "rag"  # or "baseline" or "lora"
+}
+
+Response:
+{
+  "analysis": {...},
+  "mode_used": "rag",
+  "metadata": {...}
+}
+```
+
+#### Strategy Selection Logic
+
+Clients specify mode in request → Service validates availability → Returns error if unavailable
+
+**No automatic fallback** - clients must explicitly choose mode
+
+**Availability Check**:
+```python
+# Check which modes are available for an advisor
+availability = AnalysisContext.get_available_modes("ansel")
+# {"baseline": True, "rag": True, "lora": False}
+```
+
+---
+
+### 5. RAG System (v2.4) - Image Semantic Search
 
 **Purpose**: Enable semantic search across indexed images using natural language queries.
 
 **Components**:
 
-#### 4a. Caption Service ([caption_service.py](../mondrian/caption_service.py))
+#### 5a. Caption Service ([caption_service.py](../mondrian/caption_service.py))
 
 **Port**: 5200
 
@@ -286,7 +494,7 @@ GET    /health     - Health check
 **Model**: Qwen3-VL-4B-Instruct-MLX (same as AI Advisor)
 **Performance**: ~2-5 seconds per image on Apple Silicon
 
-#### 4b. Embedding Service ([embedding_service.py](../mondrian/embedding_service.py))
+#### 5b. Embedding Service ([embedding_service.py](../mondrian/embedding_service.py))
 
 **Port**: 5300
 
@@ -301,7 +509,7 @@ GET    /health     - Health check
 **Model**: `sentence-transformers/all-MiniLM-L6-v2`
 **Performance**: ~100ms per caption
 
-#### 4c. RAG Service ([rag_service.py](../mondrian/rag_service.py))
+#### 5c. RAG Service ([rag_service.py](../mondrian/rag_service.py))
 
 **Port**: 5400
 
@@ -334,7 +542,7 @@ python3 mondrian/rag_service.py \
 
 ---
 
-### 5. Monitoring Service ([monitoring_service.py](../mondrian/monitoring_service.py))
+### 6. Monitoring Service ([monitoring_service.py](../mondrian/monitoring_service.py))
 
 **Purpose**: Comprehensive service monitoring, health checks, and job cleanup.
 
@@ -380,7 +588,7 @@ python3 mondrian/rag_service.py \
 
 ---
 
-### 5. Database ([mondrian.db](../mondrian.db))
+### 7. Database ([mondrian.db](../mondrian.db))
 
 **Schema**:
 
@@ -443,7 +651,7 @@ CREATE TABLE config (
 );
 ```
 
-**`image_captions` table** (RAG system):
+**`image_captions` table** (RAG system - image semantic search):
 ```sql
 CREATE TABLE image_captions (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -453,6 +661,27 @@ CREATE TABLE image_captions (
     embedding BLOB NOT NULL,        -- 384-dimensional vector
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE(job_id, image_path)
+);
+```
+
+**`dimensional_profiles` table** (RAG strategy - dimensional similarity):
+```sql
+CREATE TABLE dimensional_profiles (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    advisor_id TEXT NOT NULL,
+    image_path TEXT NOT NULL,
+    job_id TEXT,
+    composition REAL NOT NULL,
+    lighting REAL NOT NULL,
+    focus_sharpness REAL NOT NULL,
+    color_harmony REAL NOT NULL,
+    subject_isolation REAL NOT NULL,
+    depth_perspective REAL NOT NULL,
+    visual_balance REAL NOT NULL,
+    emotional_impact REAL NOT NULL,
+    overall_grade TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(advisor_id, image_path)
 );
 ```
 
@@ -467,7 +696,7 @@ CREATE TABLE image_captions (
 
 ```
 1. iOS/Mac Client
-   ↓ POST /upload {image: file, advisor: "all"}
+   ↓ POST /upload {image: file, advisor: "all", mode: "baseline"}
 
 2. Job Service (Port 5005)
    ↓ Create job record
@@ -476,14 +705,37 @@ CREATE TABLE image_captions (
    ↓ Save to thumbnails/
 
 3. For each advisor (Ansel, O'Keeffe, Mondrian, Gehry, Van Gogh):
-   ↓ POST /analyze {advisor, job_id, image_file}
+   ↓ POST /analyze {advisor, job_id, image_file, mode}
 
 4. AI Advisor Service (Port 5100)
-   ↓ Load advisor prompt from database
-   ↓ Compose full prompt
-   ↓ Run MLX model (cached)
+   ↓ Create AnalysisContext
+   ↓ Set strategy based on mode (baseline/rag/lora)
+   ↓ Validate strategy availability for advisor
+   ↓ Execute selected strategy:
+   │
+   ├─► BaselineStrategy:
+   │   ↓ Load advisor prompt from database
+   │   ↓ Compose full prompt
+   │   ↓ Run MLX model (cached)
+   │   ↓ Return AnalysisResult
+   │
+   ├─► RAGStrategy:
+   │   ↓ Load advisor prompt
+   │   ↓ First pass: Get dimensional scores
+   │   ↓ Query dimensional_profiles for similar images
+   │   ↓ Augment prompt with similar images context
+   │   ↓ Second pass: Generate analysis with context
+   │   ↓ Return AnalysisResult with similarity metadata
+   │
+   └─► LoRAStrategy:
+       ↓ Check adapter exists (adapters/{advisor}/adapters.safetensors)
+       ↓ Load base model + apply LoRA adapter (cached)
+       ↓ Compose full prompt
+       ↓ Run fine-tuned model
+       ↓ Return AnalysisResult with adapter metadata
+
    ↓ Stream "thinking" updates to Job Service
-   ↓ Return HTML analysis
+   ↓ Return JSON analysis with mode_used metadata
 
 5. Job Service
    ↓ Collect all advisor outputs
@@ -553,6 +805,13 @@ mondrian-macos/
 │   ├── monitoring_service.py        # Health checks & cleanup
 │   ├── config.py                    # Environment config
 │   ├── sqlite_helper.py             # Database utilities
+│   ├── strategies/                  # Analysis Strategy Pattern
+│   │   ├── __init__.py              # Module exports
+│   │   ├── base.py                  # Abstract classes (AnalysisStrategy, AnalysisResult)
+│   │   ├── baseline.py              # BaselineStrategy (prompt only)
+│   │   ├── rag.py                   # RAGStrategy (with retrieval)
+│   │   ├── lora.py                  # LoRAStrategy (fine-tuned)
+│   │   └── context.py               # AnalysisContext (strategy manager)
 │   ├── prompts/
 │   │   ├── system.md                # HTML structure (also in DB)
 │   │   ├── ansel.md                 # Advisor prompts (also in DB)
@@ -564,11 +823,22 @@ mondrian-macos/
 │   ├── thumbnails/                  # Optimized (1320px)
 │   ├── analysis/                    # HTML outputs
 │   └── logs/                        # Service logs
+├── adapters/                        # LoRA fine-tuned adapters
+│   ├── ansel/
+│   │   ├── adapters.safetensors     # LoRA weights (~150MB)
+│   │   └── adapter_config.json      # Configuration
+│   ├── okeefe/
+│   ├── mondrian/
+│   ├── gehry/
+│   └── vangogh/
 ├── mondrian.db                      # SQLite database
 ├── init_database.py                 # Database initialization
 ├── start_services.sh                # Service startup script
 └── docs/
-    └── architecture.md              # This file
+    ├── architecture.md              # This file
+    ├── RAG_INTEGRATION_COMPLETE.md  # RAG system documentation
+    └── architecture/
+        └── rag-roadmap.md           # RAG enhancement roadmap
 ```
 
 ---
@@ -1083,13 +1353,48 @@ Mac (127.0.0.1 or local network IP)
 
 ## References
 
+### External Resources
+
 - **MLX Framework**: https://github.com/ml-explore/mlx
 - **MLX-VLM**: https://github.com/Blaizzy/mlx-vlm
 - **Qwen3-VL Model**: https://huggingface.co/lmstudio-community/Qwen3-VL-4B-Instruct-MLX-4bit
 - **Flask Documentation**: https://flask.palletsprojects.com/
 
+### Related Documentation
+
+- **[README_LORA_PLAN.md](../README_LORA_PLAN.md)** - Complete LoRA fine-tuning implementation plan
+  - Comprehensive 6-phase roadmap for training advisor-specific adapters
+  - Training scripts, evaluation framework, and integration guide
+  - 8-10 day implementation timeline with detailed workbook
+
+- **[docs/RAG_INTEGRATION_COMPLETE.md](RAG_INTEGRATION_COMPLETE.md)** - RAG system integration guide
+  - Caption, Embedding, and RAG service setup
+  - Database schema for image_captions table
+  - Testing and monitoring instructions
+
+- **[docs/architecture/rag-roadmap.md](architecture/rag-roadmap.md)** - RAG enhancement roadmap
+  - Future enhancements for RAG system
+  - Image metadata ingestion plan
+  - Dimensional profile enrichment
+
+- **[docs/LORA_FINETUNING_GUIDE.md](LORA_FINETUNING_GUIDE.md)** - LoRA fine-tuning technical guide
+  - 700+ lines of comprehensive guidance
+  - Hyperparameter tuning reference
+  - MLX-native training approach
+
+### Strategy Pattern Implementation
+
+The Strategy Pattern implementation provides three analysis modes:
+
+1. **Baseline** - Always available, single-pass prompt-based analysis
+2. **RAG** - Requires dimensional_profiles table, two-pass with retrieval context
+3. **LoRA** - Requires trained adapters, single-pass with fine-tuned model
+
+See [mondrian/strategies/](../mondrian/strategies/) for implementation details.
+
 ---
 
-**Last Updated**: 2026-01-08
+**Last Updated**: 2026-01-14
 **Author**: Mondrian Development Team
 **Stack**: Python 3.12 + MLX + Qwen3-VL-4B on Apple Silicon
+**Architecture**: Strategy Pattern with Baseline, RAG, and LoRA modes

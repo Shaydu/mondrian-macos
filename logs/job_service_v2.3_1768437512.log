@@ -1,0 +1,423 @@
+[INFO] Job Service v2.3-DB-FIXED starting...
+[INFO] Database connection management fixed for real-time status updates
+[INIT] AI_SERVICE_URL: http://127.0.0.1:5100/analyze
+[INIT] Port: 5005
+[INIT] Database: /Users/shaydu/dev/mondrian-macos/mondrian/mondrian.db
+[INIT] Debug mode: False
+[INIT] Created directories
+[INIT] Initializing database...
+[INIT] Database schema OK
+[INIT] RAG Default: ENABLED (from RAG_ENABLED env var)
+============================================================
+Starting Job Service v2.3-DB-FIXED on port 5005...
+Host: 0.0.0.0:5005
+AI Service: http://127.0.0.1:5100/analyze
+============================================================
+ * Serving Flask app 'job_service_v2.3'
+ * Debug mode: off
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5005
+ * Running on http://10.0.0.131:5005
+[33mPress CTRL+C to quit[0m
+127.0.0.1 - - [14/Jan/2026 17:38:39] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:38:50] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:38:50] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:38:55] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:39:00] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:39:05] "GET /health HTTP/1.1" 200 -
+10.0.0.152 - - [14/Jan/2026 17:39:08] "GET /advisors HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:39:10] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:39:15] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:39:20] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:39:25] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:39:30] "GET /health HTTP/1.1" 200 -
+10.0.0.152 - - [14/Jan/2026 17:39:31] "[35m[1mPOST /upload HTTP/1.1[0m" 201 -
+10.0.0.152 - - [14/Jan/2026 17:39:31] "GET /stream/a7f6a4ba-6b0e-4e54-8a83-dca569876e30%20(rag) HTTP/1.1" 200 -
+10.0.0.152 - - [14/Jan/2026 17:39:31] "GET /status/a7f6a4ba-6b0e-4e54-8a83-dca569876e30%20(rag) HTTP/1.1" 200 -
+10.0.0.131 - - [14/Jan/2026 17:39:32] "PUT /job/a7f6a4ba-6b0e-4e54-8a83-dca569876e30/thinking HTTP/1.1" 200 -
+10.0.0.131 - - [14/Jan/2026 17:39:32] "PUT /job/a7f6a4ba-6b0e-4e54-8a83-dca569876e30/thinking HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:39:35] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:39:41] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:39:46] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:39:51] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:39:56] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:40:01] "GET /health HTTP/1.1" 200 -
+10.0.0.152 - - [14/Jan/2026 17:40:02] "GET /status/a7f6a4ba-6b0e-4e54-8a83-dca569876e30%20(rag) HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:40:06] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:40:12] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:40:17] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:40:22] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:40:28] "GET /health HTTP/1.1" 200 -
+10.0.0.152 - - [14/Jan/2026 17:40:32] "GET /status/a7f6a4ba-6b0e-4e54-8a83-dca569876e30%20(rag) HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:40:33] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:40:39] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:40:44] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:40:49] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:40:55] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:41:00] "GET /health HTTP/1.1" 200 -
+10.0.0.152 - - [14/Jan/2026 17:41:02] "GET /status/a7f6a4ba-6b0e-4e54-8a83-dca569876e30%20(rag) HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:41:05] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:41:10] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:41:15] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:41:21] "GET /health HTTP/1.1" 200 -
+10.0.0.152 - - [14/Jan/2026 17:41:22] "GET /summary/a7f6a4ba-6b0e-4e54-8a83-dca569876e30%20(rag) HTTP/1.1" 200 -
+10.0.0.152 - - [14/Jan/2026 17:41:22] "GET /summary/a7f6a4ba-6b0e-4e54-8a83-dca569876e30%20(rag) HTTP/1.1" 200 -
+10.0.0.152 - - [14/Jan/2026 17:41:24] "GET /advisor_image/ansel.jpg HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:41:26] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:41:31] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:41:36] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:41:42] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:41:47] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:41:52] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:41:57] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:42:02] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:42:07] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:42:13] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:42:18] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:42:23] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:42:28] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:42:33] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:42:39] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:42:44] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:42:49] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:42:54] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:42:59] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:43:04] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:43:09] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:43:14] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:43:19] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:43:24] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:43:29] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:43:34] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:43:39] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:43:45] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:43:50] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:43:55] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:44:00] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:44:05] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:44:10] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:44:15] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:44:20] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:44:25] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:44:30] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:44:35] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:44:41] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:44:46] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:44:51] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:44:56] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:45:01] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:45:06] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:45:11] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:45:16] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:45:21] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:45:26] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:45:31] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:45:37] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:45:42] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:45:47] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:45:52] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:45:57] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:46:02] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:46:07] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:46:12] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:46:17] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:46:23] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:46:28] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:46:33] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:46:38] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:46:43] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:46:48] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:46:53] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:46:58] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:47:03] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:47:08] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:47:13] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:47:18] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:47:23] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:47:28] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:47:34] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:47:39] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:47:44] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:47:49] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:47:54] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:47:59] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:48:04] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:48:09] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:48:14] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:48:19] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:48:24] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:48:29] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:48:34] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:48:39] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:48:45] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:48:50] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:48:55] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:49:00] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:49:05] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:49:10] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:49:15] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:49:20] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:49:25] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:49:30] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:49:35] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:49:40] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:49:45] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:49:50] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:49:55] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:50:01] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:50:06] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:50:11] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:50:16] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:50:21] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:50:26] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:50:31] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:50:36] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:50:41] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:50:47] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:50:52] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:50:57] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:51:02] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:51:07] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:51:12] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:51:18] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:51:23] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:51:28] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:51:33] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:51:38] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:51:43] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:51:49] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:51:54] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:51:59] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:52:04] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:52:09] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:52:15] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:52:20] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:52:25] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:52:30] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:52:35] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:52:40] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:52:45] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:52:50] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:52:56] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:53:01] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:53:06] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:53:11] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:53:16] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:53:21] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:53:26] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:53:31] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:53:36] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:53:41] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:53:46] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:53:51] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:53:56] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:54:01] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:54:06] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:54:11] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:54:16] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:54:21] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:54:26] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:54:31] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 17:54:37] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:10:21] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:10:26] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:10:31] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:10:37] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:10:42] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:10:47] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:10:52] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:10:57] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:11:02] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:11:07] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:11:12] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:11:17] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:11:22] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:11:27] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:11:32] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:11:37] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:11:43] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:11:48] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:11:53] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:11:58] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:12:03] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:12:08] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:12:13] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:12:18] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:12:23] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:12:28] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:12:33] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:12:39] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:12:44] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:12:49] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:12:54] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:12:59] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:13:04] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:13:09] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:13:14] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:13:19] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:13:24] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:13:29] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:13:34] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:13:39] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:13:44] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:13:49] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:13:54] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:14:00] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:14:05] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:14:10] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:14:15] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:14:20] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:14:25] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:14:30] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:14:35] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:14:40] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:14:45] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:14:51] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:14:56] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:15:01] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:15:06] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:15:11] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:15:16] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:15:21] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:15:26] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:15:31] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:15:36] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:15:41] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:15:46] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:15:51] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:15:56] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:16:01] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:16:06] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:16:12] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:16:17] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:16:22] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:16:27] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:16:32] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:16:37] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:16:42] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:16:47] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:16:52] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:16:57] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:17:02] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:17:07] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:17:12] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:17:17] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:17:22] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:17:27] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:17:33] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:17:38] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:17:43] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:17:48] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:17:53] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:17:58] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:18:03] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:18:08] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:18:14] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:18:19] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:18:24] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:18:29] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:18:34] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:18:39] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:18:44] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:18:49] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:18:54] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:18:59] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:19:04] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:19:09] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:19:14] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:19:19] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:19:25] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:19:30] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:19:35] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:19:40] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:19:45] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:19:50] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:19:56] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:20:01] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:20:06] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:20:11] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:20:16] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:20:21] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:20:26] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:20:31] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:20:37] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:20:42] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:20:47] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:20:52] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:20:57] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:21:02] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:21:07] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:21:12] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:21:18] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:21:23] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:21:28] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:21:33] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:21:38] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:21:44] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:21:49] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:21:55] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:22:00] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:22:05] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:22:10] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:22:15] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:22:20] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:22:25] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:22:30] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:22:35] "GET /health HTTP/1.1" 200 -
+[UPLOAD] enable_rag parameter from request: 'true' → True
+[UPLOAD] ✓ Final enable_rag value: True (will be stored in database and passed to AI service)
+[UPLOAD] Mode derived from enable_rag: 'rag'
+[UPLOAD] ✓ Final mode value: rag (will be stored in database and passed to AI service)
+[UPLOAD] ========== JOB QUEUED ==========
+[UPLOAD] Job ID: a7f6a4ba-6b0e-4e54-8a83-dca569876e30
+[UPLOAD] Mode: rag
+[UPLOAD] Enable RAG: True
+[UPLOAD] Advisors: ['ansel']
+[UPLOAD] =====================================
+
+================================================================================
+[JOB] ========== PROCESS_JOB STARTED ==========
+[JOB] Job ID: a7f6a4ba-6b0e-4e54-8a83-dca569876e30
+[JOB] Filename: photo-361DFB27-1D12-48F3-B96A-EF0218D10E5F-19ce8136.jpg
+[JOB] Advisors: ['ansel']
+[JOB] Mode: rag
+[JOB] Enable RAG: True
+[JOB] Host URL: http://10.0.0.131:5005
+[JOB] Flow: RAG + DEFAULT MODEL
+[JOB] ====================================
+================================================================================
+
+[JOB] Setting status to processing for job a7f6a4ba-6b0e-4e54-8a83-dca569876e30
+[JOB] Checking source path: /Users/shaydu/dev/mondrian-macos/source/photo-361DFB27-1D12-48F3-B96A-EF0218D10E5F-19ce8136.jpg
+[INFO] Resized image for display: photo-361DFB27-1D12-48F3-B96A-EF0218D10E5F-19ce8136.jpg (4032x3024 -> 1320x990)
+[JOB] Generated optimized image: /Users/shaydu/dev/mondrian-macos/thumbnails/photo-361DFB27-1D12-48F3-B96A-EF0218D10E5F-19ce8136.jpg
+[DEBUG] get_advisor_from_db called with db_path=/Users/shaydu/dev/mondrian-macos/mondrian/mondrian.db, advisor_id=ansel
+[DEBUG] raw row fetched for advisor_id=ansel: ('ansel', 'Ansel Adams', 'Ansel Adams (1902-1984) was an American landscape photographer and environmentalist known for his black-and-white images of the American West, especially Yosemite National Park. He helped found the photography group f/64, developed the Zone System for achieving perfect exposure and tonal range, and was a pioneering advocate for environmental conservation through his art.', '1902-1984', "You are Ansel Adams, master of black-and-white landscape photography. You revolutionized photography through your Zone System, which gave photographers unprecedented control over exposure and tonal range.\n\nYour approach to evaluating an image:\n\n1. **Tonal Range & Zone System** - Analyze the full spectrum from Zone 0 (pure black) to Zone X (pure white). Look for:\n   - Rich blacks with detail in shadows (Zones II-III)\n   - Pure whites that aren't blown out (Zone VIII-IX)\n   - Full midtone gradation (Zones IV-VI)\n   - Proper exposure that preserves detail across the entire tonal range\n\n2. **Composition & Perspective** - Examine the geometric structure:\n   - Leading lines that draw the eye through the frame\n   - Rule of thirds and golden ratio placement\n   - Foreground, midground, and background layering\n   - Balance between elements\n   - Use of natural frames\n\n3. **Technical Excellence** - Assess the craft:\n   - Critical sharpness and focus (f/64 philosophy)\n   - Depth of field appropriate to the subject\n   - Proper exposure (not too dark, not too light)\n   - Clean, well-printed negative equivalent\n\n4. **Light & Shadow** - Evaluate the interplay:\n   - Direction and quality of light\n   - Dramatic use of shadows to create depth\n   - Texture revealed through sidelight\n   - Time of day considerations (golden hour, blue hour)\n\n5. **Emotional Impact** - Consider the feeling:\n   - Sense of scale and majesty\n   - Connection to the natural world\n   - Drama and atmosphere\n   - Timeless quality\n\nWhen providing feedback, be specific and constructive. Reference the Zone System and technical aspects while also addressing the emotional impact. Encourage the photographer to see beyond the literal and capture the feeling of being present in that moment.", '[{"title": "Tonal Range & Zone System", "description": "Master of the full spectrum from pure black to pure white, using his Zone System to achieve perfect exposure and tonal gradation in every image."}, {"title": "Composition & Perspective", "description": "Precise framing that emphasizes geometric elements, leading lines, and careful positioning to create powerful visual impact."}, {"title": "Technical Excellence", "description": "Perfect sharpness, focus, and exposure achieved through large-format cameras and meticulous darkroom work."}, {"title": "Landscape Drama", "description": "Captures the majesty and drama of natural landscapes with emphasis on light, shadow, and texture."}]', 'Photographer', 'https://en.wikipedia.org/wiki/Ansel_Adams', 'https://commons.wikimedia.org/wiki/Category:Ansel_Adams', 'baseline') (cols: ['id', 'name', 'bio', 'years', 'prompt', 'focus_areas', 'category', 'wikipedia_url', 'commons_url', 'prompt_type'])
+[JOB] Calling AI service for advisor ansel: http://127.0.0.1:5100/analyze
+[JOB] ✓ Sending request to AI service with mode='rag', enable_rag='true' (boolean: True)
+[JOB] Full request data: {'advisor': 'ansel', 'job_id': 'a7f6a4ba-6b0e-4e54-8a83-dca569876e30', 'job_service_url': 'http://10.0.0.131:5005', 'enable_rag': 'true', 'mode': 'rag'}
+[JOB] AI service response status: 200
+[DEBUG] Response content-type: application/json
+[JOB] Received JSON response for ansel:
+[JOB]   HTML length: 8325 characters
+[JOB]   Mode used: rag
+[JOB]   Metadata: {'mode_used': 'rag', 'requested_mode': 'rag', 'effective_mode': 'rag', 'fallback_occurred': False, 'overall_grade': 'B-', 'advisor_id': 'ansel'}
+[JOB] Completed advisor ansel (1/1)
+[JOB] All advisors processed (1/1)
+[DEBUG] Extracting recommendations for advisor: ansel
+[DEBUG] Extracted HTML from new JSON format for ansel
+[DEBUG] Found 5 feedback cards for ansel
+[DEBUG] Added recommendation for Composition: score=8.0, has_rec=True
+[DEBUG] Added recommendation for Lighting: score=7.0, has_rec=True
+[DEBUG] Added recommendation for Color Harmony: score=6.0, has_rec=True
+[DEBUG] Added recommendation for Visual Balance: score=8.0, has_rec=True
+[DEBUG] Added recommendation for Emotional Impact: score=7.0, has_rec=True
+[DEBUG] RAG mode: User profile not found, falling back to score-based sorting
+[DEBUG] Extracted 3 recommendations for ansel
+[DEBUG] Job a7f6a4ba-6b0e-4e54-8a83-dca569876e30 completed
+[DEBUG] Parsing critical_recommendations for job a7f6a4ba-6b0e-4e54-8a83-dca569876e30 (rag)
+[DEBUG] critical_recommendations value: {"ansel": [{"dimension": "Color Harmony", "comment": "", "recommendation": "Apply a subtle color grading adjustment to soften the sky tones and enhance the natural transition from orange to yellow, preserving the emotional impact.", "dimension_score": 6.0}, {"dimension": "Lighting", "comment": "", "recommendation": "Increase exposure compensation for the shadows to reveal more texture and depth in the foreground, preserving the Zone System's full tonal range.", "dimension_score": 7.0}, {"dimensi
+[DEBUG] Parsing critical_recommendations for job a7f6a4ba-6b0e-4e54-8a83-dca569876e30 (rag)
+[DEBUG] critical_recommendations value: {"ansel": [{"dimension": "Color Harmony", "comment": "", "recommendation": "Apply a subtle color grading adjustment to soften the sky tones and enhance the natural transition from orange to yellow, preserving the emotional impact.", "dimension_score": 6.0}, {"dimension": "Lighting", "comment": "", "recommendation": "Increase exposure compensation for the shadows to reveal more texture and depth in the foreground, preserving the Zone System's full tonal range.", "dimension_score": 7.0}, {"dimensi
+[OK] Serving advisor image: ansel (673547 bytes)

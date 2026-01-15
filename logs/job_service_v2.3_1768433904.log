@@ -1,0 +1,66 @@
+[INFO] Job Service v2.3-DB-FIXED starting...
+[INFO] Database connection management fixed for real-time status updates
+[INIT] AI_SERVICE_URL: http://127.0.0.1:5100/analyze
+[INIT] Port: 5005
+[INIT] Database: /Users/shaydu/dev/mondrian-macos/mondrian/mondrian.db
+[INIT] Debug mode: False
+[INIT] Created directories
+[INIT] Initializing database...
+[INIT] Database schema OK
+[INIT] RAG Default: ENABLED (from RAG_ENABLED env var)
+============================================================
+Starting Job Service v2.3-DB-FIXED on port 5005...
+Host: 0.0.0.0:5005
+AI Service: http://127.0.0.1:5100/analyze
+============================================================
+ * Serving Flask app 'job_service_v2.3'
+ * Debug mode: off
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5005
+ * Running on http://10.0.0.131:5005
+[33mPress CTRL+C to quit[0m
+127.0.0.1 - - [14/Jan/2026 16:38:31] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:38:39] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:38:39] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:38:44] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:38:49] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:38:55] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:39:00] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:39:05] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:39:10] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:39:15] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:39:20] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:39:25] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:39:30] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:39:35] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:39:40] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:39:45] "GET /health HTTP/1.1" 200 -
+10.0.0.152 - - [14/Jan/2026 16:39:46] "GET /analysis/7cc1eda0-bf09-41ac-be13-b6b05c1398d5%20(rag) HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:39:50] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:39:55] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:40:00] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:40:06] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:40:11] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:40:16] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:40:21] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:40:26] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:40:31] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:40:36] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:40:41] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:40:46] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:40:51] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:40:56] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:41:01] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:41:06] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:41:11] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:41:16] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:41:21] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:41:27] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:41:32] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:41:37] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:41:42] "GET /health HTTP/1.1" 200 -
+[DEBUG] /analysis endpoint: Getting advisor info for 'ansel', DB_PATH: /Users/shaydu/dev/mondrian-macos/mondrian/mondrian.db
+[DEBUG] get_advisor_from_db called with db_path=/Users/shaydu/dev/mondrian-macos/mondrian/mondrian.db, advisor_id=ansel
+[DEBUG] raw row fetched for advisor_id=ansel: ('ansel', 'Ansel Adams', 'Ansel Adams (1902-1984) was an American landscape photographer and environmentalist known for his black-and-white images of the American West, especially Yosemite National Park. He helped found the photography group f/64, developed the Zone System for achieving perfect exposure and tonal range, and was a pioneering advocate for environmental conservation through his art.', '1902-1984', "You are Ansel Adams, master of black-and-white landscape photography. You revolutionized photography through your Zone System, which gave photographers unprecedented control over exposure and tonal range.\n\nYour approach to evaluating an image:\n\n1. **Tonal Range & Zone System** - Analyze the full spectrum from Zone 0 (pure black) to Zone X (pure white). Look for:\n   - Rich blacks with detail in shadows (Zones II-III)\n   - Pure whites that aren't blown out (Zone VIII-IX)\n   - Full midtone gradation (Zones IV-VI)\n   - Proper exposure that preserves detail across the entire tonal range\n\n2. **Composition & Perspective** - Examine the geometric structure:\n   - Leading lines that draw the eye through the frame\n   - Rule of thirds and golden ratio placement\n   - Foreground, midground, and background layering\n   - Balance between elements\n   - Use of natural frames\n\n3. **Technical Excellence** - Assess the craft:\n   - Critical sharpness and focus (f/64 philosophy)\n   - Depth of field appropriate to the subject\n   - Proper exposure (not too dark, not too light)\n   - Clean, well-printed negative equivalent\n\n4. **Light & Shadow** - Evaluate the interplay:\n   - Direction and quality of light\n   - Dramatic use of shadows to create depth\n   - Texture revealed through sidelight\n   - Time of day considerations (golden hour, blue hour)\n\n5. **Emotional Impact** - Consider the feeling:\n   - Sense of scale and majesty\n   - Connection to the natural world\n   - Drama and atmosphere\n   - Timeless quality\n\nWhen providing feedback, be specific and constructive. Reference the Zone System and technical aspects while also addressing the emotional impact. Encourage the photographer to see beyond the literal and capture the feeling of being present in that moment.", '[{"title": "Tonal Range & Zone System", "description": "Master of the full spectrum from pure black to pure white, using his Zone System to achieve perfect exposure and tonal gradation in every image."}, {"title": "Composition & Perspective", "description": "Precise framing that emphasizes geometric elements, leading lines, and careful positioning to create powerful visual impact."}, {"title": "Technical Excellence", "description": "Perfect sharpness, focus, and exposure achieved through large-format cameras and meticulous darkroom work."}, {"title": "Landscape Drama", "description": "Captures the majesty and drama of natural landscapes with emphasis on light, shadow, and texture."}]', 'Photographer', 'https://en.wikipedia.org/wiki/Ansel_Adams', 'https://commons.wikimedia.org/wiki/Category:Ansel_Adams', 'baseline') (cols: ['id', 'name', 'bio', 'years', 'prompt', 'focus_areas', 'category', 'wikipedia_url', 'commons_url', 'prompt_type'])
+[DEBUG] /analysis endpoint: Advisor info retrieved - True

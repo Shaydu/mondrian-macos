@@ -1,0 +1,247 @@
+[INFO] Job Service v2.3-DB-FIXED starting...
+[INFO] Database connection management fixed for real-time status updates
+[INIT] AI_SERVICE_URL: http://127.0.0.1:5100/analyze
+[INIT] Port: 5005
+[INIT] Database: /Users/shaydu/dev/mondrian-macos/mondrian/mondrian.db
+[INIT] Debug mode: False
+[INIT] Created directories
+[INIT] Initializing database...
+[INIT] Database schema OK
+[INIT] RAG Default: ENABLED (from RAG_ENABLED env var)
+============================================================
+Starting Job Service v2.3-DB-FIXED on port 5005...
+Host: 0.0.0.0:5005
+AI Service: http://127.0.0.1:5100/analyze
+============================================================
+ * Serving Flask app 'job_service_v2.3'
+ * Debug mode: off
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5005
+ * Running on http://10.0.0.131:5005
+[33mPress CTRL+C to quit[0m
+127.0.0.1 - - [14/Jan/2026 15:40:14] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:40:22] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:40:22] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:40:27] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:40:32] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:40:33] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:40:33] "[35m[1mPOST /upload HTTP/1.1[0m" 201 -
+127.0.0.1 - - [14/Jan/2026 15:40:33] "GET /stream/b37b2bad-59d4-4168-bb69-048254f5c61b HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:40:34] "PUT /job/b37b2bad-59d4-4168-bb69-048254f5c61b/thinking HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:40:37] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:40:42] "PUT /job/b37b2bad-59d4-4168-bb69-048254f5c61b/thinking HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:40:43] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:40:58] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:41:14] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:41:26] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:41:31] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:41:36] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:41:41] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:41:46] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:41:52] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:41:57] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:42:02] "GET /health HTTP/1.1" 200 -
+[UPLOAD] enable_rag parameter not provided, using env var default: True
+[UPLOAD] ✓ Final enable_rag value: True (will be stored in database and passed to AI service)
+[UPLOAD] Mode parameter from request: 'lora'
+[UPLOAD] ✓ Final mode value: lora (will be stored in database and passed to AI service)
+[UPLOAD] Queueing job b37b2bad-59d4-4168-bb69-048254f5c61b with mode=lora, enable_rag=True
+[JOB] Starting job b37b2bad-59d4-4168-bb69-048254f5c61b for mike-shrub-c07ed201.jpg with advisors: ['ansel'], mode: lora, enable_rag: True
+[JOB] Setting status to processing for job b37b2bad-59d4-4168-bb69-048254f5c61b
+[JOB] Checking source path: /Users/shaydu/dev/mondrian-macos/source/mike-shrub-c07ed201.jpg
+[INFO] Cached resized image: mike-shrub-c07ed201.jpg (width 800px within limit)
+[JOB] Generated optimized image: /Users/shaydu/dev/mondrian-macos/thumbnails/mike-shrub-c07ed201.jpg
+[DEBUG] get_advisor_from_db called with db_path=/Users/shaydu/dev/mondrian-macos/mondrian/mondrian.db, advisor_id=ansel
+[DEBUG] raw row fetched for advisor_id=ansel: ('ansel', 'Ansel Adams', 'Ansel Adams (1902-1984) was an American landscape photographer and environmentalist known for his black-and-white images of the American West, especially Yosemite National Park. He helped found the photography group f/64, developed the Zone System for achieving perfect exposure and tonal range, and was a pioneering advocate for environmental conservation through his art.', '1902-1984', "You are Ansel Adams, master of black-and-white landscape photography. You revolutionized photography through your Zone System, which gave photographers unprecedented control over exposure and tonal range.\n\nYour approach to evaluating an image:\n\n1. **Tonal Range & Zone System** - Analyze the full spectrum from Zone 0 (pure black) to Zone X (pure white). Look for:\n   - Rich blacks with detail in shadows (Zones II-III)\n   - Pure whites that aren't blown out (Zone VIII-IX)\n   - Full midtone gradation (Zones IV-VI)\n   - Proper exposure that preserves detail across the entire tonal range\n\n2. **Composition & Perspective** - Examine the geometric structure:\n   - Leading lines that draw the eye through the frame\n   - Rule of thirds and golden ratio placement\n   - Foreground, midground, and background layering\n   - Balance between elements\n   - Use of natural frames\n\n3. **Technical Excellence** - Assess the craft:\n   - Critical sharpness and focus (f/64 philosophy)\n   - Depth of field appropriate to the subject\n   - Proper exposure (not too dark, not too light)\n   - Clean, well-printed negative equivalent\n\n4. **Light & Shadow** - Evaluate the interplay:\n   - Direction and quality of light\n   - Dramatic use of shadows to create depth\n   - Texture revealed through sidelight\n   - Time of day considerations (golden hour, blue hour)\n\n5. **Emotional Impact** - Consider the feeling:\n   - Sense of scale and majesty\n   - Connection to the natural world\n   - Drama and atmosphere\n   - Timeless quality\n\nWhen providing feedback, be specific and constructive. Reference the Zone System and technical aspects while also addressing the emotional impact. Encourage the photographer to see beyond the literal and capture the feeling of being present in that moment.", '[{"title": "Tonal Range & Zone System", "description": "Master of the full spectrum from pure black to pure white, using his Zone System to achieve perfect exposure and tonal gradation in every image."}, {"title": "Composition & Perspective", "description": "Precise framing that emphasizes geometric elements, leading lines, and careful positioning to create powerful visual impact."}, {"title": "Technical Excellence", "description": "Perfect sharpness, focus, and exposure achieved through large-format cameras and meticulous darkroom work."}, {"title": "Landscape Drama", "description": "Captures the majesty and drama of natural landscapes with emphasis on light, shadow, and texture."}]', 'Photographer', 'https://en.wikipedia.org/wiki/Ansel_Adams', 'https://commons.wikimedia.org/wiki/Category:Ansel_Adams', 'baseline') (cols: ['id', 'name', 'bio', 'years', 'prompt', 'focus_areas', 'category', 'wikipedia_url', 'commons_url', 'prompt_type'])
+[JOB] Calling AI service for advisor ansel: http://127.0.0.1:5100/analyze
+[JOB] ✓ Sending request to AI service with mode='lora', enable_rag='true' (boolean: True)
+[JOB] Full request data: {'advisor': 'ansel', 'job_id': 'b37b2bad-59d4-4168-bb69-048254f5c61b', 'job_service_url': 'http://127.0.0.1:5005', 'enable_rag': 'true', 'mode': 'lora'}
+[JOB] AI service response status: 200
+[DEBUG] Response content-type: application/json
+[JOB] Received JSON response for ansel:
+[JOB]   HTML length: 461 characters
+[JOB]   Mode used: lora
+[JOB]   Metadata: {'mode_used': 'lora', 'requested_mode': 'lora', 'effective_mode': 'lora', 'fallback_occurred': False, 'overall_grade': 'N/A', 'advisor_id': 'ansel'}
+[JOB] Completed advisor ansel (1/1)
+[JOB] All advisors processed (1/1)
+[DEBUG] Extracting recommendations for advisor: ansel
+[DEBUG] Extracted HTML from new JSON format for ansel
+[DEBUG] Found 0 feedback cards for ansel
+[WARN] No feedback cards found in HTML for ansel
+[DEBUG] HTML preview (first 500 chars): <div class="analysis" style="background: #2a2a2a; color: #e0e0e0; padding: 10px; border-radius: 8px; box-sizing: border-box; max-width: 100%;">
+  <h2 style="color: #e0e0e0;">Advisor Analysis</h2>
+  <p style="color: #b0b0b0; margin-bottom: 20px;">Each dimension is analyzed with specific feedback and actionable recommendations for improvement.</p>
+
+  <h2 style="color: #e0e0e0;">Overall Grade</h2>
+  <p style="color: #e0e0e0;"><strong>5.0/10</strong></p>
+</div>
+[WARN] No recommendations extracted for advisor ansel
+[DEBUG] Job b37b2bad-59d4-4168-bb69-048254f5c61b completed
+[DEBUG] /analysis endpoint: Getting advisor info for 'ansel', DB_PATH: /Users/shaydu/dev/mondrian-macos/mondrian/mondrian.db
+[DEBUG] get_advisor_from_db called with db_path=/Users/shaydu/dev/mondrian-macos/mondrian/mondrian.db, advisor_id=ansel
+127.0.0.1 - - [14/Jan/2026 15:42:03] "GET /analysis/b37b2bad-59d4-4168-bb69-048254f5c61b%20(lora) HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:42:03] "GET /summary/b37b2bad-59d4-4168-bb69-048254f5c61b%20(lora) HTTP/1.1" 200 -
+[DEBUG] raw row fetched for advisor_id=ansel: ('ansel', 'Ansel Adams', 'Ansel Adams (1902-1984) was an American landscape photographer and environmentalist known for his black-and-white images of the American West, especially Yosemite National Park. He helped found the photography group f/64, developed the Zone System for achieving perfect exposure and tonal range, and was a pioneering advocate for environmental conservation through his art.', '1902-1984', "You are Ansel Adams, master of black-and-white landscape photography. You revolutionized photography through your Zone System, which gave photographers unprecedented control over exposure and tonal range.\n\nYour approach to evaluating an image:\n\n1. **Tonal Range & Zone System** - Analyze the full spectrum from Zone 0 (pure black) to Zone X (pure white). Look for:\n   - Rich blacks with detail in shadows (Zones II-III)\n   - Pure whites that aren't blown out (Zone VIII-IX)\n   - Full midtone gradation (Zones IV-VI)\n   - Proper exposure that preserves detail across the entire tonal range\n\n2. **Composition & Perspective** - Examine the geometric structure:\n   - Leading lines that draw the eye through the frame\n   - Rule of thirds and golden ratio placement\n   - Foreground, midground, and background layering\n   - Balance between elements\n   - Use of natural frames\n\n3. **Technical Excellence** - Assess the craft:\n   - Critical sharpness and focus (f/64 philosophy)\n   - Depth of field appropriate to the subject\n   - Proper exposure (not too dark, not too light)\n   - Clean, well-printed negative equivalent\n\n4. **Light & Shadow** - Evaluate the interplay:\n   - Direction and quality of light\n   - Dramatic use of shadows to create depth\n   - Texture revealed through sidelight\n   - Time of day considerations (golden hour, blue hour)\n\n5. **Emotional Impact** - Consider the feeling:\n   - Sense of scale and majesty\n   - Connection to the natural world\n   - Drama and atmosphere\n   - Timeless quality\n\nWhen providing feedback, be specific and constructive. Reference the Zone System and technical aspects while also addressing the emotional impact. Encourage the photographer to see beyond the literal and capture the feeling of being present in that moment.", '[{"title": "Tonal Range & Zone System", "description": "Master of the full spectrum from pure black to pure white, using his Zone System to achieve perfect exposure and tonal gradation in every image."}, {"title": "Composition & Perspective", "description": "Precise framing that emphasizes geometric elements, leading lines, and careful positioning to create powerful visual impact."}, {"title": "Technical Excellence", "description": "Perfect sharpness, focus, and exposure achieved through large-format cameras and meticulous darkroom work."}, {"title": "Landscape Drama", "description": "Captures the majesty and drama of natural landscapes with emphasis on light, shadow, and texture."}]', 'Photographer', 'https://en.wikipedia.org/wiki/Ansel_Adams', 'https://commons.wikimedia.org/wiki/Category:Ansel_Adams', 'baseline') (cols: ['id', 'name', 'bio', 'years', 'prompt', 'focus_areas', 'category', 'wikipedia_url', 'commons_url', 'prompt_type'])
+[DEBUG] /analysis endpoint: Advisor info retrieved - True
+[DEBUG] Parsing critical_recommendations for job b37b2bad-59d4-4168-bb69-048254f5c61b (lora)
+[DEBUG] critical_recommendations value: {"ansel": []}
+[DEBUG] /advisor/<advisor_id> called with advisor_id: 'ansel' and DB_PATH: /Users/shaydu/dev/mondrian-macos/mondrian/mondrian.db
+[DEBUG] direct SQL raw_row: ('ansel', 'Ansel Adams', 'Ansel Adams (1902-1984) was an American landscape photographer and environmentalist known for his black-and-white images of the American West, especially Yosemite National Park. He helped found the photography group f/64, developed the Zone System for achieving perfect exposure and tonal range, and was a pioneering advocate for environmental conservation through his art.', '1902-1984', "You are Ansel Adams, master of black-and-white landscape photography. You revolutionized photography through your Zone System, which gave photographers unprecedented control over exposure and tonal range.\n\nYour approach to evaluating an image:\n\n1. **Tonal Range & Zone System** - Analyze the full spectrum from Zone 0 (pure black) to Zone X (pure white). Look for:\n   - Rich blacks with detail in shadows (Zones II-III)\n   - Pure whites that aren't blown out (Zone VIII-IX)\n   - Full midtone gradation (Zones IV-VI)\n   - Proper exposure that preserves detail across the entire tonal range\n\n2. **Composition & Perspective** - Examine the geometric structure:\n   - Leading lines that draw the eye through the frame\n   - Rule of thirds and golden ratio placement\n   - Foreground, midground, and background layering\n   - Balance between elements\n   - Use of natural frames\n\n3. **Technical Excellence** - Assess the craft:\n   - Critical sharpness and focus (f/64 philosophy)\n   - Depth of field appropriate to the subject\n   - Proper exposure (not too dark, not too light)\n   - Clean, well-printed negative equivalent\n\n4. **Light & Shadow** - Evaluate the interplay:\n   - Direction and quality of light\n   - Dramatic use of shadows to create depth\n   - Texture revealed through sidelight\n   - Time of day considerations (golden hour, blue hour)\n\n5. **Emotional Impact** - Consider the feeling:\n   - Sense of scale and majesty\n   - Connection to the natural world\n   - Drama and atmosphere\n   - Timeless quality\n\nWhen providing feedback, be specific and constructive. Reference the Zone System and technical aspects while also addressing the emotional impact. Encourage the photographer to see beyond the literal and capture the feeling of being present in that moment.", '[{"title": "Tonal Range & Zone System", "description": "Master of the full spectrum from pure black to pure white, using his Zone System to achieve perfect exposure and tonal gradation in every image."}, {"title": "Composition & Perspective", "description": "Precise framing that emphasizes geometric elements, leading lines, and careful positioning to create powerful visual impact."}, {"title": "Technical Excellence", "description": "Perfect sharpness, focus, and exposure achieved through large-format cameras and meticulous darkroom work."}, {"title": "Landscape Drama", "description": "Captures the majesty and drama of natural landscapes with emphasis on light, shadow, and texture."}]', 'Photographer', 'https://en.wikipedia.org/wiki/Ansel_Adams', 'https://commons.wikimedia.org/wiki/Category:Ansel_Adams')
+[DEBUG] get_advisor_from_db called with db_path=/Users/shaydu/dev/mondrian-macos/mondrian/mondrian.db, advisor_id=ansel
+127.0.0.1 - - [14/Jan/2026 15:42:03] "GET /advisor/ansel HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:42:03] "GET /status/b37b2bad-59d4-4168-bb69-048254f5c61b%20(lora) HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:42:07] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:42:12] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:42:17] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:42:22] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:42:27] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:42:32] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:42:37] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:42:43] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:42:48] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:42:53] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:42:58] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:43:03] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:43:08] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:43:13] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:43:18] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:43:23] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:43:28] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:43:33] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:43:38] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:43:43] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:43:49] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:43:54] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:43:59] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:44:04] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:44:09] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:44:14] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:44:19] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:44:24] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:44:29] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:44:34] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:44:39] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:44:44] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:44:49] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:44:54] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:44:59] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:45:04] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:45:09] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:45:14] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:45:19] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:45:24] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:45:29] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:45:35] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:45:40] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:45:45] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:45:50] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:45:55] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:46:00] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:46:05] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:46:10] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:46:15] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:46:20] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:46:25] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:46:30] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:46:35] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:46:40] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:46:45] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:46:50] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:46:55] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:47:00] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:47:05] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:47:10] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:47:15] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:47:20] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:47:25] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:47:31] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:47:36] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:47:41] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:47:46] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:47:51] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:47:56] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:48:01] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:48:04] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:48:05] "[35m[1mPOST /upload HTTP/1.1[0m" 201 -
+127.0.0.1 - - [14/Jan/2026 15:48:05] "GET /stream/e5a5a6fa-a040-4f4b-9f05-d94316e12e8b HTTP/1.1" 200 -
+[DEBUG] raw row fetched for advisor_id=ansel: ('ansel', 'Ansel Adams', 'Ansel Adams (1902-1984) was an American landscape photographer and environmentalist known for his black-and-white images of the American West, especially Yosemite National Park. He helped found the photography group f/64, developed the Zone System for achieving perfect exposure and tonal range, and was a pioneering advocate for environmental conservation through his art.', '1902-1984', "You are Ansel Adams, master of black-and-white landscape photography. You revolutionized photography through your Zone System, which gave photographers unprecedented control over exposure and tonal range.\n\nYour approach to evaluating an image:\n\n1. **Tonal Range & Zone System** - Analyze the full spectrum from Zone 0 (pure black) to Zone X (pure white). Look for:\n   - Rich blacks with detail in shadows (Zones II-III)\n   - Pure whites that aren't blown out (Zone VIII-IX)\n   - Full midtone gradation (Zones IV-VI)\n   - Proper exposure that preserves detail across the entire tonal range\n\n2. **Composition & Perspective** - Examine the geometric structure:\n   - Leading lines that draw the eye through the frame\n   - Rule of thirds and golden ratio placement\n   - Foreground, midground, and background layering\n   - Balance between elements\n   - Use of natural frames\n\n3. **Technical Excellence** - Assess the craft:\n   - Critical sharpness and focus (f/64 philosophy)\n   - Depth of field appropriate to the subject\n   - Proper exposure (not too dark, not too light)\n   - Clean, well-printed negative equivalent\n\n4. **Light & Shadow** - Evaluate the interplay:\n   - Direction and quality of light\n   - Dramatic use of shadows to create depth\n   - Texture revealed through sidelight\n   - Time of day considerations (golden hour, blue hour)\n\n5. **Emotional Impact** - Consider the feeling:\n   - Sense of scale and majesty\n   - Connection to the natural world\n   - Drama and atmosphere\n   - Timeless quality\n\nWhen providing feedback, be specific and constructive. Reference the Zone System and technical aspects while also addressing the emotional impact. Encourage the photographer to see beyond the literal and capture the feeling of being present in that moment.", '[{"title": "Tonal Range & Zone System", "description": "Master of the full spectrum from pure black to pure white, using his Zone System to achieve perfect exposure and tonal gradation in every image."}, {"title": "Composition & Perspective", "description": "Precise framing that emphasizes geometric elements, leading lines, and careful positioning to create powerful visual impact."}, {"title": "Technical Excellence", "description": "Perfect sharpness, focus, and exposure achieved through large-format cameras and meticulous darkroom work."}, {"title": "Landscape Drama", "description": "Captures the majesty and drama of natural landscapes with emphasis on light, shadow, and texture."}]', 'Photographer', 'https://en.wikipedia.org/wiki/Ansel_Adams', 'https://commons.wikimedia.org/wiki/Category:Ansel_Adams', 'baseline') (cols: ['id', 'name', 'bio', 'years', 'prompt', 'focus_areas', 'category', 'wikipedia_url', 'commons_url', 'prompt_type'])
+[DEBUG] advisor_info returned: {'id': 'ansel', 'name': 'Ansel Adams', 'bio': 'Ansel Adams (1902-1984) was an American landscape photographer and environmentalist known for his black-and-white images of the American West, especially Yosemite National Park. He helped found the photography group f/64, developed the Zone System for achieving perfect exposure and tonal range, and was a pioneering advocate for environmental conservation through his art.', 'years': '1902-1984', 'prompt': "You are Ansel Adams, master of black-and-white landscape photography. You revolutionized photography through your Zone System, which gave photographers unprecedented control over exposure and tonal range.\n\nYour approach to evaluating an image:\n\n1. **Tonal Range & Zone System** - Analyze the full spectrum from Zone 0 (pure black) to Zone X (pure white). Look for:\n   - Rich blacks with detail in shadows (Zones II-III)\n   - Pure whites that aren't blown out (Zone VIII-IX)\n   - Full midtone gradation (Zones IV-VI)\n   - Proper exposure that preserves detail across the entire tonal range\n\n2. **Composition & Perspective** - Examine the geometric structure:\n   - Leading lines that draw the eye through the frame\n   - Rule of thirds and golden ratio placement\n   - Foreground, midground, and background layering\n   - Balance between elements\n   - Use of natural frames\n\n3. **Technical Excellence** - Assess the craft:\n   - Critical sharpness and focus (f/64 philosophy)\n   - Depth of field appropriate to the subject\n   - Proper exposure (not too dark, not too light)\n   - Clean, well-printed negative equivalent\n\n4. **Light & Shadow** - Evaluate the interplay:\n   - Direction and quality of light\n   - Dramatic use of shadows to create depth\n   - Texture revealed through sidelight\n   - Time of day considerations (golden hour, blue hour)\n\n5. **Emotional Impact** - Consider the feeling:\n   - Sense of scale and majesty\n   - Connection to the natural world\n   - Drama and atmosphere\n   - Timeless quality\n\nWhen providing feedback, be specific and constructive. Reference the Zone System and technical aspects while also addressing the emotional impact. Encourage the photographer to see beyond the literal and capture the feeling of being present in that moment.", 'focus_areas': [{'title': 'Tonal Range & Zone System', 'description': 'Master of the full spectrum from pure black to pure white, using his Zone System to achieve perfect exposure and tonal gradation in every image.'}, {'title': 'Composition & Perspective', 'description': 'Precise framing that emphasizes geometric elements, leading lines, and careful positioning to create powerful visual impact.'}, {'title': 'Technical Excellence', 'description': 'Perfect sharpness, focus, and exposure achieved through large-format cameras and meticulous darkroom work.'}, {'title': 'Landscape Drama', 'description': 'Captures the majesty and drama of natural landscapes with emphasis on light, shadow, and texture.'}], 'category': 'Photographer', 'wikipedia_url': 'https://en.wikipedia.org/wiki/Ansel_Adams', 'commons_url': 'https://commons.wikimedia.org/wiki/Category:Ansel_Adams', 'prompt_type': 'baseline'}
+[UPLOAD] enable_rag parameter not provided, using env var default: True
+[UPLOAD] ✓ Final enable_rag value: True (will be stored in database and passed to AI service)
+[UPLOAD] Mode parameter from request: 'baseline'
+[UPLOAD] ✓ Final mode value: baseline (will be stored in database and passed to AI service)
+[UPLOAD] Queueing job e5a5a6fa-a040-4f4b-9f05-d94316e12e8b with mode=baseline, enable_rag=True
+[JOB] Starting job e5a5a6fa-a040-4f4b-9f05-d94316e12e8b for mike-shrub-01004b68-6372c44e.jpg with advisors: ['ansel'], mode: baseline, enable_rag: True
+[JOB] Setting status to processing for job e5a5a6fa-a040-4f4b-9f05-d94316e12e8b
+[JOB] Checking source path: /Users/shaydu/dev/mondrian-macos/source/mike-shrub-01004b68-6372c44e.jpg
+[INFO] Cached resized image: mike-shrub-01004b68-6372c44e.jpg (width 800px within limit)
+[JOB] Generated optimized image: /Users/shaydu/dev/mondrian-macos/thumbnails/mike-shrub-01004b68-6372c44e.jpg
+[DEBUG] get_advisor_from_db called with db_path=/Users/shaydu/dev/mondrian-macos/mondrian/mondrian.db, advisor_id=ansel
+127.0.0.1 - - [14/Jan/2026 15:48:06] "PUT /job/e5a5a6fa-a040-4f4b-9f05-d94316e12e8b/thinking HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:48:06] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:48:11] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:48:18] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:48:23] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:48:28] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:48:33] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:48:35] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:48:35] "[35m[1mPOST /upload HTTP/1.1[0m" 201 -
+127.0.0.1 - - [14/Jan/2026 15:48:35] "GET /stream/bfc9008c-2d43-4698-b87b-e04a79940858 HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:48:38] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:48:44] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:48:49] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:48:54] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:48:59] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:49:04] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:49:09] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:49:14] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:49:20] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:49:25] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:49:31] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:49:36] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:49:41] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:49:46] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:49:52] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:49:57] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:50:02] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:50:07] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:50:13] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:50:18] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:50:25] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:50:31] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:50:36] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:50:41] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:50:46] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:50:52] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:50:57] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:51:02] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:51:07] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:51:12] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 15:51:18] "GET /health HTTP/1.1" 200 -
+[DEBUG] raw row fetched for advisor_id=ansel: ('ansel', 'Ansel Adams', 'Ansel Adams (1902-1984) was an American landscape photographer and environmentalist known for his black-and-white images of the American West, especially Yosemite National Park. He helped found the photography group f/64, developed the Zone System for achieving perfect exposure and tonal range, and was a pioneering advocate for environmental conservation through his art.', '1902-1984', "You are Ansel Adams, master of black-and-white landscape photography. You revolutionized photography through your Zone System, which gave photographers unprecedented control over exposure and tonal range.\n\nYour approach to evaluating an image:\n\n1. **Tonal Range & Zone System** - Analyze the full spectrum from Zone 0 (pure black) to Zone X (pure white). Look for:\n   - Rich blacks with detail in shadows (Zones II-III)\n   - Pure whites that aren't blown out (Zone VIII-IX)\n   - Full midtone gradation (Zones IV-VI)\n   - Proper exposure that preserves detail across the entire tonal range\n\n2. **Composition & Perspective** - Examine the geometric structure:\n   - Leading lines that draw the eye through the frame\n   - Rule of thirds and golden ratio placement\n   - Foreground, midground, and background layering\n   - Balance between elements\n   - Use of natural frames\n\n3. **Technical Excellence** - Assess the craft:\n   - Critical sharpness and focus (f/64 philosophy)\n   - Depth of field appropriate to the subject\n   - Proper exposure (not too dark, not too light)\n   - Clean, well-printed negative equivalent\n\n4. **Light & Shadow** - Evaluate the interplay:\n   - Direction and quality of light\n   - Dramatic use of shadows to create depth\n   - Texture revealed through sidelight\n   - Time of day considerations (golden hour, blue hour)\n\n5. **Emotional Impact** - Consider the feeling:\n   - Sense of scale and majesty\n   - Connection to the natural world\n   - Drama and atmosphere\n   - Timeless quality\n\nWhen providing feedback, be specific and constructive. Reference the Zone System and technical aspects while also addressing the emotional impact. Encourage the photographer to see beyond the literal and capture the feeling of being present in that moment.", '[{"title": "Tonal Range & Zone System", "description": "Master of the full spectrum from pure black to pure white, using his Zone System to achieve perfect exposure and tonal gradation in every image."}, {"title": "Composition & Perspective", "description": "Precise framing that emphasizes geometric elements, leading lines, and careful positioning to create powerful visual impact."}, {"title": "Technical Excellence", "description": "Perfect sharpness, focus, and exposure achieved through large-format cameras and meticulous darkroom work."}, {"title": "Landscape Drama", "description": "Captures the majesty and drama of natural landscapes with emphasis on light, shadow, and texture."}]', 'Photographer', 'https://en.wikipedia.org/wiki/Ansel_Adams', 'https://commons.wikimedia.org/wiki/Category:Ansel_Adams', 'baseline') (cols: ['id', 'name', 'bio', 'years', 'prompt', 'focus_areas', 'category', 'wikipedia_url', 'commons_url', 'prompt_type'])
+[JOB] Calling AI service for advisor ansel: http://127.0.0.1:5100/analyze
+[JOB] ✓ Sending request to AI service with mode='baseline', enable_rag='true' (boolean: True)
+[JOB] Full request data: {'advisor': 'ansel', 'job_id': 'e5a5a6fa-a040-4f4b-9f05-d94316e12e8b', 'job_service_url': 'http://127.0.0.1:5005', 'enable_rag': 'true', 'mode': 'baseline'}
+[UPLOAD] enable_rag parameter not provided, using env var default: True
+[UPLOAD] ✓ Final enable_rag value: True (will be stored in database and passed to AI service)
+[UPLOAD] Mode parameter from request: 'baseline'
+[UPLOAD] ✓ Final mode value: baseline (will be stored in database and passed to AI service)
+[UPLOAD] Queueing job bfc9008c-2d43-4698-b87b-e04a79940858 with mode=baseline, enable_rag=True
+Exception ignored in atexit callback: <function shutdown_worker at 0x11905c400>
+Traceback (most recent call last):
+  File "/Users/shaydu/dev/mondrian-macos/mondrian/job_service_v2.3.py", line 140, in shutdown_worker
+    requests.Session().close()
+    ^^^^^^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/requests/sessions.py", line 448, in __init__
+    self.mount("https://", HTTPAdapter())
+                           ^^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/requests/adapters.py", line 198, in __init__
+    self.init_poolmanager(pool_connections, pool_maxsize, block=pool_block)
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/requests/adapters.py", line 235, in init_poolmanager
+    self.poolmanager = PoolManager(
+                       ^^^^^^^^^^^^
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/site-packages/urllib3/poolmanager.py", line 199, in __init__
+    def __init__(
+
+KeyboardInterrupt: 

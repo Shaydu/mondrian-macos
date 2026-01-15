@@ -1,0 +1,105 @@
+[INFO] Job Service v2.3-DB-FIXED starting...
+[INFO] Database connection management fixed for real-time status updates
+[INIT] AI_SERVICE_URL: http://127.0.0.1:5100/analyze
+[INIT] Port: 5005
+[INIT] Database: /Users/shaydu/dev/mondrian-macos/mondrian/mondrian.db
+[INIT] Debug mode: False
+[INIT] Created directories
+[INIT] Initializing database...
+[INIT] Database schema OK
+[INIT] RAG Default: ENABLED (from RAG_ENABLED env var)
+============================================================
+Starting Job Service v2.3-DB-FIXED on port 5005...
+Host: 0.0.0.0:5005
+AI Service: http://127.0.0.1:5100/analyze
+============================================================
+ * Serving Flask app 'job_service_v2.3'
+ * Debug mode: off
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5005
+ * Running on http://10.0.0.131:5005
+[33mPress CTRL+C to quit[0m
+127.0.0.1 - - [14/Jan/2026 16:35:26] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:35:33] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:35:33] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:35:38] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:35:43] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:35:48] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:35:53] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:35:58] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:36:03] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:36:08] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:36:13] "GET /health HTTP/1.1" 200 -
+10.0.0.152 - - [14/Jan/2026 16:36:17] "GET /advisors HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:36:18] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:36:23] "GET /health HTTP/1.1" 200 -
+10.0.0.152 - - [14/Jan/2026 16:36:27] "[35m[1mPOST /upload HTTP/1.1[0m" 201 -
+10.0.0.152 - - [14/Jan/2026 16:36:27] "GET /stream/7cc1eda0-bf09-41ac-be13-b6b05c1398d5%20(rag) HTTP/1.1" 200 -
+10.0.0.152 - - [14/Jan/2026 16:36:27] "GET /status/7cc1eda0-bf09-41ac-be13-b6b05c1398d5%20(rag) HTTP/1.1" 200 -
+10.0.0.131 - - [14/Jan/2026 16:36:28] "PUT /job/7cc1eda0-bf09-41ac-be13-b6b05c1398d5/thinking HTTP/1.1" 200 -
+10.0.0.131 - - [14/Jan/2026 16:36:28] "PUT /job/7cc1eda0-bf09-41ac-be13-b6b05c1398d5/thinking HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:36:28] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:36:33] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:36:39] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:36:44] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:36:49] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:36:54] "GET /health HTTP/1.1" 200 -
+10.0.0.152 - - [14/Jan/2026 16:36:58] "GET /status/7cc1eda0-bf09-41ac-be13-b6b05c1398d5%20(rag) HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:36:59] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:37:04] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:37:09] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:37:14] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:37:20] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:37:25] "GET /health HTTP/1.1" 200 -
+10.0.0.152 - - [14/Jan/2026 16:37:28] "GET /status/7cc1eda0-bf09-41ac-be13-b6b05c1398d5%20(rag) HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:37:30] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:37:35] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:37:40] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:37:45] "GET /health HTTP/1.1" 200 -
+10.0.0.152 - - [14/Jan/2026 16:37:48] "GET /summary/7cc1eda0-bf09-41ac-be13-b6b05c1398d5%20(rag) HTTP/1.1" 200 -
+10.0.0.152 - - [14/Jan/2026 16:37:48] "GET /summary/7cc1eda0-bf09-41ac-be13-b6b05c1398d5%20(rag) HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:37:50] "GET /health HTTP/1.1" 200 -
+10.0.0.152 - - [14/Jan/2026 16:37:51] "GET /advisor_image/ansel.jpg HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:37:55] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:38:00] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:38:05] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:38:10] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 16:38:15] "GET /health HTTP/1.1" 200 -
+[UPLOAD] enable_rag parameter from request: 'true' → True
+[UPLOAD] ✓ Final enable_rag value: True (will be stored in database and passed to AI service)
+[UPLOAD] Mode derived from enable_rag: 'rag'
+[UPLOAD] ✓ Final mode value: rag (will be stored in database and passed to AI service)
+[UPLOAD] Queueing job 7cc1eda0-bf09-41ac-be13-b6b05c1398d5 with mode=rag, enable_rag=True
+[JOB] Starting job 7cc1eda0-bf09-41ac-be13-b6b05c1398d5 for photo-877CD5C0-94E1-4B9B-B489-553E433BC4E4-03c6bdd4.jpg with advisors: ['ansel'], mode: rag, enable_rag: True
+[JOB] Setting status to processing for job 7cc1eda0-bf09-41ac-be13-b6b05c1398d5
+[JOB] Checking source path: /Users/shaydu/dev/mondrian-macos/source/photo-877CD5C0-94E1-4B9B-B489-553E433BC4E4-03c6bdd4.jpg
+[INFO] Resized image for display: photo-877CD5C0-94E1-4B9B-B489-553E433BC4E4-03c6bdd4.jpg (4032x3024 -> 1320x990)
+[JOB] Generated optimized image: /Users/shaydu/dev/mondrian-macos/thumbnails/photo-877CD5C0-94E1-4B9B-B489-553E433BC4E4-03c6bdd4.jpg
+[DEBUG] get_advisor_from_db called with db_path=/Users/shaydu/dev/mondrian-macos/mondrian/mondrian.db, advisor_id=ansel
+[DEBUG] raw row fetched for advisor_id=ansel: ('ansel', 'Ansel Adams', 'Ansel Adams (1902-1984) was an American landscape photographer and environmentalist known for his black-and-white images of the American West, especially Yosemite National Park. He helped found the photography group f/64, developed the Zone System for achieving perfect exposure and tonal range, and was a pioneering advocate for environmental conservation through his art.', '1902-1984', "You are Ansel Adams, master of black-and-white landscape photography. You revolutionized photography through your Zone System, which gave photographers unprecedented control over exposure and tonal range.\n\nYour approach to evaluating an image:\n\n1. **Tonal Range & Zone System** - Analyze the full spectrum from Zone 0 (pure black) to Zone X (pure white). Look for:\n   - Rich blacks with detail in shadows (Zones II-III)\n   - Pure whites that aren't blown out (Zone VIII-IX)\n   - Full midtone gradation (Zones IV-VI)\n   - Proper exposure that preserves detail across the entire tonal range\n\n2. **Composition & Perspective** - Examine the geometric structure:\n   - Leading lines that draw the eye through the frame\n   - Rule of thirds and golden ratio placement\n   - Foreground, midground, and background layering\n   - Balance between elements\n   - Use of natural frames\n\n3. **Technical Excellence** - Assess the craft:\n   - Critical sharpness and focus (f/64 philosophy)\n   - Depth of field appropriate to the subject\n   - Proper exposure (not too dark, not too light)\n   - Clean, well-printed negative equivalent\n\n4. **Light & Shadow** - Evaluate the interplay:\n   - Direction and quality of light\n   - Dramatic use of shadows to create depth\n   - Texture revealed through sidelight\n   - Time of day considerations (golden hour, blue hour)\n\n5. **Emotional Impact** - Consider the feeling:\n   - Sense of scale and majesty\n   - Connection to the natural world\n   - Drama and atmosphere\n   - Timeless quality\n\nWhen providing feedback, be specific and constructive. Reference the Zone System and technical aspects while also addressing the emotional impact. Encourage the photographer to see beyond the literal and capture the feeling of being present in that moment.", '[{"title": "Tonal Range & Zone System", "description": "Master of the full spectrum from pure black to pure white, using his Zone System to achieve perfect exposure and tonal gradation in every image."}, {"title": "Composition & Perspective", "description": "Precise framing that emphasizes geometric elements, leading lines, and careful positioning to create powerful visual impact."}, {"title": "Technical Excellence", "description": "Perfect sharpness, focus, and exposure achieved through large-format cameras and meticulous darkroom work."}, {"title": "Landscape Drama", "description": "Captures the majesty and drama of natural landscapes with emphasis on light, shadow, and texture."}]', 'Photographer', 'https://en.wikipedia.org/wiki/Ansel_Adams', 'https://commons.wikimedia.org/wiki/Category:Ansel_Adams', 'baseline') (cols: ['id', 'name', 'bio', 'years', 'prompt', 'focus_areas', 'category', 'wikipedia_url', 'commons_url', 'prompt_type'])
+[JOB] Calling AI service for advisor ansel: http://127.0.0.1:5100/analyze
+[JOB] ✓ Sending request to AI service with mode='rag', enable_rag='true' (boolean: True)
+[JOB] Full request data: {'advisor': 'ansel', 'job_id': '7cc1eda0-bf09-41ac-be13-b6b05c1398d5', 'job_service_url': 'http://10.0.0.131:5005', 'enable_rag': 'true', 'mode': 'rag'}
+[JOB] AI service response status: 500
+[ERROR] AI service HTTP error for job 7cc1eda0-bf09-41ac-be13-b6b05c1398d5, advisor ansel: 500 Server Error: INTERNAL SERVER ERROR for url: http://127.0.0.1:5100/analyze
+
+Response: 
+        <html><body style="font-family: sans-serif; padding: 20px;">
+        <h1 style="color: #d32f2f;">Analysis Error</h1>
+        <p><strong>Mode:</strong> rag</p>
+        <p><strong>Advisor:</strong> ansel</p>
+        <p><strong>Error:</strong> name 'similar_images' is not defined</p>
+        <details style="margin-top: 20px;">
+            <summary>Stack Trace</summary>
+            <pre style="background: #f5f5f5; padding: 10px; overflow-x: auto;">Traceback (most recent call last):
+  File "
+[ERROR] Status code: 500
+[JOB] Completed advisor ansel (1/1)
+[JOB] All advisors processed (1/1)
+[DEBUG] Job 7cc1eda0-bf09-41ac-be13-b6b05c1398d5 completed
+[DEBUG] Parsing critical_recommendations for job 7cc1eda0-bf09-41ac-be13-b6b05c1398d5 (rag)
+[DEBUG] critical_recommendations value: {}
+[DEBUG] Parsing critical_recommendations for job 7cc1eda0-bf09-41ac-be13-b6b05c1398d5 (rag)
+[DEBUG] critical_recommendations value: {}
+[OK] Serving advisor image: ansel (673547 bytes)

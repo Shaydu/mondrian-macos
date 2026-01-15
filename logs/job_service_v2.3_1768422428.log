@@ -1,0 +1,309 @@
+[INFO] Job Service v2.3-DB-FIXED starting...
+[INFO] Database connection management fixed for real-time status updates
+[INIT] AI_SERVICE_URL: http://127.0.0.1:5100/analyze
+[INIT] Port: 5005
+[INIT] Database: /Users/shaydu/dev/mondrian-macos/mondrian/mondrian.db
+[INIT] Debug mode: False
+[INIT] Created directories
+[INIT] Initializing database...
+[INIT] Database schema OK
+[INIT] RAG Default: ENABLED (from RAG_ENABLED env var)
+============================================================
+Starting Job Service v2.3-DB-FIXED on port 5005...
+Host: 0.0.0.0:5005
+AI Service: http://127.0.0.1:5100/analyze
+============================================================
+ * Serving Flask app 'job_service_v2.3'
+ * Debug mode: off
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5005
+ * Running on http://10.0.0.131:5005
+[33mPress CTRL+C to quit[0m
+127.0.0.1 - - [14/Jan/2026 13:27:11] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:27:11] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:27:12] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:27:16] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:27:17] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:27:17] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:27:17] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:27:22] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:27:22] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:27:22] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:27:22] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:27:22] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:27:27] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:27:27] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:27:27] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:27:27] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:27:32] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:27:32] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:27:32] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:27:32] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:27:37] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:27:37] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:27:37] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:27:37] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:27:42] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:27:42] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:27:42] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:27:42] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:27:47] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:27:47] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:27:47] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:27:47] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:27:52] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:27:52] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:27:52] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:27:52] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:27:57] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:27:57] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:27:57] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:27:57] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:28:02] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:28:02] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:28:07] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:28:07] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:28:12] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:28:13] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:28:17] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:28:18] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:28:22] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:28:23] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:28:27] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:28:28] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:28:32] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:28:33] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:28:35] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:28:35] "[35m[1mPOST /upload HTTP/1.1[0m" 201 -
+127.0.0.1 - - [14/Jan/2026 13:28:35] "GET /stream/c31cb051-11f2-4f4a-8e00-b0ba52b13b2a HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:28:36] "PUT /job/c31cb051-11f2-4f4a-8e00-b0ba52b13b2a/thinking HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:28:38] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:28:38] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:28:42] "PUT /job/c31cb051-11f2-4f4a-8e00-b0ba52b13b2a/thinking HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:28:43] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:28:43] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:28:48] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:28:48] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:28:55] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:28:55] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:29:02] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:29:02] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:29:09] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:29:09] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:29:16] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:29:16] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:29:23] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:29:23] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:29:31] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:29:31] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:29:38] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:29:38] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:29:43] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:29:43] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:29:49] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:29:49] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:29:55] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:29:55] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:30:02] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:30:02] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:30:09] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:30:09] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:30:16] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:30:16] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:30:21] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:30:21] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:30:26] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:30:26] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:30:31] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:30:31] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:30:36] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:30:36] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:30:41] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:30:41] "GET /health HTTP/1.1" 200 -
+[UPLOAD] enable_rag parameter not provided, using env var default: True
+[UPLOAD] ✓ Final enable_rag value: True (will be stored in database and passed to AI service)
+[UPLOAD] Mode parameter from request: 'lora'
+[UPLOAD] ✓ Final mode value: lora (will be stored in database and passed to AI service)
+[UPLOAD] Queueing job c31cb051-11f2-4f4a-8e00-b0ba52b13b2a with mode=lora, enable_rag=True
+[JOB] Starting job c31cb051-11f2-4f4a-8e00-b0ba52b13b2a for mike-shrub-5fd290c7.jpg with advisors: ['ansel'], mode: lora, enable_rag: True
+[JOB] Setting status to processing for job c31cb051-11f2-4f4a-8e00-b0ba52b13b2a
+[JOB] Checking source path: /Users/shaydu/dev/mondrian-macos/source/mike-shrub-5fd290c7.jpg
+[INFO] Cached resized image: mike-shrub-5fd290c7.jpg (width 800px within limit)
+[JOB] Generated optimized image: /Users/shaydu/dev/mondrian-macos/thumbnails/mike-shrub-5fd290c7.jpg
+[DEBUG] get_advisor_from_db called with db_path=/Users/shaydu/dev/mondrian-macos/mondrian/mondrian.db, advisor_id=ansel
+[DEBUG] raw row fetched for advisor_id=ansel: ('ansel', 'Ansel Adams', 'Ansel Adams (1902-1984) was an American landscape photographer and environmentalist known for his black-and-white images of the American West, especially Yosemite National Park. He helped found the photography group f/64, developed the Zone System for achieving perfect exposure and tonal range, and was a pioneering advocate for environmental conservation through his art.', '1902-1984', "You are Ansel Adams, master of black-and-white landscape photography. You revolutionized photography through your Zone System, which gave photographers unprecedented control over exposure and tonal range.\n\nYour approach to evaluating an image:\n\n1. **Tonal Range & Zone System** - Analyze the full spectrum from Zone 0 (pure black) to Zone X (pure white). Look for:\n   - Rich blacks with detail in shadows (Zones II-III)\n   - Pure whites that aren't blown out (Zone VIII-IX)\n   - Full midtone gradation (Zones IV-VI)\n   - Proper exposure that preserves detail across the entire tonal range\n\n2. **Composition & Perspective** - Examine the geometric structure:\n   - Leading lines that draw the eye through the frame\n   - Rule of thirds and golden ratio placement\n   - Foreground, midground, and background layering\n   - Balance between elements\n   - Use of natural frames\n\n3. **Technical Excellence** - Assess the craft:\n   - Critical sharpness and focus (f/64 philosophy)\n   - Depth of field appropriate to the subject\n   - Proper exposure (not too dark, not too light)\n   - Clean, well-printed negative equivalent\n\n4. **Light & Shadow** - Evaluate the interplay:\n   - Direction and quality of light\n   - Dramatic use of shadows to create depth\n   - Texture revealed through sidelight\n   - Time of day considerations (golden hour, blue hour)\n\n5. **Emotional Impact** - Consider the feeling:\n   - Sense of scale and majesty\n   - Connection to the natural world\n   - Drama and atmosphere\n   - Timeless quality\n\nWhen providing feedback, be specific and constructive. Reference the Zone System and technical aspects while also addressing the emotional impact. Encourage the photographer to see beyond the literal and capture the feeling of being present in that moment.", '[{"title": "Tonal Range & Zone System", "description": "Master of the full spectrum from pure black to pure white, using his Zone System to achieve perfect exposure and tonal gradation in every image."}, {"title": "Composition & Perspective", "description": "Precise framing that emphasizes geometric elements, leading lines, and careful positioning to create powerful visual impact."}, {"title": "Technical Excellence", "description": "Perfect sharpness, focus, and exposure achieved through large-format cameras and meticulous darkroom work."}, {"title": "Landscape Drama", "description": "Captures the majesty and drama of natural landscapes with emphasis on light, shadow, and texture."}]', 'Photographer', 'https://en.wikipedia.org/wiki/Ansel_Adams', 'https://commons.wikimedia.org/wiki/Category:Ansel_Adams', 'baseline') (cols: ['id', 'name', 'bio', 'years', 'prompt', 'focus_areas', 'category', 'wikipedia_url', 'commons_url', 'prompt_type'])
+[JOB] Calling AI service for advisor ansel: http://127.0.0.1:5100/analyze
+[JOB] ✓ Sending request to AI service with mode='lora', enable_rag='true' (boolean: True)
+[JOB] Full request data: {'advisor': 'ansel', 'job_id': 'c31cb051-11f2-4f4a-8e00-b0ba52b13b2a', 'job_service_url': 'http://127.0.0.1:5005', 'enable_rag': 'true', 'mode': 'lora'}
+[JOB] AI service not ready (attempt 1/6), retrying in 5s...
+[JOB] AI service not ready (attempt 2/6), retrying in 5s...
+[JOB] AI service not ready (attempt 3/6), retrying in 5s...
+[JOB] AI service not ready (attempt 4/6), retrying in 5s...
+[JOB] AI service not ready (attempt 5/6), retrying in 5s...
+[ERROR] AI service connection failed for job c31cb051-11f2-4f4a-8e00-b0ba52b13b2a, advisor ansel: HTTPConnectionPool(host='127.0.0.1', port=5100): Max retries exceeded with url: /analyze (Caused by NewConnectionError("HTTPConnection(host='127.0.0.1', port=5100): Failed to establish a new connection: [Errno 61] Connection refused"))
+[JOB] Completed advisor ansel (1/1)
+[JOB] All advisors processed (1/1)
+[DEBUG] Job c31cb051-11f2-4f4a-8e00-b0ba52b13b2a completed
+[DEBUG] /analysis endpoint: Getting advisor info for 'ansel', DB_PATH: /Users/shaydu/dev/mondrian-macos/mondrian/mondrian.db
+[DEBUG] get_advisor_from_db called with db_path=/Users/shaydu/dev/mondrian-macos/mondrian/mondrian.db, advisor_id=ansel
+127.0.0.1 - - [14/Jan/2026 13:30:41] "GET /analysis/c31cb051-11f2-4f4a-8e00-b0ba52b13b2a%20(lora) HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:30:41] "GET /summary/c31cb051-11f2-4f4a-8e00-b0ba52b13b2a%20(lora) HTTP/1.1" 200 -
+[DEBUG] raw row fetched for advisor_id=ansel: ('ansel', 'Ansel Adams', 'Ansel Adams (1902-1984) was an American landscape photographer and environmentalist known for his black-and-white images of the American West, especially Yosemite National Park. He helped found the photography group f/64, developed the Zone System for achieving perfect exposure and tonal range, and was a pioneering advocate for environmental conservation through his art.', '1902-1984', "You are Ansel Adams, master of black-and-white landscape photography. You revolutionized photography through your Zone System, which gave photographers unprecedented control over exposure and tonal range.\n\nYour approach to evaluating an image:\n\n1. **Tonal Range & Zone System** - Analyze the full spectrum from Zone 0 (pure black) to Zone X (pure white). Look for:\n   - Rich blacks with detail in shadows (Zones II-III)\n   - Pure whites that aren't blown out (Zone VIII-IX)\n   - Full midtone gradation (Zones IV-VI)\n   - Proper exposure that preserves detail across the entire tonal range\n\n2. **Composition & Perspective** - Examine the geometric structure:\n   - Leading lines that draw the eye through the frame\n   - Rule of thirds and golden ratio placement\n   - Foreground, midground, and background layering\n   - Balance between elements\n   - Use of natural frames\n\n3. **Technical Excellence** - Assess the craft:\n   - Critical sharpness and focus (f/64 philosophy)\n   - Depth of field appropriate to the subject\n   - Proper exposure (not too dark, not too light)\n   - Clean, well-printed negative equivalent\n\n4. **Light & Shadow** - Evaluate the interplay:\n   - Direction and quality of light\n   - Dramatic use of shadows to create depth\n   - Texture revealed through sidelight\n   - Time of day considerations (golden hour, blue hour)\n\n5. **Emotional Impact** - Consider the feeling:\n   - Sense of scale and majesty\n   - Connection to the natural world\n   - Drama and atmosphere\n   - Timeless quality\n\nWhen providing feedback, be specific and constructive. Reference the Zone System and technical aspects while also addressing the emotional impact. Encourage the photographer to see beyond the literal and capture the feeling of being present in that moment.", '[{"title": "Tonal Range & Zone System", "description": "Master of the full spectrum from pure black to pure white, using his Zone System to achieve perfect exposure and tonal gradation in every image."}, {"title": "Composition & Perspective", "description": "Precise framing that emphasizes geometric elements, leading lines, and careful positioning to create powerful visual impact."}, {"title": "Technical Excellence", "description": "Perfect sharpness, focus, and exposure achieved through large-format cameras and meticulous darkroom work."}, {"title": "Landscape Drama", "description": "Captures the majesty and drama of natural landscapes with emphasis on light, shadow, and texture."}]', 'Photographer', 'https://en.wikipedia.org/wiki/Ansel_Adams', 'https://commons.wikimedia.org/wiki/Category:Ansel_Adams', 'baseline') (cols: ['id', 'name', 'bio', 'years', 'prompt', 'focus_areas', 'category', 'wikipedia_url', 'commons_url', 'prompt_type'])
+[DEBUG] /analysis endpoint: Advisor info retrieved - True
+[DEBUG] Parsing critical_recommendations for job c31cb051-11f2-4f4a-8e00-b0ba52b13b2a (lora)
+[DEBUG] critical_recommendations value: {}
+[DEBUG] /advisor/<advisor_id> called with advisor_id: 'ansel' and DB_PATH: /Users/shaydu/dev/mondrian-macos/mondrian/mondrian.db
+[DEBUG] direct SQL raw_row: ('ansel', 'Ansel Adams', 'Ansel Adams (1902-1984) was an American landscape photographer and environmentalist known for his black-and-white images of the American West, especially Yosemite National Park. He helped found the photography group f/64, developed the Zone System for achieving perfect exposure and tonal range, and was a pioneering advocate for environmental conservation through his art.', '1902-1984', "You are Ansel Adams, master of black-and-white landscape photography. You revolutionized photography through your Zone System, which gave photographers unprecedented control over exposure and tonal range.\n\nYour approach to evaluating an image:\n\n1. **Tonal Range & Zone System** - Analyze the full spectrum from Zone 0 (pure black) to Zone X (pure white). Look for:\n   - Rich blacks with detail in shadows (Zones II-III)\n   - Pure whites that aren't blown out (Zone VIII-IX)\n   - Full midtone gradation (Zones IV-VI)\n   - Proper exposure that preserves detail across the entire tonal range\n\n2. **Composition & Perspective** - Examine the geometric structure:\n   - Leading lines that draw the eye through the frame\n   - Rule of thirds and golden ratio placement\n   - Foreground, midground, and background layering\n   - Balance between elements\n   - Use of natural frames\n\n3. **Technical Excellence** - Assess the craft:\n   - Critical sharpness and focus (f/64 philosophy)\n   - Depth of field appropriate to the subject\n   - Proper exposure (not too dark, not too light)\n   - Clean, well-printed negative equivalent\n\n4. **Light & Shadow** - Evaluate the interplay:\n   - Direction and quality of light\n   - Dramatic use of shadows to create depth\n   - Texture revealed through sidelight\n   - Time of day considerations (golden hour, blue hour)\n\n5. **Emotional Impact** - Consider the feeling:\n   - Sense of scale and majesty\n   - Connection to the natural world\n   - Drama and atmosphere\n   - Timeless quality\n\nWhen providing feedback, be specific and constructive. Reference the Zone System and technical aspects while also addressing the emotional impact. Encourage the photographer to see beyond the literal and capture the feeling of being present in that moment.", '[{"title": "Tonal Range & Zone System", "description": "Master of the full spectrum from pure black to pure white, using his Zone System to achieve perfect exposure and tonal gradation in every image."}, {"title": "Composition & Perspective", "description": "Precise framing that emphasizes geometric elements, leading lines, and careful positioning to create powerful visual impact."}, {"title": "Technical Excellence", "description": "Perfect sharpness, focus, and exposure achieved through large-format cameras and meticulous darkroom work."}, {"title": "Landscape Drama", "description": "Captures the majesty and drama of natural landscapes with emphasis on light, shadow, and texture."}]', 'Photographer', 'https://en.wikipedia.org/wiki/Ansel_Adams', 'https://commons.wikimedia.org/wiki/Category:Ansel_Adams')
+[DEBUG] get_advisor_from_db called with db_path=/Users/shaydu/dev/mondrian-macos/mondrian/mondrian.db, advisor_id=ansel
+127.0.0.1 - - [14/Jan/2026 13:30:41] "GET /advisor/ansel HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:30:41] "GET /status/c31cb051-11f2-4f4a-8e00-b0ba52b13b2a%20(lora) HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:30:46] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:30:46] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:30:51] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:30:51] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:30:56] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:30:56] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:31:01] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:31:01] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:31:06] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:31:06] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:31:11] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:31:11] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:31:16] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:31:16] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:31:21] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:31:21] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:31:26] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:31:26] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:31:31] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:31:31] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:31:36] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:31:36] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:31:41] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:31:41] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:31:46] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:31:46] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:31:51] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:31:51] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:31:56] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:31:56] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:32:01] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:32:01] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:32:06] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:32:06] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:32:11] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:32:11] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:32:16] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:32:16] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:32:21] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:32:21] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:32:26] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:32:26] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:32:31] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:32:31] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:32:36] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:32:36] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:32:41] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:32:41] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:32:46] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:32:46] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:32:51] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:32:51] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:32:56] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:32:56] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:33:01] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:33:01] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:33:06] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:33:06] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:33:12] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:33:12] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:33:17] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:33:17] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:33:22] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:33:22] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:33:24] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:33:27] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:33:27] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:33:32] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:33:32] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:33:37] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:33:37] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:33:42] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:33:42] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:33:47] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:33:47] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:33:52] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:33:52] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:33:57] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:33:57] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:34:02] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:34:02] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:34:07] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:34:07] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:34:12] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:34:12] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:34:17] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:34:17] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:34:22] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:34:22] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:34:27] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:34:27] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:34:32] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:34:32] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:34:37] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:34:37] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:34:42] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:34:42] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:34:47] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:34:47] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:34:52] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:34:52] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:34:57] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:34:57] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:35:02] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:35:02] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:35:07] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:35:07] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:35:12] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:35:12] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:35:17] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:35:17] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:35:22] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:35:22] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:35:27] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:35:27] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:35:32] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:35:32] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:35:37] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:35:37] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:35:42] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:35:42] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:35:47] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:35:47] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:35:52] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:35:52] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:35:57] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:35:57] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:36:02] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:36:02] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:36:07] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:36:07] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:36:12] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:36:12] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:36:17] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:36:17] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:36:22] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:36:22] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:36:27] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:36:27] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:36:32] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:36:32] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:36:37] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:36:37] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:36:42] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:36:42] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:36:47] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:36:47] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:36:52] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 13:36:52] "GET /health HTTP/1.1" 200 -

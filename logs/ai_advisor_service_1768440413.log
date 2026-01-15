@@ -1,0 +1,697 @@
+[INFO] Python executable: /Library/Frameworks/Python.framework/Versions/3.12/bin/python3
+[INFO] Python version: 3.12.2
+[INFO] Working directory: /Users/shaydu/dev/mondrian-macos
+[INFO] Environment variables:
+[INFO]   MLX_USE_CPU=<not set>
+[INFO]   CUDA_VISIBLE_DEVICES=<not set>
+[INFO]   PYTORCH_ENABLE_MPS_FALLBACK=<not set>
+[INFO] MLX default device explicitly set to: Device(gpu, 0)
+[INFO] MLX configured to use GPU backend (Metal)
+[INFO] MLX backend initialized successfully (GPU mode)
+[INFO] AI Advisor Service v2.0-JSON starting...
+[INFO] Using JSON output format (converted to HTML for backward compatibility)
+[INFO] Using base64 encoding for all images
+[INFO] Using MLX backend for vision analysis
+[INFO] MLX Mode: ENABLED
+[INFO] MLX Model: mlx-community/Qwen3-VL-4B-Instruct-4bit
+[INFO] Model timeout: 300s
+[INFO] RAG Service URL: http://127.0.0.1:5400
+[INFO] RAG Default: ENABLED (from RAG_ENABLED env var)
+[INFO] System prompt loaded from database (2751 characters)
+AI Advisor Service starting up...
+  Port: 5100
+  DB Path: /Users/shaydu/dev/mondrian-macos/mondrian/mondrian.db
+  MLX Model: mlx-community/Qwen3-VL-4B-Instruct-4bit
+  Job service URL: http://127.0.0.1:5005
+  Current working directory: /Users/shaydu/dev/mondrian-macos
+  Image Encoding: BASE64 (all platforms)
+[INFO] Initializing service with model_mode=fine_tuned
+[INFO] Model Strategy: FINE-TUNED
+[INFO] Loading LoRA adapter from: ./adapters/ansel
+[INFO] Loading MLX model: mlx-community/Qwen3-VL-4B-Instruct-4bit...
+[INFO] Testing Metal GPU access...
+[INFO] ✓ Metal GPU is available and working
+Fetching 14 files:   0%|          | 0/14 [00:00<?, ?it/s]Fetching 14 files: 100%|██████████| 14/14 [00:00<00:00, 79674.70it/s]
+[INFO] MLX model loaded in 3.45s using GPU backend and cached
+[INFO] MLX default device: Device(gpu, 0)
+[INFO] ✓ GPU acceleration confirmed active
+[INFO] Loading LoRA adapter from: ./adapters/ansel
+[INFO] LoRA Config: rank=None, alpha=None, dropout=None
+[INFO] Applying LoRA adapter from: ./adapters/ansel
+#trainable params: 16.515072 M || all params: 4022.468096 M || trainable%: 0.411%
+[INFO] LoRA adapter successfully applied to model
+[INFO] Service initialized successfully. Fine-tuned: True
+[INFO] Model Strategy: fine_tuned
+[INFO] Fine-Tuned: True
+[INFO] Service ready on http://0.0.0.0:5100
+AI Advisor Service running on port 5100...
+ * Serving Flask app 'ai_advisor_service'
+ * Debug mode: off
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5100
+ * Running on http://10.0.0.131:5100
+[33mPress CTRL+C to quit[0m
+127.0.0.1 - - [14/Jan/2026 18:27:07] "GET /model-status HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:27:07] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:27:07] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:27:12] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:27:18] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:27:23] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:27:28] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:27:33] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:27:38] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:27:43] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:27:48] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:27:53] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:27:58] "GET /health HTTP/1.1" 200 -
+[DEBUG] === AI ADVISOR SERVICE REQUEST START ===
+[DEBUG] Timestamp: 1768440482.4311302
+[DEBUG] Received analyze request
+[DEBUG] Content-Type: multipart/form-data; boundary=b2235ea06558fcfa12bb409ef31db735
+[DEBUG] Request method: POST
+[DEBUG] Processing multipart form data
+[iOS DEBUG] MONDRIAN_API_BASE_URL not provided in request - will use job_service_url fallback
+[AI SERVICE] enable_rag from request: 'true' → True
+[AI SERVICE] enable_embeddings not in request, using env var default: False
+[AI SERVICE] Mode parameter from request: 'rag'
+[AI SERVICE] ✓ Final mode value: rag
+[AI SERVICE] ✓ Received request - advisor: ansel, job_id: 035247a6-ad9e-4c57-8312-3b99d98759fc, mode: rag, enable_rag: True, enable_embeddings: False
+[AI SERVICE] Full form data - job_service_url: http://10.0.0.131:5005
+[AI SERVICE] Response format: html
+[DEBUG] Image file - filename: photo-71BCBC68-4107-4BF6-82BB-CA68C2329B30-8e2fc69c.jpg
+[DEBUG] Saving image to temp path: /var/folders/px/96clcbr56vv3kyv2vzvblhqh0000gn/T/analyze_image_035247a6-ad9e-4c57-8312-3b99d98759fc.jpg
+[DEBUG] Image saved successfully, size: 222328 bytes
+[INFO] Analysis using model_mode=fine_tuned, fine_tuned=True
+
+================================================================================
+[STRATEGY] ========== ANALYSIS STARTED ==========
+[STRATEGY] Mode: rag
+[STRATEGY] Advisor: ansel
+[STRATEGY] Image: /var/folders/px/96clcbr56vv3kyv2vzvblhqh0000gn/T/analyze_image_035247a6-ad9e-4c57-8312-3b99d98759fc.jpg
+[STRATEGY] Job ID: 035247a6-ad9e-4c57-8312-3b99d98759fc
+[STRATEGY] Job Service URL: http://10.0.0.131:5005
+[STRATEGY] Response Format: html
+[STRATEGY] ==========================================
+================================================================================
+
+[Context] Using requested mode: rag
+[STRATEGY] ✓ Using requested mode: rag
+[STRATEGY] Executing analysis with rag strategy...
+[INFO] Python executable: /Library/Frameworks/Python.framework/Versions/3.12/bin/python3
+[INFO] Python version: 3.12.2
+[INFO] Working directory: /Users/shaydu/dev/mondrian-macos
+[INFO] Environment variables:
+[INFO]   MLX_USE_CPU=<not set>
+[INFO]   CUDA_VISIBLE_DEVICES=<not set>
+[INFO]   PYTORCH_ENABLE_MPS_FALLBACK=<not set>
+[INFO] MLX default device explicitly set to: Device(gpu, 0)
+[INFO] MLX configured to use GPU backend (Metal)
+[INFO] MLX backend initialized successfully (GPU mode)
+[INFO] AI Advisor Service v2.0-JSON starting...
+[INFO] Using JSON output format (converted to HTML for backward compatibility)
+[INFO] Using base64 encoding for all images
+[INFO] Using MLX backend for vision analysis
+[INFO] MLX Mode: ENABLED
+[INFO] MLX Model: mlx-community/Qwen3-VL-4B-Instruct-4bit
+[INFO] Model timeout: 300s
+[INFO] RAG Service URL: http://127.0.0.1:5400
+[INFO] RAG Default: ENABLED (from RAG_ENABLED env var)
+[INFO] System prompt loaded from database (2751 characters)
+[DEBUG] get_advisor_from_db called with db_path=/Users/shaydu/dev/mondrian-macos/mondrian/mondrian.db, advisor_id=ansel
+[DEBUG] raw row fetched for advisor_id=ansel: ('ansel', 'Ansel Adams', 'Ansel Adams (1902-1984) was an American landscape photographer and environmentalist known for his black-and-white images of the American West, especially Yosemite National Park. He helped found the photography group f/64, developed the Zone System for achieving perfect exposure and tonal range, and was a pioneering advocate for environmental conservation through his art.', '1902-1984', "You are Ansel Adams, master of black-and-white landscape photography. You revolutionized photography through your Zone System, which gave photographers unprecedented control over exposure and tonal range.\n\nYour approach to evaluating an image:\n\n1. **Tonal Range & Zone System** - Analyze the full spectrum from Zone 0 (pure black) to Zone X (pure white). Look for:\n   - Rich blacks with detail in shadows (Zones II-III)\n   - Pure whites that aren't blown out (Zone VIII-IX)\n   - Full midtone gradation (Zones IV-VI)\n   - Proper exposure that preserves detail across the entire tonal range\n\n2. **Composition & Perspective** - Examine the geometric structure:\n   - Leading lines that draw the eye through the frame\n   - Rule of thirds and golden ratio placement\n   - Foreground, midground, and background layering\n   - Balance between elements\n   - Use of natural frames\n\n3. **Technical Excellence** - Assess the craft:\n   - Critical sharpness and focus (f/64 philosophy)\n   - Depth of field appropriate to the subject\n   - Proper exposure (not too dark, not too light)\n   - Clean, well-printed negative equivalent\n\n4. **Light & Shadow** - Evaluate the interplay:\n   - Direction and quality of light\n   - Dramatic use of shadows to create depth\n   - Texture revealed through sidelight\n   - Time of day considerations (golden hour, blue hour)\n\n5. **Emotional Impact** - Consider the feeling:\n   - Sense of scale and majesty\n   - Connection to the natural world\n   - Drama and atmosphere\n   - Timeless quality\n\nWhen providing feedback, be specific and constructive. Reference the Zone System and technical aspects while also addressing the emotional impact. Encourage the photographer to see beyond the literal and capture the feeling of being present in that moment.", '[{"title": "Tonal Range & Zone System", "description": "Master of the full spectrum from pure black to pure white, using his Zone System to achieve perfect exposure and tonal gradation in every image."}, {"title": "Composition & Perspective", "description": "Precise framing that emphasizes geometric elements, leading lines, and careful positioning to create powerful visual impact."}, {"title": "Technical Excellence", "description": "Perfect sharpness, focus, and exposure achieved through large-format cameras and meticulous darkroom work."}, {"title": "Landscape Drama", "description": "Captures the majesty and drama of natural landscapes with emphasis on light, shadow, and texture."}]', 'Photographer', 'https://en.wikipedia.org/wiki/Ansel_Adams', 'https://commons.wikimedia.org/wiki/Category:Ansel_Adams', 'baseline') (cols: ['id', 'name', 'bio', 'years', 'prompt', 'focus_areas', 'category', 'wikipedia_url', 'commons_url', 'prompt_type'])
+[DEBUG] Sending thinking update to http://10.0.0.131:5005/job/035247a6-ad9e-4c57-8312-3b99d98759fc/thinking
+[DEBUG] Thinking update sent successfully
+[DEBUG] Sending thinking update to http://10.0.0.131:5005/job/035247a6-ad9e-4c57-8312-3b99d98759fc/thinking
+[DEBUG] Thinking update sent successfully
+[DEBUG] === STARTING MLX PYTHON API CALL ===
+[DEBUG] MLX Model: mlx-community/Qwen3-VL-4B-Instruct-4bit
+[DEBUG] Image path: /var/folders/px/96clcbr56vv3kyv2vzvblhqh0000gn/T/analyze_image_035247a6-ad9e-4c57-8312-3b99d98759fc.jpg
+[DEBUG] Prompt length: 4545 chars
+[INFO] Loading MLX model: mlx-community/Qwen3-VL-4B-Instruct-4bit...
+[INFO] Testing Metal GPU access...
+[INFO] ✓ Metal GPU is available and working
+127.0.0.1 - - [14/Jan/2026 18:28:03] "GET /health HTTP/1.1" 200 -
+Fetching 14 files:   0%|          | 0/14 [00:00<?, ?it/s]Fetching 14 files: 100%|██████████| 14/14 [00:00<00:00, 175284.35it/s]
+127.0.0.1 - - [14/Jan/2026 18:28:09] "GET /health HTTP/1.1" 200 -
+[INFO] MLX model loaded in 6.64s using GPU backend and cached
+[INFO] MLX default device: Device(gpu, 0)
+[INFO] ✓ GPU acceleration confirmed active
+Fetching 14 files:   0%|          | 0/14 [00:00<?, ?it/s]Fetching 14 files: 100%|██████████| 14/14 [00:00<00:00, 41675.13it/s]
+[INFO] Processing with image: /var/folders/px/96clcbr56vv3kyv2vzvblhqh0000gn/T/analyze_image_035247a6-ad9e-4c57-8312-3b99d98759fc.jpg
+[INFO] Running MLX generation (timeout handling disabled to preserve GPU access)...
+[INFO] GPU Device: Device(gpu, 0)
+127.0.0.1 - - [14/Jan/2026 18:28:14] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:28:19] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:28:24] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:28:29] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:28:34] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:28:39] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:28:45] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:28:50] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:28:55] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:29:00] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:29:05] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:29:10] "GET /health HTTP/1.1" 200 -
+[DEBUG] Token update: Generating analysis... (1 tokens, 10.8 tps)
+127.0.0.1 - - [14/Jan/2026 18:29:15] "GET /health HTTP/1.1" 200 -
+[DEBUG] Token update: Generating analysis... (195 tokens, 37.8 tps)
+127.0.0.1 - - [14/Jan/2026 18:29:21] "GET /health HTTP/1.1" 200 -
+[DEBUG] Token update: Generating analysis... (382 tokens, 37.6 tps)
+127.0.0.1 - - [14/Jan/2026 18:29:26] "GET /health HTTP/1.1" 200 -
+[DEBUG] Token update: Generating analysis... (556 tokens, 36.6 tps)
+127.0.0.1 - - [14/Jan/2026 18:29:31] "GET /health HTTP/1.1" 200 -
+[DEBUG] Token update: Generating analysis... (739 tokens, 36.6 tps)
+[INFO] GPU operations synchronized
+[DEBUG] MLX generation completed in 85.68s
+[DEBUG] Response type: <class 'str'>
+[DEBUG] Response length: 4088 chars
+[DEBUG] Response preview (first 500 chars): {
+  "image_description": "The photograph captures a dramatic sunset over a rugged desert landscape, with fiery orange and yellow clouds contrasting against a dark, textured foreground. A winding path and sparse vegetation frame the scene, leading the viewer's eye into the expansive sky, evoking a sense of solitude and grandeur.",
+  "dimensions": [
+    {
+      "name": "Composition",
+      "score": 8,
+      "comment": "The image uses a strong diagonal composition with the path and horizon creating
+[DEBUG] Response appears to start with JSON structure
+[JSON PARSER] Strategy 1 (as-is) succeeded
+[RAG DEBUG] Parsed JSON keys: ['image_description', 'dimensions', 'overall_score', 'key_strengths', 'priority_improvements', 'technical_notes']
+[RAG DEBUG] dimensions type: <class 'list'>
+[RAG DEBUG] dimensions length: 7
+[RAG DEBUG] First dimension: {
+  "name": "Composition",
+  "score": 8,
+  "comment": "The image uses a strong diagonal composition with the path and horizon creating a natural frame, guiding the eye toward the sunset. The foreground vegetation adds texture and balance.",
+  "recommendation": "Consider adjusting the angle slightly to better align the path with the golden hour light for a more dynamic leading line."
+}
+[STRATEGY] ✓ Analysis complete. Overall grade: B-
+[STRATEGY] ✓ Mode used in result: rag
+[_result_to_html] Converting dimensional_analysis to dimensions array
+[_result_to_html] dimensional_analysis keys: ['composition', 'lighting', 'focus_and_sharpness', 'color_harmony', 'depth_and_perspective', 'visual_balance', 'emotional_impact']
+[_result_to_html]   Added dimension: Composition (score: 8)
+[_result_to_html]   Added dimension: Lighting (score: 7)
+[_result_to_html]   Added dimension: Color Harmony (score: 6)
+[_result_to_html]   Added dimension: Visual Balance (score: 8)
+[_result_to_html]   Added dimension: Emotional Impact (score: 7)
+[_result_to_html] Total dimensions extracted: 5
+[_result_to_html] Generated HTML length: 8325 characters
+[STRATEGY] Returning JSON with HTML and metadata (mode_used=rag)
+127.0.0.1 - - [14/Jan/2026 18:29:35] "POST /analyze HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:29:36] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:29:41] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:29:46] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:29:51] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:29:56] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:30:01] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:30:07] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:30:12] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:30:17] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:30:22] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:30:27] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:30:33] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:30:38] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:30:43] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:30:48] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:30:53] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:30:58] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:31:03] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:31:09] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:31:14] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:31:19] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:31:24] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:31:29] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:31:34] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:31:39] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:31:44] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:31:49] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:31:54] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:31:59] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:32:05] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:32:10] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:32:15] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:32:20] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:32:25] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:32:31] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:32:36] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:32:41] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:32:46] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:32:52] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:32:57] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:33:02] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:33:07] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:33:12] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:33:17] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:33:22] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:33:27] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:33:32] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:33:37] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:33:42] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:33:48] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:33:53] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:33:58] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:34:03] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:34:08] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:34:13] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:34:18] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:34:23] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:34:28] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:34:33] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:34:39] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:34:44] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:34:49] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:34:54] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:34:59] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:35:04] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:35:09] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:35:14] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:35:19] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:35:24] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:35:29] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:35:35] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:35:40] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:35:45] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:35:50] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:35:55] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:36:00] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:36:05] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:36:10] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:36:16] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:36:21] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:36:26] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:36:31] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:36:36] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:36:41] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:36:46] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:36:51] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:36:56] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:37:01] "GET /health HTTP/1.1" 200 -
+[DEBUG] === AI ADVISOR SERVICE REQUEST START ===
+[DEBUG] Timestamp: 1768441026.8304
+[DEBUG] Received analyze request
+[DEBUG] Content-Type: multipart/form-data; boundary=6e5f5e6e7371d38a3c055b5dd3b8c07f
+[DEBUG] Request method: POST
+[DEBUG] Processing multipart form data
+[iOS DEBUG] MONDRIAN_API_BASE_URL not provided in request - will use job_service_url fallback
+[AI SERVICE] enable_rag from request: 'true' → True
+[AI SERVICE] enable_embeddings not in request, using env var default: False
+[AI SERVICE] Mode parameter from request: 'rag'
+[AI SERVICE] ✓ Final mode value: rag
+[AI SERVICE] ✓ Received request - advisor: ansel, job_id: 3e8dee0a-04b0-47f8-af57-b6fcad09a102, mode: rag, enable_rag: True, enable_embeddings: False
+[AI SERVICE] Full form data - job_service_url: http://10.0.0.131:5005
+[AI SERVICE] Response format: html
+[DEBUG] Image file - filename: photo-D0432958-7E3F-4C3D-945F-72643BC38151-93f3eb27.jpg
+[DEBUG] Saving image to temp path: /var/folders/px/96clcbr56vv3kyv2vzvblhqh0000gn/T/analyze_image_3e8dee0a-04b0-47f8-af57-b6fcad09a102.jpg
+[DEBUG] Image saved successfully, size: 222328 bytes
+[INFO] Analysis using model_mode=fine_tuned, fine_tuned=True
+
+================================================================================
+[STRATEGY] ========== ANALYSIS STARTED ==========
+[STRATEGY] Mode: rag
+[STRATEGY] Advisor: ansel
+[STRATEGY] Image: /var/folders/px/96clcbr56vv3kyv2vzvblhqh0000gn/T/analyze_image_3e8dee0a-04b0-47f8-af57-b6fcad09a102.jpg
+[STRATEGY] Job ID: 3e8dee0a-04b0-47f8-af57-b6fcad09a102
+[STRATEGY] Job Service URL: http://10.0.0.131:5005
+[STRATEGY] Response Format: html
+[STRATEGY] ==========================================
+================================================================================
+
+[Context] Using requested mode: rag
+[STRATEGY] ✓ Using requested mode: rag
+[STRATEGY] Executing analysis with rag strategy...
+[DEBUG] Sending thinking update to http://10.0.0.131:5005/job/3e8dee0a-04b0-47f8-af57-b6fcad09a102/thinking
+[DEBUG] Thinking update sent successfully
+[DEBUG] Sending thinking update to http://10.0.0.131:5005/job/3e8dee0a-04b0-47f8-af57-b6fcad09a102/thinking
+[DEBUG] Thinking update sent successfully
+[DEBUG] === STARTING MLX PYTHON API CALL ===
+[DEBUG] MLX Model: mlx-community/Qwen3-VL-4B-Instruct-4bit
+[DEBUG] Image path: /var/folders/px/96clcbr56vv3kyv2vzvblhqh0000gn/T/analyze_image_3e8dee0a-04b0-47f8-af57-b6fcad09a102.jpg
+[DEBUG] Prompt length: 4545 chars
+127.0.0.1 - - [14/Jan/2026 18:37:07] "GET /health HTTP/1.1" 200 -
+Fetching 14 files:   0%|          | 0/14 [00:00<?, ?it/s]Fetching 14 files: 100%|██████████| 14/14 [00:00<00:00, 27286.36it/s]
+[INFO] Processing with image: /var/folders/px/96clcbr56vv3kyv2vzvblhqh0000gn/T/analyze_image_3e8dee0a-04b0-47f8-af57-b6fcad09a102.jpg
+[INFO] Running MLX generation (timeout handling disabled to preserve GPU access)...
+[INFO] GPU Device: Device(gpu, 0)
+127.0.0.1 - - [14/Jan/2026 18:37:12] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:37:17] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:37:23] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:37:28] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:37:33] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:37:38] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:37:44] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:37:49] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:37:54] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:37:59] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:38:04] "GET /health HTTP/1.1" 200 -
+[DEBUG] Token update: Generating analysis... (1 tokens, 26.9 tps)
+127.0.0.1 - - [14/Jan/2026 18:38:10] "GET /health HTTP/1.1" 200 -
+[DEBUG] Token update: Generating analysis... (192 tokens, 38.1 tps)
+127.0.0.1 - - [14/Jan/2026 18:38:15] "GET /health HTTP/1.1" 200 -
+[DEBUG] Token update: Generating analysis... (375 tokens, 37.3 tps)
+127.0.0.1 - - [14/Jan/2026 18:38:20] "GET /health HTTP/1.1" 200 -
+[DEBUG] Token update: Generating analysis... (521 tokens, 34.5 tps)
+127.0.0.1 - - [14/Jan/2026 18:38:25] "GET /health HTTP/1.1" 200 -
+[DEBUG] Token update: Generating analysis... (658 tokens, 32.7 tps)
+127.0.0.1 - - [14/Jan/2026 18:38:30] "GET /health HTTP/1.1" 200 -
+[DEBUG] Token update: Generating analysis... (798 tokens, 31.8 tps)
+127.0.0.1 - - [14/Jan/2026 18:38:35] "GET /health HTTP/1.1" 200 -
+[INFO] GPU operations synchronized
+[DEBUG] MLX generation completed in 88.28s
+[DEBUG] Response type: <class 'str'>
+[DEBUG] Response length: 4088 chars
+[DEBUG] Response preview (first 500 chars): {
+  "image_description": "The photograph captures a dramatic sunset over a rugged desert landscape, with fiery orange and yellow clouds contrasting against a dark, textured foreground. A winding path and sparse vegetation frame the scene, leading the viewer's eye into the expansive sky, evoking a sense of solitude and grandeur.",
+  "dimensions": [
+    {
+      "name": "Composition",
+      "score": 8,
+      "comment": "The image uses a strong diagonal composition with the path and horizon creating
+[DEBUG] Response appears to start with JSON structure
+[JSON PARSER] Strategy 1 (as-is) succeeded
+[RAG DEBUG] Parsed JSON keys: ['image_description', 'dimensions', 'overall_score', 'key_strengths', 'priority_improvements', 'technical_notes']
+[RAG DEBUG] dimensions type: <class 'list'>
+[RAG DEBUG] dimensions length: 7
+[RAG DEBUG] First dimension: {
+  "name": "Composition",
+  "score": 8,
+  "comment": "The image uses a strong diagonal composition with the path and horizon creating a natural frame, guiding the eye toward the sunset. The foreground vegetation adds texture and balance.",
+  "recommendation": "Consider adjusting the angle slightly to better align the path with the golden hour light for a more dynamic leading line."
+}
+[STRATEGY] ✓ Analysis complete. Overall grade: B-
+[STRATEGY] ✓ Mode used in result: rag
+[_result_to_html] Converting dimensional_analysis to dimensions array
+[_result_to_html] dimensional_analysis keys: ['composition', 'lighting', 'focus_and_sharpness', 'color_harmony', 'depth_and_perspective', 'visual_balance', 'emotional_impact']
+[_result_to_html]   Added dimension: Composition (score: 8)
+[_result_to_html]   Added dimension: Lighting (score: 7)
+[_result_to_html]   Added dimension: Color Harmony (score: 6)
+[_result_to_html]   Added dimension: Visual Balance (score: 8)
+[_result_to_html]   Added dimension: Emotional Impact (score: 7)
+[_result_to_html] Total dimensions extracted: 5
+[_result_to_html] Generated HTML length: 8325 characters
+[STRATEGY] Returning JSON with HTML and metadata (mode_used=rag)
+127.0.0.1 - - [14/Jan/2026 18:38:36] "POST /analyze HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:38:40] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:38:46] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:38:51] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:38:56] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:39:01] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:39:06] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:39:11] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:39:17] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:39:22] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:39:27] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:39:32] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:39:37] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:39:42] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:39:47] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:39:52] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:39:57] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:40:02] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:40:08] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:40:13] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:40:18] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:40:23] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:40:28] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:40:33] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:40:38] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:40:43] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:40:48] "GET /health HTTP/1.1" 200 -
+[DEBUG] === AI ADVISOR SERVICE REQUEST START ===
+[DEBUG] Timestamp: 1768441251.367858
+[DEBUG] Received analyze request
+[DEBUG] Content-Type: multipart/form-data; boundary=2ed0790229deb5c0ee0d2da95a727952
+[DEBUG] Request method: POST
+[DEBUG] Processing multipart form data
+[iOS DEBUG] MONDRIAN_API_BASE_URL not provided in request - will use job_service_url fallback
+[AI SERVICE] enable_rag from request: 'true' → True
+[AI SERVICE] enable_embeddings not in request, using env var default: False
+[AI SERVICE] Mode parameter from request: 'rag'
+[AI SERVICE] ✓ Final mode value: rag
+[AI SERVICE] ✓ Received request - advisor: ansel, job_id: dba6ce7e-15a4-418e-bc58-7a22d8582cd2, mode: rag, enable_rag: True, enable_embeddings: False
+[AI SERVICE] Full form data - job_service_url: http://10.0.0.131:5005
+[AI SERVICE] Response format: html
+[DEBUG] Image file - filename: photo-146CD755-7B50-47A4-BE0F-4F29AC932D42-15b04a6c.jpg
+[DEBUG] Saving image to temp path: /var/folders/px/96clcbr56vv3kyv2vzvblhqh0000gn/T/analyze_image_dba6ce7e-15a4-418e-bc58-7a22d8582cd2.jpg
+[DEBUG] Image saved successfully, size: 254460 bytes
+[INFO] Analysis using model_mode=fine_tuned, fine_tuned=True
+
+================================================================================
+[STRATEGY] ========== ANALYSIS STARTED ==========
+[STRATEGY] Mode: rag
+[STRATEGY] Advisor: ansel
+[STRATEGY] Image: /var/folders/px/96clcbr56vv3kyv2vzvblhqh0000gn/T/analyze_image_dba6ce7e-15a4-418e-bc58-7a22d8582cd2.jpg
+[STRATEGY] Job ID: dba6ce7e-15a4-418e-bc58-7a22d8582cd2
+[STRATEGY] Job Service URL: http://10.0.0.131:5005
+[STRATEGY] Response Format: html
+[STRATEGY] ==========================================
+================================================================================
+
+[Context] Using requested mode: rag
+[STRATEGY] ✓ Using requested mode: rag
+[STRATEGY] Executing analysis with rag strategy...
+[DEBUG] Sending thinking update to http://10.0.0.131:5005/job/dba6ce7e-15a4-418e-bc58-7a22d8582cd2/thinking
+[DEBUG] Thinking update sent successfully
+[DEBUG] Sending thinking update to http://10.0.0.131:5005/job/dba6ce7e-15a4-418e-bc58-7a22d8582cd2/thinking
+[DEBUG] Thinking update sent successfully
+[DEBUG] === STARTING MLX PYTHON API CALL ===
+[DEBUG] MLX Model: mlx-community/Qwen3-VL-4B-Instruct-4bit
+[DEBUG] Image path: /var/folders/px/96clcbr56vv3kyv2vzvblhqh0000gn/T/analyze_image_dba6ce7e-15a4-418e-bc58-7a22d8582cd2.jpg
+[DEBUG] Prompt length: 4545 chars
+Fetching 14 files:   0%|          | 0/14 [00:00<?, ?it/s]Fetching 14 files: 100%|██████████| 14/14 [00:00<00:00, 29746.84it/s]
+[INFO] Processing with image: /var/folders/px/96clcbr56vv3kyv2vzvblhqh0000gn/T/analyze_image_dba6ce7e-15a4-418e-bc58-7a22d8582cd2.jpg
+[INFO] Running MLX generation (timeout handling disabled to preserve GPU access)...
+[INFO] GPU Device: Device(gpu, 0)
+127.0.0.1 - - [14/Jan/2026 18:40:54] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:40:59] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:41:04] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:41:09] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:41:14] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:41:20] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:41:25] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:41:30] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:41:35] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:41:40] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:41:46] "GET /health HTTP/1.1" 200 -
+[DEBUG] Token update: Generating analysis... (1 tokens, 128.0 tps)
+127.0.0.1 - - [14/Jan/2026 18:41:51] "GET /health HTTP/1.1" 200 -
+[DEBUG] Token update: Generating analysis... (184 tokens, 36.5 tps)
+127.0.0.1 - - [14/Jan/2026 18:41:56] "GET /health HTTP/1.1" 200 -
+[DEBUG] Token update: Generating analysis... (371 tokens, 36.9 tps)
+127.0.0.1 - - [14/Jan/2026 18:42:01] "GET /health HTTP/1.1" 200 -
+[DEBUG] Token update: Generating analysis... (558 tokens, 37.0 tps)
+127.0.0.1 - - [14/Jan/2026 18:42:07] "GET /health HTTP/1.1" 200 -
+[DEBUG] Token update: Generating analysis... (745 tokens, 37.1 tps)
+127.0.0.1 - - [14/Jan/2026 18:42:12] "GET /health HTTP/1.1" 200 -
+[INFO] GPU operations synchronized
+[DEBUG] MLX generation completed in 80.13s
+[DEBUG] Response type: <class 'str'>
+[DEBUG] Response length: 4051 chars
+[DEBUG] Response preview (first 500 chars): {
+  "image_description": "The photograph captures a serene sunset over a vast body of water, with the sun low on the horizon casting a golden glow across the rippling surface. A rocky shoreline and sparse vegetation frame the right side, while distant mountains and a solitary wooden post add depth and texture to the scene.",
+  "dimensions": [
+    {
+      "name": "Composition",
+      "score": 8,
+      "comment": "The image uses strong leading lines from the shoreline and water’s edge to draw the 
+[DEBUG] Response appears to start with JSON structure
+[JSON PARSER] Strategy 1 (as-is) succeeded
+[RAG DEBUG] Parsed JSON keys: ['image_description', 'dimensions', 'overall_score', 'key_strengths', 'priority_improvements', 'technical_notes']
+[RAG DEBUG] dimensions type: <class 'list'>
+[RAG DEBUG] dimensions length: 7
+[RAG DEBUG] First dimension: {
+  "name": "Composition",
+  "score": 8,
+  "comment": "The image uses strong leading lines from the shoreline and water\u2019s edge to draw the viewer\u2019s eye toward the sun, creating a natural flow. The placement of the wooden post adds a subtle focal point.",
+  "recommendation": "Consider adjusting the horizon line slightly to ensure the sun is more centered within the golden hour arc for greater visual impact."
+}
+[STRATEGY] ✓ Analysis complete. Overall grade: B-
+[STRATEGY] ✓ Mode used in result: rag
+[_result_to_html] Converting dimensional_analysis to dimensions array
+[_result_to_html] dimensional_analysis keys: ['composition', 'lighting', 'focus_and_sharpness', 'color_harmony', 'depth_and_perspective', 'visual_balance', 'emotional_impact']
+[_result_to_html]   Added dimension: Composition (score: 8)
+[_result_to_html]   Added dimension: Lighting (score: 7)
+[_result_to_html]   Added dimension: Color Harmony (score: 6)
+[_result_to_html]   Added dimension: Visual Balance (score: 8)
+[_result_to_html]   Added dimension: Emotional Impact (score: 7)
+[_result_to_html] Total dimensions extracted: 5
+[_result_to_html] Generated HTML length: 8310 characters
+[STRATEGY] Returning JSON with HTML and metadata (mode_used=rag)
+127.0.0.1 - - [14/Jan/2026 18:42:13] "POST /analyze HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:42:17] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:42:22] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:42:27] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:42:33] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:42:38] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:42:43] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:42:48] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:42:53] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:42:58] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:43:03] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:43:08] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:43:13] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:43:18] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:43:23] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:43:28] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:43:34] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:43:39] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:43:44] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:43:49] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:43:54] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:43:59] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:44:04] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:44:09] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:44:14] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:44:19] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:44:25] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:44:30] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:44:35] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:44:40] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:44:45] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:44:50] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:44:55] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:45:01] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:45:06] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:45:11] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:45:16] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:45:21] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:45:26] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:45:31] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:45:36] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:45:41] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:45:47] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:45:52] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:45:57] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:46:02] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:46:07] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:46:12] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:46:17] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:46:23] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:46:28] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:46:33] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:46:38] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:46:43] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:46:48] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:46:54] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:46:59] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:47:04] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:47:09] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:47:14] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:47:19] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:47:25] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:47:30] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:47:35] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:47:40] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:47:45] "GET /health HTTP/1.1" 200 -
+[DEBUG] === AI ADVISOR SERVICE REQUEST START ===
+[DEBUG] Timestamp: 1768441665.640807
+[DEBUG] Received analyze request
+[DEBUG] Content-Type: multipart/form-data; boundary=286d9d9644aac0fc9ffca7ab9eaba405
+[DEBUG] Request method: POST
+[DEBUG] Processing multipart form data
+[iOS DEBUG] MONDRIAN_API_BASE_URL not provided in request - will use job_service_url fallback
+[AI SERVICE] enable_rag from request: 'true' → True
+[AI SERVICE] enable_embeddings not in request, using env var default: False
+[AI SERVICE] Mode parameter from request: 'rag'
+[AI SERVICE] ✓ Final mode value: rag
+[AI SERVICE] ✓ Received request - advisor: ansel, job_id: 94802e3e-b1dc-4d46-85a8-f07e5dcb22b0, mode: rag, enable_rag: True, enable_embeddings: False
+[AI SERVICE] Full form data - job_service_url: http://10.0.0.131:5005
+[AI SERVICE] Response format: html
+[DEBUG] Image file - filename: photo-A003C00A-ECED-4B3D-91A7-9EB35A9E1700-6241263e.jpg
+[DEBUG] Saving image to temp path: /var/folders/px/96clcbr56vv3kyv2vzvblhqh0000gn/T/analyze_image_94802e3e-b1dc-4d46-85a8-f07e5dcb22b0.jpg
+[DEBUG] Image saved successfully, size: 350299 bytes
+[INFO] Analysis using model_mode=fine_tuned, fine_tuned=True
+
+================================================================================
+[STRATEGY] ========== ANALYSIS STARTED ==========
+[STRATEGY] Mode: rag
+[STRATEGY] Advisor: ansel
+[STRATEGY] Image: /var/folders/px/96clcbr56vv3kyv2vzvblhqh0000gn/T/analyze_image_94802e3e-b1dc-4d46-85a8-f07e5dcb22b0.jpg
+[STRATEGY] Job ID: 94802e3e-b1dc-4d46-85a8-f07e5dcb22b0
+[STRATEGY] Job Service URL: http://10.0.0.131:5005
+[STRATEGY] Response Format: html
+[STRATEGY] ==========================================
+================================================================================
+
+[Context] Using requested mode: rag
+[STRATEGY] ✓ Using requested mode: rag
+[STRATEGY] Executing analysis with rag strategy...
+[DEBUG] Sending thinking update to http://10.0.0.131:5005/job/94802e3e-b1dc-4d46-85a8-f07e5dcb22b0/thinking
+[DEBUG] Thinking update sent successfully
+[DEBUG] Sending thinking update to http://10.0.0.131:5005/job/94802e3e-b1dc-4d46-85a8-f07e5dcb22b0/thinking
+[DEBUG] Thinking update sent successfully
+[DEBUG] === STARTING MLX PYTHON API CALL ===
+[DEBUG] MLX Model: mlx-community/Qwen3-VL-4B-Instruct-4bit
+[DEBUG] Image path: /var/folders/px/96clcbr56vv3kyv2vzvblhqh0000gn/T/analyze_image_94802e3e-b1dc-4d46-85a8-f07e5dcb22b0.jpg
+[DEBUG] Prompt length: 4545 chars
+Fetching 14 files:   0%|          | 0/14 [00:00<?, ?it/s]Fetching 14 files: 100%|██████████| 14/14 [00:00<00:00, 6809.72it/s]
+[INFO] Processing with image: /var/folders/px/96clcbr56vv3kyv2vzvblhqh0000gn/T/analyze_image_94802e3e-b1dc-4d46-85a8-f07e5dcb22b0.jpg
+[INFO] Running MLX generation (timeout handling disabled to preserve GPU access)...
+[INFO] GPU Device: Device(gpu, 0)
+127.0.0.1 - - [14/Jan/2026 18:47:50] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:47:55] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:48:00] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:48:05] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:48:10] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:48:15] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:48:20] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:48:25] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:48:31] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:48:37] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:48:42] "GET /health HTTP/1.1" 200 -
+[DEBUG] Token update: Generating analysis... (1 tokens, 5.8 tps)
+127.0.0.1 - - [14/Jan/2026 18:48:47] "GET /health HTTP/1.1" 200 -
+[DEBUG] Token update: Generating analysis... (164 tokens, 31.2 tps)
+127.0.0.1 - - [14/Jan/2026 18:48:52] "GET /health HTTP/1.1" 200 -
+[DEBUG] Token update: Generating analysis... (313 tokens, 30.5 tps)
+127.0.0.1 - - [14/Jan/2026 18:48:57] "GET /health HTTP/1.1" 200 -
+[DEBUG] Token update: Generating analysis... (493 tokens, 32.3 tps)
+127.0.0.1 - - [14/Jan/2026 18:49:02] "GET /health HTTP/1.1" 200 -
+[DEBUG] Token update: Generating analysis... (668 tokens, 32.9 tps)
+127.0.0.1 - - [14/Jan/2026 18:49:07] "GET /health HTTP/1.1" 200 -
+[DEBUG] Token update: Generating analysis... (810 tokens, 32.0 tps)
+127.0.0.1 - - [14/Jan/2026 18:49:12] "GET /health HTTP/1.1" 200 -
+[INFO] GPU operations synchronized
+[DEBUG] MLX generation completed in 86.96s
+[DEBUG] Response type: <class 'str'>
+[DEBUG] Response length: 4371 chars
+[DEBUG] Response preview (first 500 chars): {
+  "image_description": "The photograph captures a dramatic sunset over a rugged, arid landscape with a winding dirt path leading into the distance. The sky is ablaze with fiery orange and yellow clouds against a deepening blue, while the foreground features dry, textured earth and sparse vegetation. A lone figure is visible far off on the ridge, adding a sense of scale and solitude.",
+  "dimensions": [
+    {
+      "name": "Composition",
+      "score": 8,
+      "comment": "The image uses strong
+[DEBUG] Response appears to start with JSON structure
+[JSON PARSER] Strategy 1 (as-is) succeeded
+[RAG DEBUG] Parsed JSON keys: ['image_description', 'dimensions', 'overall_score', 'key_strengths', 'priority_improvements', 'technical_notes']
+[RAG DEBUG] dimensions type: <class 'list'>
+[RAG DEBUG] dimensions length: 7
+[RAG DEBUG] First dimension: {
+  "name": "Composition",
+  "score": 8,
+  "comment": "The image uses strong leading lines from the dirt path and the ridge to guide the viewer\u2019s eye into the distance, creating a sense of journey. The horizon placement and natural framing of the sky are effective.",
+  "recommendation": "Consider adjusting the horizon slightly to ensure it aligns with the viewer\u2019s eye level for a more immersive experience."
+}
+[STRATEGY] ✓ Analysis complete. Overall grade: B-
+[STRATEGY] ✓ Mode used in result: rag
+[_result_to_html] Converting dimensional_analysis to dimensions array
+[_result_to_html] dimensional_analysis keys: ['composition', 'lighting', 'focus_and_sharpness', 'color_harmony', 'depth_and_perspective', 'visual_balance', 'emotional_impact']
+[_result_to_html]   Added dimension: Composition (score: 8)
+[_result_to_html]   Added dimension: Lighting (score: 7)
+[_result_to_html]   Added dimension: Color Harmony (score: 6)
+[_result_to_html]   Added dimension: Visual Balance (score: 8)
+[_result_to_html]   Added dimension: Emotional Impact (score: 7)
+[_result_to_html] Total dimensions extracted: 5
+[_result_to_html] Generated HTML length: 8356 characters
+[STRATEGY] Returning JSON with HTML and metadata (mode_used=rag)
+127.0.0.1 - - [14/Jan/2026 18:49:13] "POST /analyze HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:49:18] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:49:23] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:49:28] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:49:33] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:49:38] "GET /health HTTP/1.1" 200 -
+Exception ignored in: <module 'threading' from '/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/threading.py'>
+Traceback (most recent call last):
+  File "/Library/Frameworks/Python.framework/Versions/3.12/lib/python3.12/threading.py", line 1573, in _shutdown
+    def _shutdown():
+    
+KeyboardInterrupt: 

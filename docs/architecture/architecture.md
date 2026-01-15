@@ -43,15 +43,16 @@ Mondrian is a photography analysis system that provides AI-powered feedback from
 
 ## Analysis Mode Strategy Pattern
 
-The system supports three analysis modes, implemented using the **Strategy Pattern** for clean separation of concerns and runtime flexibility.
+The system supports four analysis modes, implemented using the **Strategy Pattern** for clean separation of concerns and runtime flexibility.
 
 ### Mode Overview
 
 | Mode | Passes | Model | Context | Speed | Best For |
 |------|--------|-------|---------|-------|----------|
-| `baseline` | 1 | Base Qwen2-VL | Prompt only | Fastest | Quick feedback, testing |
-| `rag` | 2 | Base Qwen2-VL | Prompt + retrieved examples | Medium | Comparative analysis |
-| `lora` | 1 | Fine-tuned Qwen2-VL | Learned advisor style | Fast | Production recommendations |
+| `baseline` | 1 | Base Qwen3-VL | Prompt only | Fastest | Quick feedback, testing |
+| `rag` | 2 | Base Qwen3-VL | Prompt + retrieved examples | Medium | Comparative analysis |
+| `lora` | 1 | Fine-tuned Qwen3-VL | Learned advisor style | Fast | Production recommendations |
+| `rag_lora` | 2 | Fine-tuned Qwen3-VL | Learned style + retrieved examples | Medium | Advanced: personalized recommendations with reference context |
 
 ### Strategy Pattern Class Diagram
 
@@ -79,18 +80,18 @@ The system supports three analysis modes, implemented using the **Strategy Patte
 └─────────────────────────────────────────────────────────────────┘
                               △
                               │
-          ┌───────────────────┼───────────────────┐
-          │                   │                   │
-┌─────────┴─────────┐ ┌───────┴───────┐ ┌────────┴────────┐
-│ BaselineStrategy  │ │  RAGStrategy  │ │  LoRAStrategy   │
-├───────────────────┤ ├───────────────┤ ├─────────────────┤
-│ Single-pass       │ │ Two-pass      │ │ Fine-tuned      │
-│ Prompt only       │ │ With retrieval│ │ Adapter weights │
-│ Always available  │ │ Needs profiles│ │ Needs adapter   │
-├───────────────────┤ ├───────────────┤ ├─────────────────┤
-│ fallback: None    │ │ fallback:     │ │ fallback:       │
-│                   │ │   Baseline    │ │   RAG           │
-└───────────────────┘ └───────────────┘ └─────────────────┘
+        ┌─────────────────────┼─────────────────────┐
+        │                     │                     │
+┌───────┴─────────┐  ┌────────┴────────┐ ┌─────────┴────────┐ ┌──────────┴──────────┐
+│ BaselineStrategy│  │  RAGStrategy    │ │  LoRAStrategy   │ │ RAGLoRAStrategy    │
+├─────────────────┤  ├─────────────────┤ ├─────────────────┤ ├────────────────────┤
+│ Single-pass     │  │ Two-pass        │ │ Single-pass     │ │ Two-pass           │
+│ Prompt only     │  │ Base model      │ │ Fine-tuned      │ │ Fine-tuned model   │
+│ Always available│  │ With retrieval  │ │ Adapter weights │ │ + RAG retrieval    │
+├─────────────────┤  ├─────────────────┤ ├─────────────────┤ ├────────────────────┤
+│ fallback: None  │  │ fallback:       │ │ fallback:       │ │ fallback: None     │
+│                 │  │   Baseline      │ │   RAG           │ │ (explicit failure) │
+└─────────────────┘  └─────────────────┘ └─────────────────┘ └────────────────────┘
 ```
 
 ### Fallback Chain
@@ -98,7 +99,13 @@ The system supports three analysis modes, implemented using the **Strategy Patte
 Each strategy defines its fallback, creating an automatic degradation path:
 
 ```
-lora (requested)
+rag_lora (requested)
+    │
+    ├─ adapter exists AND profiles exist? ──Yes──► Use RAG+LoRA
+    │
+    No
+    ▼
+lora (fallback)
     │
     ├─ adapter exists? ──Yes──► Use LoRA
     │
@@ -113,6 +120,40 @@ rag (fallback)
 baseline (terminal)
     │
     └─ always available ──────► Use Baseline
+```
+
+### RAG+LoRA Mode: Advanced Hybrid Strategy
+
+The `rag_lora` mode combines the strengths of both LoRA and RAG for the most comprehensive analysis:
+
+**What it does:**
+1. **Pass 1** (LoRA): Extract dimensional profile using fine-tuned model
+2. **Query Phase** (RAG): Retrieve portfolio images that excel in dimensions needing improvement
+3. **Pass 2** (LoRA + Context): Generate analysis with LoRA model, augmented with reference examples
+
+**Key benefits:**
+- **Personalized Voice**: The fine-tuned LoRA model captures the advisor's learned scoring patterns and style preferences
+- **Contextual Examples**: Retrieved reference images show specific portfolio examples of strong execution
+- **Comparative Feedback**: Users see how their scores compare to advisor's portfolio distribution
+- **Actionable**: References help users understand what improvement looks like
+
+**Requirements:**
+- LoRA adapter must exist for the advisor (trained weights)
+- Dimensional profiles must exist in database (scored reference images)
+- Both conditions are required; no fallback if either is missing
+
+**Metadata Tracking:**
+Each result includes detailed timing information:
+```python
+metadata={
+    "pass1_duration": 3.2,          # Dimensional extraction time
+    "query_duration": 0.5,          # Reference image retrieval time
+    "pass2_duration": 4.1,          # Comparative analysis generation time
+    "total_duration": 7.8,          # Total wall-clock time
+    "raw_response_length": 2847,    # Response JSON size
+    "adapter_path": "adapters/ansel",
+    "representative_images_count": 3
+}
 ```
 
 ### Strategy Interface
@@ -167,7 +208,8 @@ class AnalysisContext:
     STRATEGIES = {
         'baseline': BaselineStrategy,
         'rag': RAGStrategy,
-        'lora': LoRAStrategy
+        'lora': LoRAStrategy,
+        'rag_lora': RAGLoRAStrategy
     }
 
     def __init__(self, config):
@@ -205,10 +247,11 @@ mondrian/
 │   ├── baseline.py          # BaselineStrategy
 │   ├── rag.py               # RAGStrategy
 │   ├── lora.py              # LoRAStrategy
+│   ├── rag_lora.py          # RAGLoRAStrategy (new)
 │   └── context.py           # AnalysisContext
 │
 ├── ai_advisor_service.py    # Flask API using AnalysisContext
-├── config.py                # ANALYSIS_MODE = "baseline" | "rag" | "lora"
+├── config.py                # ANALYSIS_MODE = "baseline" | "rag" | "lora" | "rag_lora"
 └── ...
 ```
 

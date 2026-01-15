@@ -1,0 +1,31 @@
+[INFO] Job Service v2.3-DB-FIXED starting...
+[INFO] Database connection management fixed for real-time status updates
+[INIT] AI_SERVICE_URL: http://127.0.0.1:5100/analyze
+[INIT] Port: 5005
+[INIT] Database: /Users/shaydu/dev/mondrian-macos/mondrian/mondrian.db
+[INIT] Debug mode: False
+[INIT] Created directories
+[INIT] Initializing database...
+[INIT] Database schema OK
+[INIT] RAG Default: ENABLED (from RAG_ENABLED env var)
+============================================================
+Starting Job Service v2.3-DB-FIXED on port 5005...
+Host: 0.0.0.0:5005
+AI Service: http://127.0.0.1:5100/analyze
+============================================================
+ * Serving Flask app 'job_service_v2.3'
+ * Debug mode: off
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5005
+ * Running on http://10.0.0.131:5005
+[33mPress CTRL+C to quit[0m
+127.0.0.1 - - [14/Jan/2026 18:25:54] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:26:07] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:26:07] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:26:12] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:26:17] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:26:22] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:26:26] "GET /jobs?format=html HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:26:27] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 18:26:32] "GET /health HTTP/1.1" 200 -

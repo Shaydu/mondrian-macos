@@ -12,7 +12,12 @@ Usage:
     python3 test/test_ios_e2e_three_mode_comparison.py
     python3 test/test_ios_e2e_three_mode_comparison.py --all
 
-    # Run specific modes
+    # Run specific modes with service restart
+    python3 test/test_ios_e2e_three_mode_comparison.py --mode=base
+    python3 test/test_ios_e2e_three_mode_comparison.py --mode=rag
+    python3 test/test_ios_e2e_three_mode_comparison.py --mode=lora --lora-path=./models/qwen3-vl-4b-lora-ansel
+    
+    # Run specific tests (legacy)
     python3 test/test_ios_e2e_three_mode_comparison.py --baseline
     python3 test/test_ios_e2e_three_mode_comparison.py --rag
     python3 test/test_ios_e2e_three_mode_comparison.py --lora
@@ -86,8 +91,46 @@ def print_warning(text):
     """Print warning message"""
     print(f"{YELLOW}⚠{NC} {text}")
 
-def check_services():
-    """Check that all required services are running"""
+def restart_services_with_mode(mode, lora_path=None):
+    """Restart services with specific mode"""
+    print_header(f"Restarting Services in {mode.upper()} Mode")
+    
+    import subprocess
+    
+    # Build restart command
+    cmd = ["./mondrian.sh", "--restart", f"--mode={mode}"]
+    if lora_path and mode in ["lora", "lora+rag", "ab-test"]:
+        cmd.append(f"--lora-path={lora_path}")
+    
+    print_info(f"Running: {' '.join(cmd)}")
+    
+    try:
+        result = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
+        
+        if result.returncode == 0:
+            print_success(f"Services restarted in {mode.upper()} mode")
+            print()
+            # Wait for services to be ready
+            print_info("Waiting for services to be ready...")
+            time.sleep(5)
+            return True
+        else:
+            print_error(f"Failed to restart services: {result.stderr}")
+            print()
+            return False
+    except Exception as e:
+        print_error(f"Exception restarting services: {e}")
+        print()
+        return False
+
+def check_services(expected_mode=None, lora_path=None, auto_restart=False):
+    """Check that all required services are running
+    
+    Args:
+        expected_mode: Expected service mode (base, rag, lora, etc.)
+        lora_path: Path to LoRA adapter (if using LoRA mode)
+        auto_restart: If True, automatically restart services if mode doesn't match
+    """
     print_step(1, "Checking Services")
 
     required_services = [
@@ -103,6 +146,41 @@ def check_services():
             resp = requests.get(url, timeout=5)
             if resp.status_code == 200:
                 print_success(f"{name} (port {port}) - UP")
+                
+                # Check mode if AI Advisor Service
+                if name == "AI Advisor Service" and expected_mode:
+                    try:
+                        health_data = resp.json()
+                        current_mode = health_data.get('model_mode', 'base')
+                        is_fine_tuned = health_data.get('fine_tuned', False)
+                        
+                        print_info(f"Current mode: {current_mode}, Fine-tuned: {is_fine_tuned}")
+                        
+                        # Check if mode matches
+                        mode_matches = False
+                        if expected_mode == "base" and current_mode == "base":
+                            mode_matches = True
+                        elif expected_mode == "rag":
+                            # RAG doesn't change service mode, just runtime behavior
+                            mode_matches = True
+                        elif expected_mode == "lora" and current_mode == "fine_tuned" and is_fine_tuned:
+                            mode_matches = True
+                        elif expected_mode == "lora+rag" and current_mode == "fine_tuned" and is_fine_tuned:
+                            mode_matches = True
+                        
+                        if not mode_matches and auto_restart:
+                            print_warning(f"Service mode mismatch: expected {expected_mode}, got {current_mode}")
+                            print_info("Auto-restarting services with correct mode...")
+                            if restart_services_with_mode(expected_mode, lora_path):
+                                print_success("Services restarted successfully")
+                            else:
+                                print_error("Failed to restart services")
+                                sys.exit(1)
+                        elif not mode_matches:
+                            print_warning(f"Service mode mismatch: expected {expected_mode}, got {current_mode}")
+                            print_info(f"To restart services: ./mondrian.sh --restart --mode={expected_mode}")
+                    except Exception as e:
+                        print_warning(f"Could not check service mode: {e}")
             else:
                 print_error(f"{name} (port {port}) - DOWN (status {resp.status_code})")
                 all_required_up = False
@@ -113,6 +191,16 @@ def check_services():
             down_services.append(f"{name} (port {port})")
 
     if not all_required_up:
+        if auto_restart and expected_mode:
+            print()
+            print_warning("Services are down. Attempting to start them...")
+            if restart_services_with_mode(expected_mode, lora_path):
+                print_success("Services started successfully")
+                print()
+                return
+            else:
+                print_error("Failed to start services")
+        
         print()
         print_error("Not all required services are running. Please start them first.")
         print()
@@ -121,7 +209,13 @@ def check_services():
             print(f"  ✗ {service}")
         print()
         print(f"{BLUE}To start all services, run:{NC}")
-        print(f"  ./mondrian.sh --restart")
+        if expected_mode:
+            mode_cmd = f"./mondrian.sh --restart --mode={expected_mode}"
+            if lora_path and expected_mode in ["lora", "lora+rag"]:
+                mode_cmd += f" --lora-path={lora_path}"
+            print(f"  {mode_cmd}")
+        else:
+            print(f"  ./mondrian.sh --restart")
         print()
         sys.exit(1)
 
@@ -728,7 +822,13 @@ Examples:
   %(prog)s
   %(prog)s --all
 
-  # Run specific modes
+  # Run specific mode with automatic service restart
+  %(prog)s --mode=base
+  %(prog)s --mode=rag
+  %(prog)s --mode=lora --lora-path=./models/qwen3-vl-4b-lora-ansel
+  %(prog)s --mode=lora+rag --lora-path=./models/qwen3-vl-4b-lora-ansel
+
+  # Run specific tests (legacy)
   %(prog)s --baseline
   %(prog)s --rag
   %(prog)s --lora
@@ -739,9 +839,65 @@ Examples:
     parser.add_argument('--rag', action='store_true', help='Run RAG-enhanced test')
     parser.add_argument('--lora', action='store_true', help='Run LoRA fine-tuned test')
     parser.add_argument('--all', action='store_true', help='Run all three modes (default)')
+    parser.add_argument('--mode', type=str, choices=['base', 'rag', 'lora', 'lora+rag', 'ab-test'],
+                        help='Service mode to use (will restart services if needed)')
+    parser.add_argument('--lora-path', type=str, 
+                        help='Path to LoRA adapter (required for lora/lora+rag/ab-test modes)')
+    parser.add_argument('--auto-restart', action='store_true', default=True,
+                        help='Automatically restart services if mode doesn\'t match (default: True)')
+    parser.add_argument('--no-auto-restart', action='store_false', dest='auto_restart',
+                        help='Do not automatically restart services')
     args = parser.parse_args()
 
-    # Determine which tests to run (default: all)
+    # Handle --mode flag (new approach)
+    if args.mode:
+        # Single mode test with automatic service restart
+        if args.mode in ['lora', 'lora+rag', 'ab-test'] and not args.lora_path:
+            print_error(f"--lora-path required for mode={args.mode}")
+            print()
+            print(f"Example: {sys.argv[0]} --mode={args.mode} --lora-path=./models/qwen3-vl-4b-lora-ansel")
+            sys.exit(1)
+        
+        print_header(f"iOS End-to-End Test: {args.mode.upper()} Mode")
+        print(f"Test Image: {TEST_IMAGE}")
+        print(f"Advisor: {ADVISOR}")
+        print(f"Mode: {args.mode}")
+        if args.lora_path:
+            print(f"LoRA Path: {args.lora_path}")
+        print(f"Auto-restart: {args.auto_restart}")
+        print(f"Timestamp: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
+        print()
+        
+        # Check SSE client
+        if sseclient is None:
+            print_warning("sseclient-py not installed. Will use status polling instead")
+            print_info("Install with: pip install sseclient-py")
+            use_sse = False
+        else:
+            use_sse = True
+        
+        # Check services (with mode validation and auto-restart)
+        check_services(expected_mode=args.mode, lora_path=args.lora_path, auto_restart=args.auto_restart)
+        
+        # Run single test
+        output_dir, html = run_e2e_test(mode=args.mode, use_sse=use_sse)
+        
+        # Final summary
+        print_header("TEST COMPLETE")
+        print_success(f"{args.mode.upper()} mode test completed successfully")
+        print()
+        print(f"{BOLD}Output Directory:{NC}")
+        print(f"  {output_dir}/")
+        print()
+        print(f"{BOLD}View outputs:{NC}")
+        print(f"  open {output_dir}/analysis_summary.html")
+        print(f"  open {output_dir}/analysis_detailed.html")
+        if (output_dir / "advisor_bio.html").exists():
+            print(f"  open {output_dir}/advisor_bio.html")
+        print()
+        return
+    
+    # Legacy approach: Determine which tests to run (default: all)
     if not any([args.baseline, args.rag, args.lora, args.all]):
         run_baseline = run_rag = run_lora = True
     elif args.all:
@@ -774,7 +930,7 @@ Examples:
         print_success("SSE client available")
         use_sse = True
 
-    # Check services
+    # Check services (no mode validation for legacy multi-mode tests)
     check_services()
 
     # Check LoRA adapter if testing LoRA
