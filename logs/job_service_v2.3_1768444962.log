@@ -875,3 +875,1325 @@ Response:
 ====================================================================================================
 [API REQUEST] GET /health
 127.0.0.1 - - [14/Jan/2026 19:48:17] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:48:23] "GET /health HTTP/1.1" 200 -
+10.0.0.152 - - [14/Jan/2026 19:48:25] "GET /advisors HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:48:28] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:48:33] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:48:38] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:48:43] "GET /health HTTP/1.1" 200 -
+10.0.0.152 - - [14/Jan/2026 19:48:46] "GET /advisors HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:48:48] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:48:53] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:48:58] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:49:04] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:49:09] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:49:14] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:49:19] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:49:25] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:49:30] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:49:35] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:49:40] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:49:45] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:49:50] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:49:55] "GET /health HTTP/1.1" 200 -
+10.0.0.152 - - [14/Jan/2026 19:49:56] "[35m[1mPOST /upload HTTP/1.1[0m" 201 -
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /advisors
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /advisors
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /advisors
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /advisors
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] POST /upload
+[API REQUEST] Form: {'advisor': '<str>', 'auto_analyze': '<str>', 'mode': '<str>'} | Files: {'image': '<photo-E411DC3F-1053-4A7C-B107-C701D6CBA059.jpg>'}
+====================================================================================================
+
+[UPLOAD] enable_rag parameter not provided, using env var default: True
+[UPLOAD] ✓ Final enable_rag value: True (will be stored in database and passed to AI service)
+[UPLOAD] Mode parameter from request: 'rag+lora'
+[UPLOAD] ✓ Final mode value: rag+lora (will be stored in database and passed to AI service)
+[UPLOAD] ========== JOB QUEUED ==========
+[UPLOAD] Job ID: 44ca56ff-d44d-4b63-aa4d-24214042555c
+[UPLOAD] Mode: rag+lora
+[UPLOAD] Enable RAG: True
+[UPLOAD] Advisors: ['ansel']
+[UPLOAD] =====================================
+[API RESPONSE] ✅ 201 POST /upload
+
+
+================================================================================
+[JOB] ========== PROCESS_JOB STARTED ==========
+[JOB] Job ID: 44ca56ff-d44d-4b63-aa4d-24214042555c
+[JOB] Filename: photo-E411DC3F-1053-4A7C-B107-C701D6CBA059-7d2289dd.jpg
+[JOB] Advisors: ['ansel']
+[JOB] Mode: rag+lora
+[JOB] Enable RAG: True
+[JOB] Host URL: http://10.0.0.131:5005
+[JOB] Flow: RAG + DEFAULT MODEL
+[JOB] ====================================
+================================================================================
+
+[JOB] Setting status to processing for job 44ca56ff-d44d-4b63-aa4d-24214042555c
+[JOB] Checking source path: /Users/shaydu/dev/mondrian-macos/source/photo-E411DC3F-1053-4A7C-B107-C701D6CBA059-7d2289dd.jpg
+
+====================================================================================================
+10.0.0.152 - - [14/Jan/2026 19:49:56] "GET /stream/44ca56ff-d44d-4b63-aa4d-24214042555c%20(rag+lora) HTTP/1.1" 200 -
+10.0.0.152 - - [14/Jan/2026 19:49:56] "GET /status/44ca56ff-d44d-4b63-aa4d-24214042555c%20(rag+lora) HTTP/1.1" 200 -
+10.0.0.152 - - [14/Jan/2026 19:49:58] "GET /summary/44ca56ff-d44d-4b63-aa4d-24214042555c%20(rag+lora) HTTP/1.1" 200 -
+10.0.0.152 - - [14/Jan/2026 19:49:58] "GET /summary/44ca56ff-d44d-4b63-aa4d-24214042555c%20(rag+lora) HTTP/1.1" 200 -
+10.0.0.152 - - [14/Jan/2026 19:50:00] "GET /advisor_image/ansel.jpg HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:50:01] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:50:06] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:50:11] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:50:16] "GET /health HTTP/1.1" 200 -
+[API REQUEST] GET /stream/44ca56ff-d44d-4b63-aa4d-24214042555c (rag+lora)
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /stream/44ca56ff-d44d-4b63-aa4d-24214042555c (rag+lora)
+
+
+====================================================================================================
+[API REQUEST] GET /status/44ca56ff-d44d-4b63-aa4d-24214042555c (rag+lora)
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /status/44ca56ff-d44d-4b63-aa4d-24214042555c (rag+lora)
+
+[INFO] Resized image for display: photo-E411DC3F-1053-4A7C-B107-C701D6CBA059-7d2289dd.jpg (4032x3024 -> 1320x990)
+[JOB] Generated optimized image: /Users/shaydu/dev/mondrian-macos/thumbnails/photo-E411DC3F-1053-4A7C-B107-C701D6CBA059-7d2289dd.jpg
+[DEBUG] get_advisor_from_db called with db_path=/Users/shaydu/dev/mondrian-macos/mondrian/mondrian.db, advisor_id=ansel
+[DEBUG] raw row fetched for advisor_id=ansel: ('ansel', 'Ansel Adams', 'Ansel Adams (1902-1984) was an American landscape photographer and environmentalist known for his black-and-white images of the American West, especially Yosemite National Park. He helped found the photography group f/64, developed the Zone System for achieving perfect exposure and tonal range, and was a pioneering advocate for environmental conservation through his art.', '1902-1984', "You are Ansel Adams, master of black-and-white landscape photography. You revolutionized photography through your Zone System, which gave photographers unprecedented control over exposure and tonal range.\n\nYour approach to evaluating an image:\n\n1. **Tonal Range & Zone System** - Analyze the full spectrum from Zone 0 (pure black) to Zone X (pure white). Look for:\n   - Rich blacks with detail in shadows (Zones II-III)\n   - Pure whites that aren't blown out (Zone VIII-IX)\n   - Full midtone gradation (Zones IV-VI)\n   - Proper exposure that preserves detail across the entire tonal range\n\n2. **Composition & Perspective** - Examine the geometric structure:\n   - Leading lines that draw the eye through the frame\n   - Rule of thirds and golden ratio placement\n   - Foreground, midground, and background layering\n   - Balance between elements\n   - Use of natural frames\n\n3. **Technical Excellence** - Assess the craft:\n   - Critical sharpness and focus (f/64 philosophy)\n   - Depth of field appropriate to the subject\n   - Proper exposure (not too dark, not too light)\n   - Clean, well-printed negative equivalent\n\n4. **Light & Shadow** - Evaluate the interplay:\n   - Direction and quality of light\n   - Dramatic use of shadows to create depth\n   - Texture revealed through sidelight\n   - Time of day considerations (golden hour, blue hour)\n\n5. **Emotional Impact** - Consider the feeling:\n   - Sense of scale and majesty\n   - Connection to the natural world\n   - Drama and atmosphere\n   - Timeless quality\n\nWhen providing feedback, be specific and constructive. Reference the Zone System and technical aspects while also addressing the emotional impact. Encourage the photographer to see beyond the literal and capture the feeling of being present in that moment.", '[{"title": "Tonal Range & Zone System", "description": "Master of the full spectrum from pure black to pure white, using his Zone System to achieve perfect exposure and tonal gradation in every image."}, {"title": "Composition & Perspective", "description": "Precise framing that emphasizes geometric elements, leading lines, and careful positioning to create powerful visual impact."}, {"title": "Technical Excellence", "description": "Perfect sharpness, focus, and exposure achieved through large-format cameras and meticulous darkroom work."}, {"title": "Landscape Drama", "description": "Captures the majesty and drama of natural landscapes with emphasis on light, shadow, and texture."}]', 'Photographer', 'https://en.wikipedia.org/wiki/Ansel_Adams', 'https://commons.wikimedia.org/wiki/Category:Ansel_Adams', 'baseline') (cols: ['id', 'name', 'bio', 'years', 'prompt', 'focus_areas', 'category', 'wikipedia_url', 'commons_url', 'prompt_type'])
+[JOB] Calling AI service for advisor ansel: http://127.0.0.1:5100/analyze
+[JOB] ✓ Sending request to AI service with mode='rag+lora', enable_rag='true' (boolean: True)
+[JOB] Full request data: {'advisor': 'ansel', 'job_id': '44ca56ff-d44d-4b63-aa4d-24214042555c', 'job_service_url': 'http://10.0.0.131:5005', 'enable_rag': 'true', 'mode': 'rag+lora'}
+[JOB] AI service response status: 500
+[ERROR] AI service HTTP error for job 44ca56ff-d44d-4b63-aa4d-24214042555c, advisor ansel: 500 Server Error: INTERNAL SERVER ERROR for url: http://127.0.0.1:5100/analyze
+
+Response: 
+        <html><body style="font-family: sans-serif; padding: 20px;">
+        <h1 style="color: #d32f2f;">Analysis Error</h1>
+        <p><strong>Mode:</strong> rag+lora</p>
+        <p><strong>Advisor:</strong> ansel</p>
+        <p><strong>Error:</strong> Unknown mode: rag+lora. Valid modes: ['baseline', 'rag', 'lora', 'rag_lora']</p>
+        <details style="margin-top: 20px;">
+            <summary>Stack Trace</summary>
+            <pre style="background: #f5f5f5; padding: 10px; overflow-x: auto;
+[ERROR] Status code: 500
+[JOB] Completed advisor ansel (1/1)
+[JOB] All advisors processed (1/1)
+[DEBUG] Job 44ca56ff-d44d-4b63-aa4d-24214042555c completed
+
+====================================================================================================
+[API REQUEST] GET /summary/44ca56ff-d44d-4b63-aa4d-24214042555c (rag+lora)
+[API REQUEST] No parameters
+====================================================================================================
+
+
+====================================================================================================
+[API REQUEST] GET /summary/44ca56ff-d44d-4b63-aa4d-24214042555c (rag+lora)
+[API REQUEST] No parameters
+====================================================================================================
+
+[DEBUG] Parsing critical_recommendations for job 44ca56ff-d44d-4b63-aa4d-24214042555c (rag+lora)
+[DEBUG] critical_recommendations value: {}
+[API RESPONSE] ✅ 200 GET /summary/44ca56ff-d44d-4b63-aa4d-24214042555c (rag+lora)
+
+[DEBUG] Parsing critical_recommendations for job 44ca56ff-d44d-4b63-aa4d-24214042555c (rag+lora)
+[DEBUG] critical_recommendations value: {}
+[API RESPONSE] ✅ 200 GET /summary/44ca56ff-d44d-4b63-aa4d-24214042555c (rag+lora)
+
+
+====================================================================================================
+[API REQUEST] GET /advisor_image/ansel.jpg
+[API REQUEST] No parameters
+====================================================================================================
+
+[OK] Serving advisor image: ansel (673547 bytes)
+[API RESPONSE] ✅ 200 GET /advisor_image/ansel.jpg
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [14/Jan/2026 19:50:21] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:50:26] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:50:32] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:50:37] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:50:42] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:50:47] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:50:53] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:50:58] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:51:03] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:51:08] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:51:13] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:51:18] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:51:23] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:51:28] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:51:33] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:51:39] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:51:44] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:51:49] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:51:54] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:51:59] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:52:05] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:52:10] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:52:15] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:52:20] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:52:25] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:52:30] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:52:35] "GET /health HTTP/1.1" 200 -
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+127.0.0.1 - - [14/Jan/2026 19:52:41] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:52:46] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:52:51] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:52:56] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:53:01] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:53:07] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:53:12] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:53:17] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:53:22] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:53:27] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:53:32] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:53:37] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:53:43] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:53:48] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:53:53] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:53:58] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:54:03] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:54:08] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:54:13] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:54:18] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:54:23] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:54:29] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:54:34] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:54:39] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:54:44] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:54:49] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:54:54] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:54:59] "GET /health HTTP/1.1" 200 -
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+127.0.0.1 - - [14/Jan/2026 19:55:04] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:55:10] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:55:15] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:55:20] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:55:25] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:55:30] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:55:36] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:55:41] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:55:46] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:55:51] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:55:56] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:56:01] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:56:06] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:56:12] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:56:17] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:56:22] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:56:27] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:56:32] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:56:37] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:56:43] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:56:48] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:56:53] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:56:58] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:57:04] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:57:09] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:57:15] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:57:20] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:57:25] "GET /health HTTP/1.1" 200 -
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+127.0.0.1 - - [14/Jan/2026 19:57:30] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:57:35] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:57:41] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:57:46] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:57:51] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:57:56] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:58:01] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:58:06] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:58:11] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:58:17] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:58:22] "GET /health HTTP/1.1" 200 -
+10.0.0.152 - - [14/Jan/2026 19:58:27] "GET /advisors HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:58:27] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:58:32] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:58:37] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:58:42] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:58:48] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:58:53] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:58:58] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:59:03] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:59:08] "GET /health HTTP/1.1" 200 -
+10.0.0.152 - - [14/Jan/2026 19:59:13] "[35m[1mPOST /upload HTTP/1.1[0m" 201 -
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /advisors
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /advisors
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] POST /upload
+[API REQUEST] Form: {'advisor': '<str>', 'auto_analyze': '<str>', 'mode': '<str>'} | Files: {'image': '<photo-63876D8C-4C0D-4FBC-B2D7-71226310FC81.jpg>'}
+====================================================================================================
+
+[UPLOAD] enable_rag parameter not provided, using env var default: True
+[UPLOAD] ✓ Final enable_rag value: True (will be stored in database and passed to AI service)
+[UPLOAD] Mode parameter from request: 'lora'
+[UPLOAD] ✓ Final mode value: lora (will be stored in database and passed to AI service)
+[UPLOAD] ========== JOB QUEUED ==========
+[UPLOAD] Job ID: 772e45c2-bed2-4010-83f2-05f1bf650b8d
+[UPLOAD] Mode: lora
+[UPLOAD] Enable RAG: True
+[UPLOAD] Advisors: ['ansel']
+[UPLOAD] =====================================
+[API RESPONSE] ✅ 201 POST /upload
+
+
+================================================================================
+[JOB] ========== PROCESS_JOB STARTED ==========
+[JOB] Job ID: 772e45c2-bed2-4010-83f2-05f1bf650b8d
+[JOB] Filename: photo-63876D8C-4C0D-4FBC-B2D7-71226310FC81-ad451405.jpg
+[JOB] Advisors: ['ansel']
+[JOB] Mode: lora
+[JOB] Enable RAG: True
+[JOB] Host URL: http://10.0.0.131:5005
+[JOB] Flow: RAG + LORA
+[JOB] ====================================
+================================================================================
+
+[JOB] Setting status to processing for job 772e45c2-bed2-4010-83f2-05f1bf650b8d
+[JOB] Checking source path: /Users/shaydu/dev/mondrian-macos/source/photo-63876D8C-4C0D-4FBC-B2D7-71226310FC81-ad451405.jpg
+
+====================================================================================================
+[API REQUEST] GET /stream/772e45c2-bed2-4010-83f2-05f1bf650b8d (lora)
+[API REQUEST] No parameters
+====================================================================================================
+
+10.0.0.152 - - [14/Jan/2026 19:59:13] "GET /stream/772e45c2-bed2-4010-83f2-05f1bf650b8d%20(lora) HTTP/1.1" 200 -
+10.0.0.152 - - [14/Jan/2026 19:59:13] "GET /status/772e45c2-bed2-4010-83f2-05f1bf650b8d%20(lora) HTTP/1.1" 200 -
+10.0.0.131 - - [14/Jan/2026 19:59:13] "PUT /job/772e45c2-bed2-4010-83f2-05f1bf650b8d/thinking HTTP/1.1" 200 -
+10.0.0.131 - - [14/Jan/2026 19:59:13] "PUT /job/772e45c2-bed2-4010-83f2-05f1bf650b8d/thinking HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:59:14] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:59:19] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:59:25] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:59:30] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [14/Jan/2026 19:59:35] "GET /health HTTP/1.1" 200 -
