@@ -801,9 +801,6 @@ Examples:
     }
     env['ANALYSIS_MODE'] = mode_to_analysis.get(mode, "baseline")
     print(f"[ENV] ANALYSIS_MODE set to: {env['ANALYSIS_MODE']}")
-    print(f"[DEBUG] Full environment for services:")
-    for key in ['ANALYSIS_MODE', 'RAG_ENABLED', 'MLX_USE_CPU', 'PYTHONPATH']:
-        print(f"  {key}={env.get(key, 'NOT SET')}")
 
     # Get services for the selected mode
     services = get_services_for_mode(mode, lora_path)
