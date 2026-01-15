@@ -21,6 +21,34 @@ except ImportError:
     sys.exit(1)
 
 
+# Determine the correct Python executable to use
+def get_python_executable():
+    """Get the Python executable, preferring venv if available."""
+    script_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    
+    # Check for venv in root directory
+    venv_python = os.path.join(script_dir, "venv", "bin", "python3")
+    if os.path.exists(venv_python):
+        return venv_python
+    
+    # Check for venv in mondrian subdirectory
+    venv_python = os.path.join(script_dir, "mondrian", "venv", "bin", "python3")
+    if os.path.exists(venv_python):
+        return venv_python
+    
+    # Check VIRTUAL_ENV environment variable
+    if 'VIRTUAL_ENV' in os.environ:
+        venv_python = os.path.join(os.environ['VIRTUAL_ENV'], "bin", "python3")
+        if os.path.exists(venv_python):
+            return venv_python
+    
+    # Fall back to current Python
+    return sys.executable
+
+PYTHON_EXECUTABLE = get_python_executable()
+print(f"Using Python: {PYTHON_EXECUTABLE}")
+
+
 # Default services (will be configured based on mode)
 def get_services_for_mode(mode="base", lora_path=None, model=None):
     """
@@ -32,16 +60,20 @@ def get_services_for_mode(mode="base", lora_path=None, model=None):
         - lora: Base model with LoRA adapter (requires --lora-path)
         - lora+rag: LoRA model with RAG enabled
     """
+    # Summary Service should start first (port 5006)
     services = [
-        [sys.executable, "mondrian/job_service_v2.3.py", "--port", "5005"],
+        [PYTHON_EXECUTABLE, "mondrian/summary_service.py", "--port", "5006"],
     ]
+    
+    # Job Service (port 5005)
+    services.append([PYTHON_EXECUTABLE, "mondrian/job_service_v2.3.py", "--port", "5005"])
     
     # Configure AI Advisor Service based on mode and platform
     import platform
     if platform.system() == "Linux":
-        ai_advisor_cmd = [sys.executable, "mondrian/ai_advisor_service_linux.py", "--port", "5100"]
+        ai_advisor_cmd = [PYTHON_EXECUTABLE, "mondrian/ai_advisor_service_linux.py", "--port", "5100"]
     else:
-        ai_advisor_cmd = [sys.executable, "mondrian/ai_advisor_service.py", "--port", "5100"]
+        ai_advisor_cmd = [PYTHON_EXECUTABLE, "mondrian/ai_advisor_service.py", "--port", "5100"]
     
     # Add model if specified
     if model:
@@ -226,7 +258,7 @@ def stop_services():
         print(f"Stopped {killed} Mondrian service process(es).")
 
     # Port-based cleanup as fallback
-    service_ports = [5005, 5100]
+    service_ports = [5006, 5005, 5100]
     for port in service_ports:
         if port_in_use(port):
             print(f"Port {port} still in use, attempting port-based cleanup...")
@@ -245,6 +277,11 @@ def stop_services():
 
 # Service health monitoring
 SERVICE_HEALTH_CONFIG = {
+    "summary_service": {
+        "port": 5006,
+        "health_url": "http://127.0.0.1:5006/health",
+        "display_name": "Summary Service"
+    },
     "job_service": {
         "port": 5005,
         "health_url": "http://127.0.0.1:5005/health",
@@ -760,7 +797,7 @@ Examples:
         cleanup_stale_jobs_on_restart()
 
         # Verify ports are free before starting
-        service_ports = [5005, 5100]
+        service_ports = [5006, 5005, 5100]
         ports_free = True
         for port in service_ports:
             if port_in_use(port):

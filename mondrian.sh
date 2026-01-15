@@ -46,27 +46,27 @@ if [[ "$1" == "--system-python" ]]; then
     shift  # Remove this argument before passing to start_services.py
 fi
 
-# Select Python: prefer system if requested or venv has issues
+# Select Python: prefer venv unless system explicitly requested
 if [ "$USE_SYSTEM_PYTHON" = true ]; then
     echo "Using system Python (requested via --system-python)"
     PYTHON="$SYSTEM_PYTHON"
 elif [ -f "$VENV_PYTHON" ]; then
-    # Try venv first
+    # Use venv Python
     echo "Using venv Python: $VENV_PYTHON"
-    # Activate venv if it exists
-    if [ -f "$VENV_ACTIVATE" ]; then
-        source "$VENV_ACTIVATE"
-        echo "Virtual environment activated"
-    fi
     PYTHON="$VENV_PYTHON"
+    # Export VIRTUAL_ENV so start_services.py can detect it
+    export VIRTUAL_ENV="$VENV_DIR"
+    export PATH="$VENV_DIR/bin:$PATH"
+    echo "Virtual environment configured (VIRTUAL_ENV=$VIRTUAL_ENV)"
 else
     echo "WARNING: venv Python not found at $VENV_PYTHON"
-    if [ -f "$SYSTEM_PYTHON" ]; then
-        echo "Falling back to system Python: $SYSTEM_PYTHON"
-        PYTHON="$SYSTEM_PYTHON"
+    # Try to find system python3
+    if command -v python3 &> /dev/null; then
+        PYTHON=$(command -v python3)
+        echo "Falling back to system Python: $PYTHON"
     else
         echo "ERROR: No suitable Python found"
-        echo "Please create venv: python3 -m venv mondrian/venv"
+        echo "Please create venv: python3 -m venv venv"
         exit 1
     fi
 fi

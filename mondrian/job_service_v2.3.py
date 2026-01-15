@@ -40,9 +40,29 @@ class JobDatabase:
         self._init_db()
     
     def _init_db(self):
-        """Initialize database schema - uses existing schema"""
-        # Database is expected to exist; we don't create it
-        pass
+        """Initialize database schema - add missing columns if needed"""
+        with sqlite3.connect(self.db_path) as conn:
+            cursor = conn.cursor()
+            
+            # Check if error column exists
+            cursor.execute("PRAGMA table_info(jobs)")
+            columns = {row[1] for row in cursor.fetchall()}
+            
+            # Add missing columns
+            if 'error' not in columns:
+                logger.info("Adding 'error' column to jobs table")
+                conn.execute("ALTER TABLE jobs ADD COLUMN error TEXT DEFAULT NULL")
+                conn.commit()
+            
+            if 'analysis_html' not in columns:
+                logger.info("Adding 'analysis_html' column to jobs table")
+                conn.execute("ALTER TABLE jobs ADD COLUMN analysis_html TEXT DEFAULT NULL")
+                conn.commit()
+            
+            if 'advisor_bio' not in columns:
+                logger.info("Adding 'advisor_bio' column to jobs table")
+                conn.execute("ALTER TABLE jobs ADD COLUMN advisor_bio TEXT DEFAULT NULL")
+                conn.commit()
     
     def create_job(self, advisor: str, mode: str, image_path: str) -> str:
         """Create a new job"""
@@ -63,7 +83,9 @@ class JobDatabase:
         """Get job details"""
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.execute(
-                "SELECT id, filename, status, advisor, mode, created_at, current_step, progress_percentage, enable_rag FROM jobs WHERE id = ?",
+                """SELECT id, filename, status, advisor, mode, created_at, current_step, progress_percentage, enable_rag, 
+                          prompt, llm_prompt, analysis_markdown, llm_thinking, analysis_html, advisor_bio, llm_outputs 
+                   FROM jobs WHERE id = ?""",
                 (job_id,)
             )
             row = cursor.fetchone()
@@ -80,7 +102,14 @@ class JobDatabase:
             'created_at': row[5],
             'current_step': row[6],
             'progress_percentage': row[7],
-            'enable_rag': bool(row[8])
+            'enable_rag': bool(row[8]),
+            'prompt': row[9] or '',
+            'llm_prompt': row[10] or '',
+            'analysis_markdown': row[11] or '',
+            'llm_thinking': row[12] or '',
+            'analysis_html': row[13] or '',
+            'advisor_bio': row[14] or '',
+            'llm_outputs': row[15] or ''
         }
     
     def update_job(self, job_id: str, status: str, result: Optional[Dict] = None, error: Optional[str] = None):
@@ -408,9 +437,11 @@ def list_jobs():
             if created != 'N/A':
                 created = created.split('.')[0]  # Remove milliseconds
             
+            job_id_full = job.get('id', 'N/A')
+            job_id_short = job_id_full[:8]
             html += f"""
                     <tr>
-                        <td><span class="job-id">{job.get('id', 'N/A')[:8]}...</span></td>
+                        <td><span class="job-id"><a href="/jobs/{job_id_full}?view=detail" style="color: #666; text-decoration: none;">{job_id_short}...</a></span></td>
                         <td>{job.get('filename', 'N/A')}</td>
                         <td>{job.get('advisor', 'N/A')}</td>
                         <td><span class="mode-badge">{mode}</span></td>
@@ -447,7 +478,7 @@ def list_jobs():
 
 @app.route('/jobs/<job_id>', methods=['GET'])
 def get_job(job_id: str):
-    """Get job details"""
+    """Get job details - returns JSON or HTML based on view parameter"""
     if not job_db:
         return jsonify({"error": "Database not initialized"}), 503
     
@@ -456,7 +487,214 @@ def get_job(job_id: str):
     if not job:
         return jsonify({"error": "Job not found"}), 404
     
+    # Check if requesting HTML detail view
+    view = request.args.get('view', 'json')
+    if view == 'detail':
+        return render_job_detail_html(job)
+    
     return jsonify(job), 200
+
+
+def render_job_detail_html(job):
+    """Render detailed job view as HTML"""
+    status = job.get('status', 'unknown')
+    prompt = job.get('prompt', '')
+    llm_prompt = job.get('llm_prompt', '')
+    analysis = job.get('analysis_markdown', '')
+    thinking = job.get('llm_thinking', '')
+    
+    # Escape HTML in content
+    def escape_html(text):
+        if not text:
+            return ''
+        return str(text).replace('&', '&amp;').replace('<', '&lt;').replace('>', '&gt;').replace('"', '&quot;')
+    
+    html = f"""
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Job {job.get('id', 'Unknown')[:8]}</title>
+        <style>
+            * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+            body {{ 
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, monospace;
+                background: #f5f5f5;
+                padding: 20px;
+            }}
+            .container {{ max-width: 1200px; margin: 0 auto; }}
+            .header {{ 
+                background: white;
+                padding: 20px;
+                border-radius: 8px;
+                margin-bottom: 20px;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            }}
+            .back-link {{ 
+                display: inline-block;
+                margin-bottom: 15px;
+                color: #0066cc;
+                text-decoration: none;
+                font-size: 14px;
+            }}
+            .back-link:hover {{ text-decoration: underline; }}
+            h1 {{ color: #333; margin-bottom: 15px; }}
+            .meta {{
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+                gap: 15px;
+                margin-top: 15px;
+            }}
+            .meta-item {{
+                background: #f8f8f8;
+                padding: 10px;
+                border-radius: 4px;
+                border-left: 3px solid #0066cc;
+            }}
+            .meta-label {{ 
+                color: #999;
+                font-size: 11px;
+                text-transform: uppercase;
+                margin-bottom: 3px;
+            }}
+            .meta-value {{ 
+                color: #333;
+                font-size: 14px;
+                font-weight: 500;
+            }}
+            .status-badge {{
+                display: inline-block;
+                padding: 4px 8px;
+                border-radius: 4px;
+                font-size: 12px;
+                font-weight: 600;
+                text-transform: uppercase;
+            }}
+            .status-completed {{ background: #d1e7dd; color: #0f5132; }}
+            .status-running {{ background: #cfe2ff; color: #084298; }}
+            .status-pending {{ background: #fff3cd; color: #856404; }}
+            .status-failed {{ background: #f8d7da; color: #842029; }}
+            .section {{
+                background: white;
+                padding: 20px;
+                border-radius: 8px;
+                margin-bottom: 20px;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            }}
+            .section-title {{
+                font-size: 16px;
+                font-weight: 600;
+                color: #333;
+                margin-bottom: 15px;
+                padding-bottom: 10px;
+                border-bottom: 2px solid #f0f0f0;
+            }}
+            .content {{
+                background: #f8f8f8;
+                padding: 15px;
+                border-radius: 4px;
+                overflow-x: auto;
+                white-space: pre-wrap;
+                word-wrap: break-word;
+                font-size: 13px;
+                line-height: 1.5;
+                color: #333;
+            }}
+            .empty {{ color: #999; font-style: italic; }}
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <div class="header">
+                <a href="/jobs?format=html" class="back-link">← Back to Jobs</a>
+                <h1>Job Details</h1>
+                <div class="meta">
+                    <div class="meta-item">
+                        <div class="meta-label">Job ID</div>
+                        <div class="meta-value" style="font-family: monospace;">{escape_html(job.get('id', 'N/A'))}</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Status</div>
+                        <div class="meta-value"><span class="status-badge status-{status}">{status}</span></div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Advisor</div>
+                        <div class="meta-value">{escape_html(job.get('advisor', 'N/A'))}</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Mode</div>
+                        <div class="meta-value">{escape_html(job.get('mode', 'N/A'))}</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Created</div>
+                        <div class="meta-value">{escape_html(job.get('created_at', 'N/A').split('.')[0])}</div>
+                    </div>
+                    <div class="meta-item">
+                        <div class="meta-label">Image</div>
+                        <div class="meta-value" style="font-size: 12px; word-break: break-all;">{escape_html(job.get('filename', 'N/A'))}</div>
+                    </div>
+                </div>
+            </div>
+    """
+    
+    # System Prompt
+    if prompt:
+        html += f"""
+            <div class="section">
+                <div class="section-title">System Prompt</div>
+                <div class="content">{escape_html(prompt)}</div>
+            </div>
+        """
+    
+    # LLM Prompt
+    if llm_prompt:
+        html += f"""
+            <div class="section">
+                <div class="section-title">LLM Prompt (Sent to Model)</div>
+                <div class="content">{escape_html(llm_prompt)}</div>
+            </div>
+        """
+    
+    # Analysis Output
+    if analysis:
+        html += f"""
+            <div class="section">
+                <div class="section-title">Analysis Output (Summary & Details)</div>
+                <div class="content">{escape_html(analysis)}</div>
+            </div>
+        """
+    
+    # LLM Thinking
+    if thinking:
+        html += f"""
+            <div class="section">
+                <div class="section-title">LLM Internal Thinking</div>
+                <div class="content">{escape_html(thinking)}</div>
+            </div>
+        """
+    
+    if not (prompt or llm_prompt or analysis or thinking):
+        html += """
+            <div class="section">
+                <div class="content empty">No analysis data available yet. Job may still be processing.</div>
+            </div>
+        """
+    
+    html += """
+            <script>
+                setInterval(function() {
+                    // Auto-refresh every 5 seconds if job is still running
+                    var statusElement = document.querySelector('.status-badge');
+                    if (statusElement && (statusElement.textContent === 'PENDING' || statusElement.textContent === 'RUNNING' || statusElement.textContent === 'ANALYZING')) {
+                        location.reload();
+                    }
+                }, 5000);
+            </script>
+        </div>
+    </body>
+    </html>
+    """
+    
+    return Response(html, mimetype='text/html')
 
 
 @app.route('/status/<job_id>', methods=['GET'])
@@ -540,11 +778,22 @@ def get_analysis(job_id: str):
     if not job:
         return jsonify({"error": "Job not found"}), 404
     
+    # Try to extract summary from llm_outputs if available
+    summary = ''
+    llm_outputs = job.get('llm_outputs', '')
+    if llm_outputs:
+        try:
+            outputs_data = json.loads(llm_outputs)
+            summary = outputs_data.get('summary', '')
+        except:
+            pass
+    
     return {
         'job_id': job_id,
         'status': job.get('status'),
         'analysis_html': job.get('analysis_html', ''),
         'advisor_bio': job.get('advisor_bio', ''),
+        'summary': summary,
         'summary_html': job.get('summary_html', '')
     }
 
@@ -683,21 +932,40 @@ def process_job_worker(db_path: str):
                     if response.status_code == 200:
                         analysis_data = response.json()
                         
-                        # Extract analysis and thinking
+                        # Extract all analysis fields
                         analysis_html = analysis_data.get('analysis_html', '')
                         advisor_bio = analysis_data.get('advisor_bio', '')
                         thinking = analysis_data.get('llm_thinking', '')
+                        prompt = analysis_data.get('prompt', '')
+                        llm_prompt = analysis_data.get('llm_prompt', '')
+                        full_response = analysis_data.get('full_response', '')
+                        summary = analysis_data.get('summary', '')
                         
-                        # Update job with results
+                        # Prepare llm_outputs as JSON string
+                        llm_outputs = json.dumps({
+                            'prompt': prompt,
+                            'response': full_response,
+                            'summary': summary,
+                            'model': analysis_data.get('model', ''),
+                            'timestamp': analysis_data.get('timestamp', '')
+                        })
+                        
+                        # Create markdown summary for analysis_markdown field
+                        analysis_markdown = f"""# {advisor.title()} Analysis\n\n## Summary\n{summary}\n\n## Full Analysis\n{full_response}"""
+                        
+                        # Update job with all results including summary
                         conn.execute("""
                             UPDATE jobs SET status = ?, analysis_html = ?, 
                                            advisor_bio = ?, llm_thinking = ?,
+                                           prompt = ?, llm_prompt = ?, llm_outputs = ?,
+                                           analysis_markdown = ?,
                                            last_activity = ?
                             WHERE id = ?
                         """, ('completed', analysis_html, advisor_bio, thinking,
+                              prompt, llm_prompt, llm_outputs, analysis_markdown,
                               datetime.now().isoformat(), job_id))
                         conn.commit()
-                        logger.info(f"Job {job_id} completed successfully")
+                        logger.info(f"Job {job_id} completed successfully with summary")
                     else:
                         error_msg = f"AI Advisor returned {response.status_code}"
                         conn.execute("""

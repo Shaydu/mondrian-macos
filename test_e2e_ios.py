@@ -2,44 +2,67 @@
 """
 E2E iOS Test Suite
 Tests the complete workflow: upload image → analyze → stream progress → get results
+Saves all results to timestamped JSON file in test_results/ directory
 """
 import requests
 import time
 import json
 import sys
 from pathlib import Path
+from datetime import datetime
 
 # Configuration
 JOB_SERVICE_URL = "http://localhost:5005"
 AI_ADVISOR_URL = "http://localhost:5100"
-SUMMARY_SERVICE_URL = "http://localhost:5200"  # Summary service
+SUMMARY_SERVICE_URL = "http://localhost:5006"  # Summary service (optional, provides summaries)
 
 # Test image
 TEST_IMAGE = Path("source/mike-shrub.jpg")
 ADVISOR = "ansel"
 
+# Results storage
+RESULTS_DIR = Path("test_results")
+RESULTS_DIR.mkdir(exist_ok=True)
+
 def check_health():
     """Verify all services are healthy"""
     print("📋 Checking service health...")
-    services = {
+    # Critical services (must be running)
+    critical_services = {
         "Job Service": (JOB_SERVICE_URL, 5005),
         "AI Advisor": (AI_ADVISOR_URL, 5100),
+    }
+    
+    # Optional services (nice to have but not required)
+    optional_services = {
         "Summary Service": (SUMMARY_SERVICE_URL, 5200),
     }
     
-    all_healthy = True
-    for name, (url, port) in services.items():
+    all_critical_healthy = True
+    for name, (url, port) in critical_services.items():
         try:
             response = requests.get(f"{url}/health", timeout=5)
             if response.status_code == 200:
                 print(f"  ✅ {name} (:{port}) - healthy")
             else:
                 print(f"  ⚠️  {name} (:{port}) - responded but status {response.status_code}")
+                all_critical_healthy = False
         except Exception as e:
             print(f"  ❌ {name} (:{port}) - {str(e)[:50]}")
-            all_healthy = False
+            all_critical_healthy = False
     
-    return all_healthy
+    # Check optional services but don't fail
+    for name, (url, port) in optional_services.items():
+        try:
+            response = requests.get(f"{url}/health", timeout=5)
+            if response.status_code == 200:
+                print(f"  ✅ {name} (:{port}) - healthy")
+            else:
+                print(f"  ⚠️  {name} (:{port}) - not available (optional)")
+        except Exception as e:
+            print(f"  ⚠️  {name} (:{port}) - not available (optional)")
+    
+    return all_critical_healthy
 
 def test_image_upload():
     """Test image upload and job creation"""
@@ -52,13 +75,13 @@ def test_image_upload():
     try:
         with open(TEST_IMAGE, "rb") as f:
             response = requests.post(
-                f"{JOB_SERVICE_URL}/analyze",
+                f"{JOB_SERVICE_URL}/upload",
                 files={"image": ("test.jpg", f, "image/jpeg")},
                 data={"advisor": ADVISOR},
                 timeout=10
             )
         
-        if response.status_code == 200:
+        if response.status_code in [200, 201]:
             data = response.json()
             job_id = data.get("job_id")
             print(f"  ✅ Job created: {job_id}")
@@ -153,7 +176,7 @@ def test_get_results(job_id):
     print(f"\n🔷 Test 4: Get Analysis Results (Job: {job_id})")
     
     try:
-        response = requests.get(f"{JOB_SERVICE_URL}/results/{job_id}", timeout=10)
+        response = requests.get(f"{JOB_SERVICE_URL}/analysis/{job_id}", timeout=10)
         
         if response.status_code == 200:
             data = response.json()
@@ -193,7 +216,7 @@ def test_summary_service(job_id):
             print(f"  ⚠️  Summary service returned {response.status_code}")
             return None
     except requests.exceptions.ConnectionError:
-        print(f"  ⚠️  Summary service not running on port 5200")
+        print(f"  ⚠️  Summary service not running on port 5006")
         return None
     except Exception as e:
         print(f"  ⚠️  Summary service error: {str(e)[:50]}")
@@ -203,6 +226,18 @@ def main():
     print("=" * 70)
     print("🚀 MONDRIAN E2E iOS TEST SUITE")
     print("=" * 70)
+    
+    test_results = {
+        "timestamp": datetime.now().isoformat(),
+        "advisor": ADVISOR,
+        "test_image": str(TEST_IMAGE),
+        "services_tested": {
+            "job_service": JOB_SERVICE_URL,
+            "ai_advisor": AI_ADVISOR_URL,
+            "summary_service": SUMMARY_SERVICE_URL,
+        },
+        "results": {}
+    }
     
     # Step 1: Health check
     if not check_health():
@@ -215,6 +250,7 @@ def main():
     if not job_id:
         print("\n❌ Failed to upload image")
         sys.exit(1)
+    test_results["results"]["job_id"] = job_id
     
     # Step 3: Stream progress
     test_stream_progress(job_id)
@@ -224,15 +260,28 @@ def main():
     if not results:
         print("\n❌ Job did not complete")
         sys.exit(1)
+    test_results["results"]["status"] = results.get('status', 'unknown')
     
-    # Step 5: Get full results
+    # Step 5: Get full results (detail feedback)
     final_data = test_get_results(job_id)
     if not final_data:
         print("\n❌ Failed to get results")
         sys.exit(1)
+    test_results["results"]["detail_feedback"] = {
+        "analysis": final_data.get('analysis', ''),
+        "analysis_length": len(final_data.get('analysis', '')),
+        "raw_response": final_data
+    }
     
-    # Step 6: Try summary service
-    test_summary_service(job_id)
+    # Step 6: Try summary service (summary feedback)
+    summary_data = test_summary_service(job_id)
+    test_results["results"]["summary_feedback"] = summary_data
+    
+    # Save results to file
+    timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+    results_file = RESULTS_DIR / f"e2e_test_{job_id}_{timestamp}.json"
+    with open(results_file, "w") as f:
+        json.dump(test_results, f, indent=2)
     
     # Final summary
     print("\n" + "=" * 70)
@@ -241,6 +290,12 @@ def main():
     print(f"\nJob ID: {job_id}")
     print(f"Status: {results.get('status', 'unknown')}")
     print(f"Analysis length: {len(final_data.get('analysis', ''))} chars")
+    print(f"\n💾 Results saved to: {results_file}")
+    print(f"   - Detail Feedback: {len(final_data.get('analysis', ''))} characters")
+    if summary_data:
+        print(f"   - Summary Feedback: Available")
+    else:
+        print(f"   - Summary Feedback: Not available")
 
 if __name__ == "__main__":
     main()

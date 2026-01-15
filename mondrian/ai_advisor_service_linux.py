@@ -268,7 +268,7 @@ class QwenAdvisor:
             )[0]
             
             # Parse response into structured format
-            analysis = self._parse_response(response, advisor, mode)
+            analysis = self._parse_response(response, advisor, mode, prompt)
             
             return analysis
             
@@ -310,7 +310,7 @@ Format as JSON with keys: tonal_range, technical_mastery, composition, light_and
         
         return base_prompt
     
-    def _parse_response(self, response: str, advisor: str, mode: str) -> Dict[str, Any]:
+    def _parse_response(self, response: str, advisor: str, mode: str, prompt: str) -> Dict[str, Any]:
         """Parse model response into structured format"""
         
         # Try to extract JSON from response
@@ -334,14 +334,112 @@ Format as JSON with keys: tonal_range, technical_mastery, composition, light_and
                 "parse_error": True
             }
         
-        # Wrap in standard response format
+        # Generate a summary (first 500 chars or first paragraph)
+        summary = response[:500] if len(response) > 500 else response
+        if '\n\n' in summary:
+            summary = summary.split('\n\n')[0]
+        
+        # Create proper HTML for iOS WebView display
+        analysis_html = f"""<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {{
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            padding: 20px;
+            line-height: 1.6;
+            color: #333;
+            background: #f8f9fa;
+        }}
+        .container {{
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }}
+        .header {{
+            border-bottom: 2px solid #007AFF;
+            padding-bottom: 16px;
+            margin-bottom: 24px;
+        }}
+        .advisor-name {{
+            font-size: 24px;
+            font-weight: bold;
+            color: #007AFF;
+            margin-bottom: 8px;
+        }}
+        .mode-badge {{
+            display: inline-block;
+            background: #007AFF;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+        }}
+        .summary {{
+            background: #e3f2fd;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 24px;
+            border-left: 4px solid #007AFF;
+        }}
+        .summary-title {{
+            font-weight: bold;
+            color: #007AFF;
+            margin-bottom: 8px;
+        }}
+        .analysis {{
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-size: 15px;
+        }}
+        .footer {{
+            margin-top: 24px;
+            padding-top: 16px;
+            border-top: 1px solid #e0e0e0;
+            font-size: 12px;
+            color: #666;
+        }}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <div class="advisor-name">{advisor.title()} Analysis</div>
+            <span class="mode-badge">{mode.upper()} MODE</span>
+        </div>
+        <div class="summary">
+            <div class="summary-title">Summary</div>
+            {summary}
+        </div>
+        <div class="analysis">{response}</div>
+        <div class="footer">
+            Model: {self.model_name} | Device: {self.device} | {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}
+        </div>
+    </div>
+</body>
+</html>"""
+        
+        # Wrap in standard response format matching expected job service fields
         result = {
             "advisor": advisor,
             "mode": mode,
             "model": self.model_name,
             "device": self.device,
             "timestamp": datetime.now().isoformat(),
-            "analysis": analysis_data
+            "prompt": prompt,  # Save the system prompt
+            "llm_prompt": prompt,  # For compatibility
+            "full_response": response,  # Save the complete LLM response
+            "llm_thinking": response,  # Save thinking (complete response for now)
+            "analysis": analysis_data,  # Structured data
+            "analysis_html": analysis_html,  # HTML representation for iOS
+            "summary": summary,  # Summary for quick preview
+            "advisor_bio": f"Photography analysis by {advisor.title()} in {mode} mode using {self.model_name}"  # Advisor bio
         }
         
         return result
@@ -495,7 +593,7 @@ def main():
     """Main entry point"""
     parser = argparse.ArgumentParser(description='AI Advisor Service for Linux CUDA')
     parser.add_argument('--port', type=int, default=5100, help='Service port')
-    parser.add_argument('--model', default='Qwen/Qwen2-VL-7B-Instruct', help='Model to use')
+    parser.add_argument('--model', default='Qwen/Qwen3-VL-4B-Instruct', help='Model to use')
     parser.add_argument('--adapter', default='adapters/ansel/epoch_10', help='Path to LoRA adapter')
     parser.add_argument('--load_in_4bit', action='store_true', help='Use 4-bit quantization')
     parser.add_argument('--load_in_8bit', action='store_true', help='Use 8-bit quantization')

@@ -1,0 +1,12 @@
+======================================================================
+🚀 MONDRIAN E2E iOS TEST SUITE
+======================================================================
+📋 Checking service health...
+  ✅ Job Service (:5005) - healthy
+  ✅ AI Advisor (:5100) - healthy
+  ✅ Summary Service (:5200) - healthy
+
+🔷 Test 1: Image Upload & Job Creation
+  ❌ Upload failed: 201 - {"advisor":"ansel","advisors_used":["ansel"],"analysis_url":"http://localhost:5005/analysis/1b06363a-fba5-45af-95a4-62aaaaa51935","display_job_id":"1b06363a-fba5-45af-95a4-62aaaaa51935 (baseline)","en
+
+❌ Failed to upload image

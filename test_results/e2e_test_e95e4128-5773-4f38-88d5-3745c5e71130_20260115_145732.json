@@ -1,0 +1,26 @@
+{
+  "timestamp": "2026-01-15T14:56:27.497812",
+  "advisor": "ansel",
+  "test_image": "source/mike-shrub.jpg",
+  "services_tested": {
+    "job_service": "http://localhost:5005",
+    "ai_advisor": "http://localhost:5100",
+    "summary_service": "http://localhost:5006"
+  },
+  "results": {
+    "job_id": "e95e4128-5773-4f38-88d5-3745c5e71130",
+    "status": "completed",
+    "detail_feedback": {
+      "analysis": "",
+      "analysis_length": 0,
+      "raw_response": {
+        "advisor_bio": "",
+        "analysis_html": "",
+        "job_id": "e95e4128-5773-4f38-88d5-3745c5e71130",
+        "status": "completed",
+        "summary_html": ""
+      }
+    },
+    "summary_feedback": null
+  }
+}
