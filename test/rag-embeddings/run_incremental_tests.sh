@@ -2,7 +2,8 @@
 # Incremental Mode Test Runner
 # Runs all four modes sequentially and reports which ones pass/fail
 
-set -e
+# Don't use 'set -e' as we need to handle test failures gracefully
+set +e
 
 # Colors
 RED='\033[0;31m'
@@ -96,32 +97,74 @@ for test_config in "${TESTS[@]}"; do
     } >> "$RESULT_FILE"
     
     # Build command
-    restart_cmd="./mondrian.sh --restart $mode_arg1"
+    restart_cmd="./mondrian.sh --restart $mode_arg1 --no-monitor"
     if [ -n "$mode_arg2" ]; then
         restart_cmd="$restart_cmd $mode_arg2"
     fi
     
-    # Start service
+    # Start service - capture output to file and run in background
     print_step "Starting service: $restart_cmd"
-    if $restart_cmd >> "$RESULT_FILE" 2>&1; then
-        print_success "Service started"
-    else
-        print_fail "Service failed to start"
-        RESULTS[$mode]="FAILED (startup)"
+    service_log="$LOG_DIR/service_startup_${mode}_$$.log"
+    
+    # Run service startup directly in background
+    bash -c "cd '$PROJECT_DIR' && $restart_cmd" > "$service_log" 2>&1 &
+    service_pid=$!
+    print_success "Service process started (PID: $service_pid)"
+    
+    # Wait for services to initialize with better polling
+    print_step "Waiting for services to initialize..."
+    max_wait=90
+    waited=0
+    service_ready=false
+    
+    while [ $waited -lt $max_wait ]; do
+        # Check if AI Advisor service is responding
+        if curl -s -m 5 http://localhost:5100/health > /dev/null 2>&1; then
+            print_success "Service is responding"
+            service_ready=true
+            break
+        fi
+        
+        # Also check if the process is still running
+        if ! kill -0 $service_pid 2>/dev/null; then
+            print_fail "Service process has terminated"
+            {
+                echo "Service process terminated unexpectedly"
+                echo "Service startup log:"
+                cat "$service_log"
+                echo ""
+            } >> "$RESULT_FILE"
+            RESULTS[$mode]="FAILED (process died)"
+            FAILED_TESTS+=("$mode")
+            service_ready=false
+            break
+        fi
+        
+        printf "."
+        sleep 2
+        waited=$((waited + 2))
+    done
+    
+    if [ "$service_ready" = false ]; then
+        if [ $waited -ge $max_wait ]; then
+            print_fail "Service did not respond within $max_wait seconds"
+            {
+                echo "Status: FAILED (service not ready after $max_wait seconds)"
+                echo "Service log last 30 lines:"
+                tail -30 "$service_log"
+                echo ""
+            } >> "$RESULT_FILE"
+        fi
+        RESULTS[$mode]="FAILED (service not ready)"
         FAILED_TESTS+=("$mode")
-        {
-            echo "Status: FAILED (startup)"
-            echo ""
-        } >> "$RESULT_FILE"
         continue
     fi
     
-    # Wait for services to initialize
-    print_step "Waiting for services to initialize..."
-    sleep 5
+    echo ""  # New line after dots
+    sleep 2  # Additional buffer
     
     # Run test
-    print_step "Running test..."
+    print_step "Running test (this may take a minute)..."
     test_script="$TEST_DIR/test_mode_${mode}.py"
     
     if [ ! -f "$test_script" ]; then
@@ -135,7 +178,14 @@ for test_config in "${TESTS[@]}"; do
         continue
     fi
     
-    if python3 "$test_script" >> "$RESULT_FILE" 2>&1; then
+    # Run test with verbose output to see progress
+    print_info "Test output:"
+    test_output=$(python3 "$test_script" --verbose 2>&1)
+    test_exit_code=$?
+    
+    echo "$test_output" | tee -a "$RESULT_FILE"
+    
+    if [ $test_exit_code -eq 0 ]; then
         print_success "Test passed"
         RESULTS[$mode]="PASSED"
         PASSED_TESTS+=("$mode")
@@ -144,7 +194,7 @@ for test_config in "${TESTS[@]}"; do
             echo ""
         } >> "$RESULT_FILE"
     else
-        print_fail "Test failed"
+        print_fail "Test failed (exit code: $test_exit_code)"
         RESULTS[$mode]="FAILED"
         FAILED_TESTS+=("$mode")
         {

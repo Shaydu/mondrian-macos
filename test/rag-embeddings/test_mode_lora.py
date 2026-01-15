@@ -24,7 +24,7 @@ AI_SERVICE_URL = "http://localhost:5100"
 TEST_IMAGE_PATH = Path("source/photo-B371453D-558B-40C5-910D-72940700046C-8d4c2233.jpg")
 ADVISOR = "ansel"
 MODE = "lora"
-TIMEOUT = 60  # 60 second timeout for inference
+TIMEOUT = 300  # 300 second timeout for inference (match service model timeout)
 
 # Colors
 GREEN = '\033[92m'

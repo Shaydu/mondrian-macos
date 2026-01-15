@@ -861,14 +861,25 @@ Examples:
         if not verify_services_on_startup(max_wait=60, check_interval=2):
             print("\nWARNING: Some services may not be fully initialized yet.")
             print("Services should be running in the background.")
+            sys.exit(1)
         else:
             # Show active jobs
             print("\nDatabase status:")
             show_active_jobs()
             
-            # Start continuous monitoring
-            print("\nStarting health monitoring (Ctrl+C to stop)...")
-            monitor_services(duration=None, interval=5)
+            # Check if we should enter monitoring mode
+            # If --no-monitor is specified, exit cleanly (for automated testing)
+            # Otherwise, start continuous monitoring
+            if '--no-monitor' in sys.argv:
+                print("\nServices started successfully. Exiting to allow tests to proceed.")
+                sys.exit(0)
+            else:
+                print("\nStarting health monitoring (Ctrl+C to stop)...")
+                try:
+                    monitor_services(duration=None, interval=5)
+                except KeyboardInterrupt:
+                    print("\n\nHealth monitoring stopped.")
+                    sys.exit(0)
     else:
         print("\nServices are running in the background.")
         print(f"\nTo compare modes, restart with different --mode:")
