@@ -1,0 +1,25 @@
+{
+  "timestamp": "2026-01-16T09:19:01.046540",
+  "ai_advisor_service": {
+    "backend": "MLX",
+    "cwd": "/Users/shaydu/dev/mondrian-macos",
+    "db_path": "/Users/shaydu/dev/mondrian-macos/mondrian/mondrian.db",
+    "device": "Device(gpu, 0)",
+    "fine_tuned": false,
+    "lora_enabled": false,
+    "lora_path": null,
+    "mlx_available": true,
+    "mlx_model": "mlx-community/Qwen3-VL-4B-Instruct-4bit",
+    "model_loaded": true,
+    "model_mode": "base",
+    "script": "ai_advisor_service.py",
+    "status": "UP",
+    "timestamp": 1768580341.045965,
+    "using_gpu": true,
+    "version": "2.0-JSON"
+  },
+  "test_config": {
+    "test_image": "source/mike-shrub.jpg",
+    "advisor": "ansel"
+  }
+}

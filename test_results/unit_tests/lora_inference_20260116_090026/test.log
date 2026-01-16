@@ -1,0 +1,9 @@
+Phase 0: LoRA Inference Unit Test
+Start time: 2026-01-16T09:00:26.759073
+================================================================================
+
+Step 1: Checking services
+
+Step 2: Fetching advisor metadata
+
+Result: FAILED - Advisor metadata not found

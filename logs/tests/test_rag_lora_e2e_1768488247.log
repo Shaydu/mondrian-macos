@@ -1,0 +1,18 @@
+[2026-01-15 07:44:07,011] INFO: ================================================================================
+[2026-01-15 07:44:07,012] INFO: TEST SESSION STARTED
+[2026-01-15 07:44:07,012] INFO: ================================================================================
+[2026-01-15 07:44:07,012] INFO: Log file: /Users/shaydu/dev/mondrian-macos/logs/tests/test_rag_lora_e2e_1768488247.log
+[2026-01-15 07:44:07,012] INFO: Project root: /Users/shaydu/dev/mondrian-macos
+[2026-01-15 07:44:07,012] INFO: Python version: 3.12.2 (v3.12.2:6abddd9f6a, Feb  6 2024, 17:02:06) [Clang 13.0.0 (clang-1300.0.29.30)]
+[2026-01-15 07:44:07,012] INFO: Timestamp: 2026-01-15T07:44:07.012171
+[2026-01-15 07:44:07,012] INFO: AI Service URL: http://localhost:5100
+[2026-01-15 07:44:07,012] INFO: Test image: /Users/shaydu/dev/mondrian-macos/source/photo-B371453D-558B-40C5-910D-72940700046C-8d4c2233.jpg
+[2026-01-15 07:44:07,012] INFO: Advisor: ansel
+[2026-01-15 07:44:07,022] DEBUG: Starting new HTTP connection (1): localhost:5100
+[2026-01-15 07:44:07,024] DEBUG: http://localhost:5100 "GET /health HTTP/1.1" 200 438
+[2026-01-15 07:44:07,026] DEBUG: Starting new HTTP connection (1): localhost:5005
+[2026-01-15 07:44:07,028] DEBUG: http://localhost:5005 "GET /health HTTP/1.1" 200 132
+[2026-01-15 07:44:07,030] DEBUG: Starting new HTTP connection (1): localhost:5100
+[2026-01-15 07:45:07,071] ERROR: TEST FAILED: Availability check timeout - service may be unresponsive
+[2026-01-15 07:45:07,074] ERROR: RAG+LoRA availability check timed out
+[2026-01-15 07:45:07,074] ERROR: TEST EXECUTION ABORTED: RAG+LoRA mode is unavailable

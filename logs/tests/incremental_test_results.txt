@@ -1,41 +1,76 @@
 
-========== baseline (Thu Jan 15 07:25:01 MST 2026) ==========
+========== baseline (Thu Jan 15 07:34:24 MST 2026) ==========
 Description: Base model only
 
-test/rag-embeddings/run_incremental_tests.sh: line 183: timeout: command not found
+
+[94m======================================================================[0m
+[94m                          BASELINE MODE TEST                          [0m
+[94m======================================================================[0m
+
+
+[94m======================================================================[0m
+[94m                        Checking Prerequisites                        [0m
+[94m======================================================================[0m
+
+[92m✓ SUCCESS[0m: Test image exists: source/photo-B371453D-558B-40C5-910D-72940700046C-8d4c2233.jpg
+[92m✓ SUCCESS[0m: AI Advisor Service is running at http://localhost:5100
+[93mℹ[0m Service info: 2.0-JSON on device Device(gpu, 0)
+
+[94m======================================================================[0m
+[94m                    Running Baseline Analysis Test                    [0m
+[94m======================================================================[0m
+
+[93mℹ[0m Mode: base
+[93mℹ[0m Advisor: ansel
+[93mℹ[0m Timeout: 300s
+[93mℹ[0m Sending analysis request...
+[91m✗ FAILED[0m: Connection error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+[93mℹ[0m Service may have crashed during inference
+
+[94m======================================================================[0m
+[94m                            TEST FAILED ✗                             [0m
+[94m======================================================================[0m
+
+[91mBaseline mode failed. Check logs/ai_advisor_service_*.log[0m
 Status: FAILED
 
 
-========== rag (Thu Jan 15 07:25:07 MST 2026) ==========
+========== rag (Thu Jan 15 07:37:23 MST 2026) ==========
 Description: Base model with RAG
 
-test/rag-embeddings/run_incremental_tests.sh: line 183: timeout: command not found
+
+[94m======================================================================[0m
+[94m                            RAG MODE TEST                             [0m
+[94m======================================================================[0m
+
+
+[94m======================================================================[0m
+[94m                        Checking Prerequisites                        [0m
+[94m======================================================================[0m
+
+[92m✓ SUCCESS[0m: Test image exists: source/photo-B371453D-558B-40C5-910D-72940700046C-8d4c2233.jpg
+[92m✓ SUCCESS[0m: AI Advisor Service is running at http://localhost:5100
+[93mℹ[0m Service info: 2.0-JSON on device Device(gpu, 0)
+
+[94m======================================================================[0m
+[94m                      Running RAG Analysis Test                       [0m
+[94m======================================================================[0m
+
+[93mℹ[0m Mode: rag
+[93mℹ[0m Advisor: ansel
+[93mℹ[0m Timeout: 300s
+[93mℹ[0m Sending analysis request with RAG enabled...
+[91m✗ FAILED[0m: Connection error: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))
+[93mℹ[0m Service may have crashed during inference
+
+[94m======================================================================[0m
+[94m                            TEST FAILED ✗                             [0m
+[94m======================================================================[0m
+
+[91mRAG mode failed. Check logs/ai_advisor_service_*.log[0m
 Status: FAILED
 
 
-========== lora (Thu Jan 15 07:25:12 MST 2026) ==========
+========== lora (Thu Jan 15 07:40:04 MST 2026) ==========
 Description: Base model with LoRA
 
-test/rag-embeddings/run_incremental_tests.sh: line 183: timeout: command not found
-Status: FAILED
-
-
-========== lora_rag (Thu Jan 15 07:25:17 MST 2026) ==========
-Description: LoRA model with RAG
-
-test/rag-embeddings/run_incremental_tests.sh: line 183: timeout: command not found
-Status: FAILED
-
-
-========== SUMMARY ==========
-Total tests: 4
-Passed: 0
-Failed: 4
-
-Passed tests:
-
-Failed tests:
-  ✗ baseline
-  ✗ rag
-  ✗ lora
-  ✗ lora_rag
