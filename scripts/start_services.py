@@ -21,6 +21,24 @@ except ImportError:
     sys.exit(1)
 
 
+# Global flag to track if we're in cleanup phase
+_in_cleanup = False
+
+def signal_handler(signum, frame):
+    """Handle signals during cleanup phase."""
+    global _in_cleanup
+    if _in_cleanup:
+        # During cleanup, ignore SIGTERM to prevent parent process termination
+        print(f"[DEBUG] Received signal {signum} during cleanup phase - ignoring to prevent interruption")
+        return
+    # Otherwise, re-raise to allow normal termination
+    raise KeyboardInterrupt()
+
+# Register signal handlers
+signal.signal(signal.SIGTERM, signal_handler)
+signal.signal(signal.SIGINT, signal.default_int_handler)
+
+
 # Determine the correct Python executable to use
 def get_python_executable():
     """Get the Python executable, preferring venv if available."""
@@ -65,8 +83,8 @@ def get_services_for_mode(mode="base", lora_path=None, model=None):
         [PYTHON_EXECUTABLE, "mondrian/summary_service.py", "--port", "5006"],
     ]
     
-    # Job Service (port 5005)
-    services.append([PYTHON_EXECUTABLE, "mondrian/job_service_v2.3.py", "--port", "5005"])
+    # Job Service (port 5005) - explicitly specify database path
+    services.append([PYTHON_EXECUTABLE, "mondrian/job_service_v2.3.py", "--port", "5005", "--db", "mondrian.db"])
     
     # Configure AI Advisor Service based on mode and platform
     import platform
@@ -190,29 +208,40 @@ def kill_process_on_port(port):
                 except (psutil.NoSuchProcess, psutil.AccessDenied) as e:
                     print(f"Error killing process on port {port}: {e}")
     except (psutil.AccessDenied, PermissionError):
-        # Fallback to lsof + kill
+        # Fallback to lsof + kill with better signal handling
         try:
             result = subprocess.run(['lsof', '-t', '-i', f':{port}'],
                                   capture_output=True, text=True, timeout=5)
             if result.returncode == 0 and result.stdout.strip():
-                pids = result.stdout.strip().split('\n')
-                for pid in pids:
-                    try:
-                        pid = int(pid)
-                        print(f"Killing process on port {port} (PID {pid})...")
-                        import os
-                        os.kill(pid, signal.SIGTERM)
-                        time.sleep(2)
-                        # Check if still alive, force kill if needed
+                pids_str = result.stdout.strip()
+                # Handle multiple PIDs separated by newlines
+                if pids_str:
+                    pids = pids_str.split('\n')
+                    for pid_str in pids:
+                        pid_str = pid_str.strip()
+                        if not pid_str:
+                            continue
                         try:
-                            os.kill(pid, 0)  # Check if process exists
-                            print(f"Force killing process on port {port} (PID {pid})...")
-                            os.kill(pid, signal.SIGKILL)
-                        except OSError:
-                            pass  # Process already dead
-                        killed = True
-                    except (ValueError, OSError) as e:
-                        print(f"Error killing process {pid}: {e}")
+                            pid = int(pid_str)
+                            print(f"Killing process on port {port} (PID {pid})...")
+                            # Use subprocess to send kill signal - more reliable
+                            try:
+                                subprocess.run(['kill', '-TERM', str(pid)], timeout=3, capture_output=True)
+                                time.sleep(2)
+                                # Check if still alive using subprocess
+                                result = subprocess.run(['kill', '-0', str(pid)], capture_output=True)
+                                if result.returncode == 0:
+                                    print(f"Force killing process on port {port} (PID {pid})...")
+                                    subprocess.run(['kill', '-9', str(pid)], timeout=3, capture_output=True)
+                                killed = True
+                            except subprocess.TimeoutExpired:
+                                print(f"Timeout while killing process {pid}")
+                            except Exception as e:
+                                print(f"Error killing process {pid} via subprocess: {e}")
+                        except ValueError:
+                            print(f"Invalid PID format: '{pid_str}'")
+        except subprocess.TimeoutExpired:
+            print(f"Timeout while running lsof for port {port}")
         except Exception as e:
             print(f"Error using lsof to kill port {port}: {e}")
 
@@ -233,46 +262,52 @@ def wait_for_port_free(port, max_wait=10):
 
 def stop_services():
     """Find and kill running Mondrian service processes by script name and port."""
+    global _in_cleanup
+    _in_cleanup = True  # Set flag to ignore SIGTERM during cleanup
+    
     import psutil
     killed = 0
-    for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
-        try:
-            cmdline = proc.info['cmdline']
-            if not cmdline:
+    try:
+        for proc in psutil.process_iter(['pid', 'name', 'cmdline']):
+            try:
+                cmdline = proc.info['cmdline']
+                if not cmdline:
+                    continue
+                for script in SERVICE_SCRIPTS:
+                    if any(script in arg for arg in cmdline):
+                        print(f"Stopping {script} (PID {proc.pid})...")
+                        proc.terminate()
+                        try:
+                            proc.wait(timeout=5)
+                        except psutil.TimeoutExpired:
+                            print(f"Force killing {script} (PID {proc.pid})...")
+                            proc.kill()
+                        killed += 1
+            except (psutil.NoSuchProcess, psutil.AccessDenied):
                 continue
-            for script in SERVICE_SCRIPTS:
-                if any(script in arg for arg in cmdline):
-                    print(f"Stopping {script} (PID {proc.pid})...")
-                    proc.terminate()
-                    try:
-                        proc.wait(timeout=5)
-                    except psutil.TimeoutExpired:
-                        print(f"Force killing {script} (PID {proc.pid})...")
-                        proc.kill()
-                    killed += 1
-        except (psutil.NoSuchProcess, psutil.AccessDenied):
-            continue
-    if killed == 0:
-        print("No Mondrian service processes found to stop.")
-    else:
-        print(f"Stopped {killed} Mondrian service process(es).")
+        if killed == 0:
+            print("No Mondrian service processes found to stop.")
+        else:
+            print(f"Stopped {killed} Mondrian service process(es).")
 
-    # Port-based cleanup as fallback
-    service_ports = [5006, 5005, 5100]
-    for port in service_ports:
-        if port_in_use(port):
-            print(f"Port {port} still in use, attempting port-based cleanup...")
-            kill_process_on_port(port)
+        # Port-based cleanup as fallback
+        service_ports = [5006, 5005, 5100]
+        for port in service_ports:
+            if port_in_use(port):
+                print(f"Port {port} still in use, attempting port-based cleanup...")
+                kill_process_on_port(port)
 
-    # Verify ports are freed
-    all_freed = True
-    for port in service_ports:
-        if not wait_for_port_free(port, max_wait=10):
-            print(f"WARNING: Port {port} is still in use after cleanup attempts.")
-            all_freed = False
+        # Verify ports are freed
+        all_freed = True
+        for port in service_ports:
+            if not wait_for_port_free(port, max_wait=10):
+                print(f"WARNING: Port {port} is still in use after cleanup attempts.")
+                all_freed = False
 
-    if all_freed:
-        print("All service ports are now free.")
+        if all_freed:
+            print("All service ports are now free.")
+    finally:
+        _in_cleanup = False  # Clear flag after cleanup
 
 
 # Service health monitoring
@@ -706,8 +741,8 @@ def cleanup_stale_jobs_on_restart():
 
 def main():
     # Parse mode argument
-    mode = "base"  # Default mode
-    lora_path = None
+    mode = "lora"  # Default mode (using LoRA adapter for best performance)
+    lora_path = "./adapters/ansel_qwen3_4b_10ep"  # Default LoRA adapter trained on Qwen3-VL-4B
     model_arg = None
     all_services = False
     
@@ -733,30 +768,34 @@ Options:
     --stop              Stop all services
     --restart           Restart all services
     --status            Show active jobs
-    --mode=<mode>       Set service mode (default: base)
-    --lora-path=<path>  Path to LoRA adapter (required for lora modes)
+    --mode=<mode>       Set service mode (default: lora)
+    --lora-path=<path>  Path to LoRA adapter (default: ./adapters/ansel_qwen3_4b_10ep)
+    --model=<model>     Base model to use (default: Qwen/Qwen3-VL-4B-Instruct)
     --ab-split=<ratio>  A/B test split ratio (default: 0.5)
     --help, -h          Show this help
 
 Modes:
-    base                Base model only (default)
+    base                Base model only
     rag                 Base model with RAG enabled
-    lora                LoRA fine-tuned model
+    lora                LoRA fine-tuned model (DEFAULT)
     lora+rag            LoRA model with RAG enabled
     ab-test             A/B testing (base vs LoRA)
 
 Examples:
-    # Start with base model
-    ./mondrian.sh
+    # Start with default (Qwen3-VL-4B + LoRA ansel_qwen3_4b_10ep)
+    ./mondrian.sh --restart
 
-    # Restart with LoRA fine-tuned model
-    ./mondrian.sh --restart --mode=lora --lora-path=./models/qwen3-vl-4b-lora-ansel
+    # Start with base model (no LoRA)
+    ./mondrian.sh --restart --mode=base
+
+    # Use LoRA with custom adapter
+    ./mondrian.sh --restart --mode=lora --lora-path=./adapters/ansel_qwen3_4b_10ep
 
     # A/B test: 70% LoRA, 30% base
-    ./mondrian.sh --restart --mode=ab-test --lora-path=./models/qwen3-vl-4b-lora-ansel --ab-split=0.7
+    ./mondrian.sh --restart --mode=ab-test --ab-split=0.7
 
-    # RAG mode
-    ./mondrian.sh --restart --mode=rag
+    # RAG mode with default LoRA
+    ./mondrian.sh --restart --mode=lora+rag
 
     # Check active jobs
     ./mondrian.sh --status
@@ -846,6 +885,19 @@ Examples:
     else:
         env['PYTHONPATH'] = working_dir
 
+    # Set ANALYSIS_MODE environment variable based on the selected mode
+    # This tells the AI Advisor service what mode to operate in
+    # Supported modes: base, rag, lora, rag_lora (internally used)
+    mode_to_analysis = {
+        "base": "baseline",      # Base model only
+        "rag": "rag",           # Base model with RAG
+        "lora": "lora",         # Fine-tuned model only
+        "lora+rag": "rag_lora", # Fine-tuned model with RAG
+        "ab-test": "baseline",  # A/B testing uses baseline as default
+    }
+    env['ANALYSIS_MODE'] = mode_to_analysis.get(mode, "baseline")
+    print(f"[ENV] ANALYSIS_MODE set to: {env['ANALYSIS_MODE']}")
+
     # Get services for the selected mode
     services = get_services_for_mode(mode, lora_path, model_arg)
     
@@ -918,14 +970,25 @@ Examples:
         if not verify_services_on_startup(max_wait=60, check_interval=2):
             print("\nWARNING: Some services may not be fully initialized yet.")
             print("Services should be running in the background.")
+            sys.exit(1)
         else:
             # Show active jobs
             print("\nDatabase status:")
             show_active_jobs()
             
-            # Start continuous monitoring
-            print("\nStarting health monitoring (Ctrl+C to stop)...")
-            monitor_services(duration=None, interval=5)
+            # Check if we should enter monitoring mode
+            # If --no-monitor is specified, exit cleanly (for automated testing)
+            # Otherwise, start continuous monitoring
+            if '--no-monitor' in sys.argv:
+                print("\nServices started successfully. Exiting to allow tests to proceed.")
+                sys.exit(0)
+            else:
+                print("\nStarting health monitoring (Ctrl+C to stop)...")
+                try:
+                    monitor_services(duration=None, interval=5)
+                except KeyboardInterrupt:
+                    print("\n\nHealth monitoring stopped.")
+                    sys.exit(0)
     else:
         print("\nServices are running in the background.")
         print(f"\nTo compare modes, restart with different --mode:")

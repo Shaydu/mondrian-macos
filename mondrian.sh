@@ -2,9 +2,10 @@
 # Mondrian Services Launcher
 # Supports: base mode, RAG, LoRA adapters, model selection, all services
 # Examples:
-#   ./mondrian.sh --restart                                          (all services, default model: Qwen2-VL-7B)
-#   ./mondrian.sh --restart --mode=lora --lora-path=adapters/ansel/epoch_10
-#   ./mondrian.sh --restart --model="Qwen/Qwen2-VL-4B-Instruct"     (use lighter 4B model)
+#   ./mondrian.sh --restart                                          (all services, default: Qwen3-VL-4B + LoRA ansel_qwen3_4b_10ep)
+#   ./mondrian.sh --restart --mode=base                              (use base model without LoRA)
+#   ./mondrian.sh --restart --mode=lora --lora-path=adapters/ansel_qwen3_4b_10ep
+#   ./mondrian.sh --restart --model="Qwen/Qwen2-VL-7B-Instruct"     (use different base model)
 #   ./mondrian.sh --restart --all-services                            (ensure all services running)
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -33,10 +34,48 @@ for arg in "$@"; do
     fi
 done
 
-# Set default model if not specified (Qwen2-VL-7B for best quality)
+# Set default model if not specified (Qwen3-VL-4B for best compatibility)
 if [ -z "$MODEL_ARG" ]; then
-    MODEL_ARG="Qwen/Qwen2-VL-7B-Instruct"
-    echo "Using default model: $MODEL_ARG"
+    MODEL_ARG="Qwen/Qwen3-VL-4B-Instruct"
+fi
+
+# Set default mode and LoRA adapter
+DEFAULT_MODE="lora"
+DEFAULT_LORA_PATH="./adapters/ansel_qwen3_4b_10ep"
+
+# Check if mode was explicitly specified
+MODE_SPECIFIED=false
+for arg in "$@"; do
+    if [[ $arg == --mode=* ]]; then
+        MODE_SPECIFIED=true
+        break
+    fi
+done
+
+# Add default mode if not specified
+if [ "$MODE_SPECIFIED" = false ]; then
+    set -- "$@" "--mode=$DEFAULT_MODE"
+    echo "Using default mode: $DEFAULT_MODE"
+fi
+
+# Check if lora-path was explicitly specified
+LORA_PATH_SPECIFIED=false
+for arg in "$@"; do
+    if [[ $arg == --lora-path=* ]]; then
+        LORA_PATH_SPECIFIED=true
+        break
+    fi
+done
+
+# Add default LoRA path if not specified and mode includes lora
+if [ "$LORA_PATH_SPECIFIED" = false ]; then
+    for arg in "$@"; do
+        if [[ $arg == --mode=lora* ]]; then
+            set -- "$@" "--lora-path=$DEFAULT_LORA_PATH"
+            echo "Using default LoRA adapter: $DEFAULT_LORA_PATH"
+            break
+        fi
+    done
 fi
 
 # Check if running with --system-python flag

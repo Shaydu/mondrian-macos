@@ -1,0 +1,6 @@
+{
+  "advisor": "ansel",
+  "mode": "rag+embeddings",
+  "enable_rag": "true",
+  "enable_embeddings": "true"
+}

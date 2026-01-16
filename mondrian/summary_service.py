@@ -116,7 +116,7 @@ def health():
     """Health check endpoint"""
     return jsonify({
         'service': 'summary_service',
-        'status': 'healthy',
+        'status': 'UP',
         'timestamp': datetime.utcnow().isoformat()
     }), 200
 

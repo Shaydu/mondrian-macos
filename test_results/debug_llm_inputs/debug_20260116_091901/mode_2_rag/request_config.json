@@ -1,0 +1,5 @@
+{
+  "advisor": "ansel",
+  "mode": "rag",
+  "enable_rag": "true"
+}

@@ -63,6 +63,11 @@ class JobDatabase:
                 logger.info("Adding 'advisor_bio' column to jobs table")
                 conn.execute("ALTER TABLE jobs ADD COLUMN advisor_bio TEXT DEFAULT NULL")
                 conn.commit()
+            
+            if 'retry_count' not in columns:
+                logger.info("Adding 'retry_count' column to jobs table")
+                conn.execute("ALTER TABLE jobs ADD COLUMN retry_count INTEGER DEFAULT 0")
+                conn.commit()
     
     def create_job(self, advisor: str, mode: str, image_path: str) -> str:
         """Create a new job"""
@@ -176,7 +181,7 @@ def init_db(db_path: str = "mondrian.db"):
 def health():
     """Health check"""
     return jsonify({
-        "status": "healthy",
+        "status": "UP",
         "service": "job_service",
         "timestamp": datetime.now().isoformat()
     }), 200
@@ -749,6 +754,7 @@ def stream_job_updates(job_id: str):
                 
                 status_update_event = {
                     "type": "status_update",
+                    "job_id": job_id,
                     "timestamp": datetime.now().timestamp(),
                     "job_data": {
                         "status": current_status,
@@ -800,7 +806,7 @@ def stream_job_updates(job_id: str):
 
 @app.route('/analysis/<job_id>', methods=['GET'])
 def get_analysis(job_id: str):
-    """Get analysis results for a job"""
+    """Get analysis results for a job - returns full HTML analysis"""
     if not job_db:
         return jsonify({"error": "Database not initialized"}), 503
     
@@ -809,25 +815,17 @@ def get_analysis(job_id: str):
     if not job:
         return jsonify({"error": "Job not found"}), 404
     
-    # Try to extract summary from llm_outputs if available
-    summary = ''
-    llm_outputs = job.get('llm_outputs', '')
-    if llm_outputs:
-        try:
-            outputs_data = json.loads(llm_outputs)
-            summary = outputs_data.get('summary', '')
-        except:
-            pass
+    # Return the full analysis HTML with proper content-type
+    analysis_html = job.get('analysis_html', '')
     
-    return {
-        'job_id': job_id,
-        'status': job.get('status'),
-        'analysis_html': job.get('analysis_html', ''),
-        'advisor_bio': job.get('advisor_bio', ''),
-        'advisor_bio_html': job.get('advisor_bio_html', ''),
-        'summary': summary,
-        'summary_html': job.get('summary_html', '')
-    }
+    if not analysis_html:
+        return jsonify({"error": "No analysis available"}), 404
+    
+    return Response(
+        analysis_html,
+        mimetype='text/html; charset=utf-8',
+        headers={'Cache-Control': 'no-cache'}
+    )
 
 
 @app.route('/summary/<job_id>', methods=['GET'])
@@ -929,13 +927,41 @@ def process_job_worker(db_path: str):
     """Background worker that processes pending jobs"""
     logger.info("Job processor started")
     
+    # Wait for AI Advisor service to be ready before processing jobs
+    ai_ready = False
+    wait_attempts = 0
+    max_wait_attempts = 300  # Up to 5 minutes (30s * 10 attempts per second)
+    
+    while not ai_ready and wait_attempts < max_wait_attempts:
+        try:
+            response = requests.get(f"{AI_ADVISOR_URL}/health", timeout=5)
+            if response.status_code == 200:
+                health_data = response.json()
+                if health_data.get("status") == "UP":
+                    logger.info("✓ AI Advisor service is ready - starting job processing")
+                    ai_ready = True
+                    break
+        except Exception as e:
+            pass
+        
+        wait_attempts += 1
+        if wait_attempts % 20 == 0:  # Log every 2 seconds
+            logger.info(f"Waiting for AI Advisor service... ({wait_attempts // 10}s)")
+        time.sleep(0.1)
+    
+    if not ai_ready:
+        logger.warning(f"AI Advisor service did not become ready after {max_wait_attempts * 0.1}s")
+        logger.warning("Job processor continuing anyway - jobs will fail until service is ready")
+    
     while True:
         try:
             with sqlite3.connect(db_path) as conn:
-                # Find pending jobs
+                # Find pending jobs or jobs with retries available
                 cursor = conn.execute("""
-                    SELECT id, filename, advisor, mode FROM jobs 
-                    WHERE status IN ('pending', 'queued')
+                    SELECT id, filename, advisor, mode, error FROM jobs 
+                    WHERE (status IN ('pending', 'queued') AND COALESCE(retry_count, 0) = 0)
+                       OR (status = 'failed' AND COALESCE(retry_count, 0) < 3)
+                    ORDER BY created_at ASC
                     LIMIT 1
                 """)
                 job = cursor.fetchone()
@@ -944,16 +970,24 @@ def process_job_worker(db_path: str):
                     time.sleep(1)
                     continue
                 
-                job_id, filename, advisor, mode = job
-                logger.info(f"Processing job {job_id}: {advisor} ({mode})")
+                job_id, filename, advisor, mode, previous_error = job
+                
+                # Get current retry count
+                cursor = conn.execute("SELECT COALESCE(retry_count, 0) FROM jobs WHERE id = ?", (job_id,))
+                retry_count = cursor.fetchone()[0]
+                
+                if retry_count > 0:
+                    logger.info(f"Processing job {job_id}: {advisor} ({mode}) - RETRY {retry_count}/3 (prev error: {previous_error})")
+                else:
+                    logger.info(f"Processing job {job_id}: {advisor} ({mode})")
                 
                 # Update job status with current step
                 advisor_title = advisor.replace('_', ' ').title()
                 initial_message = f"Summoning {advisor_title}..."
                 conn.execute("""
-                    UPDATE jobs SET status = ?, current_step = ?, progress_percentage = ?, last_activity = ?
+                    UPDATE jobs SET status = ?, current_step = ?, progress_percentage = ?, last_activity = ?, error = ?
                     WHERE id = ?
-                """, ('analyzing', initial_message, 10, datetime.now().isoformat(), job_id))
+                """, ('analyzing', initial_message, 10, datetime.now().isoformat(), None, job_id))
                 conn.commit()
                 
                 # Update analyzing status
@@ -1028,21 +1062,38 @@ def process_job_worker(db_path: str):
                         logger.info(f"Job {job_id} completed successfully with summary")
                     else:
                         error_msg = f"AI Advisor returned {response.status_code}"
-                        conn.execute("""
-                            UPDATE jobs SET status = ?, error = ?, last_activity = ?
-                            WHERE id = ?
-                        """, ('failed', error_msg, datetime.now().isoformat(), job_id))
+                        # Increment retry count for transient failures
+                        current_retry = retry_count + 1
+                        if current_retry < 3:
+                            conn.execute("""
+                                UPDATE jobs SET status = ?, error = ?, retry_count = ?, last_activity = ?
+                                WHERE id = ?
+                            """, ('queued', error_msg, current_retry, datetime.now().isoformat(), job_id))
+                            logger.warning(f"Job {job_id} failed temporarily: {error_msg} - will retry ({current_retry}/3)")
+                        else:
+                            conn.execute("""
+                                UPDATE jobs SET status = ?, error = ?, retry_count = ?, last_activity = ?
+                                WHERE id = ?
+                            """, ('failed', error_msg, current_retry, datetime.now().isoformat(), job_id))
+                            logger.error(f"Job {job_id} failed permanently after {current_retry} retries: {error_msg}")
                         conn.commit()
-                        logger.error(f"Job {job_id} failed: {error_msg}")
                         
                 except Exception as e:
                     error_msg = str(e)
-                    conn.execute("""
-                        UPDATE jobs SET status = ?, error = ?, last_activity = ?
-                        WHERE id = ?
-                    """, ('failed', error_msg, datetime.now().isoformat(), job_id))
-                    conn.commit()
-                    logger.error(f"Job {job_id} error: {e}")
+                    # Increment retry count for transient failures
+                    current_retry = retry_count + 1
+                    if current_retry < 3 and "Connection refused" in error_msg:
+                        conn.execute("""
+                            UPDATE jobs SET status = ?, error = ?, retry_count = ?, last_activity = ?
+                            WHERE id = ?
+                        """, ('queued', error_msg, current_retry, datetime.now().isoformat(), job_id))
+                        logger.warning(f"Job {job_id} connection failed: {e} - will retry ({current_retry}/3)")
+                    else:
+                        conn.execute("""
+                            UPDATE jobs SET status = ?, error = ?, retry_count = ?, last_activity = ?
+                            WHERE id = ?
+                        """, ('failed', error_msg, current_retry, datetime.now().isoformat(), job_id))
+                        logger.error(f"Job {job_id} error: {e}")
                     
         except Exception as e:
             logger.error(f"Worker error: {e}")
@@ -1081,10 +1132,22 @@ def main():
     logger.info(f"Port: {args.port}")
     logger.info(f"Database: {args.db}")
     
-    init_db(args.db)
+    # Try to read db_path from config if it exists
+    db_path = args.db
+    try:
+        with sqlite3.connect(db_path) as conn:
+            cursor = conn.execute("SELECT value FROM config WHERE key = 'db_path'")
+            config_db_path = cursor.fetchone()
+            if config_db_path:
+                db_path = config_db_path[0]
+                logger.info(f"Using database path from config: {db_path}")
+    except Exception as e:
+        logger.warning(f"Could not read db_path from config: {e}")
+    
+    init_db(db_path)
     
     # Start background job processor
-    start_job_processor(args.db)
+    start_job_processor(db_path)
     logger.info("Background job processor started")
     
     logger.info(f"Starting Flask server on {args.host}:{args.port}")

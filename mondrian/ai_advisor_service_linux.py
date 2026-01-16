@@ -812,7 +812,7 @@ def health():
     """Health check endpoint - returns status even while loading"""
     if advisor:
         return jsonify({
-            "status": "healthy",
+            "status": "UP",
             "model": advisor.model_name,
             "device": advisor.device,
             "using_gpu": advisor.device == 'cuda',
