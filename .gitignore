@@ -38,6 +38,7 @@ training/
 adapters/
 uploads/
 thumbnails/
+test_results/
 
 # Massive training data and images
 training/ansel_ocr/the_camera_vol1/*.png
