@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
 """
-E2E iOS Test Suite
-Tests the complete workflow: upload image → analyze → stream progress → get results
-Saves all results to timestamped JSON file in test_results/ directory
+E2E iOS Baseline Mode Test Suite
+Tests the complete baseline workflow: upload image → analyze → stream progress → get results
+Validates all 8 iOS API endpoints in baseline mode
+Saves all results to timestamped JSON file in results/ directory
 """
 import requests
 import time
@@ -17,11 +18,11 @@ AI_ADVISOR_URL = "http://localhost:5100"
 RAG_SERVICE_URL = "http://localhost:5400"  # RAG service for semantic search
 
 # Test image
-TEST_IMAGE = Path("source/mike-shrub.jpg")
+TEST_IMAGE = Path("../../source/mike-shrub.jpg")
 ADVISOR = "ansel"
 
 # Results storage
-RESULTS_DIR = Path("test_results")
+RESULTS_DIR = Path("results")
 RESULTS_DIR.mkdir(exist_ok=True)
 
 def check_health():
@@ -402,7 +403,7 @@ def test_rag_search():
 
 def main():
     print("=" * 70)
-    print("🚀 MONDRIAN E2E iOS BASELINE FLOW TEST")
+    print("🚀 MONDRIAN E2E iOS BASELINE MODE TEST")
     print("=" * 70)
     print("Testing all 8 iOS API endpoints in baseline mode")
     print()
@@ -514,13 +515,13 @@ def main():
     
     # Save results to file
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-    results_file = RESULTS_DIR / f"e2e_ios_baseline_{job_id}_{timestamp}.json"
+    results_file = RESULTS_DIR / f"baseline_mode_{job_id}_{timestamp}.json"
     with open(results_file, "w") as f:
         json.dump(test_results, f, indent=2)
     
     # Final summary
     print("\n" + "=" * 70)
-    print("✅ iOS BASELINE FLOW TEST COMPLETE")
+    print("✅ iOS BASELINE MODE TEST COMPLETE")
     print("=" * 70)
     
     # Count successes
@@ -546,6 +547,8 @@ def main():
     if critical_passed < len(critical_tests):
         print("\n⚠️  Some critical tests failed!")
         sys.exit(1)
+    
+    print("\n✅ All critical tests passed! Ready for iOS integration.")
 
 if __name__ == "__main__":
     main()

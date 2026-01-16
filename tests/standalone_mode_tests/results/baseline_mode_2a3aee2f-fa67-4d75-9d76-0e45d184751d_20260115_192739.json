@@ -1,0 +1,52 @@
+{
+  "timestamp": "2026-01-15T19:25:52.182401",
+  "mode": "baseline",
+  "advisor": "ansel",
+  "test_image": "../../source/mike-shrub.jpg",
+  "services_tested": {
+    "job_service": "http://localhost:5005",
+    "ai_advisor": "http://localhost:5100",
+    "rag_service": "http://localhost:5400"
+  },
+  "results": {
+    "advisors": {
+      "success": false
+    },
+    "job_id": "2a3aee2f-fa67-4d75-9d76-0e45d184751d",
+    "upload": {
+      "success": true,
+      "job_id": "2a3aee2f-fa67-4d75-9d76-0e45d184751d"
+    },
+    "stream": {
+      "success": true,
+      "events": {
+        "connected": 0,
+        "status_update": 0,
+        "thinking_update": 0,
+        "analysis_complete": 0,
+        "done": 1
+      },
+      "llm_thinking_captured": 0
+    },
+    "status": {
+      "success": true,
+      "final_status": "completed"
+    },
+    "summary": {
+      "success": true,
+      "html_length": 2957
+    },
+    "analysis": {
+      "success": true,
+      "html_length": 15627
+    },
+    "rag_index": {
+      "success": false,
+      "optional": true
+    },
+    "rag_search": {
+      "success": false,
+      "optional": true
+    }
+  }
+}

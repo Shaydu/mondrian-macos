@@ -1,18 +1,136 @@
-[INFO] Job Service v2.3-DB-FIXED starting...
-[INFO] Database connection management fixed for real-time status updates
-[INIT] AI_SERVICE_URL: http://127.0.0.1:5100/analyze
-[INIT] Port: 5005
-[INIT] Database: /Users/shaydu/dev/mondrian-macos/mondrian.db
-[INIT] Debug mode: False
-[INIT] Created directories
-[INIT] Initializing database...
-[INIT] Database schema OK
-============================================================
-Starting Job Service v2.3-DB-FIXED on port 5005...
-Host: 0.0.0.0:5005
-AI Service: http://127.0.0.1:5100/analyze
-============================================================
+[2026-01-15 16:35:21] [INFO] Starting Job Service
+[2026-01-15 16:35:21] [INFO] Port: 5005
+[2026-01-15 16:35:21] [INFO] Database: mondrian.db
+[2026-01-15 16:35:21] [INFO] Job database initialized at mondrian.db
+[2026-01-15 16:35:21] [INFO] Job processor started
+[2026-01-15 16:35:21] [INFO] Background job processor started
+[2026-01-15 16:35:21] [INFO] Starting Flask server on 0.0.0.0:5005
  * Serving Flask app 'job_service_v2.3'
  * Debug mode: off
-Address already in use
-Port 5005 is in use by another program. Either identify and stop that program, or start the server with a different port.
+[2026-01-15 16:35:21] [INFO] [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5005
+ * Running on http://10.0.0.227:5005
+[2026-01-15 16:35:21] [INFO] [33mPress CTRL+C to quit[0m
+[2026-01-15 16:35:24] [INFO] 127.0.0.1 - - [15/Jan/2026 16:35:24] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:35:27] [INFO] 127.0.0.1 - - [15/Jan/2026 16:35:27] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:35:30] [INFO] 127.0.0.1 - - [15/Jan/2026 16:35:30] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:35:30] [INFO] 127.0.0.1 - - [15/Jan/2026 16:35:30] "GET /health HTTP/1.1" 200 -
+[2026-01-15 16:35:33] [INFO] 127.0.0.1 - - [15/Jan/2026 16:35:33] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:35:36] [INFO] 127.0.0.1 - - [15/Jan/2026 16:35:36] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:35:37] [INFO] Created job 5ee8f82c-b21d-4c57-9581-d62cd828bdb7
+[2026-01-15 16:35:37] [INFO] 127.0.0.1 - - [15/Jan/2026 16:35:37] "[35m[1mPOST /upload HTTP/1.1[0m" 201 -
+[2026-01-15 16:35:37] [INFO] Processing job 5ee8f82c-b21d-4c57-9581-d62cd828bdb7: ansel (baseline)
+[2026-01-15 16:35:39] [INFO] 127.0.0.1 - - [15/Jan/2026 16:35:39] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:35:42] [INFO] 127.0.0.1 - - [15/Jan/2026 16:35:42] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:35:45] [INFO] 127.0.0.1 - - [15/Jan/2026 16:35:45] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:35:46] [INFO] 127.0.0.1 - - [15/Jan/2026 16:35:46] "GET /status/5ee8f82c-b21d-4c57-9581-d62cd828bdb7 HTTP/1.1" 200 -
+[2026-01-15 16:35:48] [INFO] 127.0.0.1 - - [15/Jan/2026 16:35:48] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:35:51] [INFO] 127.0.0.1 - - [15/Jan/2026 16:35:51] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:35:52] [INFO] 127.0.0.1 - - [15/Jan/2026 16:35:52] "GET /status/5ee8f82c-b21d-4c57-9581-d62cd828bdb7 HTTP/1.1" 200 -
+[2026-01-15 16:35:54] [INFO] 127.0.0.1 - - [15/Jan/2026 16:35:54] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:35:55] [INFO] 127.0.0.1 - - [15/Jan/2026 16:35:55] "GET /status/5ee8f82c-b21d-4c57-9581-d62cd828bdb7 HTTP/1.1" 200 -
+[2026-01-15 16:35:58] [INFO] 127.0.0.1 - - [15/Jan/2026 16:35:58] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:35:58] [INFO] 127.0.0.1 - - [15/Jan/2026 16:35:58] "GET /status/5ee8f82c-b21d-4c57-9581-d62cd828bdb7 HTTP/1.1" 200 -
+[2026-01-15 16:36:01] [INFO] 127.0.0.1 - - [15/Jan/2026 16:36:01] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:36:01] [INFO] 127.0.0.1 - - [15/Jan/2026 16:36:01] "GET /status/5ee8f82c-b21d-4c57-9581-d62cd828bdb7 HTTP/1.1" 200 -
+[2026-01-15 16:36:04] [INFO] 127.0.0.1 - - [15/Jan/2026 16:36:04] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:36:04] [INFO] 127.0.0.1 - - [15/Jan/2026 16:36:04] "GET /status/5ee8f82c-b21d-4c57-9581-d62cd828bdb7 HTTP/1.1" 200 -
+[2026-01-15 16:36:07] [INFO] 127.0.0.1 - - [15/Jan/2026 16:36:07] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:36:07] [INFO] 127.0.0.1 - - [15/Jan/2026 16:36:07] "GET /status/5ee8f82c-b21d-4c57-9581-d62cd828bdb7 HTTP/1.1" 200 -
+[2026-01-15 16:36:10] [INFO] 127.0.0.1 - - [15/Jan/2026 16:36:10] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:36:10] [INFO] 127.0.0.1 - - [15/Jan/2026 16:36:10] "GET /status/5ee8f82c-b21d-4c57-9581-d62cd828bdb7 HTTP/1.1" 200 -
+[2026-01-15 16:36:13] [INFO] 127.0.0.1 - - [15/Jan/2026 16:36:13] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:36:13] [INFO] 127.0.0.1 - - [15/Jan/2026 16:36:13] "GET /status/5ee8f82c-b21d-4c57-9581-d62cd828bdb7 HTTP/1.1" 200 -
+[2026-01-15 16:36:16] [INFO] 127.0.0.1 - - [15/Jan/2026 16:36:16] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:36:16] [INFO] 127.0.0.1 - - [15/Jan/2026 16:36:16] "GET /status/5ee8f82c-b21d-4c57-9581-d62cd828bdb7 HTTP/1.1" 200 -
+[2026-01-15 16:36:19] [INFO] 127.0.0.1 - - [15/Jan/2026 16:36:19] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:36:19] [INFO] 127.0.0.1 - - [15/Jan/2026 16:36:19] "GET /status/5ee8f82c-b21d-4c57-9581-d62cd828bdb7 HTTP/1.1" 200 -
+[2026-01-15 16:36:22] [INFO] 127.0.0.1 - - [15/Jan/2026 16:36:22] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:36:22] [INFO] 127.0.0.1 - - [15/Jan/2026 16:36:22] "GET /status/5ee8f82c-b21d-4c57-9581-d62cd828bdb7 HTTP/1.1" 200 -
+[2026-01-15 16:36:25] [INFO] 127.0.0.1 - - [15/Jan/2026 16:36:25] "GET /status/5ee8f82c-b21d-4c57-9581-d62cd828bdb7 HTTP/1.1" 200 -
+[2026-01-15 16:36:25] [INFO] 127.0.0.1 - - [15/Jan/2026 16:36:25] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:36:28] [INFO] 127.0.0.1 - - [15/Jan/2026 16:36:28] "GET /status/5ee8f82c-b21d-4c57-9581-d62cd828bdb7 HTTP/1.1" 200 -
+[2026-01-15 16:36:28] [INFO] 127.0.0.1 - - [15/Jan/2026 16:36:28] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:36:31] [INFO] 127.0.0.1 - - [15/Jan/2026 16:36:31] "GET /status/5ee8f82c-b21d-4c57-9581-d62cd828bdb7 HTTP/1.1" 200 -
+[2026-01-15 16:36:31] [INFO] 127.0.0.1 - - [15/Jan/2026 16:36:31] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:36:34] [INFO] 127.0.0.1 - - [15/Jan/2026 16:36:34] "GET /status/5ee8f82c-b21d-4c57-9581-d62cd828bdb7 HTTP/1.1" 200 -
+[2026-01-15 16:36:35] [INFO] 127.0.0.1 - - [15/Jan/2026 16:36:35] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:36:37] [INFO] 127.0.0.1 - - [15/Jan/2026 16:36:37] "GET /status/5ee8f82c-b21d-4c57-9581-d62cd828bdb7 HTTP/1.1" 200 -
+[2026-01-15 16:36:38] [INFO] 127.0.0.1 - - [15/Jan/2026 16:36:38] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:36:40] [INFO] 127.0.0.1 - - [15/Jan/2026 16:36:40] "GET /status/5ee8f82c-b21d-4c57-9581-d62cd828bdb7 HTTP/1.1" 200 -
+[2026-01-15 16:36:41] [INFO] 127.0.0.1 - - [15/Jan/2026 16:36:41] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:36:43] [INFO] 127.0.0.1 - - [15/Jan/2026 16:36:43] "GET /status/5ee8f82c-b21d-4c57-9581-d62cd828bdb7 HTTP/1.1" 200 -
+[2026-01-15 16:36:44] [INFO] 127.0.0.1 - - [15/Jan/2026 16:36:44] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:36:46] [INFO] 127.0.0.1 - - [15/Jan/2026 16:36:46] "GET /status/5ee8f82c-b21d-4c57-9581-d62cd828bdb7 HTTP/1.1" 200 -
+[2026-01-15 16:36:47] [INFO] 127.0.0.1 - - [15/Jan/2026 16:36:47] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:36:49] [INFO] 127.0.0.1 - - [15/Jan/2026 16:36:49] "GET /status/5ee8f82c-b21d-4c57-9581-d62cd828bdb7 HTTP/1.1" 200 -
+[2026-01-15 16:36:50] [INFO] 127.0.0.1 - - [15/Jan/2026 16:36:50] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:36:52] [INFO] 127.0.0.1 - - [15/Jan/2026 16:36:52] "GET /status/5ee8f82c-b21d-4c57-9581-d62cd828bdb7 HTTP/1.1" 200 -
+[2026-01-15 16:36:53] [INFO] 127.0.0.1 - - [15/Jan/2026 16:36:53] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:36:55] [INFO] 127.0.0.1 - - [15/Jan/2026 16:36:55] "GET /status/5ee8f82c-b21d-4c57-9581-d62cd828bdb7 HTTP/1.1" 200 -
+[2026-01-15 16:36:56] [INFO] 127.0.0.1 - - [15/Jan/2026 16:36:56] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:36:58] [INFO] 127.0.0.1 - - [15/Jan/2026 16:36:58] "GET /status/5ee8f82c-b21d-4c57-9581-d62cd828bdb7 HTTP/1.1" 200 -
+[2026-01-15 16:36:59] [INFO] 127.0.0.1 - - [15/Jan/2026 16:36:59] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:37:01] [INFO] 127.0.0.1 - - [15/Jan/2026 16:37:01] "GET /status/5ee8f82c-b21d-4c57-9581-d62cd828bdb7 HTTP/1.1" 200 -
+[2026-01-15 16:37:02] [INFO] 127.0.0.1 - - [15/Jan/2026 16:37:02] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:37:04] [INFO] 127.0.0.1 - - [15/Jan/2026 16:37:04] "GET /status/5ee8f82c-b21d-4c57-9581-d62cd828bdb7 HTTP/1.1" 200 -
+[2026-01-15 16:37:05] [INFO] Job 5ee8f82c-b21d-4c57-9581-d62cd828bdb7 completed successfully with summary
+[2026-01-15 16:37:05] [INFO] 127.0.0.1 - - [15/Jan/2026 16:37:05] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:37:07] [INFO] 127.0.0.1 - - [15/Jan/2026 16:37:07] "GET /status/5ee8f82c-b21d-4c57-9581-d62cd828bdb7 HTTP/1.1" 200 -
+[2026-01-15 16:37:08] [INFO] 127.0.0.1 - - [15/Jan/2026 16:37:08] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:37:11] [INFO] 127.0.0.1 - - [15/Jan/2026 16:37:11] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:37:14] [INFO] 127.0.0.1 - - [15/Jan/2026 16:37:14] "GET /summary/5ee8f82c-b21d-4c57-9581-d62cd828bdb7 HTTP/1.1" 200 -
+[2026-01-15 16:37:15] [INFO] 127.0.0.1 - - [15/Jan/2026 16:37:15] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:37:18] [INFO] 127.0.0.1 - - [15/Jan/2026 16:37:18] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:37:21] [INFO] 127.0.0.1 - - [15/Jan/2026 16:37:21] "GET /status/5ee8f82c-b21d-4c57-9581-d62cd828bdb7 HTTP/1.1" 200 -
+[2026-01-15 16:37:21] [INFO] 127.0.0.1 - - [15/Jan/2026 16:37:21] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:37:24] [INFO] 127.0.0.1 - - [15/Jan/2026 16:37:24] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:37:27] [INFO] 127.0.0.1 - - [15/Jan/2026 16:37:27] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:37:28] [INFO] 127.0.0.1 - - [15/Jan/2026 16:37:28] "GET /analysis/5ee8f82c-b21d-4c57-9581-d62cd828bdb7 HTTP/1.1" 200 -
+[2026-01-15 16:37:30] [INFO] 127.0.0.1 - - [15/Jan/2026 16:37:30] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:37:33] [INFO] 127.0.0.1 - - [15/Jan/2026 16:37:33] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:37:36] [INFO] 127.0.0.1 - - [15/Jan/2026 16:37:36] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:37:39] [INFO] 127.0.0.1 - - [15/Jan/2026 16:37:39] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:37:42] [INFO] 127.0.0.1 - - [15/Jan/2026 16:37:42] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:37:45] [INFO] 127.0.0.1 - - [15/Jan/2026 16:37:45] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:37:48] [INFO] 127.0.0.1 - - [15/Jan/2026 16:37:48] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:37:52] [INFO] 127.0.0.1 - - [15/Jan/2026 16:37:52] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:37:55] [INFO] 127.0.0.1 - - [15/Jan/2026 16:37:55] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:37:58] [INFO] 127.0.0.1 - - [15/Jan/2026 16:37:58] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:38:01] [INFO] 127.0.0.1 - - [15/Jan/2026 16:38:01] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:38:04] [INFO] 127.0.0.1 - - [15/Jan/2026 16:38:04] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:38:07] [INFO] 127.0.0.1 - - [15/Jan/2026 16:38:07] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:38:10] [INFO] 127.0.0.1 - - [15/Jan/2026 16:38:10] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:38:13] [INFO] 127.0.0.1 - - [15/Jan/2026 16:38:13] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:38:16] [INFO] 127.0.0.1 - - [15/Jan/2026 16:38:16] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:38:19] [INFO] 127.0.0.1 - - [15/Jan/2026 16:38:19] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:38:22] [INFO] 127.0.0.1 - - [15/Jan/2026 16:38:22] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:38:26] [INFO] 127.0.0.1 - - [15/Jan/2026 16:38:26] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:38:29] [INFO] 127.0.0.1 - - [15/Jan/2026 16:38:29] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:38:32] [INFO] 127.0.0.1 - - [15/Jan/2026 16:38:32] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:38:35] [INFO] 127.0.0.1 - - [15/Jan/2026 16:38:35] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:38:38] [INFO] 127.0.0.1 - - [15/Jan/2026 16:38:38] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:38:41] [INFO] 127.0.0.1 - - [15/Jan/2026 16:38:41] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:38:44] [INFO] 127.0.0.1 - - [15/Jan/2026 16:38:44] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:38:47] [INFO] 127.0.0.1 - - [15/Jan/2026 16:38:47] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:38:50] [INFO] 127.0.0.1 - - [15/Jan/2026 16:38:50] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:38:53] [INFO] 127.0.0.1 - - [15/Jan/2026 16:38:53] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:38:56] [INFO] 127.0.0.1 - - [15/Jan/2026 16:38:56] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:38:59] [INFO] 127.0.0.1 - - [15/Jan/2026 16:38:59] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:39:02] [INFO] 127.0.0.1 - - [15/Jan/2026 16:39:02] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:39:06] [INFO] 127.0.0.1 - - [15/Jan/2026 16:39:06] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:39:09] [INFO] 127.0.0.1 - - [15/Jan/2026 16:39:09] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:39:12] [INFO] 127.0.0.1 - - [15/Jan/2026 16:39:12] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:39:14] [INFO] Created job 70f87cb2-2375-46b7-9a9c-314c50264e76
+[2026-01-15 16:39:14] [INFO] 127.0.0.1 - - [15/Jan/2026 16:39:14] "[35m[1mPOST /upload HTTP/1.1[0m" 201 -
+[2026-01-15 16:39:14] [INFO] Processing job 70f87cb2-2375-46b7-9a9c-314c50264e76: ansel (baseline)
+[2026-01-15 16:39:15] [INFO] 127.0.0.1 - - [15/Jan/2026 16:39:15] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:39:18] [INFO] 127.0.0.1 - - [15/Jan/2026 16:39:18] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:39:21] [INFO] 127.0.0.1 - - [15/Jan/2026 16:39:21] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:39:24] [INFO] 127.0.0.1 - - [15/Jan/2026 16:39:24] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:39:27] [INFO] 127.0.0.1 - - [15/Jan/2026 16:39:27] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:39:30] [INFO] 127.0.0.1 - - [15/Jan/2026 16:39:30] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:39:34] [INFO] 127.0.0.1 - - [15/Jan/2026 16:39:34] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:39:37] [INFO] 127.0.0.1 - - [15/Jan/2026 16:39:37] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -
+[2026-01-15 16:39:40] [INFO] 127.0.0.1 - - [15/Jan/2026 16:39:40] "GET /jobs?format=html&id=c0115df5-efae-42dd-b714-70cfff82577e&vscodeBrowserReqId=1768513787123 HTTP/1.1" 200 -

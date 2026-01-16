@@ -84,7 +84,8 @@ class JobDatabase:
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.execute(
                 """SELECT id, filename, status, advisor, mode, created_at, current_step, progress_percentage, enable_rag, 
-                          prompt, llm_prompt, analysis_markdown, llm_thinking, analysis_html, advisor_bio, llm_outputs 
+                          prompt, llm_prompt, analysis_markdown, llm_thinking, analysis_html, advisor_bio, llm_outputs,
+                          summary_html, advisor_bio_html
                    FROM jobs WHERE id = ?""",
                 (job_id,)
             )
@@ -109,7 +110,9 @@ class JobDatabase:
             'llm_thinking': row[12] or '',
             'analysis_html': row[13] or '',
             'advisor_bio': row[14] or '',
-            'llm_outputs': row[15] or ''
+            'llm_outputs': row[15] or '',
+            'summary_html': row[16] or '',
+            'advisor_bio_html': row[17] or ''
         }
     
     def update_job(self, job_id: str, status: str, result: Optional[Dict] = None, error: Optional[str] = None):
@@ -187,7 +190,7 @@ def get_advisors():
         with sqlite3.connect(db_path) as conn:
             conn.row_factory = sqlite3.Row
             cursor = conn.execute(
-                "SELECT id, name, bio, focus_areas FROM advisors ORDER BY id"
+                "SELECT id, name, bio, focus_areas, category FROM advisors ORDER BY id"
             )
             rows = cursor.fetchall()
         
@@ -196,6 +199,7 @@ def get_advisors():
             advisor = {
                 "id": row["id"],
                 "name": row["name"],
+                "specialty": row["category"] if row["category"] else "Photography",
                 "bio": row["bio"] if row["bio"] else "",
                 "focus_areas": []
             }
@@ -718,8 +722,16 @@ def stream_job_updates(job_id: str):
         import time
         from datetime import datetime
         
+        # Send connected event
+        connected_event = {
+            "type": "connected",
+            "job_id": job_id
+        }
+        yield f"event: connected\ndata: {json.dumps(connected_event)}\n\n"
+        
         last_status = job.get('status')
         last_progress = job.get('progress_percentage', 0)
+        last_thinking = job.get('llm_thinking', '')
         
         while True:
             job_data = job_db.get_job(job_id)
@@ -728,30 +740,49 @@ def stream_job_updates(job_id: str):
             
             current_status = job_data.get('status')
             current_progress = job_data.get('progress_percentage', 0)
+            current_thinking = job_data.get('llm_thinking', '')
             
             # Send status update if changed
-            if current_status != last_status or current_progress != last_progress:
-                event_data = {
-                    'status': current_status,
-                    'progress_percentage': current_progress,
-                    'current_step': job_data.get('current_step', ''),
-                    'llm_thinking': job_data.get('llm_thinking', '')
+            if (current_status != last_status or 
+                current_progress != last_progress or 
+                current_thinking != last_thinking):
+                
+                status_update_event = {
+                    "type": "status_update",
+                    "timestamp": datetime.now().timestamp(),
+                    "job_data": {
+                        "status": current_status,
+                        "progress_percentage": current_progress,
+                        "current_step": job_data.get('current_step', ''),
+                        "llm_thinking": current_thinking,
+                        "current_advisor": 1,
+                        "total_advisors": 1,
+                        "step_phase": "analyzing" if current_status == "analyzing" else "processing"
+                    }
                 }
-                yield f"data: {json.dumps(event_data)}\n\n"
+                yield f"event: status_update\ndata: {json.dumps(status_update_event)}\n\n"
+                
                 last_status = current_status
                 last_progress = current_progress
+                last_thinking = current_thinking
             
             # Check if job is complete
             if current_status in ['completed', 'failed']:
-                # Send final event
-                final_event = {
-                    'type': 'done',
-                    'status': current_status,
-                    'job_id': job_id,
-                    'analysis_html': job_data.get('analysis_html', ''),
-                    'advisor_bio': job_data.get('advisor_bio', '')
+                # Send analysis_complete event
+                if current_status == 'completed':
+                    analysis_complete_event = {
+                        "type": "analysis_complete",
+                        "job_id": job_id,
+                        "analysis_html": job_data.get('analysis_html', '')
+                    }
+                    yield f"event: analysis_complete\ndata: {json.dumps(analysis_complete_event)}\n\n"
+                
+                # Send final done event
+                done_event = {
+                    "type": "done",
+                    "job_id": job_id
                 }
-                yield f"data: {json.dumps(final_event)}\n\n"
+                yield f"event: done\ndata: {json.dumps(done_event)}\n\n"
                 break
             
             time.sleep(1)  # Check every second
@@ -793,6 +824,7 @@ def get_analysis(job_id: str):
         'status': job.get('status'),
         'analysis_html': job.get('analysis_html', ''),
         'advisor_bio': job.get('advisor_bio', ''),
+        'advisor_bio_html': job.get('advisor_bio_html', ''),
         'summary': summary,
         'summary_html': job.get('summary_html', '')
     }
@@ -801,22 +833,30 @@ def get_analysis(job_id: str):
 @app.route('/summary/<job_id>', methods=['GET'])
 def get_summary(job_id: str):
     """
-    Get a critical recommendations summary (transparent proxy to summary service on port 5006).
-    Returns HTML view of only the most important recommendations.
+    Get a critical recommendations summary HTML.
+    Returns HTML view of only the most important recommendations (top 3).
     """
-    try:
-        # Forward request to summary service on port 5006
-        summary_url = f"http://127.0.0.1:5006/generate/{job_id}"
-        resp = requests.get(summary_url, timeout=30)
-        # Return response with same status code and content type
-        return Response(
-            resp.content,
-            status=resp.status_code,
-            headers={'Content-Type': resp.headers.get('Content-Type', 'text/html; charset=utf-8')}
-        )
-    except Exception as e:
-        logger.error(f"[ERROR] Summary service proxy failed: {e}")
-        raise
+    if not job_db:
+        return jsonify({"error": "Database not initialized"}), 503
+    
+    job = job_db.get_job(job_id)
+    
+    if not job:
+        return jsonify({"error": "Job not found"}), 404
+    
+    if job['status'] != 'completed':
+        return jsonify({"error": "Job not completed"}), 400
+    
+    summary_html = job.get('summary_html', '')
+    
+    if not summary_html:
+        return jsonify({"error": "No summary available"}), 404
+    
+    return Response(
+        summary_html,
+        mimetype='text/html; charset=utf-8',
+        headers={'Cache-Control': 'no-cache'}
+    )
 
 
 @app.route('/jobs', methods=['POST'])
@@ -907,11 +947,20 @@ def process_job_worker(db_path: str):
                 job_id, filename, advisor, mode = job
                 logger.info(f"Processing job {job_id}: {advisor} ({mode})")
                 
-                # Update job status
+                # Update job status with current step
+                advisor_title = advisor.replace('_', ' ').title()
+                initial_message = f"Summoning {advisor_title}..."
                 conn.execute("""
-                    UPDATE jobs SET status = ?, last_activity = ?
+                    UPDATE jobs SET status = ?, current_step = ?, progress_percentage = ?, last_activity = ?
                     WHERE id = ?
-                """, ('analyzing', datetime.now().isoformat(), job_id))
+                """, ('analyzing', initial_message, 10, datetime.now().isoformat(), job_id))
+                conn.commit()
+                
+                # Update analyzing status
+                conn.execute("""
+                    UPDATE jobs SET current_step = ?, progress_percentage = ?, last_activity = ?
+                    WHERE id = ?
+                """, (f"Analyzing with {advisor_title}...", 30, datetime.now().isoformat(), job_id))
                 conn.commit()
                 
                 # Call AI Advisor service
@@ -930,11 +979,20 @@ def process_job_worker(db_path: str):
                         )
                     
                     if response.status_code == 200:
+                        # Update processing status
+                        conn.execute("""
+                            UPDATE jobs SET current_step = ?, progress_percentage = ?, last_activity = ?
+                            WHERE id = ?
+                        """, ("Processing analysis...", 70, datetime.now().isoformat(), job_id))
+                        conn.commit()
+                        
                         analysis_data = response.json()
                         
                         # Extract all analysis fields
                         analysis_html = analysis_data.get('analysis_html', '')
+                        summary_html = analysis_data.get('summary_html', '')
                         advisor_bio = analysis_data.get('advisor_bio', '')
+                        advisor_bio_html = analysis_data.get('advisor_bio_html', '')
                         thinking = analysis_data.get('llm_thinking', '')
                         prompt = analysis_data.get('prompt', '')
                         llm_prompt = analysis_data.get('llm_prompt', '')
@@ -953,16 +1011,18 @@ def process_job_worker(db_path: str):
                         # Create markdown summary for analysis_markdown field
                         analysis_markdown = f"""# {advisor.title()} Analysis\n\n## Summary\n{summary}\n\n## Full Analysis\n{full_response}"""
                         
-                        # Update job with all results including summary
+                        # Update job with all results including summary_html and advisor_bio_html
                         conn.execute("""
-                            UPDATE jobs SET status = ?, analysis_html = ?, 
-                                           advisor_bio = ?, llm_thinking = ?,
+                            UPDATE jobs SET status = ?, current_step = ?, progress_percentage = ?,
+                                           analysis_html = ?, summary_html = ?,
+                                           advisor_bio = ?, advisor_bio_html = ?, llm_thinking = ?,
                                            prompt = ?, llm_prompt = ?, llm_outputs = ?,
                                            analysis_markdown = ?,
                                            last_activity = ?
                             WHERE id = ?
-                        """, ('completed', analysis_html, advisor_bio, thinking,
-                              prompt, llm_prompt, llm_outputs, analysis_markdown,
+                        """, ('completed', 'Analysis complete', 100,
+                              analysis_html, summary_html, advisor_bio, advisor_bio_html,
+                              thinking, prompt, llm_prompt, llm_outputs, analysis_markdown,
                               datetime.now().isoformat(), job_id))
                         conn.commit()
                         logger.info(f"Job {job_id} completed successfully with summary")
