@@ -18,7 +18,7 @@ import threading
 import time
 import requests
 
-from flask import Flask, request, jsonify, Response
+from flask import Flask, request, jsonify, Response, send_file
 from flask_cors import CORS
 
 # Configure logging
@@ -189,7 +189,7 @@ def health():
 
 @app.route('/advisors', methods=['GET'])
 def get_advisors():
-    """Get list of available advisors"""
+    """Get list of available advisors with representative works"""
     try:
         db_path = job_db.db_path if job_db else "mondrian.db"
         with sqlite3.connect(db_path) as conn:
@@ -201,8 +201,10 @@ def get_advisors():
         
         advisors = []
         for row in rows:
+            advisor_id = row["id"]
+            
             advisor = {
-                "id": row["id"],
+                "id": advisor_id,
                 "name": row["name"],
                 "specialty": row["category"] if row["category"] else "Photography",
                 "bio": row["bio"] if row["bio"] else "",
@@ -216,6 +218,32 @@ def get_advisors():
                 except (json.JSONDecodeError, TypeError):
                     advisor["focus_areas"] = []
             
+            # Add representative works (first 4 for grid display)
+            artworks_list = []
+            possible_dirs = [
+                f"mondrian/source/advisor/photographer/{advisor_id}",
+                f"mondrian/source/advisor/painter/{advisor_id}",
+                f"mondrian/source/advisor/architect/{advisor_id}",
+                f"training/datasets/{advisor_id}-images",
+            ]
+            
+            for dir_path in possible_dirs:
+                if os.path.isdir(dir_path):
+                    images = sorted([f for f in os.listdir(dir_path) 
+                                   if f.lower().endswith(('.jpg', '.jpeg', '.png')) 
+                                   and f.lower() != 'headshot.jpg'])
+                    
+                    # Create artwork entries for up to 4 images for grid display in list view
+                    for idx, image_file in enumerate(images[:4], 1):
+                        artworks_list.append({
+                            "id": idx,
+                            "title": image_file.replace('.jpg', '').replace('.png', '').replace('_', ' '),
+                            "url": f"/advisor_artwork/{advisor_id}/{idx}"
+                        })
+                    break
+            
+            advisor["representative_works"] = artworks_list
+            advisor["image_url"] = f"/advisor_image/{advisor_id}"
             advisors.append(advisor)
         
         return jsonify({
@@ -226,6 +254,272 @@ def get_advisors():
     
     except Exception as e:
         logger.error(f"Error fetching advisors: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/advisors/<advisor_id>', methods=['GET'])
+def get_advisor_detail(advisor_id):
+    """Get detailed information for a specific advisor with images and representative works"""
+    try:
+        db_path = job_db.db_path if job_db else "mondrian.db"
+        with sqlite3.connect(db_path) as conn:
+            conn.row_factory = sqlite3.Row
+            cursor = conn.execute(
+                "SELECT id, name, bio, focus_areas, category, years, wikipedia_url, commons_url FROM advisors WHERE id = ?",
+                (advisor_id,)
+            )
+            row = cursor.fetchone()
+        
+        if not row:
+            return jsonify({"error": f"Advisor '{advisor_id}' not found"}), 404
+        
+        # Parse focus_areas JSON
+        focus_areas_list = []
+        if row["focus_areas"]:
+            try:
+                focus_areas_data = json.loads(row["focus_areas"])
+                if isinstance(focus_areas_data, list):
+                    focus_areas_list = focus_areas_data
+            except (json.JSONDecodeError, TypeError):
+                focus_areas_list = []
+        
+        # Get available artwork files for this advisor
+        artworks_list = []
+        all_images = []  # Track ALL images for lightbox navigation
+        possible_dirs = [
+            f"mondrian/source/advisor/photographer/{advisor_id}",
+            f"mondrian/source/advisor/painter/{advisor_id}",
+            f"mondrian/source/advisor/architect/{advisor_id}",
+            f"training/datasets/{advisor_id}-images",
+        ]
+        
+        for dir_path in possible_dirs:
+            if os.path.isdir(dir_path):
+                # Get image files from directory (skip headshot)
+                images = sorted([f for f in os.listdir(dir_path) 
+                               if f.lower().endswith(('.jpg', '.jpeg', '.png')) 
+                               and f.lower() != 'headshot.jpg'])
+                all_images = images
+                
+                # Create artwork entries for ALL images for lightbox support
+                for idx, image_file in enumerate(images, 1):
+                    artworks_list.append({
+                        "id": idx,  # For lightbox pagination
+                        "title": image_file.replace('.jpg', '').replace('.png', '').replace('_', ' '),
+                        "url": f"/advisor_artwork/{advisor_id}/{idx}",
+                        "filename": image_file,  # Include actual filename
+                        "index": idx,
+                        "total": len(images)  # Total count for lightbox navigation
+                    })
+                break
+        
+        # Fallback: add at least one artwork entry if none found
+        if not artworks_list:
+            artworks_list.append({
+                "id": 1,
+                "title": "Representative Work",
+                "url": f"/advisor_artwork/{advisor_id}/1",
+                "filename": "unknown",
+                "index": 1,
+                "total": 1
+            })
+        
+        # Build advisor response with image URLs
+        advisor = {
+            "id": row["id"],
+            "name": row["name"],
+            "specialty": row["category"] if row["category"] else "Photography",
+            "bio": row["bio"] if row["bio"] else "",
+            "years": row["years"] if row["years"] else "",
+            "wikipedia_url": row["wikipedia_url"] if row["wikipedia_url"] else "",
+            "commons_url": row["commons_url"] if row["commons_url"] else "",
+            "focus_areas": focus_areas_list,
+            "image_url": f"/advisor_image/{advisor_id}",  # Headshot image endpoint
+            "artworks": artworks_list,
+            "artworks_count": len(artworks_list),  # Total number of representative works
+            "representative_works": {
+                "count": len(artworks_list),
+                "display_mode": "grid",  # or "carousel" for lightbox
+                "thumbnails": [
+                    {
+                        "id": w["id"],
+                        "url": w["url"],
+                        "title": w["title"],
+                        "index": w["index"],
+                        "total": w["total"]
+                    } for w in artworks_list[:4]  # First 4 for grid display
+                ] if artworks_list else [],
+                "full_list": artworks_list  # All items for lightbox pagination
+            }
+        }
+        
+        return jsonify({
+            "advisor": advisor,
+            "timestamp": datetime.now().isoformat()
+        }), 200
+    
+    except Exception as e:
+        logger.error(f"Error fetching advisor detail for {advisor_id}: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/advisor_image/<advisor_id>', methods=['GET'])
+def get_advisor_headshot(advisor_id):
+    """Serve advisor headshot image - try multiple locations"""
+    try:
+        import os
+        
+        # Try multiple possible locations for advisor headshot, in order of priority
+        possible_paths = [
+            # First priority: training datasets (most recent/curated)
+            f"training/datasets/{advisor_id}-images/headshot.jpg",
+            f"training/datasets/{advisor_id}-images/headshot.png",
+            
+            # Second priority: source advisor directories  
+            f"mondrian/source/advisor/photographer/{advisor_id}/headshot.jpg",
+            f"mondrian/source/advisor/photographer/{advisor_id}/headshot.png",
+            f"mondrian/source/advisor/painter/{advisor_id}/headshot.jpg",
+            f"mondrian/source/advisor/painter/{advisor_id}/headshot.png",
+            f"mondrian/source/advisor/architect/{advisor_id}/headshot.jpg",
+            f"mondrian/source/advisor/architect/{advisor_id}/headshot.png",
+            
+            # Third priority: dedicated advisor_images directory
+            f"mondrian/advisor_images/{advisor_id}.jpg",
+            f"mondrian/advisor_images/{advisor_id}.png",
+        ]
+        
+        for path in possible_paths:
+            if os.path.exists(path):
+                logger.info(f"Serving advisor headshot from {path}")
+                return send_file(path, mimetype='image/jpeg')
+        
+        # If no headshot found, try to use first image from advisor directory as fallback
+        logger.warning(f"No dedicated headshot found for advisor {advisor_id}, trying to use first representative work")
+        advisor_dirs = [
+            f"mondrian/source/advisor/photographer/{advisor_id}",
+            f"mondrian/source/advisor/painter/{advisor_id}",
+            f"mondrian/source/advisor/architect/{advisor_id}",
+            f"training/datasets/{advisor_id}-images",
+        ]
+        
+        for dir_path in advisor_dirs:
+            if os.path.isdir(dir_path):
+                images = sorted([f for f in os.listdir(dir_path) 
+                               if f.lower().endswith(('.jpg', '.jpeg', '.png')) 
+                               and f.lower() != 'headshot.jpg'])
+                if images:
+                    image_path = os.path.join(dir_path, images[0])
+                    logger.info(f"Using first representative work as headshot: {image_path}")
+                    return send_file(image_path, mimetype='image/jpeg')
+        
+        # If still no image found, return 404
+        logger.warning(f"No headshot or representative work found for advisor {advisor_id}")
+        return jsonify({"error": f"No headshot image found for advisor {advisor_id}"}), 404
+    
+    except Exception as e:
+        logger.error(f"Error serving advisor headshot: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/advisor_artwork/<advisor_id>/<int:artwork_id>', methods=['GET'])
+def get_advisor_artwork(advisor_id, artwork_id):
+    """Serve advisor representative work/artwork"""
+    try:
+        import os
+        
+        # Try multiple possible locations for advisor artwork
+        possible_dirs = [
+            f"mondrian/source/advisor/photographer/{advisor_id}",
+            f"mondrian/source/advisor/painter/{advisor_id}",
+            f"mondrian/source/advisor/architect/{advisor_id}",
+            f"training/datasets/{advisor_id}-images",
+        ]
+        
+        for dir_path in possible_dirs:
+            if os.path.isdir(dir_path):
+                # Get image files from directory (skip headshot)
+                images = sorted([f for f in os.listdir(dir_path) 
+                               if f.lower().endswith(('.jpg', '.jpeg', '.png')) 
+                               and f.lower() != 'headshot.jpg'])
+                
+                if artwork_id <= len(images):
+                    image_file = images[artwork_id - 1]
+                    image_path = os.path.join(dir_path, image_file)
+                    logger.info(f"Serving artwork {artwork_id} from {image_path}")
+                    return send_file(image_path, mimetype='image/jpeg')
+        
+        # If no images found, return 404
+        logger.warning(f"No artwork {artwork_id} found for advisor {advisor_id}")
+        return jsonify({"error": f"No artwork found for advisor {advisor_id}"}), 404
+    
+    except Exception as e:
+        logger.error(f"Error serving advisor artwork: {e}")
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/advisor_artwork/<advisor_id>/lightbox/<int:artwork_id>', methods=['GET'])
+def get_advisor_artwork_lightbox_info(advisor_id, artwork_id):
+    """Get lightbox navigation info for advisor artwork - supports left/right arrow navigation"""
+    try:
+        import os
+        
+        # Try multiple possible locations for advisor artwork
+        possible_dirs = [
+            f"mondrian/source/advisor/photographer/{advisor_id}",
+            f"mondrian/source/advisor/painter/{advisor_id}",
+            f"mondrian/source/advisor/architect/{advisor_id}",
+            f"training/datasets/{advisor_id}-images",
+        ]
+        
+        for dir_path in possible_dirs:
+            if os.path.isdir(dir_path):
+                # Get image files from directory (skip headshot)
+                images = sorted([f for f in os.listdir(dir_path) 
+                               if f.lower().endswith(('.jpg', '.jpeg', '.png')) 
+                               and f.lower() != 'headshot.jpg'])
+                
+                if artwork_id <= len(images) and artwork_id >= 1:
+                    current_idx = artwork_id - 1
+                    current_image = images[current_idx]
+                    
+                    # Build lightbox metadata
+                    lightbox_info = {
+                        "current": {
+                            "id": artwork_id,
+                            "title": current_image.replace('.jpg', '').replace('.png', '').replace('_', ' '),
+                            "url": f"/advisor_artwork/{advisor_id}/{artwork_id}",
+                            "filename": current_image
+                        },
+                        "navigation": {
+                            "has_previous": current_idx > 0,
+                            "has_next": current_idx < len(images) - 1,
+                            "previous_id": artwork_id - 1 if current_idx > 0 else None,
+                            "next_id": artwork_id + 1 if current_idx < len(images) - 1 else None
+                        },
+                        "progress": {
+                            "current": artwork_id,
+                            "total": len(images),
+                            "percent": int((artwork_id / len(images)) * 100)
+                        },
+                        "all_items": [
+                            {
+                                "id": idx + 1,
+                                "title": img.replace('.jpg', '').replace('.png', '').replace('_', ' '),
+                                "url": f"/advisor_artwork/{advisor_id}/{idx + 1}",
+                                "filename": img
+                            } for idx, img in enumerate(images)
+                        ]
+                    }
+                    
+                    logger.info(f"Serving lightbox info for artwork {artwork_id} of {len(images)}")
+                    return jsonify(lightbox_info), 200
+        
+        # If no images found, return 404
+        logger.warning(f"No artwork {artwork_id} found for advisor {advisor_id} (lightbox)")
+        return jsonify({"error": f"No artwork found for advisor {advisor_id}"}), 404
+    
+    except Exception as e:
+        logger.error(f"Error serving advisor artwork lightbox info: {e}")
         return jsonify({"error": str(e)}), 500
 
 
@@ -737,6 +1031,9 @@ def stream_job_updates(job_id: str):
         last_status = job.get('status')
         last_progress = job.get('progress_percentage', 0)
         last_thinking = job.get('llm_thinking', '')
+        last_step = job.get('current_step', '')
+        last_update_time = time.time()
+        update_interval = 3  # Send thinking updates every 3 seconds for iOS UI
         
         while True:
             job_data = job_db.get_job(job_id)
@@ -746,11 +1043,17 @@ def stream_job_updates(job_id: str):
             current_status = job_data.get('status')
             current_progress = job_data.get('progress_percentage', 0)
             current_thinking = job_data.get('llm_thinking', '')
+            current_step = job_data.get('current_step', '')
+            current_time = time.time()
             
-            # Send status update if changed
-            if (current_status != last_status or 
-                current_progress != last_progress or 
-                current_thinking != last_thinking):
+            # Send status update if changed OR if periodic update interval reached (for thinking)
+            status_changed = (current_status != last_status or 
+                            current_progress != last_progress or 
+                            current_step != last_step)
+            
+            periodic_update = (current_time - last_update_time) >= update_interval and current_status == "analyzing"
+            
+            if status_changed or (periodic_update and current_thinking):
                 
                 status_update_event = {
                     "type": "status_update",
@@ -759,7 +1062,7 @@ def stream_job_updates(job_id: str):
                     "job_data": {
                         "status": current_status,
                         "progress_percentage": current_progress,
-                        "current_step": job_data.get('current_step', ''),
+                        "current_step": current_step,
                         "llm_thinking": current_thinking,
                         "current_advisor": 1,
                         "total_advisors": 1,
@@ -767,13 +1070,16 @@ def stream_job_updates(job_id: str):
                     }
                 }
                 yield f"event: status_update\ndata: {json.dumps(status_update_event)}\n\n"
+                logger.debug(f"🔄 Stream update: status={current_status}, progress={current_progress}%, thinking_len={len(current_thinking)}")
                 
                 last_status = current_status
                 last_progress = current_progress
                 last_thinking = current_thinking
+                last_step = current_step
+                last_update_time = current_time
             
             # Check if job is complete
-            if current_status in ['completed', 'failed']:
+            if current_status in ['completed', 'failed', 'done']:
                 # Send analysis_complete event
                 if current_status == 'completed':
                     analysis_complete_event = {
@@ -791,7 +1097,7 @@ def stream_job_updates(job_id: str):
                 yield f"event: done\ndata: {json.dumps(done_event)}\n\n"
                 break
             
-            time.sleep(1)  # Check every second
+            time.sleep(0.5)  # Check every 0.5 seconds for responsiveness
     
     return app.response_class(
         generate(),
@@ -1100,6 +1406,71 @@ def process_job_worker(db_path: str):
             time.sleep(1)
 
 
+def monitor_queue_status(db_path: str):
+    """Background monitor that logs queue status every 3-5 seconds for iOS UI monitoring"""
+    logger.info("Queue status monitor started")
+    
+    while True:
+        try:
+            with sqlite3.connect(db_path) as conn:
+                conn.row_factory = sqlite3.Row
+                
+                # Get queue statistics
+                cursor = conn.execute("SELECT COUNT(*) as total FROM jobs")
+                total = cursor.fetchone()['total']
+                
+                cursor = conn.execute("SELECT COUNT(*) as count FROM jobs WHERE status = 'pending'")
+                pending = cursor.fetchone()['count']
+                
+                cursor = conn.execute("SELECT COUNT(*) as count FROM jobs WHERE status = 'queued'")
+                queued = cursor.fetchone()['count']
+                
+                cursor = conn.execute("SELECT COUNT(*) as count FROM jobs WHERE status = 'processing'")
+                processing = cursor.fetchone()['count']
+                
+                cursor = conn.execute("SELECT COUNT(*) as count FROM jobs WHERE status = 'analyzing'")
+                analyzing = cursor.fetchone()['count']
+                
+                cursor = conn.execute("SELECT COUNT(*) as count FROM jobs WHERE status IN ('completed', 'done')")
+                completed = cursor.fetchone()['count']
+                
+                cursor = conn.execute("SELECT COUNT(*) as count FROM jobs WHERE status = 'failed'")
+                failed = cursor.fetchone()['count']
+                
+                # Log queue status
+                logger.info(f"📊 Queue: {total} total | {pending} pending | {queued} queued | {processing} processing | {analyzing} analyzing | {completed} completed | {failed} failed")
+                
+                # Get active jobs
+                cursor = conn.execute("""
+                    SELECT id, filename, status, advisor, mode, current_step, llm_thinking 
+                    FROM jobs 
+                    WHERE status IN ('processing', 'analyzing') 
+                    ORDER BY created_at DESC 
+                    LIMIT 3
+                """)
+                active_jobs = cursor.fetchall()
+                
+                if active_jobs:
+                    logger.info("  Active jobs:")
+                    for job in active_jobs:
+                        job_id_short = job['id'][:8]
+                        filename = job['filename'].split('/')[-1][:40] if job['filename'] else 'unknown'
+                        mode = job['mode'] or 'baseline'
+                        step = job['current_step'] or 'Starting...'
+                        thinking_len = len(job['llm_thinking'] or '')
+                        
+                        logger.info(f"    • {job_id_short}... ({job['status']}) {filename} [{mode}]")
+                        logger.info(f"      Step: {step}")
+                        if thinking_len > 0:
+                            thinking_preview = (job['llm_thinking'][:60] + '...') if thinking_len > 60 else job['llm_thinking']
+                            logger.info(f"      🧠 Thinking ({thinking_len} chars): {thinking_preview}")
+                
+        except Exception as e:
+            logger.error(f"Queue monitor error: {e}")
+        
+        time.sleep(4)  # Log status every 4 seconds
+
+
 def start_job_processor(db_path: str):
     """Start background job processor thread"""
     processor = threading.Thread(
@@ -1108,6 +1479,15 @@ def start_job_processor(db_path: str):
         daemon=True
     )
     processor.start()
+    
+    # Also start queue status monitor
+    monitor = threading.Thread(
+        target=monitor_queue_status,
+        args=(db_path,),
+        daemon=True
+    )
+    monitor.start()
+    
     return processor
 
 

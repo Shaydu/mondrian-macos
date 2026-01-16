@@ -67,8 +67,39 @@ PYTHON_EXECUTABLE = get_python_executable()
 print(f"Using Python: {PYTHON_EXECUTABLE}")
 
 
+def get_database_path():
+    """Get the database path from config table or use default.
+    
+    Returns:
+        str: The absolute path to the mondrian.db database
+    """
+    # Determine project root
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    project_root = os.path.dirname(script_dir)
+    default_db_path = os.path.join(project_root, "mondrian.db")
+    
+    # Try to read from config table if database exists
+    try:
+        if os.path.exists(default_db_path):
+            conn = sqlite3.connect(default_db_path, timeout=5)
+            cursor = conn.cursor()
+            cursor.execute("SELECT value FROM config WHERE key = 'db_path'")
+            result = cursor.fetchone()
+            conn.close()
+            
+            if result and result[0]:
+                config_db_path = result[0]
+                if os.path.exists(config_db_path):
+                    return config_db_path
+    except Exception:
+        pass
+    
+    # Fallback to default
+    return default_db_path
+
+
 # Default services (will be configured based on mode)
-def get_services_for_mode(mode="base", lora_path=None, model=None):
+def get_services_for_mode(mode="base", lora_path=None, model=None, db_path="mondrian.db"):
     """
     Get service configurations based on mode.
     
@@ -83,8 +114,8 @@ def get_services_for_mode(mode="base", lora_path=None, model=None):
         [PYTHON_EXECUTABLE, "mondrian/summary_service.py", "--port", "5006"],
     ]
     
-    # Job Service (port 5005) - explicitly specify database path
-    services.append([PYTHON_EXECUTABLE, "mondrian/job_service_v2.3.py", "--port", "5005", "--db", "mondrian.db"])
+    # Job Service (port 5005) - pass database path parameter
+    services.append([PYTHON_EXECUTABLE, "mondrian/job_service_v2.3.py", "--port", "5005", "--db", db_path])
     
     # Configure AI Advisor Service based on mode and platform
     import platform
@@ -191,10 +222,16 @@ def kill_process_on_port(port):
     import subprocess
     killed = False
 
-    # Try psutil first
+    # Try psutil first - but handle case where pid is None
+    psutil_failed = False
     try:
         for conn in psutil.net_connections(kind='inet'):
             if conn.laddr and conn.laddr.port == port:
+                # Check if pid is valid (can be None on some systems)
+                if conn.pid is None:
+                    print(f"Port {port} in use but PID unavailable via psutil, falling back to lsof")
+                    psutil_failed = True
+                    break
                 try:
                     proc = psutil.Process(conn.pid)
                     print(f"Killing process on port {port} (PID {conn.pid})...")
@@ -208,7 +245,10 @@ def kill_process_on_port(port):
                 except (psutil.NoSuchProcess, psutil.AccessDenied) as e:
                     print(f"Error killing process on port {port}: {e}")
     except (psutil.AccessDenied, PermissionError):
-        # Fallback to lsof + kill with better signal handling
+        psutil_failed = True
+
+    # Fallback to lsof + kill if psutil failed or pid was None
+    if not killed or psutil_failed:
         try:
             result = subprocess.run(['lsof', '-t', '-i', f':{port}'],
                                   capture_output=True, text=True, timeout=5)
@@ -424,12 +464,7 @@ def format_health_display(results):
 def get_job_queue_status():
     """Get current job queue status from database"""
     try:
-        try:
-            from mondrian.config import DATABASE_PATH
-        except ImportError:
-            script_dir = os.path.dirname(os.path.abspath(__file__))
-            project_root = os.path.dirname(script_dir)
-            DATABASE_PATH = os.path.join(project_root, "mondrian", "mondrian.db")
+        DATABASE_PATH = get_database_path()
         
         conn = sqlite3.connect(DATABASE_PATH, timeout=5)
         conn.row_factory = sqlite3.Row
@@ -448,7 +483,7 @@ def get_job_queue_status():
         cursor.execute("""
             SELECT id, filename, status, current_step, current_advisor, total_advisors, mode
             FROM jobs 
-            WHERE status NOT IN ('done', 'error')
+            WHERE status NOT IN ('completed', 'failed')
             ORDER BY created_at DESC
             LIMIT 5
         """)
@@ -472,10 +507,10 @@ def format_job_queue_display(status_counts, active_jobs):
     queued = status_counts.get("queued", 0)
     processing = status_counts.get("processing", 0)
     analyzing = status_counts.get("analyzing", 0)
-    done = status_counts.get("done", 0)
-    error = status_counts.get("error", 0)
+    completed = status_counts.get("completed", 0)
+    failed = status_counts.get("failed", 0)
     
-    output.append(f"  Queue: {total} total | {pending} pending | {queued} queued | {processing} processing | {analyzing} analyzing | {done} done | {error} error")
+    output.append(f"  Queue: {total} total | {pending} pending | {queued} queued | {processing} processing | {analyzing} analyzing | {completed} completed | {failed} failed")
     
     # Show active jobs
     if active_jobs:
@@ -640,24 +675,17 @@ def verify_services_on_startup(max_wait=120, check_interval=2):
 def show_active_jobs():
     """Show active jobs from the database"""
     try:
-        # Try to import from mondrian config, fallback to direct path
-        try:
-            from mondrian.config import DATABASE_PATH
-        except ImportError:
-            # Fallback: use default database path
-            script_dir = os.path.dirname(os.path.abspath(__file__))
-            project_root = os.path.dirname(script_dir)
-            DATABASE_PATH = os.path.join(project_root, "mondrian", "mondrian.db")
+        DATABASE_PATH = get_database_path()
         
         conn = sqlite3.connect(DATABASE_PATH, timeout=5)
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
         
-        # Get active jobs (not done or error)
+        # Get active jobs (not completed or failed)
         cursor.execute("""
             SELECT id, filename, advisor, status, current_step, current_advisor, total_advisors, mode
             FROM jobs 
-            WHERE status NOT IN ('done', 'error', 'pending')
+            WHERE status NOT IN ('completed', 'failed')
             ORDER BY created_at DESC
             LIMIT 10
         """)
@@ -693,41 +721,31 @@ def cleanup_stale_jobs_on_restart():
     'analyzing', 'finalizing') as errors, since their processing services were killed.
     """
     try:
-        try:
-            from mondrian.config import DATABASE_PATH
-        except ImportError:
-            script_dir = os.path.dirname(os.path.abspath(__file__))
-            project_root = os.path.dirname(script_dir)
-            DATABASE_PATH = os.path.join(project_root, "mondrian", "mondrian.db")
-        
-        if not os.path.exists(DATABASE_PATH):
-            return  # Database doesn't exist yet, nothing to clean
-        
+        DATABASE_PATH = get_database_path()
         conn = sqlite3.connect(DATABASE_PATH, timeout=5)
-        conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
         
         # Find jobs in intermediate states (they were killed when we stopped services)
         cursor.execute("""
             SELECT COUNT(*) as count
             FROM jobs
-            WHERE status IN ('pending', 'started', 'processing', 'analyzing', 'finalizing', 'queued')
+            WHERE status IN ('pending', 'queued', 'analyzing')
         """)
         
         result = cursor.fetchone()
-        stale_count = result['count'] if result else 0
+        stale_count = result[0] if result else 0
         
         if stale_count > 0:
             print(f"\nCleaning up {stale_count} stale job(s) from previous run...")
             
-            # Mark them as error
+            # Mark them as failed
             cursor.execute("""
                 UPDATE jobs
-                SET status = 'error',
+                SET status = 'failed',
                     current_step = 'Cancelled - services restarted',
                     completed_at = CURRENT_TIMESTAMP,
                     last_activity = CURRENT_TIMESTAMP
-                WHERE status IN ('pending', 'started', 'processing', 'analyzing', 'finalizing', 'queued')
+                WHERE status IN ('pending', 'queued', 'analyzing')
             """)
             
             conn.commit()
@@ -744,6 +762,7 @@ def main():
     mode = "lora"  # Default mode (using LoRA adapter for best performance)
     lora_path = "./adapters/ansel_qwen3_4b_10ep"  # Default LoRA adapter trained on Qwen3-VL-4B
     model_arg = None
+    db_path_arg = None
     all_services = False
     
     for arg in sys.argv:
@@ -753,6 +772,8 @@ def main():
             lora_path = arg.split("=", 1)[1]
         elif arg.startswith("--model="):
             model_arg = arg.split("=", 1)[1]
+        elif arg.startswith("--db="):
+            db_path_arg = arg.split("=", 1)[1]
         elif arg == "--all-services" or arg == "--full":
             all_services = True
     
@@ -771,6 +792,7 @@ Options:
     --mode=<mode>       Set service mode (default: lora)
     --lora-path=<path>  Path to LoRA adapter (default: ./adapters/ansel_qwen3_4b_10ep)
     --model=<model>     Base model to use (default: Qwen/Qwen3-VL-4B-Instruct)
+    --db=<path>         Database path (overrides config, default: mondrian.db)
     --ab-split=<ratio>  A/B test split ratio (default: 0.5)
     --help, -h          Show this help
 
@@ -796,6 +818,9 @@ Examples:
 
     # RAG mode with default LoRA
     ./mondrian.sh --restart --mode=lora+rag
+
+    # Use custom database path
+    ./mondrian.sh --restart --db=/custom/path/to/db.sqlite
 
     # Check active jobs
     ./mondrian.sh --status
@@ -898,8 +923,16 @@ Examples:
     env['ANALYSIS_MODE'] = mode_to_analysis.get(mode, "baseline")
     print(f"[ENV] ANALYSIS_MODE set to: {env['ANALYSIS_MODE']}")
 
+    # Determine database path (CLI override > config > default)
+    if db_path_arg:
+        final_db_path = db_path_arg
+        print(f"[CONFIG] Using database path from CLI: {final_db_path}")
+    else:
+        final_db_path = get_database_path()
+        print(f"[CONFIG] Using database path: {final_db_path}")
+    
     # Get services for the selected mode
-    services = get_services_for_mode(mode, lora_path, model_arg)
+    services = get_services_for_mode(mode, lora_path, model_arg, final_db_path)
     
     print("\n" + "=" * 60)
     print(f"Starting Mondrian services in {mode.upper()} mode")

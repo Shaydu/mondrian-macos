@@ -302,7 +302,11 @@ class QwenAdvisor:
             with torch.no_grad():
                 output_ids = self.model.generate(
                     **inputs, 
-                    max_new_tokens=2000,
+                    max_new_tokens=800,
+                    repetition_penalty=1.5,
+                    do_sample=True,
+                    temperature=0.5,
+                    top_p=0.90,
                     eos_token_id=self.processor.tokenizer.eos_token_id
                 )
             
@@ -686,6 +690,11 @@ Required JSON Structure:
         analysis_data = {}
         parse_success = False
         
+        # Warn if response is too long (likely runaway generation in LoRA mode)
+        if len(response) > 5000:
+            logger.warning(f"⚠️  Response is unusually long ({len(response)} chars) - may indicate runaway generation. Truncating...")
+            response = response[:5000]
+        
         try:
             # Find JSON in response (handle both raw JSON and markdown-wrapped JSON)
             start_idx = response.find('{')
@@ -693,9 +702,14 @@ Required JSON Structure:
             
             if start_idx != -1 and end_idx > start_idx:
                 json_str = response[start_idx:end_idx]
+                
+                # Validate JSON isn't too truncated
+                if len(json_str) < 100:
+                    logger.warning("⚠️  JSON response too short - likely incomplete or malformed")
+                
                 analysis_data = json.loads(json_str)
                 parse_success = True
-                logger.info(f"Successfully parsed JSON response ({len(json_str)} chars)")
+                logger.info(f"✓ Successfully parsed JSON response ({len(json_str)} chars)")
             else:
                 logger.warning("No JSON object found in response")
                 analysis_data = {
@@ -705,13 +719,14 @@ Required JSON Structure:
                     "raw_response": response
                 }
         except json.JSONDecodeError as e:
-            logger.error(f"JSON parsing failed: {e}")
+            logger.error(f"❌ JSON parsing failed: {e} at position {e.pos}")
+            logger.warning(f"   Response length: {len(response)}, Error context: ...{response[max(0,e.pos-50):min(len(response),e.pos+50)]}...")
             analysis_data = {
                 "image_description": "Unable to parse response",
                 "dimensions": [],
                 "overall_score": 0,
                 "parse_error": str(e),
-                "raw_response": response
+                "raw_response": response[:500]  # Keep only first 500 chars of raw response
             }
         
         # Load advisor data from database for bio

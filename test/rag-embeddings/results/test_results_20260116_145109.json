@@ -1,0 +1,47 @@
+{
+  "timestamp": "2026-01-16T14:51:09.349000",
+  "total_duration": 387.8458604812622,
+  "tests": [
+    {
+      "name": "baseline",
+      "mode": "base",
+      "status": "failed",
+      "duration": 296.5981328487396,
+      "error": "', 'analysis', 'analysis_html', 'device', 'full_response', 'llm_prompt', 'llm_thinking', 'mode', 'model', 'overall_score', 'parse_success', 'prompt', 'summary', 'summary_html', 'timestamp']\n\n\u001b[94m======================================================================\u001b[0m\n\u001b[94m                            TEST FAILED \u2717                             \u001b[0m\n\u001b[94m======================================================================\u001b[0m\n\n\u001b[91mBaseline mode failed. Check logs/ai_advisor_service_*.log\u001b[0m\n\n",
+      "details": null,
+      "timestamp": "2026-01-16T14:49:38.101278"
+    },
+    {
+      "name": "rag",
+      "mode": "rag",
+      "status": "failed",
+      "duration": 91.05709314346313,
+      "error": "_html', 'analysis', 'analysis_html', 'device', 'full_response', 'llm_prompt', 'llm_thinking', 'mode', 'model', 'overall_score', 'parse_success', 'prompt', 'summary', 'summary_html', 'timestamp']\n\n\u001b[94m======================================================================\u001b[0m\n\u001b[94m                            TEST FAILED \u2717                             \u001b[0m\n\u001b[94m======================================================================\u001b[0m\n\n\u001b[91mRAG mode failed. Check logs/ai_advisor_service_*.log\u001b[0m\n\n",
+      "details": null,
+      "timestamp": "2026-01-16T14:51:09.158475"
+    },
+    {
+      "name": "lora",
+      "mode": "lora",
+      "status": "failed",
+      "duration": 0.0930626392364502,
+      "error": "               \u001b[0m\n\u001b[94m======================================================================\u001b[0m\n\n\n\u001b[94m======================================================================\u001b[0m\n\u001b[94m                        Checking Prerequisites                        \u001b[0m\n\u001b[94m======================================================================\u001b[0m\n\n\u001b[92m\u2713 SUCCESS\u001b[0m: Test image exists: /home/doo/dev/mondrian-macos/source/mike-shrub-3e8985d0.jpg\n\u001b[91m\u2717 FAILED\u001b[0m: LoRA adapter not found: adapters/ansel\n",
+      "details": null,
+      "timestamp": "2026-01-16T14:51:09.251643"
+    },
+    {
+      "name": "rag+lora",
+      "mode": "rag_lora",
+      "status": "failed",
+      "duration": 0.09715795516967773,
+      "error": "               \u001b[0m\n\u001b[94m======================================================================\u001b[0m\n\n\n\u001b[94m======================================================================\u001b[0m\n\u001b[94m                        Checking Prerequisites                        \u001b[0m\n\u001b[94m======================================================================\u001b[0m\n\n\u001b[92m\u2713 SUCCESS\u001b[0m: Test image exists: /home/doo/dev/mondrian-macos/source/mike-shrub-3e8985d0.jpg\n\u001b[91m\u2717 FAILED\u001b[0m: LoRA adapter not found: adapters/ansel\n",
+      "details": null,
+      "timestamp": "2026-01-16T14:51:09.348903"
+    }
+  ],
+  "summary": {
+    "total": 4,
+    "passed": 0,
+    "failed": 4
+  }
+}

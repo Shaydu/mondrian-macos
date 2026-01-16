@@ -4,7 +4,7 @@ Complete API documentation for the Mondrian photography analysis system with sup
 
 **Current Version**: v2.3 (Job Service) + v1.13 (AI Advisor Service)  
 **Backend**: MLX with Qwen3-VL-4B-Instruct (4-bit quantized)  
-**Last Updated**: 2026-01-14
+**Last Updated**: 2026-01-16
 
 ---
 
@@ -14,6 +14,8 @@ Complete API documentation for the Mondrian photography analysis system with sup
 2. [Authentication](#authentication)
 3. [Base URLs](#base-urls)
 4. [Core Endpoints](#core-endpoints)
+   - [Advisor Endpoints](#advisor-endpoints)
+   - [Job Service Endpoints](#job-service-endpoints)
 5. [Analysis Modes](#analysis-modes)
 6. [Mode in API Responses](#mode-in-api-responses)
 7. [Examples](#examples)
@@ -57,6 +59,295 @@ For production/iOS, use the appropriate server IP and port.
 ---
 
 ## Core Endpoints
+
+### Advisor Endpoints
+
+#### 1. List All Advisors
+
+**Endpoint:** `GET /advisors`
+
+**Description:** Retrieve a list of all available advisors with their bio, specialty, and focus areas.
+
+**Response:**
+```json
+{
+  "advisors": [
+    {
+      "id": "ansel",
+      "name": "Ansel Adams",
+      "specialty": "Photographer",
+      "bio": "Legendary landscape photographer known for his black and white work and Zone System...",
+      "focus_areas": [
+        {
+          "title": "Tonal Range & Zone System",
+          "description": "Master of the full spectrum from pure black to pure white..."
+        },
+        {
+          "title": "Composition & Perspective",
+          "description": "Precise framing that emphasizes geometric elements, leading lines..."
+        }
+      ]
+    },
+    {
+      "id": "okeefe",
+      "name": "Georgia O'Keeffe",
+      "specialty": "Painter",
+      "bio": "American modernist painter known for her paintings of enlarged flowers...",
+      "focus_areas": []
+    }
+  ],
+  "count": 9,
+  "timestamp": "2026-01-16T12:15:09.155619"
+}
+```
+
+**Response Fields:**
+- `id` (string): Unique advisor identifier (used for analysis requests)
+- `name` (string): Full name of the advisor
+- `specialty` (string): Category (Photographer, Painter, Architect, etc.)
+- `bio` (string): Extended biography
+- `focus_areas` (array): List of areas of expertise with title and description
+- `count` (integer): Total number of advisors
+- `timestamp` (string): ISO 8601 timestamp of response
+
+**cURL Example:**
+```bash
+curl http://localhost:5005/advisors | jq '.advisors[].name'
+```
+
+**iOS Swift Example:**
+```swift
+struct FocusArea: Codable {
+    let title: String
+    let description: String
+}
+
+struct Advisor: Codable {
+    let id: String
+    let name: String
+    let specialty: String
+    let bio: String
+    let focus_areas: [FocusArea]
+}
+
+struct AdvisorsResponse: Codable {
+    let advisors: [Advisor]
+    let count: Int
+    let timestamp: String
+}
+
+// Fetch advisors
+func fetchAdvisors() async throws -> [Advisor] {
+    let url = URL(string: "http://10.0.0.227:5005/advisors")!
+    let (data, _) = try await URLSession.shared.data(from: url)
+    let response = try JSONDecoder().decode(AdvisorsResponse.self, from: data)
+    return response.advisors
+}
+```
+
+---
+
+#### 2. Get Advisor Details
+
+**Endpoint:** `GET /advisors/<advisor_id>`
+
+**Description:** Retrieve detailed information for a specific advisor including headshot, bio, focus areas, and representative works. Includes URLs to serve headshot image and artwork thumbnails.
+
+**Parameters:**
+- `advisor_id` (path, required): Advisor identifier (e.g., "ansel", "okeefe", "mondrian", "watkins")
+
+**Response:**
+```json
+{
+  "advisor": {
+    "id": "watkins",
+    "name": "Carleton Watkins",
+    "specialty": "Photographer",
+    "bio": "Watkins was a pioneer of large-format landscape photography in the 19th century, producing monumental images of Yosemite and the American frontier...",
+    "years": "1829-1916",
+    "wikipedia_url": "https://en.wikipedia.org/wiki/Carleton_Watkins",
+    "commons_url": "https://commons.wikimedia.org/wiki/Carleton_Watkins",
+    "focus_areas": [
+      {
+        "title": "Conservation Impact",
+        "description": "Assesses ability to inspire preservation"
+      },
+      {
+        "title": "Pioneering Technique",
+        "description": "Focuses on large-format precision and clarity"
+      }
+    ],
+    "image_url": "/advisor_image/watkins",
+    "artworks": [
+      {
+        "title": "Mirror View Yosemite",
+        "url": "/advisor_artwork/watkins/1"
+      },
+      {
+        "title": "The Grizzly Giant",
+        "url": "/advisor_artwork/watkins/2"
+      }
+    ]
+  },
+  "timestamp": "2026-01-16T12:30:11.636168"
+}
+```
+
+**Response Fields:**
+- `id` (string): Unique advisor identifier
+- `name` (string): Full name
+- `specialty` (string): Professional category (Photographer, Painter, Architect)
+- `bio` (string): Extended biography
+- `years` (string): Birth-death years or active period (e.g., "1829-1916")
+- `wikipedia_url` (string): Link to Wikipedia profile
+- `commons_url` (string): Link to Wikimedia Commons collection
+- `focus_areas` (array): Areas of expertise with title and description
+- `image_url` (string): Endpoint to fetch advisor headshot (circular image for profile)
+- `artworks` (array): Representative works with title and image URL
+
+**Image URLs:**
+
+The `image_url` and `artworks[].url` fields are relative endpoints that return image files:
+
+- **Headshot:** `GET /advisor_image/<advisor_id>` - Returns JPEG/PNG headshot for circular avatar display
+- **Artwork:** `GET /advisor_artwork/<advisor_id>/<index>` - Returns representative work image (1-indexed)
+
+**HTTP Status Codes:**
+- `200 OK` - Advisor found and returned
+- `404 Not Found` - Advisor ID does not exist, or image file not found
+
+**Error Response (404):**
+```json
+{
+  "error": "Advisor 'invalid_id' not found"
+}
+```
+
+**cURL Examples:**
+```bash
+# Get advisor profile with images and works
+curl http://localhost:5005/advisors/watkins | jq '.advisor'
+
+# Download headshot
+curl http://localhost:5005/advisor_image/watkins -o watkins_headshot.jpg
+
+# Download first artwork
+curl http://localhost:5005/advisor_artwork/watkins/1 -o watkins_work_1.jpg
+
+# Get all advisor data and pipe to parse
+curl -s http://localhost:5005/advisors/ansel | jq '.advisor.years'
+```
+
+**iOS Swift Implementation:**
+
+```swift
+struct FocusArea: Codable {
+    let title: String
+    let description: String
+}
+
+struct Artwork: Codable {
+    let title: String
+    let url: String  // Relative endpoint like "/advisor_artwork/watkins/1"
+}
+
+struct Advisor: Codable {
+    let id: String
+    let name: String
+    let specialty: String
+    let bio: String
+    let years: String
+    let wikipedia_url: String
+    let commons_url: String
+    let focus_areas: [FocusArea]
+    let image_url: String  // Endpoint for headshot
+    let artworks: [Artwork]  // Representative works
+}
+
+struct AdvisorDetail: Codable {
+    let advisor: Advisor
+    let timestamp: String
+}
+
+// Fetch advisor profile with images
+func fetchAdvisorProfile(id: String, baseURL: String = "http://10.0.0.227:5005") async throws -> Advisor {
+    let url = URL(string: "\(baseURL)/advisors/\(id)")!
+    let (data, response) = try await URLSession.shared.data(from: url)
+    
+    guard let httpResponse = response as? HTTPURLResponse, httpResponse.statusCode == 200 else {
+        throw URLError(.resourceUnavailable)
+    }
+    
+    let detail = try JSONDecoder().decode(AdvisorDetail.self, from: data)
+    return detail.advisor
+}
+
+// Download advisor headshot for circular display
+func downloadAdvisorHeadshot(advisor: Advisor, baseURL: String) async throws -> UIImage {
+    guard let url = URL(string: baseURL + advisor.image_url) else {
+        throw URLError(.badURL)
+    }
+    let (data, _) = try await URLSession.shared.data(from: url)
+    guard let image = UIImage(data: data) else {
+        throw URLError(.badServerResponse)
+    }
+    return image
+}
+
+// Download representative works grid
+func downloadAdvisorArtworks(advisor: Advisor, baseURL: String) async throws -> [UIImage] {
+    var images: [UIImage] = []
+    for artwork in advisor.artworks {
+        guard let url = URL(string: baseURL + artwork.url) else { continue }
+        let (data, _) = try await URLSession.shared.data(from: url)
+        if let image = UIImage(data: data) {
+            images.append(image)
+        }
+    }
+    return images
+}
+
+// Display advisor detail view
+func displayAdvisorProfile(id: String) async {
+    do {
+        let advisor = try await fetchAdvisorProfile(id: id)
+        
+        // Display header
+        print("📸 \(advisor.name) - \(advisor.specialty)")
+        print("📅 \(advisor.years)")
+        
+        // Download and display headshot (circular)
+        let headshot = try await downloadAdvisorHeadshot(advisor: advisor, baseURL: "http://10.0.0.227:5005")
+        // avatarImageView.image = headshot.circularImage()
+        
+        // Display bio
+        print("ℹ️ \(advisor.bio)")
+        
+        // Display focus areas
+        print("🎯 Review Focus:")
+        for focusArea in advisor.focus_areas {
+            print("  • \(focusArea.title): \(focusArea.description)")
+        }
+        
+        // Display representative works grid
+        print("🖼️ Representative Works:")
+        let artworks = try await downloadAdvisorArtworks(advisor: advisor, baseURL: "http://10.0.0.227:5005")
+        for (index, artwork) in advisor.artworks.enumerated() {
+            print("  \(index + 1). \(artwork.title)")
+        }
+        
+        // Display Wikipedia link
+        if !advisor.wikipedia_url.isEmpty {
+            print("🔗 Wikipedia: \(advisor.wikipedia_url)")
+        }
+        
+    } catch {
+        print("❌ Failed to load advisor: \(error)")
+    }
+}
+```
+
+---
 
 ### Job Service Endpoints
 
@@ -142,13 +433,31 @@ curl -F "file=@image.jpg" \
 - `job_id` (string): Includes mode suffix for reference
 
 **Status Values:**
-- `queued` - Waiting to start
+- `pending` - Waiting to start (just queued)
+- `queued` - In job processor queue
 - `started` - Processing beginning
 - `processing` - Image optimization in progress
 - `analyzing` - Advisor analysis in progress
 - `finalizing` - Results being compiled
 - `done` - Complete, ready to view
+- `completed` - ✓ Alias for done
 - `error` - Analysis failed
+
+**Important: Wait for `done` or `completed` Status**
+
+For LoRA mode, do not fetch analysis until status is `done` or `completed`. Earlier statuses indicate the job is still processing.
+
+**iOS Implementation Note:**
+
+Always check `status !== "done"` before displaying analysis results:
+
+```swift
+if status.status == "done" || status.status == "completed" {
+    // Safe to display analysis_html and other content
+} else {
+    // Still processing - show loading spinner
+}
+```
 
 **cURL Example:**
 ```bash
@@ -228,18 +537,144 @@ curl http://localhost:5005/job/550e8400-e29b-41d4-a716-446655440000/full-data | 
 
 **Endpoint:** `GET /stream/<job_id>`
 
-**Description:** Server-Sent Events (SSE) stream for real-time updates.
+**Description:** Server-Sent Events (SSE) stream for real-time analysis updates. Sends status, progress, and LLM thinking every 3-5 seconds for iOS UI updates.
 
 **Events:**
-- `status_update` - Status changed
-- `progress_update` - Progress percentage changed
-- `analysis_complete` - Analysis finished
+- `connected` - Initial connection established
+- `status_update` - Status changed or periodic thinking update (every 3 seconds during analyzing)
+- `analysis_complete` - Analysis finished with HTML results
+- `done` - Job fully complete
 
-**Response (streaming):**
+**Status Update Event (with LLM Thinking):**
+```json
+{
+  "type": "status_update",
+  "job_id": "abc123-def456-789",
+  "timestamp": 1768592178.262955,
+  "job_data": {
+    "status": "analyzing",
+    "progress_percentage": 45,
+    "current_step": "Analyzing with Ansel...",
+    "llm_thinking": "The composition shows strong leading lines... The lighting creates dramatic contrast...",
+    "current_advisor": 1,
+    "total_advisors": 1,
+    "step_phase": "analyzing"
+  }
+}
 ```
-data: {"type":"status_update","job_id":"uuid (rag)","status":"analyzing","mode":"rag"}
-data: {"type":"progress_update","progress":45}
-data: {"type":"analysis_complete","job_id":"uuid (rag)","mode":"rag"}
+
+**LLM Thinking Updates:**
+- `llm_thinking` field contains the AI's step-by-step reasoning
+- Sent every 3-5 seconds during analysis phase for real-time iOS UI updates
+- Allows UI to show "thinking" animation/text as analysis progresses
+- Character length increases as model processes image
+
+**Complete SSE Stream Example:**
+```
+event: connected
+data: {"type":"connected","job_id":"abc123-def456-789"}
+
+event: status_update
+data: {"type":"status_update","job_id":"abc123-def456-789","timestamp":1768592100.123,"job_data":{"status":"analyzing","progress_percentage":10,"current_step":"Summoning Ansel Adams...","llm_thinking":"","current_advisor":1,"total_advisors":1,"step_phase":"analyzing"}}
+
+event: status_update
+data: {"type":"status_update","job_id":"abc123-def456-789","timestamp":1768592103.456,"job_data":{"status":"analyzing","progress_percentage":30,"current_step":"Analyzing with Ansel...","llm_thinking":"The photograph shows a well-composed landscape with strong diagonal lines...","current_advisor":1,"total_advisors":1,"step_phase":"analyzing"}}
+
+event: status_update
+data: {"type":"status_update","job_id":"abc123-def456-789","timestamp":1768592106.789,"job_data":{"status":"analyzing","progress_percentage":45,"current_step":"Analyzing with Ansel...","llm_thinking":"The composition demonstrates masterful use of the Zone System. Tonality ranges from pure black to pure white with excellent midtone separation...","current_advisor":1,"total_advisors":1,"step_phase":"analyzing"}}
+
+event: analysis_complete
+data: {"type":"analysis_complete","job_id":"abc123-def456-789","analysis_html":"<html>...</html>"}
+
+event: done
+data: {"type":"done","job_id":"abc123-def456-789"}
+```
+
+**iOS Implementation:**
+```swift
+// Connect to SSE stream
+func connectToStream(jobId: String, baseURL: String = "http://10.0.0.227:5005") {
+    guard let url = URL(string: "\(baseURL)/stream/\(jobId)") else { return }
+    
+    var request = URLRequest(url: url)
+    request.timeoutInterval = 300  // 5 minute timeout for long analyses
+    
+    let session = URLSession.shared
+    let task = session.dataTask(with: request) { data, response, error in
+        guard let data = data, error == nil else { return }
+        
+        let lines = String(data: data, encoding: .utf8)?.split(separator: "\n") ?? []
+        var eventType: String?
+        var eventData: String?
+        
+        for line in lines {
+            if line.starts(with: "event:") {
+                eventType = line.replacingOccurrences(of: "event: ", with: "").trimmingCharacters(in: .whitespaces)
+            } else if line.starts(with: "data:") {
+                eventData = line.replacingOccurrences(of: "data: ", with: "")
+            } else if line.isEmpty, let type = eventType, let data = eventData {
+                handleStreamEvent(type: type, data: data)
+                eventType = nil
+                eventData = nil
+            }
+        }
+    }
+    task.resume()
+}
+
+// Handle stream events
+func handleStreamEvent(type: String, data: String) {
+    guard let jsonData = data.data(using: .utf8),
+          let json = try? JSONSerialization.jsonObject(with: jsonData) as? [String: Any] else {
+        return
+    }
+    
+    switch type {
+    case "connected":
+        print("📱 Connected to stream")
+        
+    case "status_update":
+        if let jobData = json["job_data"] as? [String: Any],
+           let status = jobData["status"] as? String,
+           let thinking = jobData["llm_thinking"] as? String {
+            let progress = jobData["progress_percentage"] as? Int ?? 0
+            let step = jobData["current_step"] as? String ?? ""
+            
+            // Update iOS UI
+            DispatchQueue.main.async {
+                self.statusLabel.text = status
+                self.progressView.progress = Float(progress) / 100.0
+                self.stepLabel.text = step
+                if !thinking.isEmpty {
+                    self.thinkingLabel.text = thinking  // Show LLM thinking
+                    self.thinkingLabel.isHidden = false
+                }
+            }
+        }
+        
+    case "analysis_complete":
+        if let html = json["analysis_html"] as? String {
+            DispatchQueue.main.async {
+                self.webView.loadHTMLString(html, baseURL: nil)
+            }
+        }
+        
+    case "done":
+        print("✅ Analysis complete")
+        
+    default:
+        break
+    }
+}
+```
+
+**cURL Example:**
+```bash
+# Connect to stream and show updates
+curl -N http://localhost:5005/stream/abc123-def456-789
+
+# Or pipe to jq for JSON formatting
+curl -N http://localhost:5005/stream/abc123-def456-789 | grep "data:" | jq -R 'split("data: ")[1] | fromjson'
 ```
 
 ---

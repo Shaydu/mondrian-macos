@@ -4,13 +4,15 @@ Update system prompt in database to use HTML format instead of JSON
 """
 import sys
 import os
+from pathlib import Path
 
 # Add mondrian directory to path
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), 'mondrian'))
 
 from sqlite_helper import set_config, get_config
 
-DB_PATH = "mondrian/mondrian.db"
+ROOT = Path(__file__).resolve().parent
+DB_PATH = str(ROOT / 'mondrian.db')
 NEW_PROMPT_FILE = "mondrian/prompts/system_html.md"
 
 def main():

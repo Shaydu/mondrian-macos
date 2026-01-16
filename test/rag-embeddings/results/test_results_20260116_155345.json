@@ -1,0 +1,51 @@
+{
+  "timestamp": "2026-01-16T15:53:45.451703",
+  "total_duration": 90.29146337509155,
+  "tests": [
+    {
+      "name": "baseline",
+      "mode": "base",
+      "status": "passed",
+      "duration": 84.19119238853455,
+      "error": null,
+      "details": {
+        "stdout": "93m\u2139\u001b[0m Timeout: 300s\n\u001b[93m\u2139\u001b[0m Sending analysis request...\n\u001b[92m\u2713 SUCCESS\u001b[0m: Analysis completed in 84.09s\n\u001b[93m\u2139\u001b[0m Mode used: baseline\n\u001b[93m\u2139\u001b[0m Overall score/grade: 0\n\u001b[93m\u2139\u001b[0m Summary length: 24 chars\n\n\u001b[94m======================================================================\u001b[0m\n\u001b[94m                            TEST PASSED \u2713                             \u001b[0m\n\u001b[94m======================================================================\u001b[0m\n\n\u001b[92mBaseline mode is working correctly!\u001b[0m\n\n"
+      },
+      "timestamp": "2026-01-16T15:53:39.351434"
+    },
+    {
+      "name": "rag",
+      "mode": "rag",
+      "status": "passed",
+      "duration": 5.9073426723480225,
+      "error": null,
+      "details": {
+        "stdout": "out: 300s\n\u001b[93m\u2139\u001b[0m Sending analysis request with RAG enabled...\n\u001b[92m\u2713 SUCCESS\u001b[0m: Analysis completed in 5.81s\n\u001b[93m\u2139\u001b[0m Mode used: rag\n\u001b[93m\u2139\u001b[0m Overall grade: None\n\u001b[93m\u2139\u001b[0m Dimensional analysis: 0 dimensions\n\n\u001b[94m======================================================================\u001b[0m\n\u001b[94m                            TEST PASSED \u2713                             \u001b[0m\n\u001b[94m======================================================================\u001b[0m\n\n\u001b[92mRAG mode is working correctly!\u001b[0m\n\n"
+      },
+      "timestamp": "2026-01-16T15:53:45.258878"
+    },
+    {
+      "name": "lora",
+      "mode": "lora",
+      "status": "failed",
+      "duration": 0.09828305244445801,
+      "error": "               \u001b[0m\n\u001b[94m======================================================================\u001b[0m\n\n\n\u001b[94m======================================================================\u001b[0m\n\u001b[94m                        Checking Prerequisites                        \u001b[0m\n\u001b[94m======================================================================\u001b[0m\n\n\u001b[92m\u2713 SUCCESS\u001b[0m: Test image exists: /home/doo/dev/mondrian-macos/source/mike-shrub-3e8985d0.jpg\n\u001b[91m\u2717 FAILED\u001b[0m: LoRA adapter not found: adapters/ansel\n",
+      "details": null,
+      "timestamp": "2026-01-16T15:53:45.357260"
+    },
+    {
+      "name": "rag+lora",
+      "mode": "rag_lora",
+      "status": "failed",
+      "duration": 0.09424757957458496,
+      "error": "               \u001b[0m\n\u001b[94m======================================================================\u001b[0m\n\n\n\u001b[94m======================================================================\u001b[0m\n\u001b[94m                        Checking Prerequisites                        \u001b[0m\n\u001b[94m======================================================================\u001b[0m\n\n\u001b[92m\u2713 SUCCESS\u001b[0m: Test image exists: /home/doo/dev/mondrian-macos/source/mike-shrub-3e8985d0.jpg\n\u001b[91m\u2717 FAILED\u001b[0m: LoRA adapter not found: adapters/ansel\n",
+      "details": null,
+      "timestamp": "2026-01-16T15:53:45.451608"
+    }
+  ],
+  "summary": {
+    "total": 4,
+    "passed": 2,
+    "failed": 2
+  }
+}

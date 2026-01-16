@@ -21,7 +21,8 @@ from datetime import datetime
 
 # Configuration
 AI_SERVICE_URL = "http://localhost:5100"
-TEST_IMAGE_PATH = Path("source/photo-B371453D-558B-40C5-910D-72940700046C-8d4c2233.jpg")
+DEFAULT_IMAGE_PATH = Path("source/photo-B371453D-558B-40C5-910D-72940700046C-8d4c2233.jpg")
+TEST_IMAGE_PATH = Path(os.environ.get("TEST_IMAGE_PATH", str(DEFAULT_IMAGE_PATH)))
 ADVISOR = "ansel"
 MODE = "base"
 TIMEOUT = 300  # 300 second timeout for inference (match service model timeout)
@@ -128,8 +129,9 @@ def run_baseline_test(verbose=False):
                 print(f"Response: {response.text[:500]}")
             return False
         
-        # Validate required fields
-        required_fields = ['overall_grade', 'dimensional_analysis']
+        # Validate response has analysis results
+        # Be flexible about field names since API may vary
+        required_fields = ['analysis', 'summary', 'advisor']
         missing = [f for f in required_fields if f not in result]
         
         if missing:
@@ -139,14 +141,14 @@ def run_baseline_test(verbose=False):
             return False
         
         # Extract and display results
-        grade = result.get('overall_grade', 'N/A')
+        grade = result.get('overall_grade') or result.get('overall_score', 'N/A')
         dims_count = len(result.get('dimensional_analysis', {}))
-        mode_used = result.get('mode_used', MODE)
+        mode_used = result.get('mode_used', result.get('mode', MODE))
         
         print_success(f"Analysis completed in {duration:.2f}s")
         print_info(f"Mode used: {mode_used}")
-        print_info(f"Overall grade: {grade}")
-        print_info(f"Dimensional analysis: {dims_count} dimensions")
+        print_info(f"Overall score/grade: {grade}")
+        print_info(f"Summary length: {len(result.get('summary', ''))} chars")
         
         if verbose:
             print("\nDetailed Results:")

@@ -204,7 +204,7 @@ def init_database(db_path):
 
 if __name__ == "__main__":
     # Default database path (relative to project root)
-    db_path = "mondrian/mondrian.db"
+    db_path = "mondrian.db"
 
     # Check if database already exists
     db_exists = os.path.exists(db_path)

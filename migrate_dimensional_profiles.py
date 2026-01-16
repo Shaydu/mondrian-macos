@@ -15,7 +15,7 @@ import os
 import sys
 
 # Database path
-DB_PATH = os.path.join(os.path.dirname(__file__), "mondrian", "mondrian.db")
+DB_PATH = os.path.join(os.path.dirname(__file__), "mondrian.db")
 
 def create_dimensional_profiles_table():
     """Create the dimensional_profiles table if it doesn't exist."""

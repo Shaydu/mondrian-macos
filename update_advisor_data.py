@@ -6,8 +6,10 @@ Update advisor bios and focus areas with historically accurate information.
 import sqlite3
 import json
 import sys
+import os
 
-DB_PATH = "/Users/shaydu/dev/mondrian-macos/mondrian.db"
+ROOT = os.path.abspath(os.path.dirname(__file__))
+DB_PATH = os.path.join(ROOT, "mondrian.db")
 
 # Comprehensive advisor data with bios and focus areas
 ADVISOR_DATA = {

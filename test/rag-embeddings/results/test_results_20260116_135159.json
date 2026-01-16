@@ -1,0 +1,47 @@
+{
+  "timestamp": "2026-01-16T13:51:59.004669",
+  "total_duration": 0.4020411968231201,
+  "tests": [
+    {
+      "name": "baseline",
+      "mode": "base",
+      "status": "failed",
+      "duration": 0.10102558135986328,
+      "error": "                        BASELINE MODE TEST                          \u001b[0m\n\u001b[94m======================================================================\u001b[0m\n\n\n\u001b[94m======================================================================\u001b[0m\n\u001b[94m                        Checking Prerequisites                        \u001b[0m\n\u001b[94m======================================================================\u001b[0m\n\n\u001b[91m\u2717 FAILED\u001b[0m: Test image not found: source/photo-B371453D-558B-40C5-910D-72940700046C-8d4c2233.jpg\n",
+      "details": null,
+      "timestamp": "2026-01-16T13:51:58.703622"
+    },
+    {
+      "name": "rag",
+      "mode": "rag",
+      "status": "failed",
+      "duration": 0.1004493236541748,
+      "error": "                          RAG MODE TEST                             \u001b[0m\n\u001b[94m======================================================================\u001b[0m\n\n\n\u001b[94m======================================================================\u001b[0m\n\u001b[94m                        Checking Prerequisites                        \u001b[0m\n\u001b[94m======================================================================\u001b[0m\n\n\u001b[91m\u2717 FAILED\u001b[0m: Test image not found: source/photo-B371453D-558B-40C5-910D-72940700046C-8d4c2233.jpg\n",
+      "details": null,
+      "timestamp": "2026-01-16T13:51:58.804180"
+    },
+    {
+      "name": "lora",
+      "mode": "lora",
+      "status": "failed",
+      "duration": 0.09916543960571289,
+      "error": "                          LoRA MODE TEST                            \u001b[0m\n\u001b[94m======================================================================\u001b[0m\n\n\n\u001b[94m======================================================================\u001b[0m\n\u001b[94m                        Checking Prerequisites                        \u001b[0m\n\u001b[94m======================================================================\u001b[0m\n\n\u001b[91m\u2717 FAILED\u001b[0m: Test image not found: source/photo-B371453D-558B-40C5-910D-72940700046C-8d4c2233.jpg\n",
+      "details": null,
+      "timestamp": "2026-01-16T13:51:58.903442"
+    },
+    {
+      "name": "rag+lora",
+      "mode": "rag_lora",
+      "status": "failed",
+      "duration": 0.10100388526916504,
+      "error": "                        LoRA+RAG MODE TEST                          \u001b[0m\n\u001b[94m======================================================================\u001b[0m\n\n\n\u001b[94m======================================================================\u001b[0m\n\u001b[94m                        Checking Prerequisites                        \u001b[0m\n\u001b[94m======================================================================\u001b[0m\n\n\u001b[91m\u2717 FAILED\u001b[0m: Test image not found: source/photo-B371453D-558B-40C5-910D-72940700046C-8d4c2233.jpg\n",
+      "details": null,
+      "timestamp": "2026-01-16T13:51:59.004540"
+    }
+  ],
+  "summary": {
+    "total": 4,
+    "passed": 0,
+    "failed": 4
+  }
+}
