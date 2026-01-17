@@ -17,10 +17,13 @@ import sys
 import requests
 import time
 from pathlib import Path
+from PIL import Image
 
 # Configuration
 AI_ADVISOR_URL = "http://localhost:5100/analyze"
-ANSEL_DIR = "/Users/shaydu/dev/mondrian-macos/mondrian/source/advisor/photographer/ansel"
+# Auto-detect workspace root for cross-platform compatibility
+WORKSPACE_ROOT = Path(__file__).parent.parent.parent
+ANSEL_DIR = str(WORKSPACE_ROOT / "mondrian" / "source" / "advisor" / "photographer" / "ansel")
 ADVISOR_ID = "ansel"
 
 # Supported image extensions
@@ -34,32 +37,49 @@ def analyze_image(image_path, advisor_id):
     """
     try:
         abs_path = str(Path(image_path).resolve())
+        filename = os.path.basename(image_path)
 
-        print(f"  [→] Analyzing {os.path.basename(image_path)}...")
+        # Validate image can be opened before sending
+        try:
+            with Image.open(abs_path) as img:
+                img.verify()
+            # Re-open after verify (verify closes the file)
+            Image.open(abs_path).convert('RGB')
+        except Exception as img_err:
+            print(f"  [✗] Invalid or corrupted image: {img_err}")
+            return False
 
-        # Send as JSON (using image_path method)
-        data = {
-            "advisor": advisor_id,
-            "image_path": abs_path,
-            "enable_rag": "false"  # Don't use RAG for historical images (no comparison needed)
-        }
+        print(f"  [→] Analyzing {filename}...")
 
-        response = requests.post(
-            AI_ADVISOR_URL,
-            json=data,
-            timeout=180  # 3 minutes timeout for analysis
-        )
+        # Detect proper mime type based on extension
+        ext = Path(image_path).suffix.lower()
+        mime_type = 'image/png' if ext == '.png' else 'image/jpeg'
+
+        # Upload image file (API expects multipart/form-data)
+        with open(abs_path, 'rb') as img_file:
+            files = {'image': (filename, img_file, mime_type)}
+            data = {
+                'advisor': advisor_id,
+                'mode': 'baseline'  # Don't use RAG for historical images
+            }
+
+            response = requests.post(
+                AI_ADVISOR_URL,
+                files=files,
+                data=data,
+                timeout=180  # 3 minutes timeout for analysis
+            )
 
         if response.status_code == 200:
             # Analysis successful - dimensional profile automatically saved
-            print(f"  [✓] Analysis complete for {os.path.basename(image_path)}")
+            print(f"  [✓] Analysis complete for {filename}")
             return True
         else:
             print(f"  [✗] Analysis failed: {response.status_code} - {response.text[:200]}")
             return False
 
     except requests.exceptions.Timeout:
-        print(f"  [✗] Timeout analyzing {os.path.basename(image_path)}")
+        print(f"  [✗] Timeout analyzing {filename}")
         return False
     except Exception as e:
         print(f"  [✗] Error analyzing {os.path.basename(image_path)}: {e}")
@@ -99,13 +119,13 @@ def main():
         sys.exit(1)
 
     image_files = []
-    for root, dirs, files in os.walk(ANSEL_DIR):
-        for filename in files:
-            if Path(filename).suffix in IMG_EXTENSIONS:
-                filepath = Path(root) / filename
-                image_files.append(filepath)
+    # Only process files directly in ANSEL_DIR, skip subdirectories (e.g., ignore/)
+    for filename in os.listdir(ANSEL_DIR):
+        filepath = Path(ANSEL_DIR) / filename
+        if filepath.is_file() and filepath.suffix in IMG_EXTENSIONS:
+            image_files.append(filepath)
 
-    print(f"Found {len(image_files)} images to index")
+    print(f"Found {len(image_files)} images to index (root directory only)")
     print()
 
     # Process each image

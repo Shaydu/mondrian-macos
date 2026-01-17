@@ -40,16 +40,25 @@ def get_clip_model():
         print("[INFO] Loading CLIP model (clip-vit-base-patch32)...")
         try:
             from transformers import CLIPProcessor, CLIPModel
+            import torch
+            
             _clip_model = CLIPModel.from_pretrained("openai/clip-vit-base-patch32")
             _clip_processor = CLIPProcessor.from_pretrained("openai/clip-vit-base-patch32")
             
-            # Move to GPU if available
-            import torch
-            if torch.cuda.is_available():
-                _clip_model = _clip_model.cuda()
-                print("[INFO] CLIP model loaded on CUDA")
-            else:
-                print("[INFO] CLIP model loaded on CPU")
+            # Try to use GPU, fall back to CPU if it fails
+            try:
+                if torch.cuda.is_available():
+                    # Test if CUDA actually works
+                    test_tensor = torch.zeros(1).cuda()
+                    _clip_model = _clip_model.cuda()
+                    print(f"[INFO] CLIP model loaded on CUDA (GPU: {torch.cuda.get_device_name(0)})")
+                else:
+                    print("[INFO] CLIP model loaded on CPU (CUDA not available)")
+            except Exception as cuda_error:
+                print(f"[WARN] CUDA failed ({cuda_error}), falling back to CPU")
+                _clip_model = _clip_model.cpu()
+                print(f"[WARN] CUDA error: {cuda_error}, falling back to CPU")
+                # Model stays on CPU
         except ImportError as e:
             print(f"[ERROR] Failed to import transformers: {e}")
             print("[INFO] Install with: pip install transformers")
@@ -120,7 +129,7 @@ def get_advisor_images(advisor_id: str = None):
     
     if advisor_id and advisor_id != 'all':
         cursor.execute("""
-            SELECT id, image_path, image_title, image_description, image_significance,
+            SELECT rowid, image_path, image_title, image_description, image_significance,
                    embedding, text_embedding
             FROM dimensional_profiles
             WHERE advisor_id = ?
@@ -128,7 +137,7 @@ def get_advisor_images(advisor_id: str = None):
         """, (advisor_id,))
     else:
         cursor.execute("""
-            SELECT id, image_path, image_title, image_description, image_significance,
+            SELECT rowid, image_path, image_title, image_description, image_significance,
                    embedding, text_embedding, advisor_id
             FROM dimensional_profiles
             WHERE composition_score IS NOT NULL
@@ -149,23 +158,31 @@ def save_embeddings(profile_id: str, clip_embedding: np.ndarray = None, text_emb
         cursor.execute("""
             UPDATE dimensional_profiles
             SET embedding = ?, text_embedding = ?
-            WHERE id = ?
+            WHERE rowid = ?
         """, (clip_embedding.tobytes(), text_embedding.tobytes(), profile_id))
+        rows_affected = cursor.rowcount
     elif clip_embedding is not None:
         cursor.execute("""
             UPDATE dimensional_profiles
             SET embedding = ?
-            WHERE id = ?
+            WHERE rowid = ?
         """, (clip_embedding.tobytes(), profile_id))
+        rows_affected = cursor.rowcount
     elif text_embedding is not None:
         cursor.execute("""
             UPDATE dimensional_profiles
             SET text_embedding = ?
-            WHERE id = ?
+            WHERE rowid = ?
         """, (text_embedding.tobytes(), profile_id))
+        rows_affected = cursor.rowcount
+    else:
+        rows_affected = 0
     
     conn.commit()
     conn.close()
+    
+    if rows_affected == 0:
+        print(f"  [WARN] No rows updated for profile_id={profile_id}")
 
 
 def verify_embeddings(advisor_id: str = None):
@@ -221,7 +238,7 @@ def compute_all_embeddings(advisor_id: str = None, force: bool = False):
     error_count = 0
     
     for i, img in enumerate(images):
-        profile_id = img['id']
+        profile_id = img['rowid']
         image_path = img['image_path']
         title = img.get('image_title', 'Unknown')
         description = img.get('image_description', '')

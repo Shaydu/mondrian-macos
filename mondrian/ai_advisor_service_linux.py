@@ -49,6 +49,28 @@ logger = logging.getLogger(__name__)
 # Database Helper Functions
 # ============================================================================
 
+def get_base_url():
+    """Get base URL for generating full image URLs"""
+    # Check for environment variable first (for Cloudflare Tunnel, etc.)
+    base_url = os.environ.get('MONDRIAN_BASE_URL')
+    if base_url:
+        return base_url.rstrip('/')
+    
+    # Auto-detect local network IP (job service runs on 5005)
+    import socket
+    try:
+        # Connect to external address to determine local IP
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(('8.8.8.8', 80))
+        local_ip = s.getsockname()[0]
+        s.close()
+        return f"http://{local_ip}:5005"
+    except Exception:
+        # Last resort - try to get hostname
+        hostname = socket.gethostname()
+        local_ip = socket.gethostbyname(hostname)
+        return f"http://{local_ip}:5005"
+
 def get_config(db_path: str, key: str) -> Optional[str]:
     """Get a configuration value from the database config table"""
     try:
@@ -314,7 +336,8 @@ class QwenAdvisor:
                 if image_path and os.path.exists(image_path):
                     try:
                         img_filename = os.path.basename(image_path)
-                        img_dict['image_url'] = f"/api/reference-image/{img_filename}"
+                        base_url = get_base_url()
+                        img_dict['image_url'] = f"{base_url}/api/reference-image/{img_filename}"
                         img_dict['image_filename'] = img_filename
                         result_images.append(img_dict)
                     except Exception as e:
@@ -502,7 +525,8 @@ class QwenAdvisor:
                 if image_path and os.path.exists(image_path):
                     try:
                         img_filename = os.path.basename(image_path)
-                        img_dict['image_url'] = f"/api/reference-image/{img_filename}"
+                        base_url = get_base_url()
+                        img_dict['image_url'] = f"{base_url}/api/reference-image/{img_filename}"
                         img_dict['image_filename'] = img_filename
                         result_images.append(img_dict)
                     except Exception as e:
@@ -646,7 +670,8 @@ class QwenAdvisor:
                 if image_path and os.path.exists(image_path):
                     try:
                         img_filename = os.path.basename(image_path)
-                        img['image_url'] = f"/api/reference-image/{img_filename}"
+                        base_url = get_base_url()
+                        img['image_url'] = f"{base_url}/api/reference-image/{img_filename}"
                         img['image_filename'] = img_filename
                         encoded_results.append(img)
                     except Exception as e:
@@ -767,7 +792,8 @@ class QwenAdvisor:
             
             # Get image URL for inline display
             img_filename = os.path.basename(img.get('image_path', ''))
-            img_url = f"/api/reference-image/{img_filename}" if img_filename else ""
+            base_url = get_base_url()
+            img_url = f"{base_url}/api/reference-image/{img_filename}" if img_filename else ""
             
             # Build case study container with inline image
             rag_context += f"""
@@ -842,19 +868,21 @@ class QwenAdvisor:
             rag_context += "\n"
         
         if user_dimensions:
-            rag_context += "\n**CRITICAL - In your dimensional recommendations:** "
+            rag_context += "\n**CRITICAL - CASE STUDIES OUTPUT:** "
             rag_context += "**ALL OUTPUT MUST BE IN ENGLISH ONLY.** "
-            rag_context += "You MUST cite these reference images by their exact title when providing improvement guidance. "
-            rag_context += "For each dimension's recommendation, reference specific images like: 'Increase contrast by shooting in brighter light like Moon and Half Dome, Yosemite National Park (1960)'. "
-            rag_context += "Explain how each reference demonstrates mastery in the specific dimensions where the user has the widest gaps. "
-            rag_context += "Calculate dimensional deltas and provide actionable guidance on how to close those gaps.\n"
+            rag_context += "You MUST include a 'case_studies' array in your JSON response with 1-3 entries (max 3). "
+            rag_context += "Each case study must reference ONE of the above reference images by exact title and year. "
+            rag_context += "Format: {\"image_title\": \"Moon and Half Dome\", \"year\": \"1960\", \"dimension\": \"Lighting\", \"explanation\": \"Study how Adams used the zone system to capture tonal range...\"} "
+            rag_context += "Focus on dimensions where the user has the widest gaps. "
+            rag_context += "NEVER repeat the same image_title twice in the case_studies array.\n"
         else:
-            rag_context += "\n**CRITICAL - In your dimensional recommendations:** "
+            rag_context += "\n**CRITICAL - CASE STUDIES OUTPUT:** "
             rag_context += "**ALL OUTPUT MUST BE IN ENGLISH ONLY.** "
-            rag_context += "You MUST cite these reference images by their exact title when providing improvement guidance. "
-            rag_context += "When analyzing the user's image, compare their dimensional scores to these references. "
-            rag_context += "For each dimension's recommendation, cite specific reference images like: 'Improve lighting by studying the zone system technique in Old Faithful Geyser (1944)'. "
-            rag_context += "Calculate the delta (difference) for each dimension and cite which reference image demonstrates the best practice for areas needing improvement.\n"
+            rag_context += "You MUST include a 'case_studies' array in your JSON response with 1-3 entries (max 3). "
+            rag_context += "Each case study must cite ONE of the above reference images by exact title and year. "
+            rag_context += "Format: {\"image_title\": \"Old Faithful Geyser\", \"year\": \"1944\", \"dimension\": \"Lighting\", \"explanation\": \"Improve lighting by studying the zone system technique...\"} "
+            rag_context += "Select images that demonstrate best practices for the user's weakest dimensions. "
+            rag_context += "NEVER repeat the same image_title twice in the case_studies array.\n"
         
         # Augment prompt
         augmented_prompt = f"{prompt}\n{rag_context}"
@@ -1012,8 +1040,40 @@ Required JSON Structure:
   "overall_score": 7.4,
   "key_strengths": ["strength 1", "strength 2"],
   "priority_improvements": ["improvement 1", "improvement 2"],
-  "technical_notes": "Technical observations"
-}"""
+  "technical_notes": "Technical observations",
+  "case_studies": [
+    {"image_title": "Moon and Half Dome", "year": "1960", "dimension": "Lighting", "explanation": "Study the zone system technique..."},
+    {"image_title": "The Tetons and the Snake River", "year": "1942", "dimension": "Composition", "explanation": "..."}
+  ]
+}
+
+**CRITICAL**: If reference images are provided in the prompt, you MUST include a case_studies array with up to 3 entries. Each case study must cite the EXACT image title from the references and explain how it demonstrates mastery in a specific dimension."""
+    
+    def _match_case_study_to_reference(self, case_study: Dict[str, Any], reference_images: List[Dict[str, Any]]) -> Dict[str, Any]:
+        """Match a case study entry to a reference image by title"""
+        if not case_study or not reference_images:
+            return None
+        
+        case_title = case_study.get('image_title', '').strip()
+        if not case_title:
+            return None
+        
+        # Try exact match first
+        for ref in reference_images:
+            ref_title = ref.get('image_title', '').strip()
+            if ref_title and ref_title.lower() == case_title.lower():
+                return ref
+        
+        # Try partial match (case study might be abbreviated)
+        for ref in reference_images:
+            ref_title = ref.get('image_title', '').strip()
+            if ref_title and case_title.lower() in ref_title.lower():
+                return ref
+            if ref_title and ref_title.lower() in case_title.lower():
+                return ref
+        
+        logger.warning(f"Could not match case study title '{case_title}' to any reference image")
+        return None
     
     def _generate_ios_detailed_html(self, analysis_data: Dict[str, Any], advisor: str, mode: str, reference_images: List[Dict[str, Any]] = None) -> str:
         """Generate iOS-compatible dark theme HTML for detailed analysis"""
@@ -1139,11 +1199,14 @@ Required JSON Structure:
         .reference-citation .case-study-image {{
             width: 100%;
             height: auto;
+            aspect-ratio: 3/2;
+            object-fit: cover;
             max-width: 100%;
             border-radius: 6px;
             margin-bottom: 12px;
             display: block;
             box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            background-color: #1c1c1e;
         }}
         .reference-citation .case-study-title {{
             color: #ffffff;
@@ -1195,6 +1258,41 @@ Required JSON Structure:
             'emotion': 'emotional_impact_score',
         }
         
+        # Build case study map from LLM output (dimension -> case study)
+        case_studies = analysis_data.get('case_studies', [])
+        case_study_map = {}
+        used_image_paths = set()
+        case_study_count = 0
+        
+        if case_studies and reference_images:
+            logger.info(f"Processing {len(case_studies)} case studies from LLM output")
+            for cs in case_studies:
+                if case_study_count >= 3:
+                    logger.info("Reached maximum of 3 case studies, skipping remaining")
+                    break
+                
+                dimension = cs.get('dimension', '').strip()
+                if not dimension:
+                    continue
+                
+                # Match case study to reference image
+                matched_ref = self._match_case_study_to_reference(cs, reference_images)
+                if matched_ref:
+                    img_path = matched_ref.get('image_path')
+                    # Enforce deduplication
+                    if img_path and img_path not in used_image_paths:
+                        case_study_map[dimension.lower()] = {
+                            'reference': matched_ref,
+                            'explanation': cs.get('explanation', '')
+                        }
+                        used_image_paths.add(img_path)
+                        case_study_count += 1
+                        logger.info(f"Added case study for {dimension}: {matched_ref.get('image_title', 'Unknown')}")
+                    else:
+                        logger.warning(f"Skipped duplicate image for {dimension}: {matched_ref.get('image_title')}")
+                else:
+                    logger.warning(f"Could not match case study for {dimension}")
+        
         # Add dimension cards
         for dim in dimensions:
             name = dim.get('name', 'Unknown')
@@ -1203,62 +1301,46 @@ Required JSON Structure:
             recommendation = dim.get('recommendation', 'No recommendation available.')
             color, rating = get_rating_style(score)
             
-            # Find the best reference image for this dimension based on largest gap
+            # Check if this dimension has a case study from LLM output
             reference_citation = ""
-            if reference_images and len(reference_images) > 0:
-                dim_key = name.lower().strip()
-                db_column = dimension_to_column.get(dim_key)
+            dim_key = name.lower().strip()
+            if dim_key in case_study_map:
+                case_study_data = case_study_map[dim_key]
+                best_ref = case_study_data['reference']
+                explanation = case_study_data['explanation']
                 
-                if db_column:
-                    # Find reference image with highest score in this dimension
-                    best_ref = None
-                    best_gap = 0
+                ref_title = best_ref.get('image_title', 'Reference Image')
+                ref_year = best_ref.get('date_taken', '')
+                
+                # Format title with year if available
+                if ref_year and str(ref_year).strip():
+                    title_with_year = f"{ref_title} ({ref_year})"
+                else:
+                    title_with_year = ref_title
+                
+                # Get image URL
+                ref_image_url = best_ref.get('image_url', '')
+                if not ref_image_url and best_ref.get('image_path'):
+                    img_filename = os.path.basename(best_ref.get('image_path', ''))
+                    if img_filename:
+                        base_url = get_base_url()
+                        ref_image_url = f"{base_url}/api/reference-image/{img_filename}"
+                
+                # Build case study box with image (only if image URL exists)
+                if ref_image_url:
+                    reference_citation = '<div class="reference-citation"><div class="case-study-box">'
+                    reference_citation += f'<div class="case-study-title">Case Study: {title_with_year}</div>'
+                    reference_citation += f'<img src="{ref_image_url}" alt="{title_with_year}" class="case-study-image" />'
                     
-                    for ref in reference_images:
-                        ref_score = ref.get(db_column)
-                        if ref_score is not None:
-                            gap = ref_score - score
-                            if gap > best_gap and ref_score >= 8.0:
-                                best_gap = gap
-                                best_ref = ref
+                    # Add metadata
+                    metadata_parts = []
+                    if explanation:
+                        metadata_parts.append(f'<strong>Study:</strong> {explanation}')
+                    if best_ref.get('location'):
+                        metadata_parts.append(f'<strong>Location:</strong> {best_ref["location"]}')
                     
-                    # Only show citation if gap is meaningful (>= 2 points)
-                    if best_ref and best_gap >= 2:
-                        ref_title = best_ref.get('image_title', 'Reference Image')
-                        ref_year = best_ref.get('date_taken', '')
-                        ref_score_val = best_ref.get(db_column, 0)
-                        
-                        # Format title with year if available
-                        if ref_year and str(ref_year).strip():
-                            title_with_year = f"{ref_title} ({ref_year})"
-                        else:
-                            title_with_year = ref_title
-                        
-                        # Get image URL - construct it from image_path if not already present
-                        ref_image_url = best_ref.get('image_url', '')
-                        if not ref_image_url and best_ref.get('image_path'):
-                            img_filename = os.path.basename(best_ref.get('image_path', ''))
-                            if img_filename:
-                                ref_image_url = f"/api/reference-image/{img_filename}"
-                        
-                        # Build case study box with image
-                        reference_citation = '<div class="reference-citation"><div class="case-study-box">'
-                        reference_citation += f'<div class="case-study-title">Case Study: {title_with_year}</div>'
-                        
-                        # Add image if available
-                        if ref_image_url:
-                            reference_citation += f'<img src="{ref_image_url}" alt="{title_with_year}" class="case-study-image" />'
-                        
-                        # Add metadata
-                        metadata_parts = []
-                        if best_ref.get('image_description'):
-                            metadata_parts.append(f'<strong>Description:</strong> {best_ref["image_description"]}')
-                        if best_ref.get('location'):
-                            metadata_parts.append(f'<strong>Location:</strong> {best_ref["location"]}')
-                        metadata_parts.append(f'<strong>Score:</strong> {ref_score_val}/10 in {name}')
-                        
-                        reference_citation += f'<div class="case-study-metadata">' + '<br/>'.join(metadata_parts) + '</div>'
-                        reference_citation += '</div></div>'
+                    reference_citation += f'<div class="case-study-metadata">' + '<br/>'.join(metadata_parts) + '</div>'
+                    reference_citation += '</div></div>'
             
             html += f'''
   <div class="feedback-card">
@@ -1416,56 +1498,13 @@ Required JSON Structure:
             score = dim.get('score', 0)
             recommendation = dim.get('recommendation', 'No recommendation available.')
             
-            # Find best reference image for this dimension
-            case_study_html = ''
-            if reference_images:
-                dim_key = name.lower().strip()
-                db_column = dimension_to_column.get(dim_key)
-                
-                if db_column:
-                    best_ref = None
-                    best_gap = 0
-                    
-                    for ref in reference_images:
-                        ref_score = ref.get(db_column)
-                        if ref_score is not None:
-                            gap = ref_score - score
-                            if gap > best_gap and ref_score >= 8.0:
-                                best_gap = gap
-                                best_ref = ref
-                    
-                    if best_ref and best_gap >= 2:
-                        ref_title = best_ref.get('image_title', 'Reference Image')
-                        ref_year = best_ref.get('date_taken', '')
-                        ref_score_val = best_ref.get(db_column, 0)
-                        
-                        # Format title with year
-                        if ref_year and str(ref_year).strip():
-                            title_with_year = f"{ref_title} ({ref_year})"
-                        else:
-                            title_with_year = ref_title
-                        
-                        # Get image URL from image path
-                        ref_image_url = best_ref.get('image_url', '')
-                        if not ref_image_url and best_ref.get('image_path'):
-                            img_filename = os.path.basename(best_ref.get('image_path', ''))
-                            if img_filename:
-                                ref_image_url = f"/api/reference-image/{img_filename}"
-                        
-                        if ref_image_url:
-                            case_study_html = f'''<div class="case-study-box">
-                <div class="case-study-title">Case Study: {title_with_year}</div>
-                <img src="{ref_image_url}" alt="{title_with_year}" class="case-study-image" />
-                <div class="case-study-metadata"><strong>Score:</strong> {ref_score_val}/10 in {name}</div>
-            </div>'''
-            
             html += f'''  <div class="recommendation-item">
     <div class="rec-header">
         <div class="rec-number">{i}</div>
         <div class="rec-content">
             <p class="rec-text"><strong>{name}</strong> ({score}/10): {recommendation}</p>
         </div>
-    </div>{case_study_html}
+    </div>
   </div>
 '''
         

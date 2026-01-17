@@ -1,0 +1,185 @@
+# Curated Metadata for Ansel Adams Reference Images
+# Tags determine dimensional scores via mapping
+
+images:
+  - filename: "Adams_The_Tetons_and_the_Snake_River.jpg"
+    title: "The Tetons and the Snake River"
+    year: 1942
+    tags: ["composition", "layered_depth", "landscape", "rule_of_thirds", "leading_lines"]
+    best_for_teaching: ["Composition", "Depth & Perspective", "Visual Balance"]
+    description: "Iconic example of layered composition with river leading to distant mountain peaks."
+
+  - filename: "ansel-moonrise-and-half-dome-yosemite-n-p-1960.png"
+    title: "Moon and Half Dome, Yosemite National Park"
+    year: 1960
+    tags: ["zone_system", "dramatic_lighting", "high_contrast", "tonal_range"]
+    best_for_teaching: ["Lighting", "Emotional Impact"]
+    description: "Demonstrates mastery of the zone system with perfect tonal gradation."
+
+  - filename: "moonrise-hernandez-new-mexico-1941.png"
+    title: "Moonrise, Hernandez, New Mexico"
+    year: 1941
+    tags: ["dramatic_lighting", "timing", "high_contrast", "emotional"]
+    best_for_teaching: ["Lighting", "Emotional Impact", "Composition"]
+    description: "Famous for capturing perfect moment with dramatic lighting and emotional depth."
+
+  - filename: "ansel-old-faithful-geyser-1944.png"
+    title: "Old Faithful Geyser"
+    year: 1944
+    tags: ["zone_system", "timing", "natural_phenomena", "tonal_range"]
+    best_for_teaching: ["Lighting", "Focus & Sharpness"]
+    description: "Perfect example of zone system technique with capturing decisive moment."
+
+  - filename: "monolith-the-face-of-half-dome-1927.png"
+    title: "Monolith, the Face of Half Dome"
+    year: 1927
+    tags: ["dramatic_lighting", "red_filter", "high_contrast", "texture"]
+    best_for_teaching: ["Lighting", "Color Harmony", "Subject Isolation"]
+    description: "Early masterwork demonstrating use of red filter for dramatic sky contrast."
+
+  - filename: "half-dome-merced-river-winter-1938.png"
+    title: "Half Dome, Merced River, Winter"
+    year: 1938
+    tags: ["reflection", "symmetry", "winter_light", "tonal_range"]
+    best_for_teaching: ["Visual Balance", "Composition", "Lighting"]
+    description: "Perfect reflection creates powerful symmetry and visual balance."
+
+  - filename: "mt-williamson-from-mansanar-1944.png"
+    title: "Mount Williamson from Manzanar"
+    year: 1944
+    tags: ["texture", "foreground_interest", "depth", "rocks"]
+    best_for_teaching: ["Depth & Perspective", "Composition", "Visual Balance"]
+    description: "Dramatic use of foreground rocks to create depth and lead eye to distant peaks."
+
+  - filename: "oak-tree-snow-storm-1948.png"
+    title: "Oak Tree, Snow Storm"
+    year: 1948
+    tags: ["isolation", "negative_space", "minimalist", "atmospheric"]
+    best_for_teaching: ["Subject Isolation", "Visual Balance", "Emotional Impact"]
+    description: "Minimalist composition with perfect use of negative space and atmospheric conditions."
+
+  - filename: "aspens-northern-new-mexico-1958.png"
+    title: "Aspens, Northern New Mexico"
+    year: 1958
+    tags: ["pattern", "texture", "vertical_lines", "abstract"]
+    best_for_teaching: ["Composition", "Visual Balance", "Color Harmony"]
+    description: "Abstract pattern of aspen trunks creating rhythmic vertical composition."
+
+  - filename: "ansel-frozen-lake-and-cliffs-1932.png"
+    title: "Frozen Lake and Cliffs"
+    year: 1932
+    tags: ["reflection", "symmetry", "high_contrast", "winter"]
+    best_for_teaching: ["Visual Balance", "Composition", "Lighting"]
+    description: "Strong reflection and symmetry with dramatic tonal contrast."
+
+  - filename: "ansel-northern-california-coast-redwoods-1960.png"
+    title: "Northern California Coast Redwoods"
+    year: 1960
+    tags: ["forest", "depth", "atmospheric", "soft_light"]
+    best_for_teaching: ["Depth & Perspective", "Lighting", "Emotional Impact"]
+    description: "Atmospheric forest scene with layers creating depth through fog."
+
+  - filename: "ansel-white-house-ruin-1947.png"
+    title: "White House Ruin"
+    year: 1947
+    tags: ["architecture", "scale", "texture", "historical"]
+    best_for_teaching: ["Composition", "Subject Isolation", "Depth & Perspective"]
+    description: "Ancient ruins shown with strong sense of scale and architectural detail."
+
+  - filename: "camera_003_sand_dunes.png"
+    title: "Sand Dunes"
+    year: 1940
+    tags: ["curves", "shadows", "texture", "abstract"]
+    best_for_teaching: ["Composition", "Lighting", "Visual Balance"]
+    description: "Abstract composition of dune curves with dramatic shadow play."
+
+  - filename: "camera_020_courtyard.png"
+    title: "Mission Courtyard"
+    year: 1950
+    tags: ["architecture", "shadows", "geometric", "texture"]
+    best_for_teaching: ["Composition", "Lighting", "Visual Balance"]
+    description: "Strong geometric composition with dramatic shadow patterns."
+
+  - filename: "camera_035_half_dome_moon.png"
+    title: "Half Dome with Moon"
+    year: 1960
+    tags: ["iconic", "timing", "scale", "celestial"]
+    best_for_teaching: ["Composition", "Emotional Impact", "Timing"]
+    description: "Iconic Yosemite view with moon providing scale and interest."
+
+  - filename: "camera_120_rock_formations.png"
+    title: "Rock Formations"
+    year: 1945
+    tags: ["texture", "pattern", "abstract", "geological"]
+    best_for_teaching: ["Composition", "Focus & Sharpness", "Subject Isolation"]
+    description: "Detailed texture and patterns in rock formations."
+
+  - filename: "camera_133_train_mountains.png"
+    title: "Train and Mountains"
+    year: 1952
+    tags: ["human_element", "scale", "landscape", "leading_lines"]
+    best_for_teaching: ["Composition", "Depth & Perspective", "Visual Balance"]
+    description: "Human element provides scale against vast mountain landscape."
+
+  - filename: "camera_150_misty_mountains.png"
+    title: "Misty Mountains"
+    year: 1955
+    tags: ["atmospheric", "layers", "soft_light", "mood"]
+    best_for_teaching: ["Depth & Perspective", "Lighting", "Emotional Impact"]
+    description: "Multiple mountain layers creating depth through atmospheric perspective."
+
+  - filename: "camera_155_tetons_fence.png"
+    title: "Tetons with Fence"
+    year: 1942
+    tags: ["foreground_interest", "leading_lines", "depth", "landscape"]
+    best_for_teaching: ["Composition", "Depth & Perspective", "Visual Balance"]
+    description: "Fence line creates leading lines and foreground interest."
+
+  - filename: "camera_160_railroad.png"
+    title: "Railroad and Mountains"
+    year: 1948
+    tags: ["leading_lines", "perspective", "human_element", "scale"]
+    best_for_teaching: ["Composition", "Depth & Perspective", "Leading Lines"]
+    description: "Railroad tracks create strong perspective lines leading to mountains."
+
+  - filename: "camera_175_tidal_beach.png"
+    title: "Tidal Beach"
+    year: 1953
+    tags: ["reflection", "texture", "patterns", "wet_sand"]
+    best_for_teaching: ["Visual Balance", "Composition", "Texture"]
+    description: "Patterns in wet sand with subtle reflections creating texture."
+
+  - filename: "print_003_waterfall.png"
+    title: "Waterfall"
+    year: 1946
+    tags: ["motion", "long_exposure", "water", "texture"]
+    best_for_teaching: ["Focus & Sharpness", "Lighting", "Composition"]
+    description: "Captures motion of water with perfect focus and detail."
+
+  - filename: "print_035_western_town.png"
+    title: "Western Town"
+    year: 1950
+    tags: ["architecture", "documentary", "historical", "geometric"]
+    best_for_teaching: ["Composition", "Lighting", "Subject Isolation"]
+    description: "Documentary style with strong architectural composition."
+
+  - filename: "print_075_windmill_clouds.jpg"
+    title: "Windmill and Clouds"
+    year: 1945
+    tags: ["sky", "clouds", "dramatic", "high_contrast"]
+    best_for_teaching: ["Lighting", "Composition", "Emotional Impact"]
+    description: "Dramatic cloud formations with windmill silhouette."
+
+  - filename: "Ansel_Adams_-_National_Archives_79-AA-G06.jpg"
+    title: "Farm Workers, California"
+    year: 1943
+    tags: ["documentary", "human_interest", "social", "portraits"]
+    best_for_teaching: ["Subject Isolation", "Emotional Impact", "Composition"]
+    description: "Documentary work showing human subjects with dignity and detail."
+
+  - filename: "Ansel_Adams_-_National_Archives_79-AAB-02.jpg"
+    title: "Manzanar Relocation Center"
+    year: 1943
+    tags: ["documentary", "historical", "human_interest", "architecture"]
+    best_for_teaching: ["Composition", "Emotional Impact", "Subject Isolation"]
+    description: "Important documentary work from Manzanar with strong composition."

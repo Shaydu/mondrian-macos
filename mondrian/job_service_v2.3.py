@@ -32,6 +32,36 @@ logger = logging.getLogger(__name__)
 # AI Advisor service URL
 AI_ADVISOR_URL = "http://127.0.0.1:5100"
 
+# Helper function to get base URL for image serving
+def get_base_url():
+    """Get base URL for generating full image URLs"""
+    # Check for environment variable first (for Cloudflare Tunnel, etc.)
+    base_url = os.environ.get('MONDRIAN_BASE_URL')
+    if base_url:
+        return base_url.rstrip('/')
+    
+    # Use Flask request host URL if available
+    try:
+        if request:
+            return request.host_url.rstrip('/')
+    except RuntimeError:
+        pass
+    
+    # Auto-detect local network IP
+    import socket
+    try:
+        # Connect to external address to determine local IP
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(('8.8.8.8', 80))
+        local_ip = s.getsockname()[0]
+        s.close()
+        return f"http://{local_ip}:5005"
+    except Exception:
+        # Last resort - try to get hostname
+        hostname = socket.gethostname()
+        local_ip = socket.gethostbyname(hostname)
+        return f"http://{local_ip}:5005"
+
 class JobDatabase:
     """Simple job tracking database"""
     
@@ -249,33 +279,22 @@ def get_advisors():
                                    if f.lower().endswith(('.jpg', '.jpeg', '.png')) 
                                    and f.lower() != 'headshot.jpg'])
                     
-                    # Create artwork entries for up to 4 images with base64 encoding
+                    # Create artwork entries for up to 4 images with full URLs
+                    base_url = get_base_url()
                     for idx, image_file in enumerate(images[:4], 1):
-                        image_path = os.path.join(dir_path, image_file)
-                        try:
-                            with open(image_path, 'rb') as f:
-                                image_data = f.read()
-                                image_base64 = base64.b64encode(image_data).decode('utf-8')
-                                # Determine MIME type
-                                mime_type = 'image/jpeg' if image_file.lower().endswith(('.jpg', '.jpeg')) else 'image/png'
-                                
-                                artworks_list.append({
-                                    "title": image_file.replace('.jpg', '').replace('.png', '').replace('_', ' '),
-                                    "year": "",
-                                    "url": f"data:{mime_type};base64,{image_base64}"
-                                })
-                        except Exception as e:
-                            logger.warning(f"Failed to read image {image_path}: {e}")
-                            # Fallback to endpoint URL if base64 fails
-                            artworks_list.append({
-                                "title": image_file.replace('.jpg', '').replace('.png', '').replace('_', ' '),
-                                "year": "",
-                                "url": f"/advisor_artwork/{advisor_id}/{idx}"
-                            })
+                        # Determine MIME type
+                        mime_type = 'image/jpeg' if image_file.lower().endswith(('.jpg', '.jpeg')) else 'image/png'
+                        
+                        artworks_list.append({
+                            "title": image_file.replace('.jpg', '').replace('.png', '').replace('_', ' '),
+                            "year": "",
+                            "url": f"{base_url}/advisor_artwork/{advisor_id}/{idx-1}",
+                            "mime_type": mime_type
+                        })
                     break
             
             advisor["artworks"] = artworks_list
-            advisor["image_url"] = f"/advisor_image/{advisor_id}"
+            advisor["image_url"] = f"{base_url}/advisor_image/{advisor_id}"
             advisors.append(advisor)
         
         return jsonify({
@@ -333,49 +352,38 @@ def get_advisor_detail(advisor_id):
                                if f.lower().endswith(('.jpg', '.jpeg', '.png')) 
                                and f.lower() != 'headshot.jpg'])
                 
-                # Create artwork entries for ALL images
-                for idx, image_file in enumerate(images, 1):
-                    image_path = os.path.join(dir_path, image_file)
+                # Create artwork entries for ALL images with full URLs
+                base_url = get_base_url()
+                for idx, image_file in enumerate(images):
+                    # Determine MIME type
+                    mime_type = 'image/jpeg' if image_file.lower().endswith(('.jpg', '.jpeg')) else 'image/png'
                     
-                    # Try to add base64 encoded image, always provide url as fallback
-                    try:
-                        with open(image_path, 'rb') as f:
-                            image_data = f.read()
-                            image_base64 = base64.b64encode(image_data).decode('utf-8')
-                            # Determine MIME type
-                            mime_type = 'image/jpeg' if image_file.lower().endswith(('.jpg', '.jpeg')) else 'image/png'
-                            
-                            artworks_list.append({
-                                "title": image_file.replace('.jpg', '').replace('.png', '').replace('_', ' '),
-                                "year": "",
-                                "url": f"data:{mime_type};base64,{image_base64}"
-                            })
-                    except Exception as e:
-                        logger.warning(f"Failed to read image {image_path}: {e}")
-                        # Always provide url field, even if base64 fails
-                        artworks_list.append({
-                            "title": image_file.replace('.jpg', '').replace('.png', '').replace('_', ' '),
-                            "year": "",
-                            "url": f"/advisor_artwork/{advisor_id}/{idx}"
-                        })
+                    artworks_list.append({
+                        "title": image_file.replace('.jpg', '').replace('.png', '').replace('_', ' '),
+                        "year": "",
+                        "url": f"{base_url}/advisor_artwork/{advisor_id}/{idx}",
+                        "mime_type": mime_type
+                    })
                 break
         
         # Fallback: add at least one artwork entry if none found
         if not artworks_list:
+            base_url = get_base_url()
             artworks_list.append({
                 "title": "Representative Work",
                 "year": "",
-                "url": f"/advisor_artwork/{advisor_id}/1"
+                "url": f"{base_url}/advisor_artwork/{advisor_id}/1"
             })
         
         # Build advisor response
+        base_url = get_base_url()
         advisor = {
             "id": row["id"],
             "name": row["name"],
             "specialty": row["category"] if row["category"] else "Photography",
             "bio": row["bio"] if row["bio"] else "",
             "focus_areas": focus_areas_list,
-            "image_url": f"/advisor_image/{advisor_id}",
+            "image_url": f"{base_url}/advisor_image/{advisor_id}",
             "artworks": artworks_list
         }
         
@@ -507,13 +515,14 @@ def get_advisor_artwork_lightbox_info(advisor_id, artwork_id):
                 if artwork_id <= len(images) and artwork_id >= 1:
                     current_idx = artwork_id - 1
                     current_image = images[current_idx]
+                    base_url = get_base_url()
                     
                     # Build lightbox metadata
                     lightbox_info = {
                         "current": {
                             "id": artwork_id,
                             "title": current_image.replace('.jpg', '').replace('.png', '').replace('_', ' '),
-                            "url": f"/advisor_artwork/{advisor_id}/{artwork_id}",
+                            "url": f"{base_url}/advisor_artwork/{advisor_id}/{artwork_id}",
                             "filename": current_image
                         },
                         "navigation": {
@@ -531,7 +540,7 @@ def get_advisor_artwork_lightbox_info(advisor_id, artwork_id):
                             {
                                 "id": idx + 1,
                                 "title": img.replace('.jpg', '').replace('.png', '').replace('_', ' '),
-                                "url": f"/advisor_artwork/{advisor_id}/{idx + 1}",
+                                "url": f"{base_url}/advisor_artwork/{advisor_id}/{idx + 1}",
                                 "filename": img
                             } for idx, img in enumerate(images)
                         ]
