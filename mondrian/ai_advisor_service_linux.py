@@ -1223,15 +1223,12 @@ Required JSON Structure:
             margin-top: 8px;
         }}
         .reference-citation .case-study-image {{
-            width: 310px;
-            height: 206px;
             display: block;
-            object-fit: cover;
             border-radius: 6px;
             margin-bottom: 8px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.3);
             background: #1c1c1e;
-            contain: layout style;
+            cursor: pointer;
         }}
         .reference-citation .case-study-title {{
             color: #ffffff;
@@ -1248,9 +1245,56 @@ Required JSON Structure:
             margin: 6px 0 0 0;
         }}
         .reference-citation strong {{ color: #30b0c0; }}
+        /* Lightbox styles */
+        .lightbox {{
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }}
+        .lightbox.active {{
+            display: flex;
+        }}
+        .lightbox img {{
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 8px;
+        }}
+        .lightbox-close {{
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: white;
+            font-size: 32px;
+            cursor: pointer;
+            z-index: 10000;
+            padding: 10px;
+        }}
     </style>
 </head>
 <body>
+<div id="lightbox" class="lightbox" onclick="closeLightbox()">
+    <span class="lightbox-close">&times;</span>
+    <img id="lightbox-img" src="" alt="Full size image">
+</div>
+<script>
+function openLightbox(src) {{
+    document.getElementById('lightbox-img').src = src + '?size=full';
+    document.getElementById('lightbox').classList.add('active');
+}}
+function closeLightbox() {{
+    document.getElementById('lightbox').classList.remove('active');
+}}
+</script>
 <div class="advisor-section" data-advisor="{advisor}">
   <div class="analysis">
   <h2>Description</h2>
@@ -1357,7 +1401,7 @@ Required JSON Structure:
                 if ref_image_url:
                     reference_citation = '<div class="reference-citation"><div class="case-study-box">'
                     reference_citation += f'<div class="case-study-title">Case Study: {title_with_year}</div>'
-                    reference_citation += f'<img src="{ref_image_url}" alt="{title_with_year}" class="case-study-image" />'
+                    reference_citation += f'<img src="{ref_image_url}" alt="{title_with_year}" class="case-study-image" onclick="openLightbox(\'{ref_image_url}\')" />'
                     
                     # Add metadata
                     metadata_parts = []
@@ -1504,15 +1548,12 @@ Required JSON Structure:
             margin-bottom: 6px;
         }
         .case-study-image {
-            width: 310px;
-            height: 206px;
             display: block;
-            object-fit: cover;
             border-radius: 4px;
             margin-bottom: 6px;
             box-shadow: 0 2px 6px rgba(0,0,0,0.3);
             background: #1c1c1e;
-            contain: layout style;
+            cursor: pointer;
         }
         .case-study-metadata {
             font-size: 11px;
@@ -1530,9 +1571,56 @@ Required JSON Structure:
             border-left: 3px solid #ff9500;
         }
         .disclaimer p { font-size: 12px; line-height: 1.4; color: #d1d1d6; margin: 0; }
+        /* Lightbox styles */
+        .lightbox {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.95);
+            z-index: 9999;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .lightbox.active {
+            display: flex;
+        }
+        .lightbox img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 8px;
+        }
+        .lightbox-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: white;
+            font-size: 32px;
+            cursor: pointer;
+            z-index: 10000;
+            padding: 10px;
+        }
     </style>
 </head>
 <body>
+<div id="lightbox" class="lightbox" onclick="closeLightbox()">
+    <span class="lightbox-close">&times;</span>
+    <img id="lightbox-img" src="" alt="Full size image">
+</div>
+<script>
+function openLightbox(src) {
+    document.getElementById('lightbox-img').src = src + '?size=full';
+    document.getElementById('lightbox').classList.add('active');
+}
+function closeLightbox() {
+    document.getElementById('lightbox').classList.remove('active');
+}
+</script>
 <div class="summary-header"><h1>Top 3 Recommendations</h1></div>
 <div class="recommendations-list">
 '''
@@ -1571,7 +1659,7 @@ Required JSON Structure:
                 if ref_image_url:
                     case_study_html = '<div class="case-study-box">'
                     case_study_html += f'<div class="case-study-title">Case Study: {title_with_year}</div>'
-                    case_study_html += f'<img src="{ref_image_url}" alt="{title_with_year}" class="case-study-image" />'
+                    case_study_html += f'<img src="{ref_image_url}" alt="{title_with_year}" class="case-study-image" onclick="openLightbox(\'{ref_image_url}\')" />'
                     
                     # Add metadata
                     if explanation:

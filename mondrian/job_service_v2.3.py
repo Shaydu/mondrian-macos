@@ -603,11 +603,14 @@ def get_advisor_artwork_lightbox_info(advisor_id, artwork_id):
 
 @app.route('/api/reference-image/<filename>', methods=['GET'])
 def get_reference_image(filename):
-    """Serve reference images for RAG analysis results"""
+    """Serve reference images for RAG analysis results. Supports ?size=full for lightbox view."""
     try:
         # Log the request for debugging
         remote_addr = request.environ.get('REMOTE_ADDR', 'unknown')
         logger.info(f"[DEBUG] Reference image request: {filename} from {remote_addr}")
+        
+        # Check for size parameter (for lightbox full-size view)
+        size = request.args.get('size', 'thumb')
         
         # Get the current working directory to construct absolute paths
         cwd = os.getcwd()
@@ -649,18 +652,20 @@ def get_reference_image(filename):
         if not image_path:
             logger.warning(f"Reference image not found: {filename} (searched {len(possible_dirs)} directories)")
             return jsonify({"error": "Image not found"}), 404
-            
-        logger.info(f"Serving reference image (resized): {image_path}")
         
-        # Resize image to 800px width maintaining aspect ratio (quality=95 for minimal compression)
-        resized = resize_image_for_web(image_path, max_width=800, max_height=2400, quality=95)
+        # Choose size based on parameter
+        if size == 'full':
+            logger.info(f"Serving reference image (full size for lightbox): {image_path}")
+            resized = resize_image_for_web(image_path, max_width=1200, max_height=9999, quality=95)
+        else:
+            logger.info(f"Serving reference image (thumbnail): {image_path}")
+            resized = resize_image_for_web(image_path, max_width=254, max_height=9999, quality=95)
         
         return send_file(resized, mimetype='image/jpeg')
         
     except Exception as e:
         logger.error(f"Failed to serve reference image {filename}: {e}", exc_info=True)
         return jsonify({"error": str(e)}), 500
-
 
 @app.route('/upload', methods=['POST'])
 def upload_image():
