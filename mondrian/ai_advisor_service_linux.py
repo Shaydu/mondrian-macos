@@ -1131,25 +1131,27 @@ Required JSON Structure:
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
     <style>
         * {{ margin: 0; padding: 0; box-sizing: border-box; }}
         body {{
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
             padding: 20px;
+            padding-bottom: 0;
             background: #000000;
             line-height: 1.6;
             color: #ffffff;
             max-width: 100%;
         }}
-        @media (max-width: 768px) {{ body {{ padding: 15px; }} .analysis {{ padding: 15px; }} }}
-        @media (max-width: 375px) {{ body {{ padding: 10px; font-size: 14px; }} .analysis {{ padding: 12px; }} }}
-        @media (min-width: 1024px) {{ body {{ max-width: 800px; margin: 0 auto; padding: 30px; }} }}
+        @media (max-width: 768px) {{ body {{ padding: 15px; padding-bottom: 0; }} .analysis {{ padding: 15px; }} }}
+        @media (max-width: 375px) {{ body {{ padding: 10px; padding-bottom: 0; font-size: 14px; }} .analysis {{ padding: 12px; }} }}
+        @media (min-width: 1024px) {{ body {{ max-width: 800px; margin: 0 auto; padding: 30px; padding-bottom: 0; }} }}
         .analysis {{
             background: #1c1c1e;
             padding: 20px;
+            padding-bottom: 12px;
             border-radius: 12px;
-            margin-bottom: 20px;
+            margin-bottom: -10px;
             text-align: left;
         }}
         .analysis h2 {{
@@ -1198,7 +1200,6 @@ Required JSON Structure:
             background: #1c1c1e;
             border-left: 4px solid #2a9aaa;
             border-radius: 4px;
-            opacity: 0.95;
         }}
         .feedback-recommendation strong {{
             display: block;
@@ -1219,17 +1220,18 @@ Required JSON Structure:
             background: #2c2c2e;
             border-radius: 8px;
             padding: 12px;
-            border-left: 4px solid #30b0c0;
             margin-top: 8px;
         }}
         .reference-citation .case-study-image {{
-            width: 100%;
-            max-width: 800px;
-            height: auto;
+            width: 310px;
+            height: 206px;
+            display: block;
+            object-fit: cover;
             border-radius: 6px;
             margin-bottom: 8px;
-            display: block;
             box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            background: #1c1c1e;
+            contain: layout style;
         }}
         .reference-citation .case-study-title {{
             color: #ffffff;
@@ -1449,7 +1451,7 @@ Required JSON Structure:
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -1494,7 +1496,6 @@ Required JSON Structure:
             padding: 8px;
             background: #2c2c2e;
             border-radius: 6px;
-            border-left: 3px solid #30b0c0;
         }
         .case-study-title {
             font-size: 12px;
@@ -1503,13 +1504,15 @@ Required JSON Structure:
             margin-bottom: 6px;
         }
         .case-study-image {
-            width: 100%;
-            max-width: 800px;
-            height: auto;
+            width: 310px;
+            height: 206px;
+            display: block;
+            object-fit: cover;
             border-radius: 4px;
             margin-bottom: 6px;
-            display: block;
             box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+            background: #1c1c1e;
+            contain: layout style;
         }
         .case-study-metadata {
             font-size: 11px;
@@ -1610,7 +1613,7 @@ Required JSON Structure:
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
     <style>
         * {{ margin: 0; padding: 0; box-sizing: border-box; }}
         html, body {{
