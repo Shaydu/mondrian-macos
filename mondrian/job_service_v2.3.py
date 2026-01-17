@@ -79,19 +79,19 @@ class JobDatabase:
                 conn.execute("ALTER TABLE jobs ADD COLUMN adapter TEXT DEFAULT NULL")
                 conn.commit()
     
-    def create_job(self, advisor: str, mode: str, image_path: str) -> str:
+    def create_job(self, advisor: str, mode: str, image_path: str, enable_rag: bool = False) -> str:
         """Create a new job"""
         job_id = str(uuid.uuid4())
         now = datetime.now().isoformat()
         
         with sqlite3.connect(self.db_path) as conn:
             conn.execute("""
-                INSERT INTO jobs (id, filename, advisor, mode, status, created_at, last_activity)
-                VALUES (?, ?, ?, ?, ?, ?, ?)
-            """, (job_id, image_path, advisor, mode, 'pending', now, now))
+                INSERT INTO jobs (id, filename, advisor, mode, status, created_at, last_activity, enable_rag)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            """, (job_id, image_path, advisor, mode, 'pending', now, now, 1 if enable_rag else 0))
             conn.commit()
         
-        logger.info(f"Created job {job_id}")
+        logger.info(f"Created job {job_id} (RAG={'enabled' if enable_rag else 'disabled'})\"")
         return job_id
     
     def get_job(self, job_id: str) -> Optional[Dict[str, Any]]:
@@ -205,6 +205,8 @@ def health():
 def get_advisors():
     """Get list of available advisors with representative works"""
     try:
+        import base64
+        
         db_path = job_db.db_path if job_db else "mondrian.db"
         with sqlite3.connect(db_path) as conn:
             conn.row_factory = sqlite3.Row
@@ -232,7 +234,7 @@ def get_advisors():
                 except (json.JSONDecodeError, TypeError):
                     advisor["focus_areas"] = []
             
-            # Add representative works (first 4 for grid display)
+            # Add representative works with base64-encoded images
             artworks_list = []
             possible_dirs = [
                 f"mondrian/source/advisor/photographer/{advisor_id}",
@@ -247,16 +249,32 @@ def get_advisors():
                                    if f.lower().endswith(('.jpg', '.jpeg', '.png')) 
                                    and f.lower() != 'headshot.jpg'])
                     
-                    # Create artwork entries for up to 4 images for grid display in list view
+                    # Create artwork entries for up to 4 images with base64 encoding
                     for idx, image_file in enumerate(images[:4], 1):
-                        artworks_list.append({
-                            "id": idx,
-                            "title": image_file.replace('.jpg', '').replace('.png', '').replace('_', ' '),
-                            "url": f"/advisor_artwork/{advisor_id}/{idx}"
-                        })
+                        image_path = os.path.join(dir_path, image_file)
+                        try:
+                            with open(image_path, 'rb') as f:
+                                image_data = f.read()
+                                image_base64 = base64.b64encode(image_data).decode('utf-8')
+                                # Determine MIME type
+                                mime_type = 'image/jpeg' if image_file.lower().endswith(('.jpg', '.jpeg')) else 'image/png'
+                                
+                                artworks_list.append({
+                                    "title": image_file.replace('.jpg', '').replace('.png', '').replace('_', ' '),
+                                    "year": "",
+                                    "url": f"data:{mime_type};base64,{image_base64}"
+                                })
+                        except Exception as e:
+                            logger.warning(f"Failed to read image {image_path}: {e}")
+                            # Fallback to endpoint URL if base64 fails
+                            artworks_list.append({
+                                "title": image_file.replace('.jpg', '').replace('.png', '').replace('_', ' '),
+                                "year": "",
+                                "url": f"/advisor_artwork/{advisor_id}/{idx}"
+                            })
                     break
             
-            advisor["representative_works"] = artworks_list
+            advisor["artworks"] = artworks_list
             advisor["image_url"] = f"/advisor_image/{advisor_id}"
             advisors.append(advisor)
         
@@ -275,6 +293,8 @@ def get_advisors():
 def get_advisor_detail(advisor_id):
     """Get detailed information for a specific advisor with images and representative works"""
     try:
+        import base64
+        
         db_path = job_db.db_path if job_db else "mondrian.db"
         with sqlite3.connect(db_path) as conn:
             conn.row_factory = sqlite3.Row
@@ -299,7 +319,6 @@ def get_advisor_detail(advisor_id):
         
         # Get available artwork files for this advisor
         artworks_list = []
-        all_images = []  # Track ALL images for lightbox navigation
         possible_dirs = [
             f"mondrian/source/advisor/photographer/{advisor_id}",
             f"mondrian/source/advisor/painter/{advisor_id}",
@@ -313,58 +332,51 @@ def get_advisor_detail(advisor_id):
                 images = sorted([f for f in os.listdir(dir_path) 
                                if f.lower().endswith(('.jpg', '.jpeg', '.png')) 
                                and f.lower() != 'headshot.jpg'])
-                all_images = images
                 
-                # Create artwork entries for ALL images for lightbox support
+                # Create artwork entries for ALL images
                 for idx, image_file in enumerate(images, 1):
-                    artworks_list.append({
-                        "id": idx,  # For lightbox pagination
-                        "title": image_file.replace('.jpg', '').replace('.png', '').replace('_', ' '),
-                        "url": f"/advisor_artwork/{advisor_id}/{idx}",
-                        "filename": image_file,  # Include actual filename
-                        "index": idx,
-                        "total": len(images)  # Total count for lightbox navigation
-                    })
+                    image_path = os.path.join(dir_path, image_file)
+                    
+                    # Try to add base64 encoded image, always provide url as fallback
+                    try:
+                        with open(image_path, 'rb') as f:
+                            image_data = f.read()
+                            image_base64 = base64.b64encode(image_data).decode('utf-8')
+                            # Determine MIME type
+                            mime_type = 'image/jpeg' if image_file.lower().endswith(('.jpg', '.jpeg')) else 'image/png'
+                            
+                            artworks_list.append({
+                                "title": image_file.replace('.jpg', '').replace('.png', '').replace('_', ' '),
+                                "year": "",
+                                "url": f"data:{mime_type};base64,{image_base64}"
+                            })
+                    except Exception as e:
+                        logger.warning(f"Failed to read image {image_path}: {e}")
+                        # Always provide url field, even if base64 fails
+                        artworks_list.append({
+                            "title": image_file.replace('.jpg', '').replace('.png', '').replace('_', ' '),
+                            "year": "",
+                            "url": f"/advisor_artwork/{advisor_id}/{idx}"
+                        })
                 break
         
         # Fallback: add at least one artwork entry if none found
         if not artworks_list:
             artworks_list.append({
-                "id": 1,
                 "title": "Representative Work",
-                "url": f"/advisor_artwork/{advisor_id}/1",
-                "filename": "unknown",
-                "index": 1,
-                "total": 1
+                "year": "",
+                "url": f"/advisor_artwork/{advisor_id}/1"
             })
         
-        # Build advisor response with image URLs
+        # Build advisor response
         advisor = {
             "id": row["id"],
             "name": row["name"],
             "specialty": row["category"] if row["category"] else "Photography",
             "bio": row["bio"] if row["bio"] else "",
-            "years": row["years"] if row["years"] else "",
-            "wikipedia_url": row["wikipedia_url"] if row["wikipedia_url"] else "",
-            "commons_url": row["commons_url"] if row["commons_url"] else "",
             "focus_areas": focus_areas_list,
-            "image_url": f"/advisor_image/{advisor_id}",  # Headshot image endpoint
-            "artworks": artworks_list,
-            "artworks_count": len(artworks_list),  # Total number of representative works
-            "representative_works": {
-                "count": len(artworks_list),
-                "display_mode": "grid",  # or "carousel" for lightbox
-                "thumbnails": [
-                    {
-                        "id": w["id"],
-                        "url": w["url"],
-                        "title": w["title"],
-                        "index": w["index"],
-                        "total": w["total"]
-                    } for w in artworks_list[:4]  # First 4 for grid display
-                ] if artworks_list else [],
-                "full_list": artworks_list  # All items for lightbox pagination
-            }
+            "image_url": f"/advisor_image/{advisor_id}",
+            "artworks": artworks_list
         }
         
         return jsonify({
@@ -569,8 +581,8 @@ def upload_image():
         filepath = upload_dir / unique_filename
         file.save(str(filepath))
         
-        # Create job
-        job_id = job_db.create_job(advisor, mode, str(filepath))
+        # Create job with enable_rag parameter
+        job_id = job_db.create_job(advisor, mode, str(filepath), enable_rag=enable_rag)
         
         # Format response - keep job_id clean for URLs, add mode to display_id
         display_job_id = f"{job_id} ({mode})"
@@ -1358,6 +1370,11 @@ def process_job_worker(db_path: str):
                 
                 # Call AI Advisor service
                 try:
+                    # Get enable_rag from job record
+                    cursor = conn.execute("SELECT enable_rag FROM jobs WHERE id = ?", (job_id,))
+                    enable_rag_row = cursor.fetchone()
+                    enable_rag = bool(enable_rag_row[0]) if enable_rag_row else False
+                    
                     with open(filename, 'rb') as f:
                         response = requests.post(
                             f"{AI_ADVISOR_URL}/analyze",
@@ -1365,7 +1382,7 @@ def process_job_worker(db_path: str):
                             data={
                                 'advisor': advisor,
                                 'mode': mode,
-                                'enable_rag': 'false'
+                                'enable_rag': str(enable_rag).lower()
                             },
                             timeout=300,
                             stream=True

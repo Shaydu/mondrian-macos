@@ -250,6 +250,115 @@ class QwenAdvisor:
             logger.warning("Continuing with base model only")
             raise
     
+    def _get_similar_images_from_db(self, advisor_id: str, top_k: int = 3) -> List[Dict[str, Any]]:
+        """
+        Retrieve similar reference images from the dimensional_profiles table.
+        This provides RAG context by finding reference images with similar dimensional scores.
+        
+        Args:
+            advisor_id: Advisor to search (e.g., 'ansel')
+            top_k: Number of similar images to return
+            
+        Returns:
+            List of similar image records with their dimensional scores
+        """
+        try:
+            conn = sqlite3.connect(DB_PATH)
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+            
+            # Get reference images for this advisor
+            # For now, just get the best-rated images as context
+            query = """
+                SELECT id, image_path, composition_score, lighting_score, 
+                       focus_sharpness_score, color_harmony_score, overall_grade,
+                       image_description, image_title
+                FROM dimensional_profiles
+                WHERE advisor_id = ?
+                ORDER BY (
+                    composition_score + lighting_score + focus_sharpness_score + 
+                    color_harmony_score
+                ) / 4.0 DESC
+                LIMIT ?
+            """
+            
+            cursor.execute(query, (advisor_id, top_k))
+            rows = cursor.fetchall()
+            conn.close()
+            
+            if not rows:
+                logger.warning(f"No reference images found for advisor: {advisor_id}")
+                return []
+            
+            similar_images = [dict(row) for row in rows]
+            logger.info(f"Retrieved {len(similar_images)} similar reference images for RAG context")
+            
+            return similar_images
+            
+        except Exception as e:
+            logger.error(f"Failed to retrieve similar images: {e}")
+            return []
+    
+    def _augment_prompt_with_rag_context(self, prompt: str, advisor_id: str) -> str:
+        """
+        Augment the prompt with RAG context from similar reference images.
+        Includes reference image names and dimensional scores for direct citation.
+        
+        Args:
+            prompt: Original prompt
+            advisor_id: Advisor to search for reference images
+            
+        Returns:
+            Augmented prompt with RAG context
+        """
+        similar_images = self._get_similar_images_from_db(advisor_id, top_k=3)
+        
+        if not similar_images:
+            logger.info("No similar images found for RAG context, using original prompt")
+            return prompt
+        
+        # Build RAG context with reference image names and dimensional comparisons
+        rag_context = "\n\n### REFERENCE IMAGES FOR COMPARATIVE ANALYSIS:\n"
+        rag_context += "These master works from the advisor's portfolio provide dimensional benchmarks.\n"
+        
+        for i, img in enumerate(similar_images, 1):
+            # Use image_title (metadata name) if available, otherwise extract filename
+            img_title = img.get('image_title')
+            if not img_title:
+                img_path = img.get('image_path', '')
+                img_title = img_path.split('/')[-1] if img_path else f"Reference {i}"
+            
+            rag_context += f"\n**Reference #{i}: {img_title}**\n"
+            if img.get('image_description'):
+                rag_context += f"- {img['image_description']}\n"
+            
+            # Add dimensional profile as structured data
+            if any(img.get(k) is not None for k in ['composition_score', 'lighting_score', 'focus_sharpness_score', 'color_harmony_score', 'overall_grade']):
+                rag_context += "- Dimensional Profile: "
+                scores = []
+                if img.get('composition_score') is not None:
+                    scores.append(f"Composition {img['composition_score']}/10")
+                if img.get('lighting_score') is not None:
+                    scores.append(f"Lighting {img['lighting_score']}/10")
+                if img.get('focus_sharpness_score') is not None:
+                    scores.append(f"Focus {img['focus_sharpness_score']}/10")
+                if img.get('color_harmony_score') is not None:
+                    scores.append(f"Color {img['color_harmony_score']}/10")
+                rag_context += ", ".join(scores)
+                if img.get('overall_grade'):
+                    rag_context += f" (Grade: {img['overall_grade']})"
+                rag_context += "\n"
+        
+        rag_context += "\nWhen analyzing the user's image, compare their dimensional scores to these references. "
+        rag_context += "Calculate the delta (difference) for each dimension and cite which reference image demonstrates "
+        rag_context += "the best practice for areas needing improvement. Use the image titles when referencing specific works.\n"
+        
+        # Augment prompt
+        augmented_prompt = f"{prompt}\n{rag_context}"
+        logger.info(f"Augmented prompt with RAG context ({len(rag_context)} chars, {len(similar_images)} references)")
+        
+        return augmented_prompt
+    
     def analyze_image(self, image_path: str, advisor: str = "ansel", 
                      mode: str = "baseline") -> Dict[str, Any]:
         """
@@ -258,7 +367,7 @@ class QwenAdvisor:
         Args:
             image_path: Path to image file
             advisor: Photography advisor persona (e.g., 'ansel')
-            mode: Analysis mode ('baseline', 'rag', etc.)
+            mode: Analysis mode ('baseline', 'rag', 'lora', 'lora+rag', 'rag_lora')
         
         Returns:
             Dictionary with analysis results
@@ -270,6 +379,11 @@ class QwenAdvisor:
             
             # Create analysis prompt
             prompt = self._create_prompt(advisor, mode)
+            
+            # Apply RAG augmentation if requested
+            if mode in ('rag', 'rag_lora', 'lora+rag', 'lora_rag'):
+                logger.info(f"Augmenting prompt with RAG context for mode={mode}")
+                prompt = self._augment_prompt_with_rag_context(prompt, advisor)
             
             # Use chat template for proper image token handling
             messages = [
@@ -385,11 +499,23 @@ Required JSON Structure:
     def _generate_ios_detailed_html(self, analysis_data: Dict[str, Any], advisor: str, mode: str) -> str:
         """Generate iOS-compatible dark theme HTML for detailed analysis"""
         
+        def format_dimension_name(name: str) -> str:
+            """Format dimension names to have proper spacing (e.g., ColorHarmony -> Color Harmony)"""
+            import re
+            # Insert space before uppercase letters that follow lowercase letters
+            formatted = re.sub(r'([a-z])([A-Z])', r'\1 \2', name)
+            return formatted
+        
         # Extract data from the expected JSON structure
         image_description = analysis_data.get('image_description', 'Image analysis')
         dimensions = analysis_data.get('dimensions', [])
         overall_score = analysis_data.get('overall_score', 'N/A')
         technical_notes = analysis_data.get('technical_notes', '')
+        
+        # Format dimension names
+        for dim in dimensions:
+            if 'name' in dim and dim['name']:
+                dim['name'] = format_dimension_name(dim['name'])
         
         def get_rating_style(score: int) -> tuple:
             """Return color and rating text based on score"""
@@ -478,10 +604,10 @@ Required JSON Structure:
 <body>
 <div class="advisor-section" data-advisor="{advisor}">
   <div class="analysis">
-  <h2>Image Analysis</h2>
+  <h2>Description</h2>
   <p>{image_description}</p>
 
-  <h2>Detailed Dimensional Analysis & Improvement Guide</h2>
+  <h2>Improvement Guide</h2>
   <p style="color: #666; margin-bottom: 20px;">Each dimension is analyzed with specific feedback and actionable recommendations for improvement.</p>
 '''
         
@@ -523,7 +649,19 @@ Required JSON Structure:
     def _generate_summary_html(self, analysis_data: Dict[str, Any]) -> str:
         """Generate iOS-compatible summary HTML with Top 3 recommendations (lowest scoring dimensions)"""
         
+        def format_dimension_name(name: str) -> str:
+            """Format dimension names to have proper spacing (e.g., ColorHarmony -> Color Harmony)"""
+            import re
+            # Insert space before uppercase letters that follow lowercase letters
+            formatted = re.sub(r'([a-z])([A-Z])', r'\1 \2', name)
+            return formatted
+        
         dimensions = analysis_data.get('dimensions', [])
+        
+        # Format dimension names
+        for dim in dimensions:
+            if 'name' in dim and dim['name']:
+                dim['name'] = format_dimension_name(dim['name'])
         
         # Sort by score ascending to get lowest/weakest areas first
         sorted_dims = sorted(dimensions, key=lambda d: d.get('score', 10))[:3]
