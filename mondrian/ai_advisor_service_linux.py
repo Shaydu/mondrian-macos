@@ -1207,7 +1207,8 @@ Required JSON Structure:
             color: #ffffff;
             font-size: clamp(13px, 3.5vw, 15px);
         }}
-        .feedback-recommendation p {{ margin: 0; line-height: 1.5; color: #ffffff; font-size: clamp(12px, 3vw, 14px); }}
+        .feedback-recommendation p {{ margin: 0; line-height: 1.5; color: #d1d1d6; font-size: clamp(13px, 3.5vw, 15px); }}
+        .feedback-recommendation .reference-text {{ margin-top: 8px; color: #30b0c0; font-style: italic; }}
         .reference-citation {{
             margin-top: 12px;
             padding: 0;
@@ -1224,6 +1225,8 @@ Required JSON Structure:
         }}
         .reference-citation .case-study-image {{
             display: block;
+            width: 98%;
+            height: auto;
             border-radius: 6px;
             margin-bottom: 8px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.3);
@@ -1374,6 +1377,7 @@ function closeLightbox() {{
             
             # Check if this dimension has a case study from LLM output
             reference_citation = ""
+            title_with_year = ""
             dim_key = name.lower().strip()
             if dim_key in case_study_map:
                 case_study_data = case_study_map[dim_key]
@@ -1413,6 +1417,11 @@ function closeLightbox() {{
                     reference_citation += f'<div class="case-study-metadata">' + '<br/>'.join(metadata_parts) + '</div>'
                     reference_citation += '</div></div>'
             
+            # Build reference text for the recommendation section
+            reference_text = ''
+            if title_with_year:
+                reference_text = f'<p class="reference-text">See Case Study: {title_with_year}</p>'
+            
             html += f'''
   <div class="feedback-card">
     <h3>
@@ -1424,7 +1433,7 @@ function closeLightbox() {{
     </div>
     <div class="feedback-recommendation">
       <strong>How to Improve:</strong>
-      <p>{recommendation}</p>
+      <p>{recommendation}</p>{reference_text}
     </div>{reference_citation}
   </div>
 '''
@@ -1549,6 +1558,8 @@ function closeLightbox() {{
         }
         .case-study-image {
             display: block;
+            width: 98%;
+            height: auto;
             border-radius: 4px;
             margin-bottom: 6px;
             box-shadow: 0 2px 6px rgba(0,0,0,0.3);
