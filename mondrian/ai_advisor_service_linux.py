@@ -11,6 +11,8 @@ import json
 import threading
 import time
 import sqlite3
+import base64
+import io
 
 # Set PyTorch memory optimization to reduce fragmentation
 os.environ['PYTORCH_CUDA_ALLOC_CONF'] = 'expandable_segments:True'
@@ -272,7 +274,7 @@ class QwenAdvisor:
             query = """
                 SELECT id, image_path, composition_score, lighting_score, 
                        focus_sharpness_score, color_harmony_score, overall_grade,
-                       image_description, image_title,
+                       image_description, image_title, date_taken,
                        subject_isolation_score, depth_perspective_score,
                        visual_balance_score, emotional_impact_score
                 FROM dimensional_profiles
@@ -293,10 +295,44 @@ class QwenAdvisor:
                 logger.warning(f"No reference images found for advisor: {advisor_id}")
                 return []
             
-            similar_images = [dict(row) for row in rows]
-            logger.info(f"Retrieved {len(similar_images)} similar reference images for RAG context")
+            result_images = []
+            for row in rows:
+                img_dict = dict(row)
+                image_path = img_dict.get('image_path')
+                
+                # Encode image as base64 for both thumbnail and fullsize
+                if image_path and os.path.exists(image_path):
+                    try:
+                        from PIL import Image
+                        img = Image.open(image_path)
+                        
+                        # Create thumbnail (200px width)
+                        thumb = img.copy()
+                        thumb.thumbnail((200, 200 * 10), Image.Resampling.LANCZOS)
+                        thumb_buffer = io.BytesIO()
+                        thumb.save(thumb_buffer, format='JPEG', quality=85)
+                        thumb_base64 = base64.b64encode(thumb_buffer.getvalue()).decode('utf-8')
+                        img_dict['thumbnail_base64'] = f"data:image/jpeg;base64,{thumb_base64}"
+                        
+                        # Create fullsize (max 1200px width for performance)
+                        full = img.copy()
+                        if full.width > 1200:
+                            full.thumbnail((1200, 1200 * 10), Image.Resampling.LANCZOS)
+                        full_buffer = io.BytesIO()
+                        full.save(full_buffer, format='JPEG', quality=90)
+                        full_base64 = base64.b64encode(full_buffer.getvalue()).decode('utf-8')
+                        img_dict['fullsize_base64'] = f"data:image/jpeg;base64,{full_base64}"
+                        
+                        result_images.append(img_dict)
+                    except Exception as e:
+                        logger.warning(f"Failed to encode image {image_path}: {e}")
+                        continue
+                else:
+                    logger.warning(f"Image path not found: {image_path}")
             
-            return similar_images
+            logger.info(f"Retrieved and encoded {len(result_images)} similar reference images for RAG context")
+            
+            return result_images
             
         except Exception as e:
             logger.error(f"Failed to retrieve similar images: {e}")
@@ -550,7 +586,7 @@ class QwenAdvisor:
             
             if not reference_images:
                 logger.info("No targeted reference images found for weak dimensions - skipping RAG augmentation")
-                return prompt
+                return prompt, []
             
             # Build targeted RAG context
             rag_context = "\n\n### TARGETED REFERENCE IMAGES FOR IMPROVEMENT:\n"
@@ -563,7 +599,7 @@ class QwenAdvisor:
             
             if not reference_images:
                 logger.info("No similar images found for RAG context, using original prompt")
-                return prompt
+                return prompt, []
             
             # Build RAG context with reference image names and dimensional comparisons
             rag_context = "\n\n### REFERENCE IMAGES FOR COMPARATIVE ANALYSIS:\n"
@@ -577,7 +613,14 @@ class QwenAdvisor:
                 img_path = img.get('image_path', '')
                 img_title = img_path.split('/')[-1] if img_path else f"Reference {i}"
             
-            rag_context += f"\n**Reference #{i}: {img_title}**\n"
+            # Add year if available
+            year = img.get('date_taken')
+            if year and str(year).strip():
+                img_title_with_year = f"{img_title} ({year})"
+            else:
+                img_title_with_year = img_title
+            
+            rag_context += f"\n**Reference #{i}: {img_title_with_year}**\n"
             if img.get('image_description'):
                 rag_context += f"- {img['image_description']}\n"
             
@@ -611,19 +654,21 @@ class QwenAdvisor:
                 rag_context += "\n"
         
         if user_dimensions:
-            rag_context += "\n**In your recommendations:** Explicitly cite these reference images by name when providing improvement guidance. "
-            rag_context += "Explain how each demonstrates mastery in the specific dimensions where the user has the widest gaps. "
+            rag_context += "\n**CRITICAL - In your dimensional recommendations:** You MUST cite these reference images by their exact title when providing improvement guidance. "
+            rag_context += "For each dimension's recommendation, reference specific images like: 'Increase contrast by shooting in brighter light like Moon and Half Dome, Yosemite National Park (1960)'. "
+            rag_context += "Explain how each reference demonstrates mastery in the specific dimensions where the user has the widest gaps. "
             rag_context += "Calculate dimensional deltas and provide actionable guidance on how to close those gaps.\n"
         else:
-            rag_context += "\nWhen analyzing the user's image, compare their dimensional scores to these references. "
-            rag_context += "Calculate the delta (difference) for each dimension and cite which reference image demonstrates "
-            rag_context += "the best practice for areas needing improvement. Use the image titles when referencing specific works.\n"
+            rag_context += "\n**CRITICAL - In your dimensional recommendations:** You MUST cite these reference images by their exact title when providing improvement guidance. "
+            rag_context += "When analyzing the user's image, compare their dimensional scores to these references. "
+            rag_context += "For each dimension's recommendation, cite specific reference images like: 'Improve lighting by studying the zone system technique in Old Faithful Geyser (1944)'. "
+            rag_context += "Calculate the delta (difference) for each dimension and cite which reference image demonstrates the best practice for areas needing improvement.\n"
         
         # Augment prompt
         augmented_prompt = f"{prompt}\n{rag_context}"
         logger.info(f"Augmented prompt with RAG context ({len(rag_context)} chars, {len(reference_images)} references)")
         
-        return augmented_prompt
+        return augmented_prompt, reference_images
     
     def analyze_image(self, image_path: str, advisor: str = "ansel", 
                      mode: str = "baseline") -> Dict[str, Any]:
@@ -647,6 +692,7 @@ class QwenAdvisor:
             prompt = self._create_prompt(advisor, mode)
             
             # Apply RAG augmentation if requested
+            reference_images = []
             if mode in ('rag', 'rag_lora', 'lora+rag', 'lora_rag'):
                 logger.info(f"Augmenting prompt with RAG context for mode={mode}")
                 
@@ -654,10 +700,10 @@ class QwenAdvisor:
                 user_dims = self._get_user_dimensional_profile(image_path)
                 if user_dims:
                     logger.info("Using gap-based RAG with user's existing dimensional profile")
-                    prompt = self._augment_prompt_with_rag_context(prompt, advisor, user_dimensions=user_dims)
+                    prompt, reference_images = self._augment_prompt_with_rag_context(prompt, advisor, user_dimensions=user_dims)
                 else:
                     logger.info("No existing user profile found, using standard RAG")
-                    prompt = self._augment_prompt_with_rag_context(prompt, advisor)
+                    prompt, reference_images = self._augment_prompt_with_rag_context(prompt, advisor)
             
             # Use chat template for proper image token handling
             messages = [
@@ -710,7 +756,7 @@ class QwenAdvisor:
             logger.info(f"Generated response: {len(response)} chars")
             
             # Parse response into structured format
-            analysis = self._parse_response(response, advisor, mode, prompt)
+            analysis = self._parse_response(response, advisor, mode, prompt, reference_images=reference_images)
             
             return analysis
             
@@ -770,8 +816,11 @@ Required JSON Structure:
   "technical_notes": "Technical observations"
 }"""
     
-    def _generate_ios_detailed_html(self, analysis_data: Dict[str, Any], advisor: str, mode: str) -> str:
+    def _generate_ios_detailed_html(self, analysis_data: Dict[str, Any], advisor: str, mode: str, reference_images: List[Dict[str, Any]] = None) -> str:
         """Generate iOS-compatible dark theme HTML for detailed analysis"""
+        
+        if reference_images is None:
+            reference_images = []
         
         def format_dimension_name(name: str) -> str:
             """Format dimension names to have proper spacing (e.g., ColorHarmony -> Color Harmony)"""
@@ -873,6 +922,15 @@ Required JSON Structure:
             color: #1976d2;
         }}
         .feedback-recommendation p {{ margin: 0; line-height: 1.6; color: #333; }}
+        .reference-citation {{
+            margin-top: 12px;
+            padding: 10px 12px;
+            background: #fff8e1;
+            border-left: 4px solid #ffc107;
+            border-radius: 4px;
+            font-size: 14px;
+        }}
+        .reference-citation strong {{ color: #f57c00; }}
     </style>
 </head>
 <body>
@@ -885,6 +943,31 @@ Required JSON Structure:
   <p style="color: #666; margin-bottom: 20px;">Each dimension is analyzed with specific feedback and actionable recommendations for improvement.</p>
 '''
         
+        # Map dimension names to database column names for reference lookup
+        dimension_to_column = {
+            'composition': 'composition_score',
+            'lighting': 'lighting_score',
+            'focus': 'focus_sharpness_score',
+            'focus & sharpness': 'focus_sharpness_score',
+            'focus and sharpness': 'focus_sharpness_score',
+            'focus_sharpness': 'focus_sharpness_score',
+            'color': 'color_harmony_score',
+            'color harmony': 'color_harmony_score',
+            'color_harmony': 'color_harmony_score',
+            'subject isolation': 'subject_isolation_score',
+            'subject_isolation': 'subject_isolation_score',
+            'depth': 'depth_perspective_score',
+            'depth & perspective': 'depth_perspective_score',
+            'depth and perspective': 'depth_perspective_score',
+            'depth_perspective': 'depth_perspective_score',
+            'visual balance': 'visual_balance_score',
+            'visual_balance': 'visual_balance_score',
+            'balance': 'visual_balance_score',
+            'emotional impact': 'emotional_impact_score',
+            'emotional_impact': 'emotional_impact_score',
+            'emotion': 'emotional_impact_score',
+        }
+        
         # Add dimension cards
         for dim in dimensions:
             name = dim.get('name', 'Unknown')
@@ -892,6 +975,42 @@ Required JSON Structure:
             comment = dim.get('comment', 'No analysis available.')
             recommendation = dim.get('recommendation', 'No recommendation available.')
             color, rating = get_rating_style(score)
+            
+            # Find the best reference image for this dimension based on largest gap
+            reference_citation = ""
+            if reference_images and len(reference_images) > 0:
+                dim_key = name.lower().strip()
+                db_column = dimension_to_column.get(dim_key)
+                
+                if db_column:
+                    # Find reference image with highest score in this dimension
+                    best_ref = None
+                    best_gap = 0
+                    
+                    for ref in reference_images:
+                        ref_score = ref.get(db_column)
+                        if ref_score is not None:
+                            gap = ref_score - score
+                            if gap > best_gap and ref_score >= 8.0:
+                                best_gap = gap
+                                best_ref = ref
+                    
+                    # Only show citation if gap is meaningful (>= 2 points)
+                    if best_ref and best_gap >= 2:
+                        ref_title = best_ref.get('image_title', 'Reference Image')
+                        ref_year = best_ref.get('date_taken', '')
+                        ref_score_val = best_ref.get(db_column, 0)
+                        
+                        # Format title with year if available
+                        if ref_year and str(ref_year).strip():
+                            title_with_year = f"{ref_title} ({ref_year})"
+                        else:
+                            title_with_year = ref_title
+                        
+                        reference_citation = f'''
+    <div class="reference-citation">
+      <strong>📷 Study:</strong> <em>{title_with_year}</em> — scores {ref_score_val}/10 in {name} (+{best_gap:.0f} point improvement opportunity)
+    </div>'''
             
             html += f'''
   <div class="feedback-card">
@@ -905,7 +1024,7 @@ Required JSON Structure:
     <div class="feedback-recommendation">
       <strong>💡 How to Improve:</strong>
       <p>{recommendation}</p>
-    </div>
+    </div>{reference_citation}
   </div>
 '''
         
@@ -913,6 +1032,233 @@ Required JSON Structure:
   <h2>Overall Grade</h2>
   <p><strong>{overall_score}/10</strong></p>
   <p><strong>Grade Note:</strong> {technical_notes}</p>
+'''
+        
+        # Add reference images carousel if available
+        if reference_images and len(reference_images) > 0:
+            html += '''
+  <h2 style="margin-top: 32px;">Reference Images for Improvement</h2>
+  <p style="color: #666; margin-bottom: 16px; font-size: 14px;">Master works that excel in your areas for improvement. Tap to view full size.</p>
+  
+  <div class="reference-carousel" style="
+    display: flex;
+    overflow-x: auto;
+    gap: 16px;
+    padding: 12px 0;
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x mandatory;
+  ">
+'''
+            
+            # Add thumbnail cards
+            for i, img in enumerate(reference_images):
+                img_title = img.get('image_title', f'Reference {i+1}')
+                year = img.get('date_taken')
+                thumbnail = img.get('thumbnail_base64', '')
+                
+                # Format caption with year if available
+                if year and str(year).strip():
+                    caption = f"{img_title} ({year})"
+                else:
+                    caption = img_title
+                
+                html += f'''
+    <div class="reference-item" data-index="{i}" style="
+      flex: 0 0 200px;
+      scroll-snap-align: start;
+      cursor: pointer;
+    " onclick="openLightbox({i})">
+      <img src="{thumbnail}" style="
+        width: 200px;
+        height: auto;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      " />
+      <p style="
+        margin: 8px 0 0 0;
+        font-size: 13px;
+        color: #333;
+        line-height: 1.3;
+        text-align: center;
+      ">{caption}</p>
+    </div>
+'''
+            
+            html += '''
+  </div>
+  
+  <!-- Hidden full-size images for lazy loading -->
+  <div id="fullsize-images" style="display: none;">
+'''
+            
+            # Add hidden full-size images
+            for i, img in enumerate(reference_images):
+                fullsize = img.get('fullsize_base64', '')
+                html += f'''
+    <img id="fullsize-{i}" data-src="{fullsize}" />
+'''
+            
+            html += '''
+  </div>
+  
+  <!-- Lightbox overlay -->
+  <div id="lightbox" style="
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0,0,0,0.95);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+  ">
+    <button onclick="closeLightbox()" style="
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: rgba(255,255,255,0.2);
+      border: none;
+      color: white;
+      font-size: 32px;
+      width: 48px;
+      height: 48px;
+      border-radius: 24px;
+      cursor: pointer;
+      z-index: 10001;
+    ">×</button>
+    
+    <div id="lightbox-container" style="
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      overflow-x: hidden;
+      touch-action: pan-x;
+    ">
+    </div>
+    
+    <div id="lightbox-dots" style="
+      position: absolute;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      z-index: 10001;
+    "></div>
+  </div>
+  
+  <script>
+    let currentIndex = 0;
+    let startX = 0;
+    let isDragging = false;
+    const images = ''' + str([{'title': img.get('image_title', ''), 'year': img.get('date_taken', '')} for img in reference_images]) + ''';
+    
+    function openLightbox(index) {
+      currentIndex = index;
+      const lightbox = document.getElementById('lightbox');
+      lightbox.style.display = 'flex';
+      renderLightbox();
+    }
+    
+    function closeLightbox() {
+      document.getElementById('lightbox').style.display = 'none';
+    }
+    
+    function renderLightbox() {
+      const container = document.getElementById('lightbox-container');
+      container.innerHTML = '';
+      
+      // Lazy load current image
+      const fullsizeImg = document.getElementById('fullsize-' + currentIndex);
+      if (fullsizeImg && !fullsizeImg.src) {
+        fullsizeImg.src = fullsizeImg.getAttribute('data-src');
+      }
+      
+      // Create image wrapper
+      const wrapper = document.createElement('div');
+      wrapper.style.cssText = 'width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; padding: 60px 20px;';
+      
+      const img = document.createElement('img');
+      img.src = fullsizeImg ? fullsizeImg.src : '';
+      img.style.cssText = 'max-width: 100%; max-height: 100%; object-fit: contain;';
+      
+      wrapper.appendChild(img);
+      container.appendChild(wrapper);
+      
+      // Update dots
+      updateDots();
+      
+      // Preload adjacent images
+      if (currentIndex > 0) {
+        const prevImg = document.getElementById('fullsize-' + (currentIndex - 1));
+        if (prevImg && !prevImg.src) {
+          setTimeout(() => { prevImg.src = prevImg.getAttribute('data-src'); }, 100);
+        }
+      }
+      if (currentIndex < images.length - 1) {
+        const nextImg = document.getElementById('fullsize-' + (currentIndex + 1));
+        if (nextImg && !nextImg.src) {
+          setTimeout(() => { nextImg.src = nextImg.getAttribute('data-src'); }, 100);
+        }
+      }
+    }
+    
+    function updateDots() {
+      const dotsContainer = document.getElementById('lightbox-dots');
+      dotsContainer.innerHTML = '';
+      
+      for (let i = 0; i < images.length; i++) {
+        const dot = document.createElement('div');
+        dot.style.cssText = 'width: 8px; height: 8px; border-radius: 4px; background: ' + 
+          (i === currentIndex ? 'white' : 'rgba(255,255,255,0.4)') + '; cursor: pointer;';
+        dot.onclick = () => { currentIndex = i; renderLightbox(); };
+        dotsContainer.appendChild(dot);
+      }
+    }
+    
+    // Touch swipe handlers
+    const container = document.getElementById('lightbox-container');
+    container.addEventListener('touchstart', (e) => {
+      startX = e.touches[0].clientX;
+      isDragging = true;
+    });
+    
+    container.addEventListener('touchmove', (e) => {
+      if (!isDragging) return;
+      e.preventDefault();
+    });
+    
+    container.addEventListener('touchend', (e) => {
+      if (!isDragging) return;
+      isDragging = false;
+      
+      const endX = e.changedTouches[0].clientX;
+      const diff = startX - endX;
+      
+      if (Math.abs(diff) > 50) {
+        if (diff > 0 && currentIndex < images.length - 1) {
+          currentIndex++;
+          renderLightbox();
+        } else if (diff < 0 && currentIndex > 0) {
+          currentIndex--;
+          renderLightbox();
+        }
+      }
+    });
+    
+    // Close on background click
+    document.getElementById('lightbox').addEventListener('click', (e) => {
+      if (e.target.id === 'lightbox') {
+        closeLightbox();
+      }
+    });
+  </script>
+'''
+        
+        html += '''
 </div>
 </div>
 </body>
@@ -1095,10 +1441,13 @@ Required JSON Structure:
         
         return html
     
-    def _parse_response(self, response: str, advisor: str, mode: str, prompt: str) -> Dict[str, Any]:
+    def _parse_response(self, response: str, advisor: str, mode: str, prompt: str, reference_images: List[Dict[str, Any]] = None) -> Dict[str, Any]:
         """Parse model response into structured format with iOS-compatible HTML"""
 
         import re
+        
+        if reference_images is None:
+            reference_images = []
 
         # Extract thinking if present (for thinking models like Qwen3-VL-4B-Thinking)
         thinking_text = ""
@@ -1170,8 +1519,25 @@ Required JSON Structure:
         # Load advisor data from database for bio
         advisor_data = get_advisor_from_db(DB_PATH, advisor)
         
+        # Extract weak dimensions from analysis and retrieve targeted reference images
+        weak_dimensions = []
+        dimensions = analysis_data.get('dimensions', [])
+        if dimensions and len(dimensions) > 0:
+            # Sort by score (ascending) to find weakest
+            sorted_dims = sorted(dimensions, key=lambda d: d.get('score', 10))
+            # Get the 3 weakest dimensions
+            weak_dimensions = [d.get('name', '').lower().replace(' ', '_') for d in sorted_dims[:3]]
+            
+            if weak_dimensions:
+                logger.info(f"User's weakest dimensions: {weak_dimensions}")
+                # Retrieve reference images that excel in these weak areas
+                targeted_refs = self._get_images_for_weak_dimensions(advisor, weak_dimensions, max_images=4)
+                if targeted_refs:
+                    reference_images = targeted_refs
+                    logger.info(f"Retrieved {len(reference_images)} targeted reference images for weak dimensions")
+        
         # Generate HTML outputs
-        analysis_html = self._generate_ios_detailed_html(analysis_data, advisor, mode)
+        analysis_html = self._generate_ios_detailed_html(analysis_data, advisor, mode, reference_images=reference_images)
         summary_html = self._generate_summary_html(analysis_data)
         
         # Generate advisor bio HTML from database
