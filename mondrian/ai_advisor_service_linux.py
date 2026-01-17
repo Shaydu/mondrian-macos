@@ -188,23 +188,37 @@ class QwenAdvisor:
                 
                 quantization_config = BitsAndBytesConfig(
                     load_in_4bit=True,
-                    bnb_4bit_compute_dtype=torch.float16,
+                    bnb_4bit_compute_dtype=torch.bfloat16,  # BFloat16 is faster and more stable
                     bnb_4bit_use_double_quant=True,
                     bnb_4bit_quant_type="nf4"
                 )
                 
-                self.model = model_loader.from_pretrained(
-                    self.model_name,
-                    quantization_config=quantization_config,
-                    device_map="auto",
-                    low_cpu_mem_usage=True,
-                    local_files_only=False,
-                    trust_remote_code=True
-                )
+                # Try to load with Flash Attention 2 for faster inference
+                try:
+                    self.model = model_loader.from_pretrained(
+                        self.model_name,
+                        quantization_config=quantization_config,
+                        device_map="auto",
+                        low_cpu_mem_usage=True,
+                        local_files_only=False,
+                        trust_remote_code=True,
+                        attn_implementation="flash_attention_2"  # Enable Flash Attention 2 during loading
+                    )
+                    logger.info("Flash Attention 2 enabled for faster inference")
+                except Exception as fa_error:
+                    logger.warning(f"Flash Attention 2 not available ({fa_error}), using standard attention")
+                    self.model = model_loader.from_pretrained(
+                        self.model_name,
+                        quantization_config=quantization_config,
+                        device_map="auto",
+                        low_cpu_mem_usage=True,
+                        local_files_only=False,
+                        trust_remote_code=True
+                    )
             else:
                 self.model = model_loader.from_pretrained(
                     self.model_name,
-                    torch_dtype=torch.float16 if self.device == 'cuda' else torch.float32,
+                    torch_dtype=torch.bfloat16 if self.device == 'cuda' else torch.float32,
                     device_map="auto" if self.device == 'cuda' else None,
                     low_cpu_mem_usage=True,
                     local_files_only=False,
@@ -213,20 +227,16 @@ class QwenAdvisor:
                 if self.device == 'cpu':
                     self.model = self.model.to('cpu')
             
-            # Enable gradient checkpointing to save memory during inference
-            if hasattr(self.model, 'gradient_checkpointing_enable'):
-                self.model.gradient_checkpointing_enable()
-                logger.info("Gradient checkpointing enabled for memory efficiency")
+            # Note: Gradient checkpointing is for training only, disabled for inference
+            # It slows down inference while saving memory during backprop
             
-            # Enable Flash Attention if available (RTX 3060+ supports it)
-            try:
-                if self.device == 'cuda':
-                    # For PyTorch 2.0+, enable scaled_dot_product_attention with Flash Attention backend
-                    self.model.config.attn_implementation = "flash_attention_2"
-                    logger.info("Flash Attention 2 enabled for faster inference")
-            except (AttributeError, ImportError):
-                # Flash Attention not available, fall back to standard attention
-                logger.debug("Flash Attention 2 not available, using standard attention")
+            # Apply torch.compile for faster inference (PyTorch 2.0+)
+            if self.device == 'cuda' and hasattr(torch, 'compile'):
+                try:
+                    self.model = torch.compile(self.model, mode="reduce-overhead")
+                    logger.info("torch.compile() applied for optimized inference")
+                except Exception as compile_error:
+                    logger.warning(f"torch.compile() not available ({compile_error}), using standard execution")
             
             logger.info("Model loaded successfully")
             
@@ -911,7 +921,15 @@ class QwenAdvisor:
         try:
             # Load and validate image
             image = Image.open(image_path).convert('RGB')
-            logger.info(f"Loaded image: {image_path} ({image.size})")
+            original_size = image.size
+            
+            # Resize large images to reduce vision encoder processing time
+            max_image_size = 1024
+            if max(image.size) > max_image_size:
+                image.thumbnail((max_image_size, max_image_size), Image.LANCZOS)
+                logger.info(f"Loaded image: {image_path} (resized from {original_size} to {image.size})")
+            else:
+                logger.info(f"Loaded image: {image_path} ({image.size})")
             
             # Create analysis prompt
             prompt = self._create_prompt(advisor, mode)
@@ -965,9 +983,10 @@ class QwenAdvisor:
             with torch.no_grad():
                 output_ids = self.model.generate(
                     **inputs, 
-                    max_new_tokens=1200,
+                    max_new_tokens=1500,  # Increased to ensure full JSON output (was 1200, 800 caused truncation)
                     repetition_penalty=1.0,
                     do_sample=False,
+                    use_cache=True,  # Enable KV cache for faster autoregressive generation
                     eos_token_id=self.processor.tokenizer.eos_token_id
                 )
             
