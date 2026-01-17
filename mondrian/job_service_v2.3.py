@@ -650,18 +650,12 @@ def get_reference_image(filename):
             logger.warning(f"Reference image not found: {filename} (searched {len(possible_dirs)} directories)")
             return jsonify({"error": "Image not found"}), 404
             
-        logger.info(f"Serving reference image: {image_path}")
+        logger.info(f"Serving reference image (resized): {image_path}")
         
-        # Determine MIME type
-        mime_type = 'image/jpeg'
-        if filename.lower().endswith('.png'):
-            mime_type = 'image/png'
-        elif filename.lower().endswith('.gif'):
-            mime_type = 'image/gif'
-        elif filename.lower().endswith('.webp'):
-            mime_type = 'image/webp'
+        # Resize image to 800px width maintaining aspect ratio (quality=95 for minimal compression)
+        resized = resize_image_for_web(image_path, max_width=800, max_height=2400, quality=95)
         
-        return send_file(image_path, mimetype=mime_type)
+        return send_file(resized, mimetype='image/jpeg')
         
     except Exception as e:
         logger.error(f"Failed to serve reference image {filename}: {e}", exc_info=True)

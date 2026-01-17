@@ -934,23 +934,23 @@ class QwenAdvisor:
             # Create analysis prompt
             prompt = self._create_prompt(advisor, mode)
             
-            # Apply RAG augmentation if requested
+            # Always augment prompt with reference images for case study generation
+            # This ensures the LLM has reference context to generate case_studies
             reference_images = []
-            if mode in ('rag', 'rag_lora', 'lora+rag', 'lora_rag'):
-                logger.info(f"Augmenting prompt with RAG context for mode={mode}")
-                
-                # Try to get user's existing dimensional profile for gap-based RAG
-                user_dims = self._get_user_dimensional_profile(image_path)
-                if user_dims:
-                    logger.info("Using gap-based RAG with user's existing dimensional profile and visual embeddings")
-                    prompt, reference_images = self._augment_prompt_with_rag_context(
-                        prompt, advisor, user_dimensions=user_dims, user_image_path=image_path
-                    )
-                else:
-                    logger.info("No existing user profile found, using standard RAG with visual embeddings")
-                    prompt, reference_images = self._augment_prompt_with_rag_context(
-                        prompt, advisor, user_image_path=image_path
-                    )
+            logger.info(f"Augmenting prompt with reference images for case study generation")
+            
+            # Try to get user's existing dimensional profile for targeted reference retrieval
+            user_dims = self._get_user_dimensional_profile(image_path)
+            if user_dims:
+                logger.info("Using gap-based reference retrieval with user's existing dimensional profile")
+                prompt, reference_images = self._augment_prompt_with_rag_context(
+                    prompt, advisor, user_dimensions=user_dims, user_image_path=image_path
+                )
+            else:
+                logger.info("Using standard reference retrieval based on advisor's top-rated images")
+                prompt, reference_images = self._augment_prompt_with_rag_context(
+                    prompt, advisor, user_image_path=image_path
+                )
             
             # Use chat template for proper image token handling
             messages = [
@@ -1195,7 +1195,7 @@ Required JSON Structure:
         .feedback-recommendation {{
             margin-top: 10px;
             padding: 10px;
-            background: #30b0c0;
+            background: #1c1c1e;
             border-left: 4px solid #2a9aaa;
             border-radius: 4px;
             opacity: 0.95;
@@ -1224,6 +1224,7 @@ Required JSON Structure:
         }}
         .reference-citation .case-study-image {{
             width: 100%;
+            max-width: 800px;
             height: auto;
             border-radius: 6px;
             margin-bottom: 8px;
@@ -1503,6 +1504,7 @@ Required JSON Structure:
         }
         .case-study-image {
             width: 100%;
+            max-width: 800px;
             height: auto;
             border-radius: 4px;
             margin-bottom: 6px;
@@ -1773,22 +1775,14 @@ Required JSON Structure:
         # Load advisor data from database for bio
         advisor_data = get_advisor_from_db(DB_PATH, advisor)
         
-        # Extract weak dimensions from analysis and retrieve targeted reference images
-        weak_dimensions = []
-        dimensions = analysis_data.get('dimensions', [])
-        if dimensions and len(dimensions) > 0:
-            # Sort by score (ascending) to find weakest
-            sorted_dims = sorted(dimensions, key=lambda d: d.get('score', 10))
-            # Get the 3 weakest dimensions
-            weak_dimensions = [d.get('name', '').lower().replace(' ', '_') for d in sorted_dims[:3]]
-            
-            if weak_dimensions:
-                logger.info(f"User's weakest dimensions: {weak_dimensions}")
-                # Retrieve reference images that excel in these weak areas
-                targeted_refs = self._get_images_for_weak_dimensions(advisor, weak_dimensions, max_images=4)
-                if targeted_refs:
-                    reference_images = targeted_refs
-                    logger.info(f"Retrieved {len(reference_images)} targeted reference images for weak dimensions")
+        # Reference images are already populated from the inference phase
+        # They are retrieved based on either user's existing dimensional profile (gap-based)
+        # or advisor's top-rated images, both of which are already optimal matches
+        if reference_images:
+            logger.info(f"Using {len(reference_images)} reference images from inference phase for case study matching")
+        else:
+            logger.warning("No reference images available for case study matching")
+            reference_images = []
         
         # Generate HTML outputs
         analysis_html = self._generate_ios_detailed_html(analysis_data, advisor, mode, reference_images=reference_images)
