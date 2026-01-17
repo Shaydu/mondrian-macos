@@ -1148,77 +1148,82 @@ Required JSON Structure:
             text-align: left;
         }}
         .feedback-card {{
-            background: #fff;
-            margin: 20px 0;
-            padding: 20px;
-            border: 1px solid #ddd;
+            background: #2c2c2e;
+            margin: 12px 0;
+            padding: 12px;
+            border: 1px solid #3c3c3e;
             border-radius: 8px;
+            color: #ffffff;
         }}
         .feedback-card h3 {{
-            margin-top: 0;
+            margin: 0 0 8px 0;
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            color: #333;
+            align-items: flex-start;
+            gap: 8px;
+            color: #ffffff;
+            font-size: clamp(14px, 4vw, 16px);
+            flex-wrap: wrap;
         }}
         .feedback-comment {{
-            margin: 15px 0;
-            padding: 12px;
-            background: #f8f9fa;
+            margin: 10px 0;
+            padding: 10px;
+            background: #1c1c1e;
             border-radius: 4px;
+            font-size: clamp(13px, 3.5vw, 15px);
         }}
-        .feedback-comment p {{ margin: 0; line-height: 1.6; color: #333; }}
+        .feedback-comment p {{ margin: 0; line-height: 1.5; color: #d1d1d6; }}
         .feedback-recommendation {{
-            margin-top: 15px;
-            padding: 12px;
-            background: #e3f2fd;
-            border-left: 4px solid #2196f3;
+            margin-top: 10px;
+            padding: 10px;
+            background: #30b0c0;
+            border-left: 4px solid #2a9aaa;
             border-radius: 4px;
+            opacity: 0.95;
         }}
         .feedback-recommendation strong {{
             display: block;
-            margin-bottom: 8px;
-            color: #1976d2;
+            margin-bottom: 6px;
+            color: #ffffff;
+            font-size: clamp(13px, 3.5vw, 15px);
         }}
-        .feedback-recommendation p {{ margin: 0; line-height: 1.6; color: #333; }}
+        .feedback-recommendation p {{ margin: 0; line-height: 1.5; color: #ffffff; font-size: clamp(12px, 3vw, 14px); }}
         .reference-citation {{
-            margin-top: 16px;
+            margin-top: 12px;
             padding: 0;
             background: transparent;
             border: none;
             border-radius: 0;
-            font-size: 14px;
+            font-size: clamp(12px, 3vw, 14px);
         }}
         .reference-citation .case-study-box {{
             background: #2c2c2e;
             border-radius: 8px;
-            padding: 16px;
+            padding: 12px;
             border-left: 4px solid #30b0c0;
-            overflow: hidden;
+            margin-top: 8px;
         }}
         .reference-citation .case-study-image {{
             width: 100%;
             height: auto;
-            aspect-ratio: 3/2;
-            object-fit: cover;
-            max-width: 100%;
             border-radius: 6px;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             display: block;
             box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-            background-color: #1c1c1e;
         }}
         .reference-citation .case-study-title {{
             color: #ffffff;
-            font-size: 16px;
-            margin: 0 0 12px 0;
+            font-size: clamp(14px, 4vw, 16px);
+            margin: 0 0 8px 0;
             font-weight: 600;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }}
         .reference-citation .case-study-metadata {{
             color: #d1d1d6;
-            font-size: 13px;
-            line-height: 1.5;
-            margin: 8px 0 0 0;
+            font-size: clamp(12px, 3vw, 13px);
+            line-height: 1.4;
+            margin: 6px 0 0 0;
         }}
         .reference-citation strong {{ color: #30b0c0; }}
     </style>
@@ -1392,21 +1397,33 @@ Required JSON Structure:
         # Sort by score ascending to get lowest/weakest areas first
         sorted_dims = sorted(dimensions, key=lambda d: d.get('score', 10))[:3]
         
-        # Map dimension names to database columns
-        dimension_to_column = {
-            'composition': 'composition_score',
-            'lighting': 'lighting_score',
-            'focus & sharpness': 'focus_sharpness_score',
-            'focus': 'focus_sharpness_score',
-            'focus sharpness': 'focus_sharpness_score',
-            'color harmony': 'color_harmony_score',
-            'color': 'color_harmony_score',
-            'subject isolation': 'subject_isolation_score',
-            'depth & perspective': 'depth_perspective_score',
-            'depth perspective': 'depth_perspective_score',
-            'visual balance': 'visual_balance_score',
-            'emotional impact': 'emotional_impact_score',
-        }
+        # Build case study map from LLM output (dimension -> case study)
+        case_studies = analysis_data.get('case_studies', [])
+        case_study_map = {}
+        used_image_paths = set()
+        
+        if case_studies and reference_images:
+            case_study_count = 0
+            for cs in case_studies:
+                if case_study_count >= 3:
+                    break
+                
+                dimension = cs.get('dimension', '').strip()
+                if not dimension:
+                    continue
+                
+                # Match case study to reference image
+                matched_ref = self._match_case_study_to_reference(cs, reference_images)
+                if matched_ref:
+                    img_path = matched_ref.get('image_path')
+                    # Enforce deduplication
+                    if img_path and img_path not in used_image_paths:
+                        case_study_map[dimension.lower()] = {
+                            'reference': matched_ref,
+                            'explanation': cs.get('explanation', '')
+                        }
+                        used_image_paths.add(img_path)
+                        case_study_count += 1
         
         html = '''<!DOCTYPE html>
 <html>
@@ -1455,9 +1472,9 @@ Required JSON Structure:
         .case-study-box {
             margin-top: 8px;
             padding: 8px;
-            background: #0d0d0f;
+            background: #2c2c2e;
             border-radius: 6px;
-            border: 1px solid #424245;
+            border-left: 3px solid #30b0c0;
         }
         .case-study-title {
             font-size: 12px;
@@ -1468,15 +1485,18 @@ Required JSON Structure:
         .case-study-image {
             width: 100%;
             height: auto;
-            max-height: 120px;
             border-radius: 4px;
             margin-bottom: 6px;
             display: block;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
         }
         .case-study-metadata {
             font-size: 11px;
             line-height: 1.3;
-            color: #a0a0a6;
+            color: #d1d1d6;
+        }
+        .case-study-metadata strong {
+            color: #30b0c0;
         }
         .disclaimer {
             margin-top: 24px;
@@ -1498,13 +1518,52 @@ Required JSON Structure:
             score = dim.get('score', 0)
             recommendation = dim.get('recommendation', 'No recommendation available.')
             
+            # Check if this dimension has a case study
+            case_study_html = ""
+            dim_key = name.lower().strip()
+            if dim_key in case_study_map:
+                case_study_data = case_study_map[dim_key]
+                best_ref = case_study_data['reference']
+                explanation = case_study_data['explanation']
+                
+                ref_title = best_ref.get('image_title', 'Reference Image')
+                ref_year = best_ref.get('date_taken', '')
+                
+                # Format title with year if available
+                if ref_year and str(ref_year).strip():
+                    title_with_year = f"{ref_title} ({ref_year})"
+                else:
+                    title_with_year = ref_title
+                
+                # Get image URL
+                ref_image_url = best_ref.get('image_url', '')
+                if not ref_image_url and best_ref.get('image_path'):
+                    img_filename = os.path.basename(best_ref.get('image_path', ''))
+                    if img_filename:
+                        base_url = get_base_url()
+                        ref_image_url = f"{base_url}/api/reference-image/{img_filename}"
+                
+                # Build case study box with image (only if image URL exists)
+                if ref_image_url:
+                    case_study_html = '<div class="case-study-box">'
+                    case_study_html += f'<div class="case-study-title">Case Study: {title_with_year}</div>'
+                    case_study_html += f'<img src="{ref_image_url}" alt="{title_with_year}" class="case-study-image" />'
+                    
+                    # Add metadata
+                    if explanation:
+                        case_study_html += f'<div class="case-study-metadata"><strong>Study:</strong> {explanation}</div>'
+                    if best_ref.get('location'):
+                        case_study_html += f'<div class="case-study-metadata"><strong>Location:</strong> {best_ref["location"]}</div>'
+                    
+                    case_study_html += '</div>'
+            
             html += f'''  <div class="recommendation-item">
     <div class="rec-header">
         <div class="rec-number">{i}</div>
         <div class="rec-content">
             <p class="rec-text"><strong>{name}</strong> ({score}/10): {recommendation}</p>
         </div>
-    </div>
+    </div>{case_study_html}
   </div>
 '''
         
@@ -1533,48 +1592,69 @@ Required JSON Structure:
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+        html, body {{
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }}
         body {{
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            padding: 20px;
+            padding: 12px;
             background: #000000;
             color: #ffffff;
             line-height: 1.6;
+            font-size: 16px;
+            -webkit-text-size-adjust: 100%;
+            overflow-x: hidden;
         }}
         .advisor-profile {{
             background: #1c1c1e;
-            padding: 24px;
+            padding: 16px;
             border-radius: 12px;
-            margin-bottom: 24px;
+            margin-bottom: 12px;
+            max-width: 100%;
+            overflow: hidden;
         }}
         .advisor-profile h1 {{
             color: #ffffff;
-            font-size: 28px;
+            font-size: clamp(20px, 6vw, 28px);
             font-weight: 600;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }}
         .advisor-years {{
             color: #98989d;
-            font-size: 16px;
+            font-size: clamp(13px, 4vw, 16px);
             font-weight: 400;
-            margin-bottom: 16px;
+            margin-bottom: 12px;
         }}
         .advisor-bio {{
             color: #d1d1d6;
-            font-size: 16px;
-            line-height: 1.6;
-            margin-bottom: 16px;
+            font-size: clamp(14px, 4vw, 16px);
+            line-height: 1.5;
+            margin-bottom: 12px;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
         }}
         .link-button {{
             display: inline-block;
             color: #007AFF;
             text-decoration: none;
-            font-size: 16px;
+            font-size: clamp(13px, 3.5vw, 16px);
             font-weight: 500;
-            padding: 8px 16px;
+            padding: 6px 12px;
             border: 1px solid #007AFF;
             border-radius: 6px;
-            margin-right: 10px;
-            margin-bottom: 10px;
+            margin-right: 8px;
+            margin-bottom: 8px;
+            white-space: nowrap;
+        }}
+        @media (max-width: 480px) {{
+            body {{ padding: 8px; }}
+            .advisor-profile {{ padding: 12px; margin-bottom: 8px; }}
+            .link-button {{ margin-right: 6px; padding: 5px 10px; }}
         }}
     </style>
 </head>

@@ -20,6 +20,8 @@ import requests
 
 from flask import Flask, request, jsonify, Response, send_file
 from flask_cors import CORS
+from PIL import Image
+from io import BytesIO
 
 # Configure logging
 logging.basicConfig(
@@ -31,6 +33,44 @@ logger = logging.getLogger(__name__)
 
 # AI Advisor service URL
 AI_ADVISOR_URL = "http://127.0.0.1:5100"
+
+# Helper function to resize images for thumbnails
+def resize_image_for_web(image_path: str, max_width: int = 800, max_height: int = 800, quality: int = 85) -> BytesIO:
+    """
+    Resize image to web-friendly dimensions while maintaining aspect ratio.
+    Returns BytesIO object containing JPEG data.
+    """
+    try:
+        with Image.open(image_path) as img:
+            # Convert RGBA to RGB if needed
+            if img.mode in ('RGBA', 'LA', 'P'):
+                background = Image.new('RGB', img.size, (255, 255, 255))
+                if img.mode == 'P':
+                    img = img.convert('RGBA')
+                background.paste(img, mask=img.split()[-1] if img.mode in ('RGBA', 'LA') else None)
+                img = background
+            elif img.mode != 'RGB':
+                img = img.convert('RGB')
+            
+            # Calculate new dimensions maintaining aspect ratio
+            width, height = img.size
+            if width > max_width or height > max_height:
+                ratio = min(max_width / width, max_height / height)
+                new_size = (int(width * ratio), int(height * ratio))
+                img = img.resize(new_size, Image.Resampling.LANCZOS)
+            
+            # Save to BytesIO as JPEG
+            output = BytesIO()
+            img.save(output, format='JPEG', quality=quality, optimize=True)
+            output.seek(0)
+            return output
+    except Exception as e:
+        logger.error(f"Error resizing image {image_path}: {e}")
+        # Return original file as fallback
+        with open(image_path, 'rb') as f:
+            output = BytesIO(f.read())
+            output.seek(0)
+            return output
 
 # Helper function to get base URL for image serving
 def get_base_url():
@@ -425,7 +465,8 @@ def get_advisor_headshot(advisor_id):
         for path in possible_paths:
             if os.path.exists(path):
                 logger.info(f"Serving advisor headshot from {path}")
-                return send_file(path, mimetype='image/jpeg')
+                resized = resize_image_for_web(path, max_width=400, max_height=400)
+                return send_file(resized, mimetype='image/jpeg')
         
         # If no headshot found, try to use first image from advisor directory as fallback
         logger.warning(f"No dedicated headshot found for advisor {advisor_id}, trying to use first representative work")
@@ -444,7 +485,8 @@ def get_advisor_headshot(advisor_id):
                 if images:
                     image_path = os.path.join(dir_path, images[0])
                     logger.info(f"Using first representative work as headshot: {image_path}")
-                    return send_file(image_path, mimetype='image/jpeg')
+                    resized = resize_image_for_web(image_path, max_width=400, max_height=400)
+                    return send_file(resized, mimetype='image/jpeg')
         
         # If still no image found, return 404
         logger.warning(f"No headshot or representative work found for advisor {advisor_id}")
@@ -480,7 +522,8 @@ def get_advisor_artwork(advisor_id, artwork_id):
                     image_file = images[artwork_id - 1]
                     image_path = os.path.join(dir_path, image_file)
                     logger.info(f"Serving artwork {artwork_id} from {image_path}")
-                    return send_file(image_path, mimetype='image/jpeg')
+                    resized = resize_image_for_web(image_path, max_width=1200, max_height=1200)
+                    return send_file(resized, mimetype='image/jpeg')
         
         # If no images found, return 404
         logger.warning(f"No artwork {artwork_id} found for advisor {advisor_id}")
