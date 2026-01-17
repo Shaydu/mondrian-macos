@@ -272,9 +272,12 @@ class QwenAdvisor:
             query = """
                 SELECT id, image_path, composition_score, lighting_score, 
                        focus_sharpness_score, color_harmony_score, overall_grade,
-                       image_description, image_title
+                       image_description, image_title,
+                       subject_isolation_score, depth_perspective_score,
+                       visual_balance_score, emotional_impact_score
                 FROM dimensional_profiles
                 WHERE advisor_id = ?
+                  AND composition_score IS NOT NULL
                 ORDER BY (
                     composition_score + lighting_score + focus_sharpness_score + 
                     color_harmony_score
@@ -299,29 +302,275 @@ class QwenAdvisor:
             logger.error(f"Failed to retrieve similar images: {e}")
             return []
     
-    def _augment_prompt_with_rag_context(self, prompt: str, advisor_id: str) -> str:
+    def _get_images_for_weak_dimensions(self, advisor_id: str, weak_dimensions: List[str], max_images: int = 4) -> List[Dict[str, Any]]:
         """
-        Augment the prompt with RAG context from similar reference images.
-        Includes reference image names and dimensional scores for direct citation.
+        Retrieve reference images that excel in the user's weakest dimensions.
+        This provides targeted improvement guidance by showing mastery in areas needing work.
+        
+        Args:
+            advisor_id: Advisor to search (e.g., 'ansel')
+            weak_dimensions: List of dimension names where user needs improvement (e.g., ['composition', 'lighting'])
+            max_images: Maximum number of reference images to return (default 4)
+            
+        Returns:
+            List of reference images that excel in the specified dimensions
+        """
+        try:
+            if not weak_dimensions:
+                return []
+            
+            conn = sqlite3.connect(DB_PATH)
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+            
+            # Map dimension names to database columns
+            dimension_map = {
+                'composition': 'composition_score',
+                'lighting': 'lighting_score',
+                'focus_sharpness': 'focus_sharpness_score',
+                'focus': 'focus_sharpness_score',
+                'sharpness': 'focus_sharpness_score',
+                'color_harmony': 'color_harmony_score',
+                'color': 'color_harmony_score',
+                'subject_isolation': 'subject_isolation_score',
+                'isolation': 'subject_isolation_score',
+                'depth_perspective': 'depth_perspective_score',
+                'depth': 'depth_perspective_score',
+                'perspective': 'depth_perspective_score',
+                'visual_balance': 'visual_balance_score',
+                'balance': 'visual_balance_score',
+                'emotional_impact': 'emotional_impact_score',
+                'emotion': 'emotional_impact_score',
+                'impact': 'emotional_impact_score'
+            }
+            
+            # Build query to find images that excel in the weak dimensions
+            score_columns = []
+            for dim in weak_dimensions[:3]:  # Limit to top 3 weak dimensions
+                dim_col = dimension_map.get(dim.lower().replace(' ', '_').replace('&', ''))
+                if dim_col:
+                    score_columns.append(dim_col)
+            
+            if not score_columns:
+                logger.warning(f"Could not map weak dimensions {weak_dimensions} to database columns")
+                return []
+            
+            # Calculate average score across weak dimensions and get images that excel
+            avg_calc = " + ".join(score_columns)
+            query = f"""
+                SELECT id, image_path, composition_score, lighting_score, 
+                       focus_sharpness_score, color_harmony_score,
+                       subject_isolation_score, depth_perspective_score,
+                       visual_balance_score, emotional_impact_score,
+                       overall_grade, image_description, image_title
+                FROM dimensional_profiles
+                WHERE advisor_id = ?
+                  AND composition_score IS NOT NULL
+                  AND ({" AND ".join([f"{col} >= 8.0" for col in score_columns])})
+                ORDER BY ({avg_calc}) / {len(score_columns)} DESC
+                LIMIT ?
+            """
+            
+            cursor.execute(query, (advisor_id, max_images))
+            rows = cursor.fetchall()
+            conn.close()
+            
+            if not rows:
+                logger.info(f"No reference images found with high scores in dimensions: {weak_dimensions}")
+                return []
+            
+            result_images = [dict(row) for row in rows]
+            logger.info(f"Retrieved {len(result_images)} reference images that excel in weak dimensions: {weak_dimensions}")
+            
+            return result_images
+            
+        except Exception as e:
+            logger.error(f"Failed to retrieve images for weak dimensions: {e}")
+            return []
+    
+    def _get_images_for_weak_dimensions(self, advisor_id: str, weak_dimensions: List[str], max_images: int = 4) -> List[Dict[str, Any]]:
+        """
+        Retrieve reference images that excel in the user's weakest dimensions.
+        This helps provide specific examples showing how to improve in areas where the user needs the most help.
+        
+        Args:
+            advisor_id: Advisor to search (e.g., 'ansel')
+            weak_dimensions: List of dimension names where user needs improvement (e.g., ['composition', 'lighting'])
+            max_images: Maximum number of reference images to return (default 4)
+            
+        Returns:
+            List of reference images that excel in the specified dimensions
+        """
+        try:
+            if not weak_dimensions:
+                return []
+            
+            conn = sqlite3.connect(DB_PATH)
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+            
+            # Map dimension names to database columns
+            dimension_map = {
+                'composition': 'composition_score',
+                'lighting': 'lighting_score',
+                'focus_sharpness': 'focus_sharpness_score',
+                'focus': 'focus_sharpness_score',
+                'sharpness': 'focus_sharpness_score',
+                'color_harmony': 'color_harmony_score',
+                'color': 'color_harmony_score',
+                'subject_isolation': 'subject_isolation_score',
+                'depth_perspective': 'depth_perspective_score',
+                'depth': 'depth_perspective_score',
+                'perspective': 'depth_perspective_score',
+                'visual_balance': 'visual_balance_score',
+                'balance': 'visual_balance_score',
+                'emotional_impact': 'emotional_impact_score',
+                'emotion': 'emotional_impact_score',
+                'impact': 'emotional_impact_score'
+            }
+            
+            # Build query to find images that excel in the weak dimensions
+            score_columns = []
+            for dim in weak_dimensions[:3]:  # Limit to top 3 weak dimensions
+                dim_col = dimension_map.get(dim.lower().replace(' ', '_').replace('&', ''))
+                if dim_col:
+                    score_columns.append(dim_col)
+            
+            if not score_columns:
+                logger.warning(f"Could not map weak dimensions {weak_dimensions} to database columns")
+                return []
+            
+            # Calculate average score across weak dimensions and get images that excel
+            avg_calc = " + ".join(score_columns)
+            query = f"""
+                SELECT id, image_path, composition_score, lighting_score, 
+                       focus_sharpness_score, color_harmony_score,
+                       subject_isolation_score, depth_perspective_score,
+                       visual_balance_score, emotional_impact_score,
+                       overall_grade, image_description, image_title
+                FROM dimensional_profiles
+                WHERE advisor_id = ?
+                  AND composition_score IS NOT NULL
+                  AND ({" AND ".join([f"{col} >= 8.0" for col in score_columns])})
+                ORDER BY ({avg_calc}) / {len(score_columns)} DESC
+                LIMIT ?
+            """
+            
+            cursor.execute(query, (advisor_id, max_images))
+            rows = cursor.fetchall()
+            conn.close()
+            
+            if not rows:
+                logger.info(f"No reference images found with high scores in dimensions: {weak_dimensions}")
+                return []
+            
+            result_images = [dict(row) for row in rows]
+            logger.info(f"Retrieved {len(result_images)} reference images that excel in weak dimensions: {weak_dimensions}")
+            
+            return result_images
+            
+        except Exception as e:
+            logger.error(f"Failed to retrieve images for weak dimensions: {e}")
+            return []
+    
+    def _get_user_dimensional_profile(self, image_path: str) -> Dict[str, float]:
+        """
+        Retrieve user's dimensional profile from database if it exists.
+        This allows us to do gap analysis on re-analysis or second-pass RAG.
+        
+        Args:
+            image_path: Path to the user's image
+            
+        Returns:
+            Dictionary of dimensional scores, or None if not found
+        """
+        try:
+            conn = sqlite3.connect(DB_PATH)
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+            
+            # Get most recent profile for this image
+            cursor.execute("""
+                SELECT composition_score, lighting_score, focus_sharpness_score,
+                       color_harmony_score, subject_isolation_score, depth_perspective_score,
+                       visual_balance_score, emotional_impact_score
+                FROM dimensional_profiles
+                WHERE image_path = ?
+                ORDER BY created_at DESC
+                LIMIT 1
+            """, (image_path,))
+            
+            row = cursor.fetchone()
+            conn.close()
+            
+            if not row:
+                return None
+            
+            # Convert to dictionary
+            user_dims = dict(row)
+            logger.info(f"Retrieved user dimensional profile for {image_path}")
+            return user_dims
+            
+        except Exception as e:
+            logger.error(f"Failed to retrieve user dimensional profile: {e}")
+            return None
+    
+    def _augment_prompt_with_rag_context(self, prompt: str, advisor_id: str, user_dimensions: Dict[str, float] = None) -> str:
+        """
+        Augment the prompt with RAG context from reference images.
+        If user_dimensions are provided, finds images that excel in the user's weakest areas.
+        Otherwise, uses top-rated reference images.
         
         Args:
             prompt: Original prompt
             advisor_id: Advisor to search for reference images
+            user_dimensions: Optional dict of user's dimensional scores for gap analysis
             
         Returns:
             Augmented prompt with RAG context
         """
-        similar_images = self._get_similar_images_from_db(advisor_id, top_k=3)
         
-        if not similar_images:
-            logger.info("No similar images found for RAG context, using original prompt")
-            return prompt
+        # If user dimensions are provided, do gap-based analysis
+        if user_dimensions:
+            # Find the user's 3 weakest dimensions
+            dimension_scores = []
+            for dim_name, score in user_dimensions.items():
+                if score is not None and dim_name.endswith('_score'):
+                    clean_name = dim_name.replace('_score', '')
+                    dimension_scores.append((clean_name, score))
+            
+            # Sort by score ascending (weakest first)
+            dimension_scores.sort(key=lambda x: x[1])
+            weak_dimensions = [name for name, score in dimension_scores[:3]]
+            
+            logger.info(f"User's weakest dimensions: {weak_dimensions}")
+            
+            # Get images that excel in these weak areas
+            reference_images = self._get_images_for_weak_dimensions(advisor_id, weak_dimensions, max_images=4)
+            
+            if not reference_images:
+                logger.info("No targeted reference images found for weak dimensions - skipping RAG augmentation")
+                return prompt
+            
+            # Build targeted RAG context
+            rag_context = "\n\n### TARGETED REFERENCE IMAGES FOR IMPROVEMENT:\n"
+            rag_context += f"Based on the analysis, here are reference images that excel in the weakest areas ({', '.join(weak_dimensions)}).\n"
+            rag_context += "Study how these master works demonstrate excellence in the dimensions where improvement is most needed.\n"
+            
+        else:
+            # No user dimensions yet - use general top-rated references
+            reference_images = self._get_similar_images_from_db(advisor_id, top_k=3)
+            
+            if not reference_images:
+                logger.info("No similar images found for RAG context, using original prompt")
+                return prompt
+            
+            # Build RAG context with reference image names and dimensional comparisons
+            rag_context = "\n\n### REFERENCE IMAGES FOR COMPARATIVE ANALYSIS:\n"
+            rag_context += "These master works from the advisor's portfolio provide dimensional benchmarks.\n"
         
-        # Build RAG context with reference image names and dimensional comparisons
-        rag_context = "\n\n### REFERENCE IMAGES FOR COMPARATIVE ANALYSIS:\n"
-        rag_context += "These master works from the advisor's portfolio provide dimensional benchmarks.\n"
-        
-        for i, img in enumerate(similar_images, 1):
+        # Add reference image details with ALL 8 dimensions
+        for i, img in enumerate(reference_images, 1):
             # Use image_title (metadata name) if available, otherwise extract filename
             img_title = img.get('image_title')
             if not img_title:
@@ -332,30 +581,47 @@ class QwenAdvisor:
             if img.get('image_description'):
                 rag_context += f"- {img['image_description']}\n"
             
-            # Add dimensional profile as structured data
-            if any(img.get(k) is not None for k in ['composition_score', 'lighting_score', 'focus_sharpness_score', 'color_harmony_score', 'overall_grade']):
+            # Add dimensional profile with ALL 8 dimensions
+            all_dims = ['composition_score', 'lighting_score', 'focus_sharpness_score', 
+                       'color_harmony_score', 'subject_isolation_score', 'depth_perspective_score',
+                       'visual_balance_score', 'emotional_impact_score']
+            
+            if any(img.get(k) is not None for k in all_dims):
                 rag_context += "- Dimensional Profile: "
                 scores = []
-                if img.get('composition_score') is not None:
-                    scores.append(f"Composition {img['composition_score']}/10")
-                if img.get('lighting_score') is not None:
-                    scores.append(f"Lighting {img['lighting_score']}/10")
-                if img.get('focus_sharpness_score') is not None:
-                    scores.append(f"Focus {img['focus_sharpness_score']}/10")
-                if img.get('color_harmony_score') is not None:
-                    scores.append(f"Color {img['color_harmony_score']}/10")
+                
+                dim_labels = {
+                    'composition_score': 'Composition',
+                    'lighting_score': 'Lighting',
+                    'focus_sharpness_score': 'Focus & Sharpness',
+                    'color_harmony_score': 'Color Harmony',
+                    'subject_isolation_score': 'Subject Isolation',
+                    'depth_perspective_score': 'Depth & Perspective',
+                    'visual_balance_score': 'Visual Balance',
+                    'emotional_impact_score': 'Emotional Impact'
+                }
+                
+                for dim_key, dim_label in dim_labels.items():
+                    if img.get(dim_key) is not None:
+                        scores.append(f"{dim_label} {img[dim_key]}/10")
+                
                 rag_context += ", ".join(scores)
                 if img.get('overall_grade'):
                     rag_context += f" (Grade: {img['overall_grade']})"
                 rag_context += "\n"
         
-        rag_context += "\nWhen analyzing the user's image, compare their dimensional scores to these references. "
-        rag_context += "Calculate the delta (difference) for each dimension and cite which reference image demonstrates "
-        rag_context += "the best practice for areas needing improvement. Use the image titles when referencing specific works.\n"
+        if user_dimensions:
+            rag_context += "\n**In your recommendations:** Explicitly cite these reference images by name when providing improvement guidance. "
+            rag_context += "Explain how each demonstrates mastery in the specific dimensions where the user has the widest gaps. "
+            rag_context += "Calculate dimensional deltas and provide actionable guidance on how to close those gaps.\n"
+        else:
+            rag_context += "\nWhen analyzing the user's image, compare their dimensional scores to these references. "
+            rag_context += "Calculate the delta (difference) for each dimension and cite which reference image demonstrates "
+            rag_context += "the best practice for areas needing improvement. Use the image titles when referencing specific works.\n"
         
         # Augment prompt
         augmented_prompt = f"{prompt}\n{rag_context}"
-        logger.info(f"Augmented prompt with RAG context ({len(rag_context)} chars, {len(similar_images)} references)")
+        logger.info(f"Augmented prompt with RAG context ({len(rag_context)} chars, {len(reference_images)} references)")
         
         return augmented_prompt
     
@@ -383,7 +649,15 @@ class QwenAdvisor:
             # Apply RAG augmentation if requested
             if mode in ('rag', 'rag_lora', 'lora+rag', 'lora_rag'):
                 logger.info(f"Augmenting prompt with RAG context for mode={mode}")
-                prompt = self._augment_prompt_with_rag_context(prompt, advisor)
+                
+                # Try to get user's existing dimensional profile for gap-based RAG
+                user_dims = self._get_user_dimensional_profile(image_path)
+                if user_dims:
+                    logger.info("Using gap-based RAG with user's existing dimensional profile")
+                    prompt = self._augment_prompt_with_rag_context(prompt, advisor, user_dimensions=user_dims)
+                else:
+                    logger.info("No existing user profile found, using standard RAG")
+                    prompt = self._augment_prompt_with_rag_context(prompt, advisor)
             
             # Use chat template for proper image token handling
             messages = [
