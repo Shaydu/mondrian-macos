@@ -1122,14 +1122,42 @@ Required JSON Structure:
         }}
         .feedback-recommendation p {{ margin: 0; line-height: 1.6; color: #333; }}
         .reference-citation {{
-            margin-top: 12px;
-            padding: 10px 12px;
-            background: #d1d1d6;
-            border-left: 4px solid #5a5a5e;
-            border-radius: 4px;
+            margin-top: 16px;
+            padding: 0;
+            background: transparent;
+            border: none;
+            border-radius: 0;
             font-size: 14px;
         }}
-        .reference-citation strong {{ color: #333333; }}
+        .reference-citation .case-study-box {{
+            background: #2c2c2e;
+            border-radius: 8px;
+            padding: 16px;
+            border-left: 4px solid #30b0c0;
+            overflow: hidden;
+        }}
+        .reference-citation .case-study-image {{
+            width: 100%;
+            height: auto;
+            max-width: 100%;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            display: block;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }}
+        .reference-citation .case-study-title {{
+            color: #ffffff;
+            font-size: 16px;
+            margin: 0 0 12px 0;
+            font-weight: 600;
+        }}
+        .reference-citation .case-study-metadata {{
+            color: #d1d1d6;
+            font-size: 13px;
+            line-height: 1.5;
+            margin: 8px 0 0 0;
+        }}
+        .reference-citation strong {{ color: #30b0c0; }}
     </style>
 </head>
 <body>
@@ -1214,38 +1242,23 @@ Required JSON Structure:
                                 ref_image_url = f"/api/reference-image/{img_filename}"
                         
                         # Build case study box with image
-                        reference_citation = f'''
-    <div class="reference-citation" style="
-        background: #2c2c2e; 
-        border-radius: 8px; 
-        padding: 16px; 
-        margin-top: 12px;
-        border-left: 4px solid #30b0c0;
-    ">
-      <h4 style="color: #ffffff; margin: 0 0 12px 0; font-size: 16px;">
-        Case Study: <em>{title_with_year}</em>
-      </h4>'''
+                        reference_citation = '<div class="reference-citation"><div class="case-study-box">'
+                        reference_citation += f'<div class="case-study-title">Case Study: {title_with_year}</div>'
                         
                         # Add image if available
                         if ref_image_url:
-                            reference_citation += f'''
-      <img src="{ref_image_url}" style="
-          width: 100%; 
-          max-width: 100%; 
-          height: auto; 
-          border-radius: 6px; 
-          margin-bottom: 12px;
-          box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-      " alt="{title_with_year}" />'''
+                            reference_citation += f'<img src="{ref_image_url}" alt="{title_with_year}" class="case-study-image" />'
                         
-                        reference_citation += f'''
-      <div style="color: #d1d1d6; font-size: 14px; line-height: 1.5;">
-        <p style="margin: 0;">
-          <strong>Score:</strong> {ref_score_val}/10 in {name}<br/>
-          <strong>Improvement Opportunity:</strong> +{best_gap:.0f} points
-        </p>
-      </div>
-    </div>'''
+                        # Add metadata
+                        metadata_parts = []
+                        if best_ref.get('image_description'):
+                            metadata_parts.append(f'<strong>Description:</strong> {best_ref["image_description"]}')
+                        if best_ref.get('location'):
+                            metadata_parts.append(f'<strong>Location:</strong> {best_ref["location"]}')
+                        metadata_parts.append(f'<strong>Score:</strong> {ref_score_val}/10 in {name}')
+                        
+                        reference_citation += f'<div class="case-study-metadata">' + '<br/>'.join(metadata_parts) + '</div>'
+                        reference_citation += '</div></div>'
             
             html += f'''
   <div class="feedback-card">
