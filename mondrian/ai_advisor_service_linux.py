@@ -1290,8 +1290,8 @@ Required JSON Structure:
         
         return html
     
-    def _generate_summary_html(self, analysis_data: Dict[str, Any]) -> str:
-        """Generate iOS-compatible summary HTML with Top 3 recommendations (lowest scoring dimensions)"""
+    def _generate_summary_html(self, analysis_data: Dict[str, Any], advisor_id: str = None, reference_images: List[Dict[str, Any]] = None) -> str:
+        """Generate iOS-compatible summary HTML with Top 3 recommendations with case study images"""
         
         def format_dimension_name(name: str) -> str:
             """Format dimension names to have proper spacing (e.g., ColorHarmony -> Color Harmony)"""
@@ -1310,6 +1310,22 @@ Required JSON Structure:
         # Sort by score ascending to get lowest/weakest areas first
         sorted_dims = sorted(dimensions, key=lambda d: d.get('score', 10))[:3]
         
+        # Map dimension names to database columns
+        dimension_to_column = {
+            'composition': 'composition_score',
+            'lighting': 'lighting_score',
+            'focus & sharpness': 'focus_sharpness_score',
+            'focus': 'focus_sharpness_score',
+            'focus sharpness': 'focus_sharpness_score',
+            'color harmony': 'color_harmony_score',
+            'color': 'color_harmony_score',
+            'subject isolation': 'subject_isolation_score',
+            'depth & perspective': 'depth_perspective_score',
+            'depth perspective': 'depth_perspective_score',
+            'visual balance': 'visual_balance_score',
+            'emotional impact': 'emotional_impact_score',
+        }
+        
         html = '''<!DOCTYPE html>
 <html>
 <head>
@@ -1323,16 +1339,21 @@ Required JSON Structure:
             background: #000000;
             color: #ffffff;
         }
-        .summary-header { margin-bottom: 8px; padding-bottom: 16px; }
-        .summary-header h1 { font-size: 24px; font-weight: 600; margin-bottom: 8px; }
+        .summary-header { margin-bottom: 16px; padding-bottom: 12px; }
+        .summary-header h1 { font-size: 24px; font-weight: 600; margin: 0; }
         .recommendations-list { display: flex; flex-direction: column; gap: 12px; }
         .recommendation-item {
             display: flex;
-            gap: 12px;
+            flex-direction: column;
             padding: 10px;
             background: #1c1c1e;
             border-radius: 6px;
             border-left: 3px solid #30b0c0;
+        }
+        .rec-header {
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
         }
         .rec-number {
             display: flex;
@@ -1348,7 +1369,33 @@ Required JSON Structure:
             flex-shrink: 0;
         }
         .rec-content { flex: 1; }
-        .rec-text { font-size: 14px; line-height: 1.4; color: #e0e0e0; }
+        .rec-text { font-size: 14px; line-height: 1.4; color: #e0e0e0; margin: 0; }
+        .case-study-box {
+            margin-top: 8px;
+            padding: 8px;
+            background: #0d0d0f;
+            border-radius: 6px;
+            border: 1px solid #424245;
+        }
+        .case-study-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #30b0c0;
+            margin-bottom: 6px;
+        }
+        .case-study-image {
+            width: 100%;
+            height: auto;
+            max-height: 120px;
+            border-radius: 4px;
+            margin-bottom: 6px;
+            display: block;
+        }
+        .case-study-metadata {
+            font-size: 11px;
+            line-height: 1.3;
+            color: #a0a0a6;
+        }
         .disclaimer {
             margin-top: 24px;
             padding: 16px;
@@ -1369,11 +1416,56 @@ Required JSON Structure:
             score = dim.get('score', 0)
             recommendation = dim.get('recommendation', 'No recommendation available.')
             
+            # Find best reference image for this dimension
+            case_study_html = ''
+            if reference_images:
+                dim_key = name.lower().strip()
+                db_column = dimension_to_column.get(dim_key)
+                
+                if db_column:
+                    best_ref = None
+                    best_gap = 0
+                    
+                    for ref in reference_images:
+                        ref_score = ref.get(db_column)
+                        if ref_score is not None:
+                            gap = ref_score - score
+                            if gap > best_gap and ref_score >= 8.0:
+                                best_gap = gap
+                                best_ref = ref
+                    
+                    if best_ref and best_gap >= 2:
+                        ref_title = best_ref.get('image_title', 'Reference Image')
+                        ref_year = best_ref.get('date_taken', '')
+                        ref_score_val = best_ref.get(db_column, 0)
+                        
+                        # Format title with year
+                        if ref_year and str(ref_year).strip():
+                            title_with_year = f"{ref_title} ({ref_year})"
+                        else:
+                            title_with_year = ref_title
+                        
+                        # Get image URL from image path
+                        ref_image_url = best_ref.get('image_url', '')
+                        if not ref_image_url and best_ref.get('image_path'):
+                            img_filename = os.path.basename(best_ref.get('image_path', ''))
+                            if img_filename:
+                                ref_image_url = f"/api/reference-image/{img_filename}"
+                        
+                        if ref_image_url:
+                            case_study_html = f'''<div class="case-study-box">
+                <div class="case-study-title">Case Study: {title_with_year}</div>
+                <img src="{ref_image_url}" alt="{title_with_year}" class="case-study-image" />
+                <div class="case-study-metadata"><strong>Score:</strong> {ref_score_val}/10 in {name}</div>
+            </div>'''
+            
             html += f'''  <div class="recommendation-item">
-    <div class="rec-number">{i}</div>
-    <div class="rec-content">
-      <p class="rec-text"><strong>{name}</strong> ({score}/10): {recommendation}</p>
-    </div>
+    <div class="rec-header">
+        <div class="rec-number">{i}</div>
+        <div class="rec-content">
+            <p class="rec-text"><strong>{name}</strong> ({score}/10): {recommendation}</p>
+        </div>
+    </div>{case_study_html}
   </div>
 '''
         
@@ -1562,7 +1654,7 @@ Required JSON Structure:
         
         # Generate HTML outputs
         analysis_html = self._generate_ios_detailed_html(analysis_data, advisor, mode, reference_images=reference_images)
-        summary_html = self._generate_summary_html(analysis_data)
+        summary_html = self._generate_summary_html(analysis_data, advisor_id=advisor, reference_images=reference_images)
         
         # Generate advisor bio HTML from database
         if advisor_data:
