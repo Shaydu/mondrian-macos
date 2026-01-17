@@ -99,7 +99,7 @@ def get_database_path():
 
 
 # Default services (will be configured based on mode)
-def get_services_for_mode(mode="base", lora_path=None, model=None, db_path="mondrian.db"):
+def get_services_for_mode(mode="base", lora_path=None, model=None, db_path="mondrian.db", generation_profile=None):
     """
     Get service configurations based on mode.
     
@@ -127,6 +127,10 @@ def get_services_for_mode(mode="base", lora_path=None, model=None, db_path="mond
     # Add model if specified
     if model:
         ai_advisor_cmd.extend(["--model", model])
+    
+    # Add generation profile if specified
+    if generation_profile:
+        ai_advisor_cmd.extend(["--generation-profile", generation_profile])
     
     if mode == "base":
         # Base mode: default settings (no special flags)
@@ -763,6 +767,7 @@ def main():
     lora_path = "./adapters/ansel_qwen3_4b_instruct/epoch_10"  # Default LoRA adapter for Qwen3-VL-4B-Instruct
     model_arg = None
     db_path_arg = None
+    generation_profile = None
     all_services = False
     
     for arg in sys.argv:
@@ -774,6 +779,8 @@ def main():
             model_arg = arg.split("=", 1)[1]
         elif arg.startswith("--db="):
             db_path_arg = arg.split("=", 1)[1]
+        elif arg.startswith("--generation-profile="):
+            generation_profile = arg.split("=", 1)[1]
         elif arg == "--all-services" or arg == "--full":
             all_services = True
     
@@ -794,6 +801,7 @@ Options:
     --lora-path=<path>          Path to LoRA adapter (overrides config)
     --model=<model>             Base model to use (overrides config)
     --db=<path>                 Database path (overrides config, default: mondrian.db)
+    --generation-profile=<prof> Generation profile: fast_greedy, beam_search, or sampling
     --ab-split=<ratio>          A/B test split ratio (default: 0.5)
     --help, -h                  Show this help
 
@@ -939,7 +947,7 @@ Examples:
         print(f"[CONFIG] Using database path: {final_db_path}")
     
     # Get services for the selected mode
-    services = get_services_for_mode(mode, lora_path, model_arg, final_db_path)
+    services = get_services_for_mode(mode, lora_path, model_arg, final_db_path, generation_profile)
     
     print("\n" + "=" * 60)
     print(f"Starting Mondrian services in {mode.upper()} mode")

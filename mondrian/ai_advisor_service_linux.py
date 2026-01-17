@@ -90,7 +90,7 @@ class QwenAdvisor:
     
     def __init__(self, model_name: str = "Qwen/Qwen2-VL-7B-Instruct", 
                  load_in_4bit: bool = True, device: Optional[str] = None,
-                 adapter_path: Optional[str] = None):
+                 adapter_path: Optional[str] = None, generation_config: Optional[Dict] = None):
         """
         Initialize Qwen advisor with specified configuration
         
@@ -99,11 +99,34 @@ class QwenAdvisor:
             load_in_4bit: Use 4-bit quantization (recommended for RTX 3060)
             device: Compute device ('cuda', 'cpu', or None for auto)
             adapter_path: Path to LoRA adapter (optional)
+            generation_config: Generation parameters (max_new_tokens, temperature, etc.)
         """
         self.model_name = model_name
         self.load_in_4bit = load_in_4bit
         self.adapter_path = adapter_path
         self._offload_dir = None  # Track offload directory for cleanup
+        
+        # Store generation config with defaults
+        self.generation_config = {
+            "max_new_tokens": 1200,
+            "num_beams": 1,
+            "do_sample": False,
+            "repetition_penalty": 1.0,
+            "temperature": 0.7,
+            "top_p": 0.95
+        }
+        if generation_config:
+            # Filter out non-generation parameters (e.g., 'description')
+            valid_gen_keys = {
+                'max_new_tokens', 'num_beams', 'do_sample', 'repetition_penalty',
+                'temperature', 'top_p', 'top_k', 'min_length', 'length_penalty',
+                'early_stopping', 'no_repeat_ngram_size', 'encoder_no_repeat_ngram_size',
+                'bad_words_ids', 'force_words_ids', 'renormalize_logits', 'diversity_penalty',
+                'num_beam_groups', 'diversity_penalty', 'output_scores', 'return_dict_in_generate',
+                'output_hidden_states', 'output_attentions'
+            }
+            filtered_config = {k: v for k, v in generation_config.items() if k in valid_gen_keys}
+            self.generation_config.update(filtered_config)
         
         # Determine device
         if device is None:
@@ -934,12 +957,11 @@ class QwenAdvisor:
             
             # Generate response
             logger.info("Running inference...")
+            logger.info(f"Generation config: {self.generation_config}")
             with torch.no_grad():
                 output_ids = self.model.generate(
                     **inputs, 
-                    max_new_tokens=1200,
-                    repetition_penalty=1.0,
-                    do_sample=False,
+                    **self.generation_config,
                     eos_token_id=self.processor.tokenizer.eos_token_id
                 )
             
@@ -997,6 +1019,11 @@ class QwenAdvisor:
     def _get_default_system_prompt(self) -> str:
         """Fallback system prompt if database is unavailable"""
         return """You are a photography analysis assistant. **ALL OUTPUT MUST BE IN ENGLISH ONLY.** Output valid JSON only.
+**CRITICAL JSON REQUIREMENTS:**
+- Use ONLY straight quotes (") for all strings, NEVER curved/fancy quotes (" or ")
+- Use ONLY ASCII characters in all text fields (no Unicode dashes, em-dashes, or special characters)
+- Replace special characters: use regular hyphen (-) instead of em-dash (–)
+- All JSON must be valid and parseable by standard JSON parsers
 Required JSON Structure:
 {
   "image_description": "2-3 sentence description",
@@ -1020,6 +1047,11 @@ Required JSON Structure:
         
         if reference_images is None:
             reference_images = []
+        
+        # Track used images and limit to 4 total case studies
+        used_image_paths = set()
+        case_study_count = 0
+        max_case_studies = 4
         
         def format_dimension_name(name: str) -> str:
             """Format dimension names to have proper spacing (e.g., ColorHarmony -> Color Harmony)"""
@@ -1197,6 +1229,10 @@ Required JSON Structure:
         
         # Add dimension cards
         for dim in dimensions:
+            # Stop adding case studies if we've reached the maximum
+            if case_study_count >= max_case_studies:
+                break
+                
             name = dim.get('name', 'Unknown')
             score = dim.get('score', 0)
             comment = dim.get('comment', 'No analysis available.')
@@ -1228,12 +1264,13 @@ Required JSON Structure:
                         for ref in reference_images:
                             ref_img_title = ref.get('image_title', '').strip()
                             ref_img_year = str(ref.get('date_taken', '')).strip()
+                            ref_path = ref.get('image_path', '')
                             
                             # Check for title match (flexible matching)
                             if (ref_title_from_text.lower() in ref_img_title.lower() or 
                                 ref_img_title.lower() in ref_title_from_text.lower()):
                                 # Year match is a bonus but not required
-                                if ref_img_year == ref_year_from_text:
+                                if ref_img_year == ref_year_from_text and ref_path not in used_image_paths:
                                     best_ref = ref
                                     best_gap = 0  # Found exact recommendation match
                                     break
@@ -1242,6 +1279,12 @@ Required JSON Structure:
                     if not best_ref:
                         for ref in reference_images:
                             ref_score = ref.get(db_column)
+                            ref_path = ref.get('image_path', '')
+                            
+                            # Skip if image already used
+                            if ref_path in used_image_paths:
+                                continue
+                                
                             if ref_score is not None:
                                 gap = ref_score - score
                                 if gap > best_gap and ref_score >= 8.0:
@@ -1249,10 +1292,11 @@ Required JSON Structure:
                                     best_ref = ref
                     
                     # Only show citation if gap is meaningful (>= 2 points) or we found a referenced image
-                    if best_ref and (best_gap >= 2 or image_refs):
+                    if best_ref and (best_gap >= 2 or image_refs) and case_study_count < max_case_studies:
                         ref_title = best_ref.get('image_title', 'Reference Image')
                         ref_year = best_ref.get('date_taken', '')
                         ref_score_val = best_ref.get(db_column, 0)
+                        ref_path = best_ref.get('image_path', '')
                         
                         # Format title with year if available
                         if ref_year and str(ref_year).strip():
@@ -1293,6 +1337,10 @@ Required JSON Structure:
                         
                         reference_citation += f'<div class="case-study-metadata">' + '<br/>'.join(metadata_parts) + '</div>'
                         reference_citation += '</div></div>'
+                        
+                        # Mark image as used and increment counter
+                        used_image_paths.add(ref_path)
+                        case_study_count += 1
             
             html += f'''
   <div class="feedback-card">
@@ -1539,6 +1587,13 @@ Required JSON Structure:
                 if len(json_str) < 100:
                     logger.warning("⚠️  JSON response too short - likely incomplete or malformed")
 
+                # SANITIZE: Replace Unicode quotes and special characters with ASCII equivalents
+                # This handles cases where the model generates fancy quotes or dashes
+                json_str = json_str.replace('"', '"').replace('"', '"')  # Unicode quotes -> ASCII quotes
+                json_str = json_str.replace(''', "'").replace(''', "'")  # Unicode apostrophes -> ASCII apostrophes
+                json_str = json_str.replace('–', '-').replace('—', '-')  # Em-dashes and en-dashes -> hyphen
+                json_str = json_str.replace('…', '...')  # Ellipsis -> three dots
+
                 analysis_data = json.loads(json_str)
                 parse_success = True
                 
@@ -1660,7 +1715,7 @@ loading_status = {
     'message': 'Not started'
 }
 
-def init_advisor(model_name: str, load_in_4bit: bool, adapter_path: Optional[str] = None):
+def init_advisor(model_name: str, load_in_4bit: bool, adapter_path: Optional[str] = None, generation_config: Optional[Dict] = None):
     """Initialize the advisor service"""
     global advisor, loading_status
     try:
@@ -1671,7 +1726,8 @@ def init_advisor(model_name: str, load_in_4bit: bool, adapter_path: Optional[str
         advisor = QwenAdvisor(
             model_name=model_name,
             load_in_4bit=load_in_4bit,
-            adapter_path=adapter_path
+            adapter_path=adapter_path,
+            generation_config=generation_config
         )
         
         loading_status['completed'] = True
@@ -1967,8 +2023,27 @@ def main():
     parser.add_argument('--load_in_8bit', action='store_true', help='Use 8-bit quantization')
     parser.add_argument('--host', default='0.0.0.0', help='Host to bind to')
     parser.add_argument('--debug', action='store_true', help='Run in debug mode')
+    parser.add_argument('--generation-profile', default=None, help='Generation profile from model_config.json (fast_greedy, beam_search, sampling)')
     
     args = parser.parse_args()
+    
+    # Load generation config from model_config.json
+    generation_config = None
+    config_path = Path(__file__).parent.parent / 'model_config.json'
+    if config_path.exists():
+        try:
+            with open(config_path) as f:
+                config = json.load(f)
+            
+            # Use specified profile or try to get from model preset
+            profile_name = args.generation_profile or config.get('defaults', {}).get('generation_profile', 'fast_greedy')
+            if profile_name in config.get('generation_profiles', {}):
+                generation_config = config['generation_profiles'][profile_name]
+                logger.info(f"Loaded generation profile '{profile_name}' from model_config.json")
+            else:
+                logger.warning(f"Generation profile '{profile_name}' not found in model_config.json")
+        except Exception as e:
+            logger.warning(f"Could not load model_config.json: {e}")
     
     # Log startup info
     logger.info("Starting AI Advisor Service")
@@ -1976,6 +2051,8 @@ def main():
     logger.info(f"Model: {args.model}")
     logger.info(f"Adapter: {args.adapter}")
     logger.info(f"4-bit quantization: {args.load_in_4bit}")
+    if generation_config:
+        logger.info(f"Generation config: {generation_config}")
     
     # Start Flask server in a background thread BEFORE loading the model
     # This ensures the service responds to health checks while loading
@@ -1992,7 +2069,7 @@ def main():
     # NOW load the model in the main thread
     try:
         logger.info("Loading model (this may take several minutes)...")
-        init_advisor(args.model, args.load_in_4bit, adapter_path=args.adapter)
+        init_advisor(args.model, args.load_in_4bit, adapter_path=args.adapter, generation_config=generation_config)
         
         # Keep the main thread alive
         flask_thread.join()

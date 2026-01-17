@@ -5,6 +5,8 @@
 #   ./mondrian.sh --restart                                          (default: qwen3-4b-instruct)
 #   ./mondrian.sh --restart --model-preset=qwen3-4b-thinking        (switch to thinking model)
 #   ./mondrian.sh --restart --model-preset=qwen3-8b-instruct        (switch to 8B model)
+#   ./mondrian.sh --restart --generation-profile=beam_search        (switch to beam search)
+#   ./mondrian.sh --restart --generation-profile=sampling           (switch to sampling)
 #   ./mondrian.sh --help                                             (show available model presets)
 #   ./mondrian.sh --restart --mode=base                              (use base model without LoRA)
 #   ./mondrian.sh --restart --model="Qwen/Custom-Model"             (override with custom model)
@@ -23,6 +25,7 @@ SERVICES_SCRIPT="$SCRIPT_DIR/scripts/start_services.py"
 # Parse model and db arguments
 MODEL_ARG=""
 DB_ARG=""
+GENERATION_PROFILE=""
 ALL_SERVICES=false
 for arg in "$@"; do
     if [[ $arg == --model=* ]]; then
@@ -31,6 +34,10 @@ for arg in "$@"; do
         set -- "${@/$arg}"
     elif [[ $arg == --db=* ]]; then
         DB_ARG="${arg#--db=}"
+        # Remove this from arguments passed to start_services
+        set -- "${@/$arg}"
+    elif [[ $arg == --generation-profile=* ]]; then
+        GENERATION_PROFILE="${arg#--generation-profile=}"
         # Remove this from arguments passed to start_services
         set -- "${@/$arg}"
     elif [[ $arg == "--all-services" ]] || [[ $arg == "--full" ]]; then
@@ -178,6 +185,11 @@ SERVICE_ARGS+=(--model="$MODEL_ARG")
 # Add database argument if specified
 if [ -n "$DB_ARG" ]; then
     SERVICE_ARGS+=(--db="$DB_ARG")
+fi
+
+# Add generation profile if specified
+if [ -n "$GENERATION_PROFILE" ]; then
+    SERVICE_ARGS+=(--generation-profile="$GENERATION_PROFILE")
 fi
 
 # Add all-services flag if requested

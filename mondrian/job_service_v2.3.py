@@ -234,7 +234,15 @@ def get_advisors():
                 except (json.JSONDecodeError, TypeError):
                     advisor["focus_areas"] = []
             
-            # Add representative works with base64-encoded images
+            # Build base URL from request context for absolute URLs (scheme + netloc only)
+            try:
+                from urllib.parse import urlparse
+                parsed = urlparse(request.base_url)
+                base_url = f"{parsed.scheme}://{parsed.netloc}"
+            except:
+                base_url = 'http://localhost:5005'
+            
+            # Add representative works with URL-based images (no base64 bloat)
             artworks_list = []
             possible_dirs = [
                 f"mondrian/source/advisor/photographer/{advisor_id}",
@@ -247,35 +255,25 @@ def get_advisors():
                 if os.path.isdir(dir_path):
                     images = sorted([f for f in os.listdir(dir_path) 
                                    if f.lower().endswith(('.jpg', '.jpeg', '.png')) 
-                                   and f.lower() != 'headshot.jpg'])
+                                   and f.lower() != 'headshot.jpg'
+                                   and not f.lower().startswith('neg')])
                     
-                    # Create artwork entries for up to 4 images with base64 encoding
-                    for idx, image_file in enumerate(images[:4], 1):
-                        image_path = os.path.join(dir_path, image_file)
-                        try:
-                            with open(image_path, 'rb') as f:
-                                image_data = f.read()
-                                image_base64 = base64.b64encode(image_data).decode('utf-8')
-                                # Determine MIME type
-                                mime_type = 'image/jpeg' if image_file.lower().endswith(('.jpg', '.jpeg')) else 'image/png'
-                                
-                                artworks_list.append({
-                                    "title": image_file.replace('.jpg', '').replace('.png', '').replace('_', ' '),
-                                    "year": "",
-                                    "url": f"data:{mime_type};base64,{image_base64}"
-                                })
-                        except Exception as e:
-                            logger.warning(f"Failed to read image {image_path}: {e}")
-                            # Fallback to endpoint URL if base64 fails
-                            artworks_list.append({
-                                "title": image_file.replace('.jpg', '').replace('.png', '').replace('_', ' '),
-                                "year": "",
-                                "url": f"/advisor_artwork/{advisor_id}/{idx}"
-                            })
+                    # Limit to 5 images max
+                    images = images[:5]
+                    
+                    # Create artwork entries with full URLs
+                    for idx, image_file in enumerate(images, 1):
+                        full_url = f"{base_url}/advisor_artwork/{advisor_id}/{idx}"
+                        artworks_list.append({
+                            "title": image_file.replace('.jpg', '').replace('.png', '').replace('_', ' '),
+                            "year": "",
+                            "url": full_url
+                        })
                     break
             
             advisor["artworks"] = artworks_list
-            advisor["image_url"] = f"/advisor_image/{advisor_id}"
+            advisor["image_url"] = f"{base_url}/advisor_image/{advisor_id}"
+            logger.info(f"[/advisors] {advisor_id}: {len(artworks_list)} artworks, headshot={advisor['image_url']}")
             advisors.append(advisor)
         
         return jsonify({
@@ -317,6 +315,14 @@ def get_advisor_detail(advisor_id):
             except (json.JSONDecodeError, TypeError):
                 focus_areas_list = []
         
+        # Build base URL from request (for absolute URLs) - scheme + netloc only
+        try:
+            from urllib.parse import urlparse
+            parsed = urlparse(request.base_url)
+            base_url = f"{parsed.scheme}://{parsed.netloc}"
+        except:
+            base_url = 'http://localhost:5005'
+        
         # Get available artwork files for this advisor
         artworks_list = []
         possible_dirs = [
@@ -328,36 +334,22 @@ def get_advisor_detail(advisor_id):
         
         for dir_path in possible_dirs:
             if os.path.isdir(dir_path):
-                # Get image files from directory (skip headshot)
+                # Get image files from directory (skip headshot, skip negatives/ subdirectory)
                 images = sorted([f for f in os.listdir(dir_path) 
                                if f.lower().endswith(('.jpg', '.jpeg', '.png')) 
-                               and f.lower() != 'headshot.jpg'])
+                               and f.lower() != 'headshot.jpg'
+                               and not f.lower().startswith('neg')])
                 
-                # Create artwork entries for ALL images
+                # Limit to 5 images max for efficient carousel
+                images = images[:5]
+                
+                # Create artwork entries with absolute URLs (not relative)
                 for idx, image_file in enumerate(images, 1):
-                    image_path = os.path.join(dir_path, image_file)
-                    
-                    # Try to add base64 encoded image, always provide url as fallback
-                    try:
-                        with open(image_path, 'rb') as f:
-                            image_data = f.read()
-                            image_base64 = base64.b64encode(image_data).decode('utf-8')
-                            # Determine MIME type
-                            mime_type = 'image/jpeg' if image_file.lower().endswith(('.jpg', '.jpeg')) else 'image/png'
-                            
-                            artworks_list.append({
-                                "title": image_file.replace('.jpg', '').replace('.png', '').replace('_', ' '),
-                                "year": "",
-                                "url": f"data:{mime_type};base64,{image_base64}"
-                            })
-                    except Exception as e:
-                        logger.warning(f"Failed to read image {image_path}: {e}")
-                        # Always provide url field, even if base64 fails
-                        artworks_list.append({
-                            "title": image_file.replace('.jpg', '').replace('.png', '').replace('_', ' '),
-                            "year": "",
-                            "url": f"/advisor_artwork/{advisor_id}/{idx}"
-                        })
+                    artworks_list.append({
+                        "title": image_file.replace('.jpg', '').replace('.png', '').replace('_', ' '),
+                        "year": "",
+                        "url": f"{base_url}/advisor_artwork/{advisor_id}/{idx}"
+                    })
                 break
         
         # Fallback: add at least one artwork entry if none found
@@ -365,8 +357,19 @@ def get_advisor_detail(advisor_id):
             artworks_list.append({
                 "title": "Representative Work",
                 "year": "",
-                "url": f"/advisor_artwork/{advisor_id}/1"
+                "url": f"{base_url}/advisor_artwork/{advisor_id}/1"
             })
+        logger.info(f"\n{'='*70}")
+        logger.info(f"[/advisors/<id>] Advisor detail request: {advisor_id}")
+        logger.info(f"Base URL: {base_url}")
+        logger.info(f"Name: {row['name']}")
+        logger.info(f"Bio: {(row['bio'][:80] + '...') if row['bio'] and len(row['bio']) > 80 else row['bio']}")
+        logger.info(f"Category: {row['category']}")
+        logger.info(f"Artworks found: {len(artworks_list)}")
+        for idx, art in enumerate(artworks_list, 1):
+            logger.info(f"  {idx}. {art['title']}")
+            logger.info(f"     URL: {art['url']}")
+        logger.info(f"{'='*70}\n")
         
         # Build advisor response
         advisor = {
@@ -375,7 +378,7 @@ def get_advisor_detail(advisor_id):
             "specialty": row["category"] if row["category"] else "Photography",
             "bio": row["bio"] if row["bio"] else "",
             "focus_areas": focus_areas_list,
-            "image_url": f"/advisor_image/{advisor_id}",
+            "image_url": f"{base_url}/advisor_image/{advisor_id}",
             "artworks": artworks_list
         }
         
@@ -395,46 +398,52 @@ def get_advisor_headshot(advisor_id):
     try:
         import os
         
-        # Try multiple possible locations for advisor headshot, in order of priority
+        # Get absolute app root path
+        app_root = os.path.abspath(os.path.dirname(__file__))
+        
+        # Try multiple possible locations for advisor headshot (using absolute paths)
         possible_paths = [
             # First priority: training datasets (most recent/curated)
-            f"training/datasets/{advisor_id}-images/headshot.jpg",
-            f"training/datasets/{advisor_id}-images/headshot.png",
+            os.path.join(app_root, '..', f"training/datasets/{advisor_id}-images/headshot.jpg"),
+            os.path.join(app_root, '..', f"training/datasets/{advisor_id}-images/headshot.png"),
             
             # Second priority: source advisor directories  
-            f"mondrian/source/advisor/photographer/{advisor_id}/headshot.jpg",
-            f"mondrian/source/advisor/photographer/{advisor_id}/headshot.png",
-            f"mondrian/source/advisor/painter/{advisor_id}/headshot.jpg",
-            f"mondrian/source/advisor/painter/{advisor_id}/headshot.png",
-            f"mondrian/source/advisor/architect/{advisor_id}/headshot.jpg",
-            f"mondrian/source/advisor/architect/{advisor_id}/headshot.png",
+            os.path.join(app_root, '..', f"mondrian/source/advisor/photographer/{advisor_id}/headshot.jpg"),
+            os.path.join(app_root, '..', f"mondrian/source/advisor/photographer/{advisor_id}/headshot.png"),
+            os.path.join(app_root, '..', f"mondrian/source/advisor/painter/{advisor_id}/headshot.jpg"),
+            os.path.join(app_root, '..', f"mondrian/source/advisor/painter/{advisor_id}/headshot.png"),
+            os.path.join(app_root, '..', f"mondrian/source/advisor/architect/{advisor_id}/headshot.jpg"),
+            os.path.join(app_root, '..', f"mondrian/source/advisor/architect/{advisor_id}/headshot.png"),
             
             # Third priority: dedicated advisor_images directory
-            f"mondrian/advisor_images/{advisor_id}.jpg",
-            f"mondrian/advisor_images/{advisor_id}.png",
+            os.path.join(app_root, '..', f"mondrian/advisor_images/{advisor_id}.jpg"),
+            os.path.join(app_root, '..', f"mondrian/advisor_images/{advisor_id}.png"),
         ]
         
         for path in possible_paths:
-            if os.path.exists(path):
-                logger.info(f"Serving advisor headshot from {path}")
-                return send_file(path, mimetype='image/jpeg')
+            abs_path = os.path.abspath(path)
+            if os.path.exists(abs_path):
+                logger.info(f"Serving advisor headshot from {abs_path}")
+                return send_file(abs_path, mimetype='image/jpeg')
         
         # If no headshot found, try to use first image from advisor directory as fallback
         logger.warning(f"No dedicated headshot found for advisor {advisor_id}, trying to use first representative work")
         advisor_dirs = [
-            f"mondrian/source/advisor/photographer/{advisor_id}",
-            f"mondrian/source/advisor/painter/{advisor_id}",
-            f"mondrian/source/advisor/architect/{advisor_id}",
-            f"training/datasets/{advisor_id}-images",
+            os.path.join(app_root, '..', f"mondrian/source/advisor/photographer/{advisor_id}"),
+            os.path.join(app_root, '..', f"mondrian/source/advisor/painter/{advisor_id}"),
+            os.path.join(app_root, '..', f"mondrian/source/advisor/architect/{advisor_id}"),
+            os.path.join(app_root, '..', f"training/datasets/{advisor_id}-images"),
         ]
         
         for dir_path in advisor_dirs:
-            if os.path.isdir(dir_path):
-                images = sorted([f for f in os.listdir(dir_path) 
+            abs_dir_path = os.path.abspath(dir_path)
+            if os.path.isdir(abs_dir_path):
+                images = sorted([f for f in os.listdir(abs_dir_path) 
                                if f.lower().endswith(('.jpg', '.jpeg', '.png')) 
-                               and f.lower() != 'headshot.jpg'])
+                               and f.lower() != 'headshot.jpg'
+                               and not f.lower().startswith('neg')])
                 if images:
-                    image_path = os.path.join(dir_path, images[0])
+                    image_path = os.path.abspath(os.path.join(abs_dir_path, images[0]))
                     logger.info(f"Using first representative work as headshot: {image_path}")
                     return send_file(image_path, mimetype='image/jpeg')
         
@@ -453,24 +462,29 @@ def get_advisor_artwork(advisor_id, artwork_id):
     try:
         import os
         
-        # Try multiple possible locations for advisor artwork
+        # Get absolute app root path
+        app_root = os.path.abspath(os.path.dirname(__file__))
+        
+        # Try multiple possible locations for advisor artwork (using absolute paths)
         possible_dirs = [
-            f"mondrian/source/advisor/photographer/{advisor_id}",
-            f"mondrian/source/advisor/painter/{advisor_id}",
-            f"mondrian/source/advisor/architect/{advisor_id}",
-            f"training/datasets/{advisor_id}-images",
+            os.path.join(app_root, '..', f"mondrian/source/advisor/photographer/{advisor_id}"),
+            os.path.join(app_root, '..', f"mondrian/source/advisor/painter/{advisor_id}"),
+            os.path.join(app_root, '..', f"mondrian/source/advisor/architect/{advisor_id}"),
+            os.path.join(app_root, '..', f"training/datasets/{advisor_id}-images"),
         ]
         
         for dir_path in possible_dirs:
-            if os.path.isdir(dir_path):
-                # Get image files from directory (skip headshot)
-                images = sorted([f for f in os.listdir(dir_path) 
+            abs_dir_path = os.path.abspath(dir_path)
+            if os.path.isdir(abs_dir_path):
+                # Get image files from directory (skip headshot and negatives)
+                images = sorted([f for f in os.listdir(abs_dir_path) 
                                if f.lower().endswith(('.jpg', '.jpeg', '.png')) 
-                               and f.lower() != 'headshot.jpg'])
+                               and f.lower() != 'headshot.jpg'
+                               and not f.lower().startswith('neg')])
                 
                 if artwork_id <= len(images):
                     image_file = images[artwork_id - 1]
-                    image_path = os.path.join(dir_path, image_file)
+                    image_path = os.path.abspath(os.path.join(abs_dir_path, image_file))
                     logger.info(f"Serving artwork {artwork_id} from {image_path}")
                     return send_file(image_path, mimetype='image/jpeg')
         
@@ -489,20 +503,25 @@ def get_advisor_artwork_lightbox_info(advisor_id, artwork_id):
     try:
         import os
         
-        # Try multiple possible locations for advisor artwork
+        # Get absolute app root path
+        app_root = os.path.abspath(os.path.dirname(__file__))
+        
+        # Try multiple possible locations for advisor artwork (using absolute paths)
         possible_dirs = [
-            f"mondrian/source/advisor/photographer/{advisor_id}",
-            f"mondrian/source/advisor/painter/{advisor_id}",
-            f"mondrian/source/advisor/architect/{advisor_id}",
-            f"training/datasets/{advisor_id}-images",
+            os.path.join(app_root, '..', f"mondrian/source/advisor/photographer/{advisor_id}"),
+            os.path.join(app_root, '..', f"mondrian/source/advisor/painter/{advisor_id}"),
+            os.path.join(app_root, '..', f"mondrian/source/advisor/architect/{advisor_id}"),
+            os.path.join(app_root, '..', f"training/datasets/{advisor_id}-images"),
         ]
         
         for dir_path in possible_dirs:
-            if os.path.isdir(dir_path):
-                # Get image files from directory (skip headshot)
-                images = sorted([f for f in os.listdir(dir_path) 
+            abs_dir_path = os.path.abspath(dir_path)
+            if os.path.isdir(abs_dir_path):
+                # Get image files from directory (skip headshot and negatives)
+                images = sorted([f for f in os.listdir(abs_dir_path) 
                                if f.lower().endswith(('.jpg', '.jpeg', '.png')) 
-                               and f.lower() != 'headshot.jpg'])
+                               and f.lower() != 'headshot.jpg'
+                               and not f.lower().startswith('neg')])
                 
                 if artwork_id <= len(images) and artwork_id >= 1:
                     current_idx = artwork_id - 1
