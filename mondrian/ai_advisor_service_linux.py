@@ -196,6 +196,16 @@ class QwenAdvisor:
                 self.model.gradient_checkpointing_enable()
                 logger.info("Gradient checkpointing enabled for memory efficiency")
             
+            # Enable Flash Attention if available (RTX 3060+ supports it)
+            try:
+                if self.device == 'cuda':
+                    # For PyTorch 2.0+, enable scaled_dot_product_attention with Flash Attention backend
+                    self.model.config.attn_implementation = "flash_attention_2"
+                    logger.info("Flash Attention 2 enabled for faster inference")
+            except (AttributeError, ImportError):
+                # Flash Attention not available, fall back to standard attention
+                logger.debug("Flash Attention 2 not available, using standard attention")
+            
             logger.info("Model loaded successfully")
             
             # Load LoRA adapter if provided
@@ -398,7 +408,7 @@ class QwenAdvisor:
                        focus_sharpness_score, color_harmony_score,
                        subject_isolation_score, depth_perspective_score,
                        visual_balance_score, emotional_impact_score,
-                       overall_grade, image_description, image_title
+                       overall_grade, image_description, image_title, date_taken
                 FROM dimensional_profiles
                 WHERE advisor_id = ?
                   AND composition_score IS NOT NULL
@@ -483,7 +493,7 @@ class QwenAdvisor:
                        focus_sharpness_score, color_harmony_score,
                        subject_isolation_score, depth_perspective_score,
                        visual_balance_score, emotional_impact_score,
-                       overall_grade, image_description, image_title
+                       overall_grade, image_description, image_title, date_taken
                 FROM dimensional_profiles
                 WHERE advisor_id = ?
                   AND composition_score IS NOT NULL
@@ -509,6 +519,42 @@ class QwenAdvisor:
             logger.error(f"Failed to retrieve images for weak dimensions: {e}")
             return []
     
+    def _deduplicate_reference_images(self, images: List[Dict[str, Any]], used_paths: set, min_images: int = 1) -> List[Dict[str, Any]]:
+        """
+        Remove duplicate images based on image_path to ensure each reference is used only once.
+        
+        Args:
+            images: List of reference image dictionaries
+            used_paths: Set of already used image paths
+            min_images: Minimum number of images to return (will add back best images if needed)
+            
+        Returns:
+            List of unique reference images
+        """
+        deduplicated = []
+        for img in images:
+            img_path = img.get('image_path')
+            if img_path and img_path not in used_paths:
+                used_paths.add(img_path)
+                deduplicated.append(img)
+                logger.debug(f"Added unique reference: {img.get('image_title', img_path.split('/')[-1])}")
+            else:
+                logger.debug(f"Skipped duplicate reference: {img.get('image_title', img_path.split('/')[-1] if img_path else 'Unknown')}")
+        
+        # If we have too few unique images, add back the best duplicates
+        if len(deduplicated) < min_images and len(images) > len(deduplicated):
+            logger.info(f"Only {len(deduplicated)} unique images found, adding back best duplicates to reach minimum of {min_images}")
+            for img in images:
+                if len(deduplicated) >= min_images:
+                    break
+                img_path = img.get('image_path')
+                if img_path and img_path in used_paths:
+                    # Add it back but mark it as a duplicate in the log
+                    deduplicated.append(img)
+                    logger.debug(f"Re-added duplicate reference: {img.get('image_title', img_path.split('/')[-1])}")
+        
+        return deduplicated
+
     def _get_user_dimensional_profile(self, image_path: str) -> Dict[str, float]:
         """
         Retrieve user's dimensional profile from database if it exists.
@@ -647,6 +693,9 @@ class QwenAdvisor:
             Augmented prompt with RAG context
         """
         
+        # Track used images to prevent duplicates
+        used_image_paths = set()
+        
         # If user dimensions are provided, do gap-based analysis
         if user_dimensions:
             # Find the user's 3 weakest dimensions
@@ -671,6 +720,9 @@ class QwenAdvisor:
             else:
                 # Fall back to score-based retrieval
                 reference_images = self._get_images_for_weak_dimensions(advisor_id, weak_dimensions, max_images=4)
+            
+            # Deduplicate images
+            reference_images = self._deduplicate_reference_images(reference_images, used_image_paths, min_images=2)
             
             if not reference_images:
                 logger.info("No targeted reference images found for weak dimensions - skipping RAG augmentation")
@@ -699,8 +751,11 @@ class QwenAdvisor:
             if not reference_images:
                 reference_images = self._get_similar_images_from_db(advisor_id, top_k=3)
             
+            # Deduplicate images
+            reference_images = self._deduplicate_reference_images(reference_images, used_image_paths, min_images=2)
+            
             if not reference_images:
-                logger.info("No similar images found for RAG context, using original prompt")
+                logger.info("No unique reference images found after deduplication - skipping RAG augmentation")
                 return prompt, []
             
             # Build RAG context with reference image names and dimensional comparisons
@@ -775,7 +830,12 @@ class QwenAdvisor:
         
         # Augment prompt
         augmented_prompt = f"{prompt}\n{rag_context}"
-        logger.info(f"Augmented prompt with RAG context ({len(rag_context)} chars, {len(reference_images)} references)")
+        logger.info(f"Augmented prompt with RAG context ({len(rag_context)} chars, {len(reference_images)} unique references)")
+        
+        # Log image titles for debugging duplication
+        if reference_images:
+            image_titles = [img.get('image_title', img.get('image_path', '').split('/')[-1]) for img in reference_images]
+            logger.info(f"Reference images used: {image_titles}")
         
         return augmented_prompt, reference_images
     
@@ -1176,17 +1236,18 @@ Required JSON Structure:
     <div class="reference-item" data-index="{i}" style="
       width: 100%;
       cursor: pointer;
+      margin-bottom: 16px;
     " onclick="openLightbox({i})">
       <img src="{thumbnail}" style="
         width: 100%;
         height: auto;
-        max-height: 400px;
-        object-fit: cover;
+        max-width: 100%;
+        object-fit: contain;
         border-radius: 8px;
         box-shadow: 0 4px 12px rgba(0,0,0,0.3);
         border: 2px solid #5a5a5e;
         display: block;
-      " />
+      " alt="{img_title}" />'
       <div style="margin-top: 8px;">
         <p style="
           margin: 0;
