@@ -22,12 +22,12 @@ from typing import Optional
 PROJECT_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
-# Import config for default model path
-from mondrian.config import DEFAULT_MODEL_PATH
+# Default model path for LoRA training
+DEFAULT_MODEL_PATH = "mlx-community/Qwen3-VL-4B-Instruct-4bit"
 
 # Default hyperparameters optimized for small datasets (< 20 images)
 DEFAULT_CONFIG = {
-    "model_path": DEFAULT_MODEL_PATH,  # Uses Qwen3-VL-8B by default
+    "model_path": DEFAULT_MODEL_PATH,  # Uses Qwen3-VL-4B by default
     "rank": 8,           # Low rank for small dataset
     "alpha": 0.1,        # Scaling factor
     "dropout": 0.1,      # Higher dropout to prevent overfitting
@@ -69,12 +69,12 @@ def train_lora(
         dry_run: If True, validate setup without training
         resume_from: Path to existing adapter to resume training from
     """
-    # Set default paths - use combined dataset (images + text) by default
+    # Set default paths - use fixed image training dataset (correct JSON schema)
     if dataset_path is None:
-        dataset_path = PROJECT_ROOT / "training" / "datasets" / f"{advisor_id}_combined_train.jsonl"
-        # Fall back to image-only dataset if combined doesn't exist
+        dataset_path = PROJECT_ROOT / "training" / "datasets" / f"{advisor_id}_image_training_fixed.jsonl"
+        # Fall back to nuanced dataset if fixed doesn't exist
         if not dataset_path.exists():
-            dataset_path = PROJECT_ROOT / "training" / "datasets" / f"{advisor_id}_train.jsonl"
+            dataset_path = PROJECT_ROOT / "training" / "datasets" / f"{advisor_id}_image_training_nuanced.jsonl"
 
     if output_path is None:
         output_path = PROJECT_ROOT / "adapters" / advisor_id

@@ -68,6 +68,16 @@ class JobDatabase:
                 logger.info("Adding 'retry_count' column to jobs table")
                 conn.execute("ALTER TABLE jobs ADD COLUMN retry_count INTEGER DEFAULT 0")
                 conn.commit()
+
+            if 'model' not in columns:
+                logger.info("Adding 'model' column to jobs table")
+                conn.execute("ALTER TABLE jobs ADD COLUMN model TEXT DEFAULT NULL")
+                conn.commit()
+
+            if 'adapter' not in columns:
+                logger.info("Adding 'adapter' column to jobs table")
+                conn.execute("ALTER TABLE jobs ADD COLUMN adapter TEXT DEFAULT NULL")
+                conn.commit()
     
     def create_job(self, advisor: str, mode: str, image_path: str) -> str:
         """Create a new job"""
@@ -88,17 +98,17 @@ class JobDatabase:
         """Get job details"""
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.execute(
-                """SELECT id, filename, status, advisor, mode, created_at, current_step, progress_percentage, enable_rag, 
+                """SELECT id, filename, status, advisor, mode, created_at, current_step, progress_percentage, enable_rag,
                           prompt, llm_prompt, analysis_markdown, llm_thinking, analysis_html, advisor_bio, llm_outputs,
-                          summary_html, advisor_bio_html
+                          summary_html, advisor_bio_html, model, adapter
                    FROM jobs WHERE id = ?""",
                 (job_id,)
             )
             row = cursor.fetchone()
-        
+
         if not row:
             return None
-        
+
         return {
             'id': row[0],
             'filename': row[1],
@@ -117,7 +127,9 @@ class JobDatabase:
             'advisor_bio': row[14] or '',
             'llm_outputs': row[15] or '',
             'summary_html': row[16] or '',
-            'advisor_bio_html': row[17] or ''
+            'advisor_bio_html': row[17] or '',
+            'model': row[18] or '',
+            'adapter': row[19] or ''
         }
     
     def update_job(self, job_id: str, status: str, result: Optional[Dict] = None, error: Optional[str] = None):
@@ -137,11 +149,11 @@ class JobDatabase:
         """List recent jobs"""
         with sqlite3.connect(self.db_path) as conn:
             cursor = conn.execute("""
-                SELECT id, filename, status, advisor, mode, created_at FROM jobs
+                SELECT id, filename, status, advisor, mode, created_at, model, adapter FROM jobs
                 ORDER BY created_at DESC LIMIT ?
             """, (limit,))
             rows = cursor.fetchall()
-        
+
         return [
             {
                 'id': row[0],
@@ -149,7 +161,9 @@ class JobDatabase:
                 'status': row[2],
                 'advisor': row[3],
                 'mode': row[4],
-                'created_at': row[5]
+                'created_at': row[5],
+                'model': row[6],
+                'adapter': row[7]
             }
             for row in rows
         ]
@@ -725,6 +739,8 @@ def list_jobs():
                         <th>Filename</th>
                         <th>Advisor</th>
                         <th>Mode</th>
+                        <th>Model</th>
+                        <th>Adapter</th>
                         <th>Status</th>
                         <th>Progress</th>
                         <th>Created</th>
@@ -739,7 +755,18 @@ def list_jobs():
             created = job.get('created_at', 'N/A')
             if created != 'N/A':
                 created = created.split('.')[0]  # Remove milliseconds
-            
+
+            # Extract model and adapter display names
+            model = job.get('model', '') or 'N/A'
+            if model and model != 'N/A' and '/' in model:
+                model = model.split('/')[-1]  # Get friendly name from "Qwen/Qwen3-VL-4B-Thinking"
+
+            adapter = job.get('adapter', '') or 'N/A'
+            if adapter and adapter != 'N/A':
+                import os
+                # Extract meaningful part from "./adapters/ansel_qwen3_4b_thinking/epoch_10"
+                adapter = os.path.basename(os.path.dirname(adapter))
+
             job_id_full = job.get('id', 'N/A')
             job_id_short = job_id_full[:8]
             html += f"""
@@ -748,6 +775,8 @@ def list_jobs():
                         <td>{job.get('filename', 'N/A')}</td>
                         <td>{job.get('advisor', 'N/A')}</td>
                         <td><span class="mode-badge">{mode}</span></td>
+                        <td><small>{model}</small></td>
+                        <td><small>{adapter}</small></td>
                         <td><span class="status-badge status-{status}">{status}</span></td>
                         <td>
                             <div class="progress-bar">
@@ -1011,30 +1040,52 @@ def stream_job_updates(job_id: str):
     """Stream job updates via Server-Sent Events (SSE)"""
     if not job_db:
         return jsonify({"error": "Database not initialized"}), 503
-    
+
     job = job_db.get_job(job_id)
     if not job:
         return jsonify({"error": "Job not found"}), 404
-    
+
+    # Compute base_url outside generator (request context available here)
+    base_url = f"http://{request.host.split(':')[0]}:5005"
+
     def generate():
         """Generator function that yields SSE events"""
         import time
         from datetime import datetime
-        
+
         # Send connected event
         connected_event = {
             "type": "connected",
             "job_id": job_id
         }
         yield f"event: connected\ndata: {json.dumps(connected_event)}\n\n"
-        
+
         last_status = job.get('status')
         last_progress = job.get('progress_percentage', 0)
         last_thinking = job.get('llm_thinking', '')
         last_step = job.get('current_step', '')
         last_update_time = time.time()
-        update_interval = 3  # Send thinking updates every 3 seconds for iOS UI
-        
+        update_interval = 3  # Send status updates every 3 seconds for iOS UI
+
+        # Send initial status update immediately after connected
+        initial_update_event = {
+            "type": "status_update",
+            "job_id": job_id,
+            "timestamp": datetime.now().timestamp(),
+            "job_data": {
+                "status": last_status,
+                "progress_percentage": last_progress,
+                "current_step": last_step,
+                "llm_thinking": last_thinking,
+                "current_advisor": 1,
+                "total_advisors": 1,
+                "step_phase": "analyzing" if last_status == "analyzing" else "processing",
+                "analysis_url": f"{base_url}/analysis/{job_id}"
+            }
+        }
+        yield f"event: status_update\ndata: {json.dumps(initial_update_event)}\n\n"
+        logger.debug(f"🔄 Initial stream update: status={last_status}, progress={last_progress}%, step={last_step}")
+
         while True:
             job_data = job_db.get_job(job_id)
             if not job_data:
@@ -1046,14 +1097,15 @@ def stream_job_updates(job_id: str):
             current_step = job_data.get('current_step', '')
             current_time = time.time()
             
-            # Send status update if changed OR if periodic update interval reached (for thinking)
-            status_changed = (current_status != last_status or 
-                            current_progress != last_progress or 
-                            current_step != last_step)
-            
+            # Send status update if changed OR if periodic update interval reached (for progress/step updates)
+            status_changed = (current_status != last_status or
+                            current_progress != last_progress or
+                            current_step != last_step or
+                            current_thinking != last_thinking)
+
             periodic_update = (current_time - last_update_time) >= update_interval and current_status == "analyzing"
-            
-            if status_changed or (periodic_update and current_thinking):
+
+            if status_changed or periodic_update:
                 
                 status_update_event = {
                     "type": "status_update",
@@ -1066,7 +1118,8 @@ def stream_job_updates(job_id: str):
                         "llm_thinking": current_thinking,
                         "current_advisor": 1,
                         "total_advisors": 1,
-                        "step_phase": "analyzing" if current_status == "analyzing" else "processing"
+                        "step_phase": "analyzing" if current_status == "analyzing" else "processing",
+                        "analysis_url": f"{base_url}/analysis/{job_id}"
                     }
                 }
                 yield f"event: status_update\ndata: {json.dumps(status_update_event)}\n\n"
@@ -1338,31 +1391,34 @@ def process_job_worker(db_path: str):
                         llm_prompt = analysis_data.get('llm_prompt', '')
                         full_response = analysis_data.get('full_response', '')
                         summary = analysis_data.get('summary', '')
-                        
+                        model = analysis_data.get('model', '')
+                        adapter = analysis_data.get('adapter', '')
+
                         # Prepare llm_outputs as JSON string
                         llm_outputs = json.dumps({
                             'prompt': prompt,
                             'response': full_response,
                             'summary': summary,
-                            'model': analysis_data.get('model', ''),
+                            'model': model,
                             'timestamp': analysis_data.get('timestamp', '')
                         })
-                        
+
                         # Create markdown summary for analysis_markdown field
                         analysis_markdown = f"""# {advisor.title()} Analysis\n\n## Summary\n{summary}\n\n## Full Analysis\n{full_response}"""
-                        
+
                         # Update job with all results including summary_html and advisor_bio_html
                         conn.execute("""
                             UPDATE jobs SET status = ?, current_step = ?, progress_percentage = ?,
                                            analysis_html = ?, summary_html = ?,
                                            advisor_bio = ?, advisor_bio_html = ?, llm_thinking = ?,
                                            prompt = ?, llm_prompt = ?, llm_outputs = ?,
-                                           analysis_markdown = ?,
+                                           analysis_markdown = ?, model = ?, adapter = ?,
                                            last_activity = ?
                             WHERE id = ?
                         """, ('completed', 'Analysis complete', 100,
                               analysis_html, summary_html, advisor_bio, advisor_bio_html,
                               thinking, prompt, llm_prompt, llm_outputs, analysis_markdown,
+                              model, adapter,
                               datetime.now().isoformat(), job_id))
                         conn.commit()
                         logger.info(f"Job {job_id} completed successfully with summary")

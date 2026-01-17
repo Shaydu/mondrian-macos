@@ -760,7 +760,7 @@ def cleanup_stale_jobs_on_restart():
 def main():
     # Parse mode argument
     mode = "lora"  # Default mode (using LoRA adapter for best performance)
-    lora_path = "./adapters/ansel_qwen3_4b_10ep"  # Default LoRA adapter trained on Qwen3-VL-4B
+    lora_path = "./adapters/ansel_qwen3_4b_instruct/epoch_10"  # Default LoRA adapter for Qwen3-VL-4B-Instruct
     model_arg = None
     db_path_arg = None
     all_services = False
@@ -786,15 +786,22 @@ Usage:
     ./mondrian.sh [options]
 
 Options:
-    --stop              Stop all services
-    --restart           Restart all services
-    --status            Show active jobs
-    --mode=<mode>       Set service mode (default: lora)
-    --lora-path=<path>  Path to LoRA adapter (default: ./adapters/ansel_qwen3_4b_10ep)
-    --model=<model>     Base model to use (default: Qwen/Qwen3-VL-4B-Instruct)
-    --db=<path>         Database path (overrides config, default: mondrian.db)
-    --ab-split=<ratio>  A/B test split ratio (default: 0.5)
-    --help, -h          Show this help
+    --stop                      Stop all services
+    --restart                   Restart all services
+    --status                    Show active jobs
+    --model-preset=<preset>     Model preset to use (default: qwen3-4b-instruct)
+    --mode=<mode>               Set service mode (default: lora)
+    --lora-path=<path>          Path to LoRA adapter (overrides config)
+    --model=<model>             Base model to use (overrides config)
+    --db=<path>                 Database path (overrides config, default: mondrian.db)
+    --ab-split=<ratio>          A/B test split ratio (default: 0.5)
+    --help, -h                  Show this help
+
+Model Presets (configured in model_config.json):
+    qwen3-4b-instruct          Qwen3-VL-4B-Instruct (default: fast, good quality)
+    qwen3-4b-thinking          Qwen3-VL-4B-Thinking (slower, shows reasoning)
+    qwen3-8b-instruct          Qwen3-VL-8B-Instruct (larger, better quality)
+    qwen3-8b-thinking          Qwen3-VL-8B-Thinking (largest, best quality + reasoning)
 
 Modes:
     base                Base model only
@@ -804,23 +811,23 @@ Modes:
     ab-test             A/B testing (base vs LoRA)
 
 Examples:
-    # Start with default (Qwen3-VL-4B + LoRA ansel_qwen3_4b_10ep)
+    # Start with default model preset
     ./mondrian.sh --restart
 
-    # Start with base model (no LoRA)
-    ./mondrian.sh --restart --mode=base
+    # Switch to thinking model (with visible reasoning)
+    ./mondrian.sh --restart --model-preset=qwen3-4b-thinking
 
-    # Use LoRA with custom adapter
-    ./mondrian.sh --restart --mode=lora --lora-path=./adapters/ansel_qwen3_4b_10ep
+    # Switch to 8B model (better quality)
+    ./mondrian.sh --restart --model-preset=qwen3-8b-instruct
 
     # A/B test: 70% LoRA, 30% base
     ./mondrian.sh --restart --mode=ab-test --ab-split=0.7
 
-    # RAG mode with default LoRA
-    ./mondrian.sh --restart --mode=lora+rag
+    # RAG mode with thinking model
+    ./mondrian.sh --restart --model-preset=qwen3-4b-thinking --mode=lora+rag
 
-    # Use custom database path
-    ./mondrian.sh --restart --db=/custom/path/to/db.sqlite
+    # Override with custom model (ignores preset)
+    ./mondrian.sh --restart --model="Qwen/Custom-Model" --lora-path=./adapters/custom
 
     # Check active jobs
     ./mondrian.sh --status

@@ -302,11 +302,11 @@ class QwenAdvisor:
             with torch.no_grad():
                 output_ids = self.model.generate(
                     **inputs, 
-                    max_new_tokens=800,
-                    repetition_penalty=1.5,
+                    max_new_tokens=4096,
+                    repetition_penalty=1.0,
                     do_sample=True,
-                    temperature=0.5,
-                    top_p=0.90,
+                    temperature=0.3,
+                    top_p=0.95,
                     eos_token_id=self.processor.tokenizer.eos_token_id
                 )
             
@@ -685,30 +685,56 @@ Required JSON Structure:
     
     def _parse_response(self, response: str, advisor: str, mode: str, prompt: str) -> Dict[str, Any]:
         """Parse model response into structured format with iOS-compatible HTML"""
-        
+
+        import re
+
+        # Extract thinking if present (for thinking models like Qwen3-VL-4B-Thinking)
+        thinking_text = ""
+
+        # Check for <thinking> tags (Qwen thinking model format)
+        thinking_match = re.search(r'<thinking>(.*?)</thinking>', response, re.DOTALL)
+        if thinking_match:
+            thinking_text = thinking_match.group(1).strip()
+            logger.info(f"✓ Extracted extended thinking ({len(thinking_text)} chars)")
+            # Remove thinking tags from response before JSON parsing
+            response = re.sub(r'<thinking>.*?</thinking>', '', response, flags=re.DOTALL).strip()
+
         # Try to extract JSON from response
         analysis_data = {}
         parse_success = False
-        
+
         # Warn if response is too long (likely runaway generation in LoRA mode)
         if len(response) > 5000:
             logger.warning(f"⚠️  Response is unusually long ({len(response)} chars) - may indicate runaway generation. Truncating...")
             response = response[:5000]
-        
+
         try:
             # Find JSON in response (handle both raw JSON and markdown-wrapped JSON)
             start_idx = response.find('{')
             end_idx = response.rfind('}') + 1
-            
+
             if start_idx != -1 and end_idx > start_idx:
                 json_str = response[start_idx:end_idx]
-                
+
                 # Validate JSON isn't too truncated
                 if len(json_str) < 100:
                     logger.warning("⚠️  JSON response too short - likely incomplete or malformed")
-                
+
                 analysis_data = json.loads(json_str)
                 parse_success = True
+                
+                # CRITICAL: Check if thinking leaked into image_description
+                image_desc = analysis_data.get('image_description', '')
+                if any(phrase in image_desc.lower() for phrase in [
+                    'okay, let me', 'step by step', 'first,', 'let me analyze', 
+                    'i need to', 'the user wants', 'let\'s check', 'wait', 'hold up'
+                ]):
+                    logger.warning("⚠️  Detected thinking contamination in image_description - this indicates prompt/model issue")
+                    # If thinking leaked into description, try to extract actual description after reasoning
+                    # or mark as unparseable
+                    analysis_data['image_description'] = "Unable to parse response - thinking model contaminated output"
+                    analysis_data['contamination_detected'] = True
+                
                 logger.info(f"✓ Successfully parsed JSON response ({len(json_str)} chars)")
             else:
                 logger.warning("No JSON object found in response")
@@ -760,12 +786,13 @@ Required JSON Structure:
             "advisor": advisor,
             "mode": mode,
             "model": self.model_name,
+            "adapter": self.adapter_path if self.adapter_path else None,
             "device": self.device,
             "timestamp": datetime.now().isoformat(),
             "prompt": prompt,  # System+advisor prompt sent to LLM
             "llm_prompt": prompt,  # For compatibility
-            "full_response": response,  # Complete LLM response (JSON string)
-            "llm_thinking": response,  # Complete response
+            "full_response": response,  # Complete LLM response (with thinking tags if present)
+            "llm_thinking": thinking_text,  # Extracted thinking from thinking models (empty if not present)
             "analysis": analysis_data,  # Structured JSON data
             "analysis_html": analysis_html,  # Detailed HTML for iOS WebView
             "summary_html": summary_html,  # Top 3 recommendations HTML
@@ -826,14 +853,27 @@ def init_advisor(model_name: str, load_in_4bit: bool, adapter_path: Optional[str
 def health():
     """Health check endpoint - returns status even while loading"""
     if advisor:
-        return jsonify({
+        health_response = {
             "status": "UP",
             "model": advisor.model_name,
             "device": advisor.device,
             "using_gpu": advisor.device == 'cuda',
             "loading": False,
             "timestamp": datetime.now().isoformat()
-        }), 200
+        }
+        
+        # Add LoRA adapter info if loaded
+        if advisor.adapter_path:
+            from pathlib import Path
+            adapter_path = Path(advisor.adapter_path)
+            health_response["fine_tuned"] = True
+            health_response["lora_path"] = str(advisor.adapter_path)
+            health_response["adapter_exists"] = adapter_path.exists()
+        else:
+            health_response["fine_tuned"] = False
+            health_response["lora_path"] = None
+        
+        return jsonify(health_response), 200
     elif loading_status['error']:
         return jsonify({
             "status": "error",
@@ -900,8 +940,7 @@ def analyze():
         
         # Get parameters
         advisor_name = request.form.get('advisor', 'ansel')
-        mode = request.form.get('enable_rag', 'false').lower() == 'true'
-        mode_str = 'rag' if mode else 'baseline'
+        mode_str = request.form.get('mode', 'baseline')
         
         # Run analysis
         logger.info(f"Analyzing image with advisor={advisor_name}, mode={mode_str}")
@@ -918,6 +957,163 @@ def analyze():
         return jsonify({"error": str(e), "traceback": traceback.format_exc()}), 500
 
 
+@app.route('/analyze_stream', methods=['POST'])
+def analyze_stream():
+    """Analyze an image with streaming output (Server-Sent Events)"""
+    if not advisor:
+        return jsonify({"error": "Service not initialized"}), 503
+    
+    try:
+        from transformers import TextIteratorStreamer
+        
+        # Get image from request
+        if 'image' not in request.files:
+            return jsonify({"error": "No image provided"}), 400
+        
+        image_file = request.files['image']
+        
+        # Save temporarily
+        temp_path = f"/tmp/{image_file.filename}"
+        image_file.save(temp_path)
+        
+        # Get parameters
+        advisor_name = request.form.get('advisor', 'ansel')
+        mode_str = request.form.get('mode', 'baseline')
+        
+        logger.info(f"Starting STREAMING analysis with advisor={advisor_name}, mode={mode_str}")
+        
+        def generate():
+            """Generator function for Server-Sent Events"""
+            try:
+                # Load and validate image
+                image = Image.open(temp_path).convert('RGB')
+                
+                # Create analysis prompt
+                prompt = advisor._create_prompt(advisor_name, mode_str)
+                
+                # Use chat template for proper image token handling
+                messages = [
+                    {"role": "user", "content": [
+                        {"type": "image"},
+                        {"type": "text", "text": prompt}
+                    ]}
+                ]
+                
+                # Prepare inputs
+                text = advisor.processor.apply_chat_template(
+                    messages,
+                    tokenize=False,
+                    add_generation_prompt=True
+                )
+                
+                inputs = advisor.processor(
+                    text=text,
+                    images=[image],
+                    padding=True,
+                    return_tensors="pt"
+                )
+                
+                # Move to device
+                if advisor.device == 'cuda':
+                    inputs = {k: v.cuda() if hasattr(v, 'cuda') else v for k, v in inputs.items()}
+                
+                # Create streamer
+                streamer = TextIteratorStreamer(
+                    advisor.processor.tokenizer,
+                    skip_special_tokens=True,
+                    skip_prompt=True
+                )
+                
+                # Generation parameters
+                generation_kwargs = {
+                    **inputs,
+                    "streamer": streamer,
+                    "max_new_tokens": 800,
+                    "repetition_penalty": 1.5,
+                    "do_sample": True,
+                    "temperature": 0.5,
+                    "top_p": 0.90,
+                    "eos_token_id": advisor.processor.tokenizer.eos_token_id
+                }
+                
+                # Start generation in background thread
+                thread = threading.Thread(target=advisor.model.generate, kwargs=generation_kwargs)
+                thread.start()
+                
+                # Send initial event
+                yield f"data: {json.dumps({'type': 'start', 'advisor': advisor_name, 'mode': mode_str})}\n\n"
+                
+                # Stream tokens as they arrive WITH SEPARATION
+                full_response = ""
+                in_thinking = False
+                in_json = False
+                thinking_buffer = ""
+                json_buffer = ""
+                
+                for new_text in streamer:
+                    full_response += new_text
+                    
+                    # Detect thinking tags
+                    if '<thinking>' in new_text:
+                        in_thinking = True
+                        yield f"data: {json.dumps({'type': 'thinking_start'})}\n\n"
+                        # Remove tag from text
+                        new_text = new_text.replace('<thinking>', '')
+                    
+                    if '</thinking>' in new_text:
+                        in_thinking = False
+                        yield f"data: {json.dumps({'type': 'thinking_end', 'full_thinking': thinking_buffer})}\n\n"
+                        # Remove tag from text
+                        new_text = new_text.replace('</thinking>', '')
+                    
+                    # Detect JSON start
+                    if '{' in new_text and not in_thinking and not in_json:
+                        in_json = True
+                        yield f"data: {json.dumps({'type': 'json_start'})}\n\n"
+                    
+                    # Send appropriate event type based on current state
+                    if new_text.strip():  # Only send non-empty tokens
+                        if in_thinking:
+                            thinking_buffer += new_text
+                            yield f"data: {json.dumps({'type': 'thinking_token', 'text': new_text})}\n\n"
+                        elif in_json:
+                            json_buffer += new_text
+                            yield f"data: {json.dumps({'type': 'json_token', 'text': new_text})}\n\n"
+                        else:
+                            # Unknown content (shouldn't happen with proper format)
+                            yield f"data: {json.dumps({'type': 'token', 'text': new_text})}\n\n"
+                
+                thread.join()
+                
+                # Parse final response
+                result = advisor._parse_response(full_response, advisor_name, mode_str, prompt)
+                
+                # Send complete event with parsed data
+                yield f"data: {json.dumps({'type': 'complete', 'result': result})}\n\n"
+                
+                # Clean up
+                Path(temp_path).unlink()
+                
+            except Exception as e:
+                logger.error(f"Streaming error: {e}")
+                yield f"data: {json.dumps({'type': 'error', 'error': str(e)})}\n\n"
+        
+        # Return SSE response
+        return app.response_class(
+            generate(),
+            mimetype='text/event-stream',
+            headers={
+                'Cache-Control': 'no-cache',
+                'X-Accel-Buffering': 'no'
+            }
+        )
+        
+    except Exception as e:
+        logger.error(f"Stream setup error: {e}")
+        logger.error(traceback.format_exc())
+        return jsonify({"error": str(e)}), 500
+
+
 @app.errorhandler(500)
 def handle_error(e):
     """Handle internal server errors"""
@@ -930,7 +1126,7 @@ def main():
     parser = argparse.ArgumentParser(description='AI Advisor Service for Linux CUDA')
     parser.add_argument('--port', type=int, default=5100, help='Service port')
     parser.add_argument('--model', default='Qwen/Qwen3-VL-4B-Instruct', help='Model to use')
-    parser.add_argument('--adapter', default='adapters/ansel/epoch_10', help='Path to LoRA adapter')
+    parser.add_argument('--adapter', default='adapters/ansel_qwen3_4b_v2/epoch_20', help='Path to LoRA adapter')
     parser.add_argument('--load_in_4bit', action='store_true', help='Use 4-bit quantization')
     parser.add_argument('--load_in_8bit', action='store_true', help='Use 8-bit quantization')
     parser.add_argument('--host', default='0.0.0.0', help='Host to bind to')

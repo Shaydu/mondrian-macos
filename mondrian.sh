@@ -1,12 +1,13 @@
 #!/bin/bash
 # Mondrian Services Launcher
-# Supports: base mode, RAG, LoRA adapters, model selection, all services
+# Supports: model presets, base mode, RAG, LoRA adapters, all services
 # Examples:
-#   ./mondrian.sh --restart                                          (all services, default: Qwen3-VL-4B + LoRA ansel_qwen3_4b_10ep)
+#   ./mondrian.sh --restart                                          (default: qwen3-4b-instruct)
+#   ./mondrian.sh --restart --model-preset=qwen3-4b-thinking        (switch to thinking model)
+#   ./mondrian.sh --restart --model-preset=qwen3-8b-instruct        (switch to 8B model)
+#   ./mondrian.sh --help                                             (show available model presets)
 #   ./mondrian.sh --restart --mode=base                              (use base model without LoRA)
-#   ./mondrian.sh --restart --mode=lora --lora-path=adapters/ansel_qwen3_4b_10ep
-#   ./mondrian.sh --restart --model="Qwen/Qwen2-VL-7B-Instruct"     (use different base model)
-#   ./mondrian.sh --restart --all-services                            (ensure all services running)
+#   ./mondrian.sh --restart --model="Qwen/Custom-Model"             (override with custom model)
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # Try both locations: root venv first, then mondrian/venv
@@ -39,14 +40,48 @@ for arg in "$@"; do
     fi
 done
 
-# Set default model if not specified (Qwen3-VL-4B for best compatibility)
-if [ -z "$MODEL_ARG" ]; then
-    MODEL_ARG="Qwen/Qwen3-VL-4B-Instruct"
+# Load model configuration from model_config.json
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+MODEL_CONFIG_FILE="$SCRIPT_DIR/model_config.json"
+
+# Function to extract value from JSON using Python (fallback if jq not available)
+extract_json_value() {
+    local json_file=$1
+    local key_path=$2
+    python3 -c "import json, sys; f=open('$json_file'); d=json.load(f); keys='$key_path'.strip('.').split('.'); result=d; [result:=result[k] for k in keys]; print(result)" 2>/dev/null
+}
+
+# Parse model preset from --model-preset argument
+MODEL_PRESET=""
+for arg in "$@"; do
+    if [[ $arg == --model-preset=* ]]; then
+        MODEL_PRESET="${arg#--model-preset=}"
+        # Remove this from arguments passed to start_services
+        set -- "${@/$arg}"
+        break
+    fi
+done
+
+# Set default model preset if not specified
+if [ -z "$MODEL_PRESET" ]; then
+    MODEL_PRESET=$(extract_json_value "$MODEL_CONFIG_FILE" ".defaults.model_preset")
 fi
 
-# Set default mode and LoRA adapter
+# Extract model info from config
+MODEL_ARG=$(extract_json_value "$MODEL_CONFIG_FILE" ".models.$MODEL_PRESET.model_id")
+DEFAULT_LORA_PATH=$(extract_json_value "$MODEL_CONFIG_FILE" ".models.$MODEL_PRESET.adapter")
 DEFAULT_MODE="lora"
-DEFAULT_LORA_PATH="./adapters/ansel_qwen3_4b_10ep"
+
+if [ -z "$MODEL_ARG" ]; then
+    echo "ERROR: Unknown model preset: $MODEL_PRESET"
+    echo "Available presets:"
+    python3 -c "import json; f=open('$MODEL_CONFIG_FILE'); d=json.load(f); [print(f'  - {k}: {v.get(\"name\")} ({v.get(\"description\")})') for k,v in d.get('models', {}).items()]"
+    exit 1
+fi
+
+echo "Using model preset: $MODEL_PRESET"
+echo "  Model: $MODEL_ARG"
+echo "  Adapter: $DEFAULT_LORA_PATH"
 
 # Check if mode was explicitly specified
 MODE_SPECIFIED=false

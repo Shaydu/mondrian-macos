@@ -1,0 +1,49 @@
+{
+  "models": {
+    "qwen3-4b-instruct": {
+      "name": "Qwen3-VL-4B-Instruct",
+      "model_id": "Qwen/Qwen3-VL-4B-Instruct",
+      "description": "Fast, optimized for speed. Good for standard photography analysis.",
+      "adapter": "./adapters/ansel_qwen3_4b_v2/epoch_20",
+      "speed": "fast",
+      "quality": "good",
+      "reasoning": false,
+      "tokens_per_sec": "25-35 (BF16)"
+    },
+    "qwen3-4b-thinking": {
+      "name": "Qwen3-VL-4B-Thinking",
+      "model_id": "Qwen/Qwen3-VL-4B-Thinking",
+      "description": "Shows step-by-step reasoning. Great for detailed analysis with visible thinking.",
+      "adapter": "./adapters/ansel_qwen3_4b_thinking/epoch_10",
+      "speed": "slower",
+      "quality": "excellent",
+      "reasoning": true,
+      "tokens_per_sec": "15-25 (BF16)"
+    },
+    "qwen3-8b-instruct": {
+      "name": "Qwen3-VL-8B-Instruct",
+      "model_id": "Qwen/Qwen3-VL-8B-Instruct",
+      "description": "Larger model, better quality than 4B. Fast.",
+      "adapter": "./adapters/ansel_qwen3_8b_instruct/epoch_10",
+      "speed": "fast",
+      "quality": "excellent",
+      "reasoning": false,
+      "tokens_per_sec": "20-30 (BF16)"
+    },
+    "qwen3-8b-thinking": {
+      "name": "Qwen3-VL-8B-Thinking",
+      "model_id": "Qwen/Qwen3-VL-8B-Thinking",
+      "description": "Largest model with reasoning. Best quality and visible thinking.",
+      "adapter": "./adapters/ansel_qwen3_8b_thinking/epoch_10",
+      "speed": "slower",
+      "quality": "best",
+      "reasoning": true,
+      "tokens_per_sec": "12-20 (BF16)"
+    }
+  },
+  "defaults": {
+    "model_preset": "qwen3-4b-instruct",
+    "mode": "lora",
+    "description": "Default: Qwen3-VL-4B-Instruct with LoRA adapter for fast, good quality analysis"
+  }
+}
