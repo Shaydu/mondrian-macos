@@ -1193,7 +1193,7 @@ Required JSON Structure:
             border-radius: 4px;
             font-size: clamp(13px, 3.5vw, 15px);
         }}
-        .feedback-comment p {{ margin: 0; line-height: 1.5; color: #d1d1d6; }}
+        .feedback-comment p {{ margin: 0; line-height: 1.5; color: #d1d1d6; font-size: clamp(13px, 3.5vw, 15px); }}
         .feedback-recommendation {{
             margin-top: 10px;
             padding: 10px;
@@ -1225,7 +1225,7 @@ Required JSON Structure:
         }}
         .reference-citation .case-study-image {{
             display: block;
-            width: 98%;
+            width: 100%;
             height: auto;
             border-radius: 6px;
             margin-bottom: 8px;
@@ -1277,16 +1277,25 @@ Required JSON Structure:
             top: 20px;
             right: 20px;
             color: white;
-            font-size: 32px;
+            font-size: 40px;
+            font-weight: bold;
             cursor: pointer;
             z-index: 10000;
-            padding: 10px;
+            padding: 15px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
         }}
     </style>
 </head>
 <body>
 <div id="lightbox" class="lightbox" onclick="closeLightbox()">
-    <span class="lightbox-close">&times;</span>
+    <span class="lightbox-close" onclick="event.stopPropagation(); closeLightbox();">✕</span>
     <img id="lightbox-img" src="" alt="Full size image">
 </div>
 <script>
@@ -1558,7 +1567,7 @@ function closeLightbox() {{
         }
         .case-study-image {
             display: block;
-            width: 98%;
+            width: 100%;
             height: auto;
             border-radius: 4px;
             margin-bottom: 6px;
@@ -1611,16 +1620,25 @@ function closeLightbox() {{
             top: 20px;
             right: 20px;
             color: white;
-            font-size: 32px;
+            font-size: 40px;
+            font-weight: bold;
             cursor: pointer;
             z-index: 10000;
-            padding: 10px;
+            padding: 15px;
+            background: rgba(0,0,0,0.5);
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
         }
     </style>
 </head>
 <body>
 <div id="lightbox" class="lightbox" onclick="closeLightbox()">
-    <span class="lightbox-close">&times;</span>
+    <span class="lightbox-close" onclick="event.stopPropagation(); closeLightbox();">✕</span>
     <img id="lightbox-img" src="" alt="Full size image">
 </div>
 <script>
