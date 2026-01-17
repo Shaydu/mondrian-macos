@@ -549,6 +549,73 @@ def get_advisor_artwork_lightbox_info(advisor_id, artwork_id):
         return jsonify({"error": str(e)}), 500
 
 
+@app.route('/api/reference-image/<filename>', methods=['GET'])
+def get_reference_image(filename):
+    """Serve reference images for RAG analysis results"""
+    try:
+        # Log the request for debugging
+        remote_addr = request.environ.get('REMOTE_ADDR', 'unknown')
+        logger.info(f"[DEBUG] Reference image request: {filename} from {remote_addr}")
+        
+        # Get the current working directory to construct absolute paths
+        cwd = os.getcwd()
+        
+        # Search for the image file in advisor directories
+        possible_dirs = [
+            os.path.join(cwd, "mondrian/source/advisor/photographer/ansel"),
+            os.path.join(cwd, "mondrian/source/advisor/photographer"),
+            os.path.join(cwd, "mondrian/source/advisor/painter"),
+            os.path.join(cwd, "mondrian/source/advisor/architect"),
+            os.path.join(cwd, "training/datasets")
+        ]
+        
+        image_path = None
+        for base_dir in possible_dirs:
+            # Try direct path
+            test_path = os.path.join(base_dir, filename)
+            if os.path.exists(test_path) and os.path.isfile(test_path):
+                image_path = test_path
+                logger.info(f"[DEBUG] Found image at: {image_path}")
+                break
+                
+            # Try subdirectories (one level deep)
+            if os.path.isdir(base_dir):
+                try:
+                    for subdir in os.listdir(base_dir):
+                        subdir_path = os.path.join(base_dir, subdir)
+                        if os.path.isdir(subdir_path):
+                            test_path = os.path.join(subdir_path, filename)
+                            if os.path.exists(test_path) and os.path.isfile(test_path):
+                                image_path = test_path
+                                logger.info(f"[DEBUG] Found image in subdirectory: {image_path}")
+                                break
+                except OSError as e:
+                    logger.debug(f"Could not search directory {base_dir}: {e}")
+                if image_path:
+                    break
+        
+        if not image_path:
+            logger.warning(f"Reference image not found: {filename} (searched {len(possible_dirs)} directories)")
+            return jsonify({"error": "Image not found"}), 404
+            
+        logger.info(f"Serving reference image: {image_path}")
+        
+        # Determine MIME type
+        mime_type = 'image/jpeg'
+        if filename.lower().endswith('.png'):
+            mime_type = 'image/png'
+        elif filename.lower().endswith('.gif'):
+            mime_type = 'image/gif'
+        elif filename.lower().endswith('.webp'):
+            mime_type = 'image/webp'
+        
+        return send_file(image_path, mimetype=mime_type)
+        
+    except Exception as e:
+        logger.error(f"Failed to serve reference image {filename}: {e}", exc_info=True)
+        return jsonify({"error": str(e)}), 500
+
+
 @app.route('/upload', methods=['POST'])
 def upload_image():
     """Upload image and queue for analysis"""

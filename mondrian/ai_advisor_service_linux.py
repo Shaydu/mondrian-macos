@@ -310,37 +310,20 @@ class QwenAdvisor:
                 img_dict = dict(row)
                 image_path = img_dict.get('image_path')
                 
-                # Encode image as base64 for both thumbnail and fullsize
+                # Serve image via endpoint instead of base64
                 if image_path and os.path.exists(image_path):
                     try:
-                        from PIL import Image
-                        img = Image.open(image_path)
-                        
-                        # Create thumbnail (200px width)
-                        thumb = img.copy()
-                        thumb.thumbnail((200, 200 * 10), Image.Resampling.LANCZOS)
-                        thumb_buffer = io.BytesIO()
-                        thumb.save(thumb_buffer, format='JPEG', quality=85)
-                        thumb_base64 = base64.b64encode(thumb_buffer.getvalue()).decode('utf-8')
-                        img_dict['thumbnail_base64'] = f"data:image/jpeg;base64,{thumb_base64}"
-                        
-                        # Create fullsize (max 1200px width for performance)
-                        full = img.copy()
-                        if full.width > 1200:
-                            full.thumbnail((1200, 1200 * 10), Image.Resampling.LANCZOS)
-                        full_buffer = io.BytesIO()
-                        full.save(full_buffer, format='JPEG', quality=90)
-                        full_base64 = base64.b64encode(full_buffer.getvalue()).decode('utf-8')
-                        img_dict['fullsize_base64'] = f"data:image/jpeg;base64,{full_base64}"
-                        
+                        img_filename = os.path.basename(image_path)
+                        img_dict['image_url'] = f"/api/reference-image/{img_filename}"
+                        img_dict['image_filename'] = img_filename
                         result_images.append(img_dict)
                     except Exception as e:
-                        logger.warning(f"Failed to encode image {image_path}: {e}")
+                        logger.warning(f"Failed to process image {image_path}: {e}")
                         continue
                 else:
                     logger.warning(f"Image path not found: {image_path}")
             
-            logger.info(f"Retrieved and encoded {len(result_images)} similar reference images for RAG context")
+            logger.info(f"Retrieved and prepared {len(result_images)} similar reference images for RAG context")
             
             return result_images
             
@@ -510,7 +493,25 @@ class QwenAdvisor:
                 logger.info(f"No reference images found with high scores in dimensions: {weak_dimensions}")
                 return []
             
-            result_images = [dict(row) for row in rows]
+            result_images = []
+            for row in rows:
+                img_dict = dict(row)
+                image_path = img_dict.get('image_path')
+                
+                # Construct image URL if image_path exists
+                if image_path and os.path.exists(image_path):
+                    try:
+                        img_filename = os.path.basename(image_path)
+                        img_dict['image_url'] = f"/api/reference-image/{img_filename}"
+                        img_dict['image_filename'] = img_filename
+                        result_images.append(img_dict)
+                    except Exception as e:
+                        logger.warning(f"Failed to process image {image_path}: {e}")
+                        continue
+                else:
+                    # If image doesn't exist but we have the dict, still add it (without image_url)
+                    result_images.append(img_dict)
+            
             logger.info(f"Retrieved {len(result_images)} reference images that excel in weak dimensions: {weak_dimensions}")
             
             return result_images
@@ -638,36 +639,20 @@ class QwenAdvisor:
                 logger.info("No embedding results, falling back to score-based retrieval")
                 return self._get_images_for_weak_dimensions(advisor_id, weak_dimensions, max_images)
             
-            # Encode images as base64 (same as other retrieval methods)
+            # Encode images as URLs instead of base64
             encoded_results = []
             for img in results:
                 image_path = img.get('image_path')
                 if image_path and os.path.exists(image_path):
                     try:
-                        pil_img = Image.open(image_path)
-                        
-                        # Create thumbnail (200px width)
-                        thumb = pil_img.copy()
-                        thumb.thumbnail((200, 200 * 10), Image.Resampling.LANCZOS)
-                        thumb_buffer = io.BytesIO()
-                        thumb.save(thumb_buffer, format='JPEG', quality=85)
-                        thumb_base64 = base64.b64encode(thumb_buffer.getvalue()).decode('utf-8')
-                        img['thumbnail_base64'] = f"data:image/jpeg;base64,{thumb_base64}"
-                        
-                        # Create fullsize (max 1200px width)
-                        full = pil_img.copy()
-                        if full.width > 1200:
-                            full.thumbnail((1200, 1200 * 10), Image.Resampling.LANCZOS)
-                        full_buffer = io.BytesIO()
-                        full.save(full_buffer, format='JPEG', quality=90)
-                        full_base64 = base64.b64encode(full_buffer.getvalue()).decode('utf-8')
-                        img['fullsize_base64'] = f"data:image/jpeg;base64,{full_base64}"
-                        
+                        img_filename = os.path.basename(image_path)
+                        img['image_url'] = f"/api/reference-image/{img_filename}"
+                        img['image_filename'] = img_filename
                         encoded_results.append(img)
                     except Exception as e:
-                        logger.warning(f"Failed to encode image {image_path}: {e}")
+                        logger.warning(f"Failed to process image {image_path}: {e}")
             
-            logger.info(f"Retrieved {len(encoded_results)} images via embedding retrieval")
+            logger.info(f"Retrieved {len(encoded_results)} images via embedding retrieval with URLs")
             return encoded_results
             
         except ImportError as e:
@@ -765,7 +750,7 @@ class QwenAdvisor:
             else:
                 rag_context += "These master works from the advisor's portfolio provide dimensional benchmarks.\n"
         
-        # Add reference image details with ALL 8 dimensions
+        # Add reference image details with case study containers
         for i, img in enumerate(reference_images, 1):
             # Use image_title (metadata name) if available, otherwise extract filename
             img_title = img.get('image_title')
@@ -780,9 +765,45 @@ class QwenAdvisor:
             else:
                 img_title_with_year = img_title
             
-            rag_context += f"\n**Reference #{i}: {img_title_with_year}**\n"
+            # Get image URL for inline display
+            img_filename = os.path.basename(img.get('image_path', ''))
+            img_url = f"/api/reference-image/{img_filename}" if img_filename else ""
+            
+            # Build case study container with inline image
+            rag_context += f"""
+<div class="case-study-container" style="
+    background: #1c1c1e; 
+    border-radius: 12px; 
+    padding: 20px; 
+    margin: 20px 0;
+    border-left: 4px solid #30b0c0;
+">
+    <h3 style="color: #ffffff; margin-top: 0; margin-bottom: 16px; font-size: 18px;">
+        Case Study #{i}: {img_title_with_year}
+    </h3>
+    
+    <div style="display: flex; flex-direction: column; gap: 16px;">
+"""
+            
+            # Add image if available
+            if img_url:
+                rag_context += f"""
+        <img src="{img_url}" style="
+            width: 100%; 
+            max-width: 100%; 
+            height: auto; 
+            border-radius: 8px; 
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        " alt="{img_title}" />
+"""
+            
+            rag_context += """
+        <div style="color: #d1d1d6; line-height: 1.6;">
+"""
+            
+            # Add description
             if img.get('image_description'):
-                rag_context += f"- {img['image_description']}\n"
+                rag_context += f"<p style='margin: 0 0 12px 0;'><strong>Description:</strong> {img['image_description']}</p>"
             
             # Add dimensional profile with ALL 8 dimensions
             all_dims = ['composition_score', 'lighting_score', 'focus_sharpness_score', 
@@ -790,7 +811,7 @@ class QwenAdvisor:
                        'visual_balance_score', 'emotional_impact_score']
             
             if any(img.get(k) is not None for k in all_dims):
-                rag_context += "- Dimensional Profile: "
+                rag_context += "<p style='margin: 0;'><strong>Technical Excellence:</strong> "
                 scores = []
                 
                 dim_labels = {
@@ -811,7 +832,14 @@ class QwenAdvisor:
                 rag_context += ", ".join(scores)
                 if img.get('overall_grade'):
                     rag_context += f" (Grade: {img['overall_grade']})"
-                rag_context += "\n"
+                rag_context += "</p>"
+            
+            rag_context += """
+        </div>
+    </div>
+</div>
+"""
+            rag_context += "\n"
         
         if user_dimensions:
             rag_context += "\n**CRITICAL - In your dimensional recommendations:** "
@@ -1178,9 +1206,45 @@ Required JSON Structure:
                         else:
                             title_with_year = ref_title
                         
+                        # Get image URL - construct it from image_path if not already present
+                        ref_image_url = best_ref.get('image_url', '')
+                        if not ref_image_url and best_ref.get('image_path'):
+                            img_filename = os.path.basename(best_ref.get('image_path', ''))
+                            if img_filename:
+                                ref_image_url = f"/api/reference-image/{img_filename}"
+                        
+                        # Build case study box with image
                         reference_citation = f'''
-    <div class="reference-citation">
-      <strong>Case Study:</strong> <em>{title_with_year}</em> — scores {ref_score_val}/10 in {name} (+{best_gap:.0f} point improvement opportunity)
+    <div class="reference-citation" style="
+        background: #2c2c2e; 
+        border-radius: 8px; 
+        padding: 16px; 
+        margin-top: 12px;
+        border-left: 4px solid #30b0c0;
+    ">
+      <h4 style="color: #ffffff; margin: 0 0 12px 0; font-size: 16px;">
+        Case Study: <em>{title_with_year}</em>
+      </h4>'''
+                        
+                        # Add image if available
+                        if ref_image_url:
+                            reference_citation += f'''
+      <img src="{ref_image_url}" style="
+          width: 100%; 
+          max-width: 100%; 
+          height: auto; 
+          border-radius: 6px; 
+          margin-bottom: 12px;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+      " alt="{title_with_year}" />'''
+                        
+                        reference_citation += f'''
+      <div style="color: #d1d1d6; font-size: 14px; line-height: 1.5;">
+        <p style="margin: 0;">
+          <strong>Score:</strong> {ref_score_val}/10 in {name}<br/>
+          <strong>Improvement Opportunity:</strong> +{best_gap:.0f} points
+        </p>
+      </div>
     </div>'''
             
             html += f'''
@@ -1203,243 +1267,6 @@ Required JSON Structure:
   <h2>Overall Grade</h2>
   <p><strong>{overall_score}/10</strong></p>
   <p><strong>Grade Note:</strong> {technical_notes}</p>
-'''
-        
-        # Add reference images carousel if available
-        if reference_images and len(reference_images) > 0:
-            html += '''
-  <h2 style="margin-top: 32px; color: #ffffff;">Reference Images</h2>
-  <p style="color: #d1d1d6; margin-bottom: 16px; font-size: 14px;">Master works that excel in your areas for improvement. Tap to view full size.</p>
-  
-  <div class="reference-carousel" style="
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-    padding: 12px 0;
-  ">
-'''
-            
-            # Add thumbnail cards
-            for i, img in enumerate(reference_images):
-                img_title = img.get('image_title', f'Reference {i+1}')
-                year = img.get('date_taken')
-                photographer = img.get('photographer_name', img.get('artist_name', 'Ansel Adams'))
-                thumbnail = img.get('thumbnail_base64', '')
-                
-                # Format caption with year if available
-                if year and str(year).strip():
-                    title_with_year = f"{img_title} ({year})"
-                else:
-                    title_with_year = img_title
-                
-                html += f'''
-    <div class="reference-item" data-index="{i}" style="
-      width: 100%;
-      cursor: pointer;
-      margin-bottom: 16px;
-    " onclick="openLightbox({i})">
-      <img src="{thumbnail}" style="
-        width: 100%;
-        height: auto;
-        max-width: 100%;
-        object-fit: contain;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        border: 2px solid #5a5a5e;
-        display: block;
-      " alt="{img_title}" />'
-      <div style="margin-top: 8px;">
-        <p style="
-          margin: 0;
-          font-size: 14px;
-          color: #ffffff;
-          line-height: 1.3;
-          text-align: left;
-          font-weight: 500;
-        ">{title_with_year}</p>
-        <p style="
-          margin: 4px 0 0 0;
-          font-size: 12px;
-          color: #98989d;
-          line-height: 1.2;
-          text-align: left;
-        ">{photographer}</p>
-      </div>
-    </div>
-'''
-            
-            html += '''
-  </div>
-  
-  <!-- Hidden full-size images for lazy loading -->
-  <div id="fullsize-images" style="display: none;">
-'''
-            
-            # Add hidden full-size images
-            for i, img in enumerate(reference_images):
-                fullsize = img.get('fullsize_base64', '')
-                html += f'''
-    <img id="fullsize-{i}" data-src="{fullsize}" />
-'''
-            
-            html += '''
-  </div>
-  
-  <!-- Lightbox overlay -->
-  <div id="lightbox" style="
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0,0,0,0.95);
-    z-index: 9999;
-    justify-content: center;
-    align-items: center;
-  ">
-    <button onclick="closeLightbox()" style="
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      background: rgba(255,255,255,0.2);
-      border: none;
-      color: white;
-      font-size: 32px;
-      width: 48px;
-      height: 48px;
-      border-radius: 24px;
-      cursor: pointer;
-      z-index: 10001;
-    ">×</button>
-    
-    <div id="lightbox-container" style="
-      position: relative;
-      width: 100%;
-      height: 100%;
-      display: flex;
-      overflow-x: hidden;
-      touch-action: pan-x;
-    ">
-    </div>
-    
-    <div id="lightbox-dots" style="
-      position: absolute;
-      bottom: 30px;
-      left: 50%;
-      transform: translateX(-50%);
-      display: flex;
-      gap: 8px;
-      z-index: 10001;
-    "></div>
-  </div>
-  
-  <script>
-    let currentIndex = 0;
-    let startX = 0;
-    let isDragging = false;
-    const images = ''' + str([{'title': img.get('image_title', ''), 'year': img.get('date_taken', '')} for img in reference_images]) + ''';
-    
-    function openLightbox(index) {
-      currentIndex = index;
-      const lightbox = document.getElementById('lightbox');
-      lightbox.style.display = 'flex';
-      renderLightbox();
-    }
-    
-    function closeLightbox() {
-      document.getElementById('lightbox').style.display = 'none';
-    }
-    
-    function renderLightbox() {
-      const container = document.getElementById('lightbox-container');
-      container.innerHTML = '';
-      
-      // Lazy load current image
-      const fullsizeImg = document.getElementById('fullsize-' + currentIndex);
-      if (fullsizeImg && !fullsizeImg.src) {
-        fullsizeImg.src = fullsizeImg.getAttribute('data-src');
-      }
-      
-      // Create image wrapper
-      const wrapper = document.createElement('div');
-      wrapper.style.cssText = 'width: 100%; height: 100%; display: flex; justify-content: center; align-items: center; padding: 60px 20px;';
-      
-      const img = document.createElement('img');
-      img.src = fullsizeImg ? fullsizeImg.src : '';
-      img.style.cssText = 'max-width: 100%; max-height: 100%; object-fit: contain;';
-      
-      wrapper.appendChild(img);
-      container.appendChild(wrapper);
-      
-      // Update dots
-      updateDots();
-      
-      // Preload adjacent images
-      if (currentIndex > 0) {
-        const prevImg = document.getElementById('fullsize-' + (currentIndex - 1));
-        if (prevImg && !prevImg.src) {
-          setTimeout(() => { prevImg.src = prevImg.getAttribute('data-src'); }, 100);
-        }
-      }
-      if (currentIndex < images.length - 1) {
-        const nextImg = document.getElementById('fullsize-' + (currentIndex + 1));
-        if (nextImg && !nextImg.src) {
-          setTimeout(() => { nextImg.src = nextImg.getAttribute('data-src'); }, 100);
-        }
-      }
-    }
-    
-    function updateDots() {
-      const dotsContainer = document.getElementById('lightbox-dots');
-      dotsContainer.innerHTML = '';
-      
-      for (let i = 0; i < images.length; i++) {
-        const dot = document.createElement('div');
-        dot.style.cssText = 'width: 8px; height: 8px; border-radius: 4px; background: ' + 
-          (i === currentIndex ? 'white' : 'rgba(255,255,255,0.4)') + '; cursor: pointer;';
-        dot.onclick = () => { currentIndex = i; renderLightbox(); };
-        dotsContainer.appendChild(dot);
-      }
-    }
-    
-    // Touch swipe handlers
-    const container = document.getElementById('lightbox-container');
-    container.addEventListener('touchstart', (e) => {
-      startX = e.touches[0].clientX;
-      isDragging = true;
-    });
-    
-    container.addEventListener('touchmove', (e) => {
-      if (!isDragging) return;
-      e.preventDefault();
-    });
-    
-    container.addEventListener('touchend', (e) => {
-      if (!isDragging) return;
-      isDragging = false;
-      
-      const endX = e.changedTouches[0].clientX;
-      const diff = startX - endX;
-      
-      if (Math.abs(diff) > 50) {
-        if (diff > 0 && currentIndex < images.length - 1) {
-          currentIndex++;
-          renderLightbox();
-        } else if (diff < 0 && currentIndex > 0) {
-          currentIndex--;
-          renderLightbox();
-        }
-      }
-    });
-    
-    // Close on background click
-    document.getElementById('lightbox').addEventListener('click', (e) => {
-      if (e.target.id === 'lightbox') {
-        closeLightbox();
-      }
-    });
-  </script>
 '''
         
         html += '''
