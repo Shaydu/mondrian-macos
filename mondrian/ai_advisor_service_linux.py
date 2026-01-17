@@ -551,7 +551,88 @@ class QwenAdvisor:
             logger.error(f"Failed to retrieve user dimensional profile: {e}")
             return None
     
-    def _augment_prompt_with_rag_context(self, prompt: str, advisor_id: str, user_dimensions: Dict[str, float] = None) -> str:
+    def _get_images_with_embedding_retrieval(self, advisor_id: str, user_image_path: str, 
+                                              weak_dimensions: List[str] = None, 
+                                              user_scores: Dict[str, float] = None,
+                                              max_images: int = 4) -> List[Dict[str, Any]]:
+        """
+        Retrieve reference images using CLIP visual embeddings for semantic similarity.
+        Falls back to score-based retrieval if embeddings are not available.
+        
+        Args:
+            advisor_id: Advisor to search
+            user_image_path: Path to user's image for visual similarity
+            weak_dimensions: User's weak dimensions for filtering
+            user_scores: User's dimensional scores for gap calculation
+            max_images: Maximum number of images to return
+            
+        Returns:
+            List of reference images with base64 encoded thumbnails
+        """
+        try:
+            # Try embedding-based retrieval first
+            from mondrian.embedding_retrieval import get_images_hybrid_retrieval, get_similar_images_by_visual_embedding
+            
+            if user_scores and weak_dimensions:
+                # Hybrid retrieval: visual similarity + dimensional gaps
+                logger.info("Using hybrid embedding retrieval (visual + gap scores)")
+                results = get_images_hybrid_retrieval(
+                    DB_PATH, user_image_path, advisor_id,
+                    weak_dimensions, user_scores, top_k=max_images
+                )
+            else:
+                # Pure visual similarity
+                logger.info("Using visual embedding retrieval")
+                results = get_similar_images_by_visual_embedding(
+                    DB_PATH, user_image_path, advisor_id,
+                    weak_dimensions, top_k=max_images
+                )
+            
+            if not results:
+                logger.info("No embedding results, falling back to score-based retrieval")
+                return self._get_images_for_weak_dimensions(advisor_id, weak_dimensions, max_images)
+            
+            # Encode images as base64 (same as other retrieval methods)
+            encoded_results = []
+            for img in results:
+                image_path = img.get('image_path')
+                if image_path and os.path.exists(image_path):
+                    try:
+                        pil_img = Image.open(image_path)
+                        
+                        # Create thumbnail (200px width)
+                        thumb = pil_img.copy()
+                        thumb.thumbnail((200, 200 * 10), Image.Resampling.LANCZOS)
+                        thumb_buffer = io.BytesIO()
+                        thumb.save(thumb_buffer, format='JPEG', quality=85)
+                        thumb_base64 = base64.b64encode(thumb_buffer.getvalue()).decode('utf-8')
+                        img['thumbnail_base64'] = f"data:image/jpeg;base64,{thumb_base64}"
+                        
+                        # Create fullsize (max 1200px width)
+                        full = pil_img.copy()
+                        if full.width > 1200:
+                            full.thumbnail((1200, 1200 * 10), Image.Resampling.LANCZOS)
+                        full_buffer = io.BytesIO()
+                        full.save(full_buffer, format='JPEG', quality=90)
+                        full_base64 = base64.b64encode(full_buffer.getvalue()).decode('utf-8')
+                        img['fullsize_base64'] = f"data:image/jpeg;base64,{full_base64}"
+                        
+                        encoded_results.append(img)
+                    except Exception as e:
+                        logger.warning(f"Failed to encode image {image_path}: {e}")
+            
+            logger.info(f"Retrieved {len(encoded_results)} images via embedding retrieval")
+            return encoded_results
+            
+        except ImportError as e:
+            logger.warning(f"Embedding retrieval not available: {e}")
+            logger.info("Falling back to score-based retrieval")
+            return self._get_images_for_weak_dimensions(advisor_id, weak_dimensions, max_images)
+        except Exception as e:
+            logger.error(f"Embedding retrieval failed: {e}")
+            return self._get_images_for_weak_dimensions(advisor_id, weak_dimensions, max_images)
+    
+    def _augment_prompt_with_rag_context(self, prompt: str, advisor_id: str, user_dimensions: Dict[str, float] = None, user_image_path: str = None) -> str:
         """
         Augment the prompt with RAG context from reference images.
         If user_dimensions are provided, finds images that excel in the user's weakest areas.
@@ -581,8 +662,15 @@ class QwenAdvisor:
             
             logger.info(f"User's weakest dimensions: {weak_dimensions}")
             
-            # Get images that excel in these weak areas
-            reference_images = self._get_images_for_weak_dimensions(advisor_id, weak_dimensions, max_images=4)
+            # Try embedding-based retrieval if user image path is available
+            if user_image_path:
+                logger.info("Using embedding-based retrieval for visually similar references")
+                reference_images = self._get_images_with_embedding_retrieval(
+                    advisor_id, user_image_path, weak_dimensions, user_dimensions, max_images=4
+                )
+            else:
+                # Fall back to score-based retrieval
+                reference_images = self._get_images_for_weak_dimensions(advisor_id, weak_dimensions, max_images=4)
             
             if not reference_images:
                 logger.info("No targeted reference images found for weak dimensions - skipping RAG augmentation")
@@ -591,11 +679,25 @@ class QwenAdvisor:
             # Build targeted RAG context
             rag_context = "\n\n### TARGETED REFERENCE IMAGES FOR IMPROVEMENT:\n"
             rag_context += f"Based on the analysis, here are reference images that excel in the weakest areas ({', '.join(weak_dimensions)}).\n"
-            rag_context += "Study how these master works demonstrate excellence in the dimensions where improvement is most needed.\n"
+            
+            # Add note about visual similarity if embedding retrieval was used
+            if user_image_path and any('visual_similarity' in img or 'hybrid_score' in img for img in reference_images):
+                rag_context += "These images are also visually similar to your photograph, making them excellent study references.\n"
+            else:
+                rag_context += "Study how these master works demonstrate excellence in the dimensions where improvement is most needed.\n"
             
         else:
-            # No user dimensions yet - use general top-rated references
-            reference_images = self._get_similar_images_from_db(advisor_id, top_k=3)
+            # No user dimensions yet - try visual embedding retrieval first
+            if user_image_path:
+                logger.info("Using visual embedding retrieval for first-time analysis")
+                reference_images = self._get_images_with_embedding_retrieval(
+                    advisor_id, user_image_path, weak_dimensions=None, 
+                    user_scores=None, max_images=3
+                )
+            
+            # Fall back to score-based if no embedding results
+            if not reference_images:
+                reference_images = self._get_similar_images_from_db(advisor_id, top_k=3)
             
             if not reference_images:
                 logger.info("No similar images found for RAG context, using original prompt")
@@ -603,7 +705,10 @@ class QwenAdvisor:
             
             # Build RAG context with reference image names and dimensional comparisons
             rag_context = "\n\n### REFERENCE IMAGES FOR COMPARATIVE ANALYSIS:\n"
-            rag_context += "These master works from the advisor's portfolio provide dimensional benchmarks.\n"
+            if user_image_path and any('visual_similarity' in img for img in reference_images):
+                rag_context += "These master works are visually similar to your photograph and provide dimensional benchmarks.\n"
+            else:
+                rag_context += "These master works from the advisor's portfolio provide dimensional benchmarks.\n"
         
         # Add reference image details with ALL 8 dimensions
         for i, img in enumerate(reference_images, 1):
@@ -654,12 +759,16 @@ class QwenAdvisor:
                 rag_context += "\n"
         
         if user_dimensions:
-            rag_context += "\n**CRITICAL - In your dimensional recommendations:** You MUST cite these reference images by their exact title when providing improvement guidance. "
+            rag_context += "\n**CRITICAL - In your dimensional recommendations:** "
+            rag_context += "**ALL OUTPUT MUST BE IN ENGLISH ONLY.** "
+            rag_context += "You MUST cite these reference images by their exact title when providing improvement guidance. "
             rag_context += "For each dimension's recommendation, reference specific images like: 'Increase contrast by shooting in brighter light like Moon and Half Dome, Yosemite National Park (1960)'. "
             rag_context += "Explain how each reference demonstrates mastery in the specific dimensions where the user has the widest gaps. "
             rag_context += "Calculate dimensional deltas and provide actionable guidance on how to close those gaps.\n"
         else:
-            rag_context += "\n**CRITICAL - In your dimensional recommendations:** You MUST cite these reference images by their exact title when providing improvement guidance. "
+            rag_context += "\n**CRITICAL - In your dimensional recommendations:** "
+            rag_context += "**ALL OUTPUT MUST BE IN ENGLISH ONLY.** "
+            rag_context += "You MUST cite these reference images by their exact title when providing improvement guidance. "
             rag_context += "When analyzing the user's image, compare their dimensional scores to these references. "
             rag_context += "For each dimension's recommendation, cite specific reference images like: 'Improve lighting by studying the zone system technique in Old Faithful Geyser (1944)'. "
             rag_context += "Calculate the delta (difference) for each dimension and cite which reference image demonstrates the best practice for areas needing improvement.\n"
@@ -699,11 +808,15 @@ class QwenAdvisor:
                 # Try to get user's existing dimensional profile for gap-based RAG
                 user_dims = self._get_user_dimensional_profile(image_path)
                 if user_dims:
-                    logger.info("Using gap-based RAG with user's existing dimensional profile")
-                    prompt, reference_images = self._augment_prompt_with_rag_context(prompt, advisor, user_dimensions=user_dims)
+                    logger.info("Using gap-based RAG with user's existing dimensional profile and visual embeddings")
+                    prompt, reference_images = self._augment_prompt_with_rag_context(
+                        prompt, advisor, user_dimensions=user_dims, user_image_path=image_path
+                    )
                 else:
-                    logger.info("No existing user profile found, using standard RAG")
-                    prompt, reference_images = self._augment_prompt_with_rag_context(prompt, advisor)
+                    logger.info("No existing user profile found, using standard RAG with visual embeddings")
+                    prompt, reference_images = self._augment_prompt_with_rag_context(
+                        prompt, advisor, user_image_path=image_path
+                    )
             
             # Use chat template for proper image token handling
             messages = [
@@ -736,11 +849,9 @@ class QwenAdvisor:
             with torch.no_grad():
                 output_ids = self.model.generate(
                     **inputs, 
-                    max_new_tokens=4096,
+                    max_new_tokens=1200,
                     repetition_penalty=1.0,
-                    do_sample=True,
-                    temperature=0.3,
-                    top_p=0.95,
+                    do_sample=False,
                     eos_token_id=self.processor.tokenizer.eos_token_id
                 )
             
@@ -797,7 +908,7 @@ class QwenAdvisor:
     
     def _get_default_system_prompt(self) -> str:
         """Fallback system prompt if database is unavailable"""
-        return """You are a photography analysis assistant. Output valid JSON only.
+        return """You are a photography analysis assistant. **ALL OUTPUT MUST BE IN ENGLISH ONLY.** Output valid JSON only.
 Required JSON Structure:
 {
   "image_description": "2-3 sentence description",
@@ -925,12 +1036,12 @@ Required JSON Structure:
         .reference-citation {{
             margin-top: 12px;
             padding: 10px 12px;
-            background: #fff8e1;
-            border-left: 4px solid #ffc107;
+            background: #d1d1d6;
+            border-left: 4px solid #5a5a5e;
             border-radius: 4px;
             font-size: 14px;
         }}
-        .reference-citation strong {{ color: #f57c00; }}
+        .reference-citation strong {{ color: #333333; }}
     </style>
 </head>
 <body>
@@ -1009,7 +1120,7 @@ Required JSON Structure:
                         
                         reference_citation = f'''
     <div class="reference-citation">
-      <strong>📷 Study:</strong> <em>{title_with_year}</em> — scores {ref_score_val}/10 in {name} (+{best_gap:.0f} point improvement opportunity)
+      <strong>Case Study:</strong> <em>{title_with_year}</em> — scores {ref_score_val}/10 in {name} (+{best_gap:.0f} point improvement opportunity)
     </div>'''
             
             html += f'''
@@ -1022,7 +1133,7 @@ Required JSON Structure:
       <p>{comment}</p>
     </div>
     <div class="feedback-recommendation">
-      <strong>💡 How to Improve:</strong>
+      <strong>How to Improve:</strong>
       <p>{recommendation}</p>
     </div>{reference_citation}
   </div>
@@ -1037,16 +1148,14 @@ Required JSON Structure:
         # Add reference images carousel if available
         if reference_images and len(reference_images) > 0:
             html += '''
-  <h2 style="margin-top: 32px;">Reference Images for Improvement</h2>
-  <p style="color: #666; margin-bottom: 16px; font-size: 14px;">Master works that excel in your areas for improvement. Tap to view full size.</p>
+  <h2 style="margin-top: 32px; color: #ffffff;">Reference Images</h2>
+  <p style="color: #d1d1d6; margin-bottom: 16px; font-size: 14px;">Master works that excel in your areas for improvement. Tap to view full size.</p>
   
   <div class="reference-carousel" style="
     display: flex;
-    overflow-x: auto;
-    gap: 16px;
+    flex-direction: column;
+    gap: 24px;
     padding: 12px 0;
-    -webkit-overflow-scrolling: touch;
-    scroll-snap-type: x mandatory;
   ">
 '''
             
@@ -1054,33 +1163,47 @@ Required JSON Structure:
             for i, img in enumerate(reference_images):
                 img_title = img.get('image_title', f'Reference {i+1}')
                 year = img.get('date_taken')
+                photographer = img.get('photographer_name', img.get('artist_name', 'Ansel Adams'))
                 thumbnail = img.get('thumbnail_base64', '')
                 
                 # Format caption with year if available
                 if year and str(year).strip():
-                    caption = f"{img_title} ({year})"
+                    title_with_year = f"{img_title} ({year})"
                 else:
-                    caption = img_title
+                    title_with_year = img_title
                 
                 html += f'''
     <div class="reference-item" data-index="{i}" style="
-      flex: 0 0 200px;
-      scroll-snap-align: start;
+      width: 100%;
       cursor: pointer;
     " onclick="openLightbox({i})">
       <img src="{thumbnail}" style="
-        width: 200px;
+        width: 100%;
         height: auto;
+        max-height: 400px;
+        object-fit: cover;
         border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+        border: 2px solid #5a5a5e;
+        display: block;
       " />
-      <p style="
-        margin: 8px 0 0 0;
-        font-size: 13px;
-        color: #333;
-        line-height: 1.3;
-        text-align: center;
-      ">{caption}</p>
+      <div style="margin-top: 8px;">
+        <p style="
+          margin: 0;
+          font-size: 14px;
+          color: #ffffff;
+          line-height: 1.3;
+          text-align: left;
+          font-weight: 500;
+        ">{title_with_year}</p>
+        <p style="
+          margin: 4px 0 0 0;
+          font-size: 12px;
+          color: #98989d;
+          line-height: 1.2;
+          text-align: left;
+        ">{photographer}</p>
+      </div>
     </div>
 '''
             
