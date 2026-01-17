@@ -1210,20 +1210,46 @@ Required JSON Structure:
                 db_column = dimension_to_column.get(dim_key)
                 
                 if db_column:
-                    # Find reference image with highest score in this dimension
+                    # First, try to extract the image title from the recommendation text
                     best_ref = None
                     best_gap = 0
                     
-                    for ref in reference_images:
-                        ref_score = ref.get(db_column)
-                        if ref_score is not None:
-                            gap = ref_score - score
-                            if gap > best_gap and ref_score >= 8.0:
-                                best_gap = gap
-                                best_ref = ref
+                    # Parse recommendation text for referenced image title (e.g., "Old Faithful Geyser (1944)")
+                    # Pattern: "Study ... in <Image Title> (<Year>)"
+                    import re
+                    image_refs = re.findall(r'(?:in|by|studying)\s+([A-Z][^(]+)\s*\((\d{4})\)', recommendation)
                     
-                    # Only show citation if gap is meaningful (>= 2 points)
-                    if best_ref and best_gap >= 2:
+                    if image_refs:
+                        # Try to match the first referenced image in the recommendation
+                        ref_title_from_text, ref_year_from_text = image_refs[0]
+                        ref_title_from_text = ref_title_from_text.strip()
+                        
+                        # Look for exact match in reference images
+                        for ref in reference_images:
+                            ref_img_title = ref.get('image_title', '').strip()
+                            ref_img_year = str(ref.get('date_taken', '')).strip()
+                            
+                            # Check for title match (flexible matching)
+                            if (ref_title_from_text.lower() in ref_img_title.lower() or 
+                                ref_img_title.lower() in ref_title_from_text.lower()):
+                                # Year match is a bonus but not required
+                                if ref_img_year == ref_year_from_text:
+                                    best_ref = ref
+                                    best_gap = 0  # Found exact recommendation match
+                                    break
+                    
+                    # If no exact match from recommendation text, find best image by score gap
+                    if not best_ref:
+                        for ref in reference_images:
+                            ref_score = ref.get(db_column)
+                            if ref_score is not None:
+                                gap = ref_score - score
+                                if gap > best_gap and ref_score >= 8.0:
+                                    best_gap = gap
+                                    best_ref = ref
+                    
+                    # Only show citation if gap is meaningful (>= 2 points) or we found a referenced image
+                    if best_ref and (best_gap >= 2 or image_refs):
                         ref_title = best_ref.get('image_title', 'Reference Image')
                         ref_year = best_ref.get('date_taken', '')
                         ref_score_val = best_ref.get(db_column, 0)
@@ -1234,12 +1260,20 @@ Required JSON Structure:
                         else:
                             title_with_year = ref_title
                         
-                        # Get image URL - construct it from image_path if not already present
-                        ref_image_url = best_ref.get('image_url', '')
-                        if not ref_image_url and best_ref.get('image_path'):
-                            img_filename = os.path.basename(best_ref.get('image_path', ''))
-                            if img_filename:
-                                ref_image_url = f"/api/reference-image/{img_filename}"
+                        # Get image data and convert to base64 for embedding
+                        ref_image_url = ''
+                        if best_ref.get('image_path') and os.path.exists(best_ref.get('image_path')):
+                            try:
+                                image_path = best_ref.get('image_path')
+                                with open(image_path, 'rb') as img_file:
+                                    image_data = img_file.read()
+                                    b64_image = base64.b64encode(image_data).decode('utf-8')
+                                    # Determine MIME type based on file extension
+                                    img_ext = os.path.splitext(image_path)[1].lower()
+                                    mime_type = 'image/png' if img_ext == '.png' else 'image/jpeg' if img_ext in ['.jpg', '.jpeg'] else 'image/png'
+                                    ref_image_url = f"data:{mime_type};base64,{b64_image}"
+                            except Exception as e:
+                                logger.warning(f"Failed to embed image as base64: {e}")
                         
                         # Build case study box with image
                         reference_citation = '<div class="reference-citation"><div class="case-study-box">'

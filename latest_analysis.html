@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+            padding: 20px;
+            background: #000000;
+            line-height: 1.6;
+            color: #ffffff;
+            max-width: 100%;
+        }
+        @media (max-width: 768px) { body { padding: 15px; } .analysis { padding: 15px; } }
+        @media (max-width: 375px) { body { padding: 10px; font-size: 14px; } .analysis { padding: 12px; } }
+        @media (min-width: 1024px) { body { max-width: 800px; margin: 0 auto; padding: 30px; } }
+        .analysis {
+            background: #1c1c1e;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        .analysis h2 {
+            color: #ffffff;
+            font-size: 22px;
+            font-weight: 600;
+            margin: 0 0 12px 0;
+            text-align: left;
+        }
+        .analysis p {
+            color: #d1d1d6;
+            font-size: 16px;
+            margin: 0 0 16px 0;
+            line-height: 1.6;
+            text-align: left;
+        }
+        .feedback-card {
+            background: #fff;
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .feedback-card h3 {
+            margin-top: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            color: #333;
+        }
+        .feedback-comment {
+            margin: 15px 0;
+            padding: 12px;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+        .feedback-comment p { margin: 0; line-height: 1.6; color: #333; }
+        .feedback-recommendation {
+            margin-top: 15px;
+            padding: 12px;
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
+            border-radius: 4px;
+        }
+        .feedback-recommendation strong {
+            display: block;
+            margin-bottom: 8px;
+            color: #1976d2;
+        }
+        .feedback-recommendation p { margin: 0; line-height: 1.6; color: #333; }
+        .reference-citation {
+            margin-top: 16px;
+            padding: 0;
+            background: transparent;
+            border: none;
+            border-radius: 0;
+            font-size: 14px;
+        }
+        .reference-citation .case-study-box {
+            background: #2c2c2e;
+            border-radius: 8px;
+            padding: 16px;
+            border-left: 4px solid #30b0c0;
+            overflow: hidden;
+        }
+        .reference-citation .case-study-image {
+            width: 100%;
+            height: auto;
+            max-width: 100%;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            display: block;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+        .reference-citation .case-study-title {
+            color: #ffffff;
+            font-size: 16px;
+            margin: 0 0 12px 0;
+            font-weight: 600;
+        }
+        .reference-citation .case-study-metadata {
+            color: #d1d1d6;
+            font-size: 13px;
+            line-height: 1.5;
+            margin: 8px 0 0 0;
+        }
+        .reference-citation strong { color: #30b0c0; }
+    </style>
+</head>
+<body>
+<div class="advisor-section" data-advisor="ansel">
+  <div class="analysis">
+  <h2>Description</h2>
+  <p>A dramatic coastal scene at sunset, with the sun low on the horizon casting golden light across rippling water, framed by a rocky shoreline on the right and a dark mountain range in the distance under a vast, textured sky.</p>
+
+  <h2>Improvement Guide</h2>
+  <p style="color: #666; margin-bottom: 20px;">Each dimension is analyzed with specific feedback and actionable recommendations for improvement.</p>
+
+  <div class="feedback-card">
+    <h3>
+      <span>Composition</span>
+      <span style="color: #388e3c; font-size: 1.1em;">8/10 <span style="font-size: 0.7em; font-weight: normal;">(Excellent)</span></span>
+    </h3>
+    <div class="feedback-comment" style="border-left: 4px solid #388e3c;">
+      <p>The image uses strong leading lines from the shoreline and the mountain range to draw the eye toward the sun, creating a sense of depth and scale. The rocky foreground adds texture and anchors the composition.</p>
+    </div>
+    <div class="feedback-recommendation">
+      <strong>How to Improve:</strong>
+      <p>Study the compositional layering in Adams The Tetons and the Snake River (1942) to enhance foreground-to-background relationships. Use the rule of thirds to balance the horizon and sky, ensuring the sun remains a focal point.</p>
+    </div><div class="reference-citation"><div class="case-study-box"><div class="case-study-title">Case Study: Old Faithful Geyser (1944)</div><img src="/api/reference-image/ansel-old-faithful-geyser-1944.png" alt="Old Faithful Geyser (1944)" class="case-study-image" /><div class="case-study-metadata"><strong>Description:</strong> A black-and-white photograph captures a geyser erupting in the Yellowstone National Park, with a dramatic explosion of white water against a dark, starry sky.<br/><strong>Score:</strong> 10.0/10 in Composition</div></div></div>
+  </div>
+
+  <div class="feedback-card">
+    <h3>
+      <span>Lighting</span>
+      <span style="color: #f57c00; font-size: 1.1em;">7/10 <span style="font-size: 0.7em; font-weight: normal;">(Good)</span></span>
+    </h3>
+    <div class="feedback-comment" style="border-left: 4px solid #f57c00;">
+      <p>The golden hour lighting is effective, creating a warm glow on the water and sky. However, the contrast between the bright sun and darker clouds could be more controlled to preserve detail in the shadows.</p>
+    </div>
+    <div class="feedback-recommendation">
+      <strong>How to Improve:</strong>
+      <p>Improve lighting by studying the zone system technique in Old Faithful Geyser (1944) to balance highlights and shadows. Use graduated neutral density filters to control exposure and retain detail in the brightest areas.</p>
+    </div><div class="reference-citation"><div class="case-study-box"><div class="case-study-title">Case Study: Old Faithful Geyser (1944)</div><img src="/api/reference-image/ansel-old-faithful-geyser-1944.png" alt="Old Faithful Geyser (1944)" class="case-study-image" /><div class="case-study-metadata"><strong>Description:</strong> A black-and-white photograph captures a geyser erupting in the Yellowstone National Park, with a dramatic explosion of white water against a dark, starry sky.<br/><strong>Score:</strong> 10.0/10 in Lighting</div></div></div>
+  </div>
+
+  <div class="feedback-card">
+    <h3>
+      <span>Focus & Sharpness</span>
+      <span style="color: #388e3c; font-size: 1.1em;">9/10 <span style="font-size: 0.7em; font-weight: normal;">(Excellent)</span></span>
+    </h3>
+    <div class="feedback-comment" style="border-left: 4px solid #388e3c;">
+      <p>The image is sharp, with clear texture in the rocks and fine detail in the water ripples. The focus is well-placed, capturing the interplay between light and surface texture.</p>
+    </div>
+    <div class="feedback-recommendation">
+      <strong>How to Improve:</strong>
+      <p>Maintain sharpness by using a tripod and small aperture (f/11 or higher) to ensure depth of field. Consider using a higher resolution sensor to capture more detail in the foreground rocks.</p>
+    </div>
+  </div>
+
+  <div class="feedback-card">
+    <h3>
+      <span>Color Harmony</span>
+      <span style="color: #f57c00; font-size: 1.1em;">6/10 <span style="font-size: 0.7em; font-weight: normal;">(Good)</span></span>
+    </h3>
+    <div class="feedback-comment" style="border-left: 4px solid #f57c00;">
+      <p>The color palette is dominated by cool blues and grays, with warm golden tones from the sun. However, the contrast between the sky and water is somewhat flat, reducing visual interest.</p>
+    </div>
+    <div class="feedback-recommendation">
+      <strong>How to Improve:</strong>
+      <p>Enhance color harmony by studying the tonal balance in Moon and Half Dome, Yosemite National Park (1960). Adjust white balance to deepen the blues and enhance the golden glow for greater contrast and emotional impact.</p>
+    </div><div class="reference-citation"><div class="case-study-box"><div class="case-study-title">Case Study: Old Faithful Geyser (1944)</div><img src="/api/reference-image/ansel-old-faithful-geyser-1944.png" alt="Old Faithful Geyser (1944)" class="case-study-image" /><div class="case-study-metadata"><strong>Description:</strong> A black-and-white photograph captures a geyser erupting in the Yellowstone National Park, with a dramatic explosion of white water against a dark, starry sky.<br/><strong>Score:</strong> 10.0/10 in Color Harmony</div></div></div>
+  </div>
+
+  <div class="feedback-card">
+    <h3>
+      <span>Depth & Perspective</span>
+      <span style="color: #f57c00; font-size: 1.1em;">7/10 <span style="font-size: 0.7em; font-weight: normal;">(Good)</span></span>
+    </h3>
+    <div class="feedback-comment" style="border-left: 4px solid #f57c00;">
+      <p>The perspective is strong, with the shoreline and mountain range creating depth. The viewer is positioned to feel immersed in the scene, with the sun acting as a natural focal point.</p>
+    </div>
+    <div class="feedback-recommendation">
+      <strong>How to Improve:</strong>
+      <p>Enhance depth by studying the layered perspective in Adams The Tetons and the Snake River (1942). Use foreground elements to create leading lines and guide the eye toward the distant horizon.</p>
+    </div><div class="reference-citation"><div class="case-study-box"><div class="case-study-title">Case Study: Old Faithful Geyser (1944)</div><img src="/api/reference-image/ansel-old-faithful-geyser-1944.png" alt="Old Faithful Geyser (1944)" class="case-study-image" /><div class="case-study-metadata"><strong>Description:</strong> A black-and-white photograph captures a geyser erupting in the Yellowstone National Park, with a dramatic explosion of white water against a dark, starry sky.<br/><strong>Score:</strong> 10.0/10 in Depth & Perspective</div></div></div>
+  </div>
+
+  <div class="feedback-card">
+    <h3>
+      <span>Visual Balance</span>
+      <span style="color: #388e3c; font-size: 1.1em;">8/10 <span style="font-size: 0.7em; font-weight: normal;">(Excellent)</span></span>
+    </h3>
+    <div class="feedback-comment" style="border-left: 4px solid #388e3c;">
+      <p>The image is well-balanced, with the rocky foreground on the right and the expansive sky and water on the left. The sun provides a strong visual anchor.</p>
+    </div>
+    <div class="feedback-recommendation">
+      <strong>How to Improve:</strong>
+      <p>Improve balance by studying the visual weight distribution in Moon and Half Dome, Yosemite National Park (1960). Adjust the placement of the sun to create a more dynamic tension between foreground and background elements.</p>
+    </div><div class="reference-citation"><div class="case-study-box"><div class="case-study-title">Case Study: Old Faithful Geyser (1944)</div><img src="/api/reference-image/ansel-old-faithful-geyser-1944.png" alt="Old Faithful Geyser (1944)" class="case-study-image" /><div class="case-study-metadata"><strong>Description:</strong> A black-and-white photograph captures a geyser erupting in the Yellowstone National Park, with a dramatic explosion of white water against a dark, starry sky.<br/><strong>Score:</strong> 10.0/10 in Visual Balance</div></div></div>
+  </div>
+
+  <div class="feedback-card">
+    <h3>
+      <span>Emotional Impact</span>
+      <span style="color: #f57c00; font-size: 1.1em;">7/10 <span style="font-size: 0.7em; font-weight: normal;">(Good)</span></span>
+    </h3>
+    <div class="feedback-comment" style="border-left: 4px solid #f57c00;">
+      <p>The image evokes a sense of tranquility and awe, with the vastness of the sky and water creating a feeling of solitude. The golden light adds warmth and emotional resonance.</p>
+    </div>
+    <div class="feedback-recommendation">
+      <strong>How to Improve:</strong>
+      <p>Strengthen emotional impact by studying the dramatic atmosphere in Old Faithful Geyser (1944). Use the sun's position to create a sense of time and place, enhancing the viewer's emotional connection to the moment.</p>
+    </div><div class="reference-citation"><div class="case-study-box"><div class="case-study-title">Case Study: Old Faithful Geyser (1944)</div><img src="/api/reference-image/ansel-old-faithful-geyser-1944.png" alt="Old Faithful Geyser (1944)" class="case-study-image" /><div class="case-study-metadata"><strong>Description:</strong> A black-and-white photograph captures a geyser erupting in the Yellowstone National Park, with a dramatic explosion of white water against a dark, starry sky.<br/><strong>Score:</strong> 10.0/10 in Emotional Impact</div></div></div>
+  </div>
+
+  <h2>Overall Grade</h2>
+  <p><strong>7.4/10</strong></p>
+  <p><strong>Grade Note:</strong> The image is well-exposed with good dynamic range. Consider using a tripod for sharper images and adjusting white balance for better color rendering.</p>
+
+</div>
+</div>
+</body>
+</html>
