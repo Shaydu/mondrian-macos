@@ -3440,3 +3440,366 @@ ModuleNotFoundError: No module named 'bs4'
 
 ====================================================================================================
 127.0.0.1 - - [16/Jan/2026 10:41:48] "GET /health HTTP/1.1" 200 -
+10.0.0.131 - - [16/Jan/2026 12:08:35] "GET /health HTTP/1.1" 200 -
+10.0.0.131 - - [16/Jan/2026 12:11:01] "GET /stream/test-job-id HTTP/1.1" 200 -
+10.0.0.131 - - [16/Jan/2026 12:25:27] "GET /advisors HTTP/1.1" 200 -
+10.0.0.131 - - [16/Jan/2026 12:27:43] "GET /stream/test-job-id HTTP/1.1" 200 -
+10.0.0.131 - - [16/Jan/2026 12:42:43] "GET /advisors HTTP/1.1" 200 -
+10.0.0.131 - - [16/Jan/2026 12:43:00] "[33mGET /advisor/random HTTP/1.1[0m" 404 -
+10.0.0.131 - - [16/Jan/2026 13:19:24] "GET /advisors HTTP/1.1" 200 -
+10.0.0.131 - - [16/Jan/2026 13:20:45] "[35m[1mPOST /upload HTTP/1.1[0m" 201 -
+10.0.0.131 - - [16/Jan/2026 13:20:45] "GET /stream/5e857816-1555-4e8a-9e06-90e82e781ce7%20(rag) HTTP/1.1" 200 -
+10.0.0.131 - - [16/Jan/2026 13:20:45] "GET /status/5e857816-1555-4e8a-9e06-90e82e781ce7%20(rag) HTTP/1.1" 200 -
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /stream/test-job-id
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /stream/test-job-id
+
+
+====================================================================================================
+[API REQUEST] GET /advisors
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /advisors
+
+
+====================================================================================================
+[API REQUEST] GET /stream/test-job-id
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /stream/test-job-id
+
+
+====================================================================================================
+[API REQUEST] GET /advisors
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /advisors
+
+
+====================================================================================================
+[API REQUEST] GET /advisor/random
+[API REQUEST] No parameters
+====================================================================================================
+
+[DEBUG] /advisor/<advisor_id> called with advisor_id: 'random' and DB_PATH: /Users/shaydu/dev/mondrian-macos/mondrian/mondrian.db
+[DEBUG] direct SQL raw_row: None
+[DEBUG] get_advisor_from_db called with db_path=/Users/shaydu/dev/mondrian-macos/mondrian/mondrian.db, advisor_id=random
+[DEBUG] raw row fetched for advisor_id=random: None (cols: ['id', 'name', 'bio', 'years', 'prompt', 'focus_areas', 'category', 'wikipedia_url', 'commons_url', 'prompt_type'])
+[DEBUG] advisor_info returned: None
+[API RESPONSE] ❌ 404 GET /advisor/random
+
+
+====================================================================================================
+[API REQUEST] GET /advisors
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /advisors
+
+
+====================================================================================================
+[API REQUEST] POST /upload
+[API REQUEST] Form: {'advisor': '<str>'} | Files: {'image': '<photo-300A07EB-C7DE-41E5-8748-0750E3E1FE3A.jpg>'}
+====================================================================================================
+
+[UPLOAD] enable_rag parameter not provided, using env var default: True
+[UPLOAD] ✓ Final enable_rag value: True (will be stored in database and passed to AI service)
+[UPLOAD] Mode derived from enable_rag: 'rag'
+[UPLOAD] ✓ Final mode value: rag (will be stored in database and passed to AI service)
+[UPLOAD] ========== JOB QUEUED ==========
+[UPLOAD] Job ID: 5e857816-1555-4e8a-9e06-90e82e781ce7
+[UPLOAD] Mode: rag
+[UPLOAD] Enable RAG: True
+[UPLOAD] Advisors: ['ansel']
+[UPLOAD] =====================================
+[API RESPONSE] ✅ 201 POST /upload
+
+
+================================================================================
+[JOB] ========== PROCESS_JOB STARTED ==========
+[JOB] Job ID: 5e857816-1555-4e8a-9e06-90e82e781ce7
+[JOB] Filename: photo-300A07EB-C7DE-41E5-8748-0750E3E1FE3A-8529732f.jpg
+[JOB] Advisors: ['ansel']
+[JOB] Mode: rag
+[JOB] Enable RAG: True
+[JOB] Host URL: http://10.0.0.131:5005
+[JOB] Flow: RAG + DEFAULT MODEL
+[JOB] ====================================
+================================================================================
+
+[JOB] Setting status to processing for job 5e857816-1555-4e8a-9e06-90e82e781ce7
+[JOB] Checking source path: /Users/shaydu/dev/mondrian-macos/source/photo-300A07EB-C7DE-41E5-8748-0750E3E1FE3A-8529732f.jpg
+
+====================================================================================================
+[API REQUEST] GET /stream/5e857816-1555-4e8a-9e06-90e82e781ce7 (rag)
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /stream/5e857816-1555-4e8a-9e06-90e82e781ce7 (rag)
+
+
+====================================================================================================
+[API REQUEST] GET /status/5e857816-1555-4e8a-9e06-90e82e781ce7 (rag)
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /status/5e857816-1555-4e8a-9e06-90e82e781ce7 (rag)
+
+[INFO] Resized image for display: photo-300A07EB-C7DE-41E5-8748-0750E3E1FE3A-8529732f.jpg (4032x3024 -> 1320x990)
+[JOB] Generated optimized image: /Users/shaydu/dev/mondrian-macos/thumbnails/photo-300A07EB-C7DE-41E5-8748-0750E3E1FE3A-8529732f.jpg
+[DEBUG] get_advisor_from_db called with db_path=/Users/shaydu/dev/mondrian-macos/mondrian/mondrian.db, advisor_id=ansel
+10.0.0.131 - - [16/Jan/2026 13:21:15] "GET /status/5e857816-1555-4e8a-9e06-90e82e781ce7%20(rag) HTTP/1.1" 200 -
+10.0.0.131 - - [16/Jan/2026 13:21:45] "GET /status/5e857816-1555-4e8a-9e06-90e82e781ce7%20(rag) HTTP/1.1" 200 -
+10.0.0.131 - - [16/Jan/2026 13:22:15] "GET /status/5e857816-1555-4e8a-9e06-90e82e781ce7%20(rag) HTTP/1.1" 200 -
+Traceback (most recent call last):
+  File "/Users/shaydu/dev/mondrian-macos/mondrian/job_service_v2.3.py", line 1162, in process_job
+    critical_recs = extract_critical_recommendations(llm_outputs, enable_rag=enable_rag, job_id=job_id)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shaydu/dev/mondrian-macos/mondrian/job_service_v2.3.py", line 3271, in extract_critical_recommendations
+    from bs4 import BeautifulSoup
+ModuleNotFoundError: No module named 'bs4'
+10.0.0.131 - - [16/Jan/2026 13:22:51] "GET /status/5e857816-1555-4e8a-9e06-90e82e781ce7%20(rag) HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jan/2026 05:17:12] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jan/2026 05:17:12] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jan/2026 05:17:17] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jan/2026 05:17:17] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jan/2026 05:17:22] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jan/2026 05:17:22] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jan/2026 05:17:27] "GET /health HTTP/1.1" 200 -
+127.0.0.1 - - [17/Jan/2026 05:17:27] "GET /health HTTP/1.1" 200 -
+10.0.0.152 - - [17/Jan/2026 05:23:35] "GET /advisors HTTP/1.1" 200 -
+[DEBUG] raw row fetched for advisor_id=ansel: ('ansel', 'Ansel Adams', 'Ansel Adams (1902-1984) was an American landscape photographer and environmentalist known for his black-and-white images of the American West, especially Yosemite National Park. He helped found the photography group f/64, developed the Zone System for achieving perfect exposure and tonal range, and was a pioneering advocate for environmental conservation through his art.', '1902-1984', "You are Ansel Adams, master of black-and-white landscape photography. You revolutionized photography through your Zone System, which gave photographers unprecedented control over exposure and tonal range.\n\nYour approach to evaluating an image:\n\n1. **Tonal Range & Zone System** - Analyze the full spectrum from Zone 0 (pure black) to Zone X (pure white). Look for:\n   - Rich blacks with detail in shadows (Zones II-III)\n   - Pure whites that aren't blown out (Zone VIII-IX)\n   - Full midtone gradation (Zones IV-VI)\n   - Proper exposure that preserves detail across the entire tonal range\n\n2. **Composition & Perspective** - Examine the geometric structure:\n   - Leading lines that draw the eye through the frame\n   - Rule of thirds and golden ratio placement\n   - Foreground, midground, and background layering\n   - Balance between elements\n   - Use of natural frames\n\n3. **Technical Excellence** - Assess the craft:\n   - Critical sharpness and focus (f/64 philosophy)\n   - Depth of field appropriate to the subject\n   - Proper exposure (not too dark, not too light)\n   - Clean, well-printed negative equivalent\n\n4. **Light & Shadow** - Evaluate the interplay:\n   - Direction and quality of light\n   - Dramatic use of shadows to create depth\n   - Texture revealed through sidelight\n   - Time of day considerations (golden hour, blue hour)\n\n5. **Emotional Impact** - Consider the feeling:\n   - Sense of scale and majesty\n   - Connection to the natural world\n   - Drama and atmosphere\n   - Timeless quality\n\nWhen providing feedback, be specific and constructive. Reference the Zone System and technical aspects while also addressing the emotional impact. Encourage the photographer to see beyond the literal and capture the feeling of being present in that moment.", '[{"title": "Tonal Range & Zone System", "description": "Master of the full spectrum from pure black to pure white, using his Zone System to achieve perfect exposure and tonal gradation in every image."}, {"title": "Composition & Perspective", "description": "Precise framing that emphasizes geometric elements, leading lines, and careful positioning to create powerful visual impact."}, {"title": "Technical Excellence", "description": "Perfect sharpness, focus, and exposure achieved through large-format cameras and meticulous darkroom work."}, {"title": "Landscape Drama", "description": "Captures the majesty and drama of natural landscapes with emphasis on light, shadow, and texture."}]', 'Photographer', 'https://en.wikipedia.org/wiki/Ansel_Adams', 'https://commons.wikimedia.org/wiki/Category:Ansel_Adams', 'baseline') (cols: ['id', 'name', 'bio', 'years', 'prompt', 'focus_areas', 'category', 'wikipedia_url', 'commons_url', 'prompt_type'])
+[JOB] Calling AI service for advisor ansel: http://127.0.0.1:5100/analyze
+[JOB] ✓ Sending request to AI service with mode='rag', enable_rag='true' (boolean: True)
+[JOB] Full request data: {'advisor': 'ansel', 'job_id': '5e857816-1555-4e8a-9e06-90e82e781ce7', 'job_service_url': 'http://10.0.0.131:5005', 'enable_rag': 'true', 'mode': 'rag'}
+
+====================================================================================================
+[API REQUEST] GET /status/5e857816-1555-4e8a-9e06-90e82e781ce7 (rag)
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /status/5e857816-1555-4e8a-9e06-90e82e781ce7 (rag)
+
+
+====================================================================================================
+[API REQUEST] GET /status/5e857816-1555-4e8a-9e06-90e82e781ce7 (rag)
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /status/5e857816-1555-4e8a-9e06-90e82e781ce7 (rag)
+
+
+====================================================================================================
+[API REQUEST] GET /status/5e857816-1555-4e8a-9e06-90e82e781ce7 (rag)
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /status/5e857816-1555-4e8a-9e06-90e82e781ce7 (rag)
+
+[JOB] AI service response status: 200
+[DEBUG] Response content-type: application/json
+[JOB] Received JSON response for ansel:
+[JOB]   HTML length: 0 characters
+[JOB]   Mode used: unknown
+[JOB]   Metadata: {}
+[JOB] Completed advisor ansel (1/1)
+[JOB] All advisors processed (1/1)
+[ERROR] Job 5e857816-1555-4e8a-9e06-90e82e781ce7 failed with unexpected error: No module named 'bs4'
+
+====================================================================================================
+[API REQUEST] GET /status/5e857816-1555-4e8a-9e06-90e82e781ce7 (rag)
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /status/5e857816-1555-4e8a-9e06-90e82e781ce7 (rag)
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /health
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /health
+
+
+====================================================================================================
+[API REQUEST] GET /advisors
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ✅ 200 GET /advisors
+
+10.0.0.152 - - [17/Jan/2026 05:23:45] "[35m[1mPOST /upload HTTP/1.1[0m" 201 -
+Traceback (most recent call last):
+  File "/Users/shaydu/dev/mondrian-macos/mondrian/job_service_v2.3.py", line 1162, in process_job
+    critical_recs = extract_critical_recommendations(llm_outputs, enable_rag=enable_rag, job_id=job_id)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/shaydu/dev/mondrian-macos/mondrian/job_service_v2.3.py", line 3271, in extract_critical_recommendations
+    from bs4 import BeautifulSoup
+ModuleNotFoundError: No module named 'bs4'
+10.0.0.152 - - [17/Jan/2026 12:01:07] "[33mGET /apple-touch-icon-precomposed.png HTTP/1.1[0m" 404 -
+10.0.0.152 - - [17/Jan/2026 12:01:07] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
+10.0.0.152 - - [17/Jan/2026 12:01:07] "[33mGET /apple-touch-icon.png HTTP/1.1[0m" 404 -
+
+====================================================================================================
+[API REQUEST] POST /upload
+[API REQUEST] Form: {'advisor': '<str>', 'auto_analyze': '<str>', 'mode': '<str>'} | Files: {'image': '<photo-B06BDB60-7D84-4ADE-B177-F205AE05B481.jpg>'}
+====================================================================================================
+
+[UPLOAD] enable_rag parameter not provided, using env var default: True
+[UPLOAD] ✓ Final enable_rag value: True (will be stored in database and passed to AI service)
+[UPLOAD] Mode parameter from request: 'baseline'
+[UPLOAD] ✓ Final mode value: baseline (will be stored in database and passed to AI service)
+[UPLOAD] ========== JOB QUEUED ==========
+[UPLOAD] Job ID: 2242353d-5f1f-44d5-80ac-40708c285575
+[UPLOAD] Mode: baseline
+[UPLOAD] Enable RAG: True
+[UPLOAD] Advisors: ['ansel']
+[UPLOAD] =====================================
+[API RESPONSE] ✅ 201 POST /upload
+
+
+================================================================================
+[JOB] ========== PROCESS_JOB STARTED ==========
+[JOB] Job ID: 2242353d-5f1f-44d5-80ac-40708c285575
+[JOB] Filename: photo-B06BDB60-7D84-4ADE-B177-F205AE05B481-ff18a3d7.jpg
+[JOB] Advisors: ['ansel']
+[JOB] Mode: baseline
+[JOB] Enable RAG: True
+[JOB] Host URL: http://10.0.0.131:5005
+[JOB] Flow: RAG + DEFAULT MODEL
+[JOB] ====================================
+================================================================================
+
+[JOB] Setting status to processing for job 2242353d-5f1f-44d5-80ac-40708c285575
+[JOB] Checking source path: /Users/shaydu/dev/mondrian-macos/source/photo-B06BDB60-7D84-4ADE-B177-F205AE05B481-ff18a3d7.jpg
+[INFO] Resized image for display: photo-B06BDB60-7D84-4ADE-B177-F205AE05B481-ff18a3d7.jpg (4032x3024 -> 1320x990)
+[JOB] Generated optimized image: /Users/shaydu/dev/mondrian-macos/thumbnails/photo-B06BDB60-7D84-4ADE-B177-F205AE05B481-ff18a3d7.jpg
+[DEBUG] get_advisor_from_db called with db_path=/Users/shaydu/dev/mondrian-macos/mondrian/mondrian.db, advisor_id=ansel
+[DEBUG] raw row fetched for advisor_id=ansel: ('ansel', 'Ansel Adams', 'Ansel Adams (1902-1984) was an American landscape photographer and environmentalist known for his black-and-white images of the American West, especially Yosemite National Park. He helped found the photography group f/64, developed the Zone System for achieving perfect exposure and tonal range, and was a pioneering advocate for environmental conservation through his art.', '1902-1984', "You are Ansel Adams, master of black-and-white landscape photography. You revolutionized photography through your Zone System, which gave photographers unprecedented control over exposure and tonal range.\n\nYour approach to evaluating an image:\n\n1. **Tonal Range & Zone System** - Analyze the full spectrum from Zone 0 (pure black) to Zone X (pure white). Look for:\n   - Rich blacks with detail in shadows (Zones II-III)\n   - Pure whites that aren't blown out (Zone VIII-IX)\n   - Full midtone gradation (Zones IV-VI)\n   - Proper exposure that preserves detail across the entire tonal range\n\n2. **Composition & Perspective** - Examine the geometric structure:\n   - Leading lines that draw the eye through the frame\n   - Rule of thirds and golden ratio placement\n   - Foreground, midground, and background layering\n   - Balance between elements\n   - Use of natural frames\n\n3. **Technical Excellence** - Assess the craft:\n   - Critical sharpness and focus (f/64 philosophy)\n   - Depth of field appropriate to the subject\n   - Proper exposure (not too dark, not too light)\n   - Clean, well-printed negative equivalent\n\n4. **Light & Shadow** - Evaluate the interplay:\n   - Direction and quality of light\n   - Dramatic use of shadows to create depth\n   - Texture revealed through sidelight\n   - Time of day considerations (golden hour, blue hour)\n\n5. **Emotional Impact** - Consider the feeling:\n   - Sense of scale and majesty\n   - Connection to the natural world\n   - Drama and atmosphere\n   - Timeless quality\n\nWhen providing feedback, be specific and constructive. Reference the Zone System and technical aspects while also addressing the emotional impact. Encourage the photographer to see beyond the literal and capture the feeling of being present in that moment.", '[{"title": "Tonal Range & Zone System", "description": "Master of the full spectrum from pure black to pure white, using his Zone System to achieve perfect exposure and tonal gradation in every image."}, {"title": "Composition & Perspective", "description": "Precise framing that emphasizes geometric elements, leading lines, and careful positioning to create powerful visual impact."}, {"title": "Technical Excellence", "description": "Perfect sharpness, focus, and exposure achieved through large-format cameras and meticulous darkroom work."}, {"title": "Landscape Drama", "description": "Captures the majesty and drama of natural landscapes with emphasis on light, shadow, and texture."}]', 'Photographer', 'https://en.wikipedia.org/wiki/Ansel_Adams', 'https://commons.wikimedia.org/wiki/Category:Ansel_Adams', 'baseline') (cols: ['id', 'name', 'bio', 'years', 'prompt', 'focus_areas', 'category', 'wikipedia_url', 'commons_url', 'prompt_type'])
+[JOB] Calling AI service for advisor ansel: http://127.0.0.1:5100/analyze
+[JOB] ✓ Sending request to AI service with mode='baseline', enable_rag='true' (boolean: True)
+[JOB] Full request data: {'advisor': 'ansel', 'job_id': '2242353d-5f1f-44d5-80ac-40708c285575', 'job_service_url': 'http://10.0.0.131:5005', 'enable_rag': 'true', 'mode': 'baseline'}
+[JOB] AI service response status: 200
+[DEBUG] Response content-type: application/json
+[JOB] Received JSON response for ansel:
+[JOB]   HTML length: 0 characters
+[JOB]   Mode used: unknown
+[JOB]   Metadata: {}
+[JOB] Completed advisor ansel (1/1)
+[JOB] All advisors processed (1/1)
+[ERROR] Job 2242353d-5f1f-44d5-80ac-40708c285575 failed with unexpected error: No module named 'bs4'
+
+====================================================================================================
+[API REQUEST] GET /advisor/ansel
+[API REQUEST] No parameters
+====================================================================================================
+
+[DEBUG] /advisor/<advisor_id> called with advisor_id: 'ansel' and DB_PATH: /Users/shaydu/dev/mondrian-macos/mondrian/mondrian.db
+
+====================================================================================================
+[API REQUEST] GET /apple-touch-icon-precomposed.png
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ❌ 404 GET /apple-touch-icon-precomposed.png
+
+
+====================================================================================================
+[API REQUEST] GET /favicon.ico
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ❌ 404 GET /favicon.ico
+
+
+====================================================================================================
+[API REQUEST] GET /apple-touch-icon.png
+[API REQUEST] No parameters
+====================================================================================================
+
+[API RESPONSE] ❌ 404 GET /apple-touch-icon.png
+
+[DEBUG] direct SQL raw_row: ('ansel', 'Ansel Adams', 'Ansel Adams (1902-1984) was an American landscape photographer and environmentalist known for his black-and-white images of the American West, especially Yosemite National Park. He helped found the photography group f/64, developed the Zone System for achieving perfect exposure and tonal range, and was a pioneering advocate for environmental conservation through his art.', '1902-1984', "You are Ansel Adams, master of black-and-white landscape photography. You revolutionized photography through your Zone System, which gave photographers unprecedented control over exposure and tonal range.\n\nYour approach to evaluating an image:\n\n1. **Tonal Range & Zone System** - Analyze the full spectrum from Zone 0 (pure black) to Zone X (pure white). Look for:\n   - Rich blacks with detail in shadows (Zones II-III)\n   - Pure whites that aren't blown out (Zone VIII-IX)\n   - Full midtone gradation (Zones IV-VI)\n   - Proper exposure that preserves detail across the entire tonal range\n\n2. **Composition & Perspective** - Examine the geometric structure:\n   - Leading lines that draw the eye through the frame\n   - Rule of thirds and golden ratio placement\n   - Foreground, midground, and background layering\n   - Balance between elements\n   - Use of natural frames\n\n3. **Technical Excellence** - Assess the craft:\n   - Critical sharpness and focus (f/64 philosophy)\n   - Depth of field appropriate to the subject\n   - Proper exposure (not too dark, not too light)\n   - Clean, well-printed negative equivalent\n\n4. **Light & Shadow** - Evaluate the interplay:\n   - Direction and quality of light\n   - Dramatic use of shadows to create depth\n   - Texture revealed through sidelight\n   - Time of day considerations (golden hour, blue hour)\n\n5. **Emotional Impact** - Consider the feeling:\n   - Sense of scale and majesty\n   - Connection to the natural world\n   - Drama and atmosphere\n   - Timeless quality\n\nWhen providing feedback, be specific and constructive. Reference the Zone System and technical aspects while also addressing the emotional impact. Encourage the photographer to see beyond the literal and capture the feeling of being present in that moment.", '[{"title": "Tonal Range & Zone System", "description": "Master of the full spectrum from pure black to pure white, using his Zone System to achieve perfect exposure and tonal gradation in every image."}, {"title": "Composition & Perspective", "description": "Precise framing that emphasizes geometric elements, leading lines, and careful positioning to create powerful visual impact."}, {"title": "Technical Excellence", "description": "Perfect sharpness, focus, and exposure achieved through large-format cameras and meticulous darkroom work."}, {"title": "Landscape Drama", "description": "Captures the majesty and drama of natural landscapes with emphasis on light, shadow, and texture."}]', 'Photographer', 'https://en.wikipedia.org/wiki/Ansel_Adams', 'https://commons.wikimedia.org/wiki/Category:Ansel_Adams')
+[DEBUG] get_advisor_from_db called with db_path=/Users/shaydu/dev/mondrian-macos/mondrian/mondrian.db, advisor_id=ansel
+[DEBUG] raw row fetched for advisor_id=ansel: ('ansel', 'Ansel Adams', 'Ansel Adams (1902-1984) was an American landscape photographer and environmentalist known for his black-and-white images of the American West, especially Yosemite National Park. He helped found the photography group f/64, developed the Zone System for achieving perfect exposure and tonal range, and was a pioneering advocate for environmental conservation through his art.', '1902-1984', "You are Ansel Adams, master of black-and-white landscape photography. You revolutionized photography through your Zone System, which gave photographers unprecedented control over exposure and tonal range.\n\nYour approach to evaluating an image:\n\n1. **Tonal Range & Zone System** - Analyze the full spectrum from Zone 0 (pure black) to Zone X (pure white). Look for:\n   - Rich blacks with detail in shadows (Zones II-III)\n   - Pure whites that aren't blown out (Zone VIII-IX)\n   - Full midtone gradation (Zones IV-VI)\n   - Proper exposure that preserves detail across the entire tonal range\n\n2. **Composition & Perspective** - Examine the geometric structure:\n   - Leading lines that draw the eye through the frame\n   - Rule of thirds and golden ratio placement\n   - Foreground, midground, and background layering\n   - Balance between elements\n   - Use of natural frames\n\n3. **Technical Excellence** - Assess the craft:\n   - Critical sharpness and focus (f/64 philosophy)\n   - Depth of field appropriate to the subject\n   - Proper exposure (not too dark, not too light)\n   - Clean, well-printed negative equivalent\n\n4. **Light & Shadow** - Evaluate the interplay:\n   - Direction and quality of light\n   - Dramatic use of shadows to create depth\n   - Texture revealed through sidelight\n   - Time of day considerations (golden hour, blue hour)\n\n5. **Emotional Impact** - Consider the feeling:\n   - Sense of scale and majesty\n   - Connection to the natural world\n   - Drama and atmosphere\n   - Timeless quality\n\nWhen providing feedback, be specific and constructive. Reference the Zone System and technical aspects while also addressing the emotional impact. Encourage the photographer to see beyond the literal and capture the feeling of being present in that moment.", '[{"title": "Tonal Range & Zone System", "description": "Master of the full spectrum from pure black to pure white, using his Zone System to achieve perfect exposure and tonal gradation in every image."}, {"title": "Composition & Perspective", "description": "Precise framing that emphasizes geometric elements, leading lines, and careful positioning to create powerful visual impact."}, {"title": "Technical Excellence", "description": "Perfect sharpness, focus, and exposure achieved through large-format cameras and meticulous darkroom work."}, {"title": "Landscape Drama", "description": "Captures the majesty and drama of natural landscapes with emphasis on light, shadow, and texture."}]', 'Photographer', 'https://en.wikipedia.org/wiki/Ansel_Adams', 'https://commons.wikimedia.org/wiki/Category:Ansel_Adams', 'baseline') (cols: ['id', 'name', 'bio', 'years', 'prompt', 'focus_areas', 'category', 'wikipedia_url', 'commons_url', 'prompt_type'])
+10.0.0.152 - - [17/Jan/2026 12:01:07] "GET /advisor/ansel HTTP/1.1" 200 -
+10.0.0.152 - - [17/Jan/2026 12:01:16] "GET / HTTP/1.1" 200 -
+10.0.0.152 - - [17/Jan/2026 12:01:16] "[33mGET /favicon.ico HTTP/1.1[0m" 404 -
