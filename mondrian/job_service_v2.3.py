@@ -417,6 +417,22 @@ def get_advisor_detail(advisor_id):
         
         # Build advisor response
         base_url = get_base_url()
+        
+        # Build "Learn More" section with references
+        learn_more = {}
+        if row["wikipedia_url"]:
+            learn_more["wikipedia"] = {
+                "title": "Wikipedia",
+                "url": row["wikipedia_url"],
+                "description": f"Learn more about {row['name']} on Wikipedia"
+            }
+        if row["commons_url"]:
+            learn_more["gallery"] = {
+                "title": "Gallery",
+                "url": row["commons_url"],
+                "description": f"View {row['name']}'s work"
+            }
+        
         advisor = {
             "id": row["id"],
             "name": row["name"],
@@ -424,7 +440,8 @@ def get_advisor_detail(advisor_id):
             "bio": row["bio"] if row["bio"] else "",
             "focus_areas": focus_areas_list,
             "image_url": f"{base_url}/advisor_image/{advisor_id}",
-            "artworks": artworks_list
+            "artworks": artworks_list,
+            "learn_more": learn_more
         }
         
         return jsonify({

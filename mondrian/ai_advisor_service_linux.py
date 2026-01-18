@@ -14,8 +14,15 @@ import sqlite3
 import base64
 import io
 
-# Set PyTorch memory optimization to reduce fragmentation
-os.environ['PYTORCH_CUDA_ALLOC_CONF'] = 'expandable_segments:True'
+# ============================================================================
+# CUDA Performance Optimizations for RTX 3060
+# ============================================================================
+# Memory optimization: reduce fragmentation with expandable segments
+os.environ['PYTORCH_CUDA_ALLOC_CONF'] = 'expandable_segments:True,garbage_collection_threshold:0.8'
+# Enable TF32 for faster matrix ops on Ampere GPUs (RTX 30xx series)
+os.environ['TORCH_ALLOW_TF32_CUBLAS_OVERRIDE'] = '1'
+# Disable tokenizers parallelism to avoid deadlocks with multiprocessing
+os.environ['TOKENIZERS_PARALLELISM'] = 'false'
 import logging
 import argparse
 from pathlib import Path
@@ -32,6 +39,18 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from PIL import Image
 import io
+
+# ============================================================================
+# Enable CUDA performance optimizations after torch import
+# ============================================================================
+if torch.cuda.is_available():
+    # Enable cuDNN benchmark mode - finds optimal convolution algorithms
+    # This adds ~1-2s warmup on first inference but speeds up subsequent runs
+    torch.backends.cudnn.benchmark = True
+    
+    # Enable TF32 for Ampere GPUs (RTX 30xx) - ~2x faster matrix ops with minimal precision loss
+    torch.backends.cuda.matmul.allow_tf32 = True
+    torch.backends.cudnn.allow_tf32 = True
 
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
@@ -974,19 +993,21 @@ class QwenAdvisor:
                 return_tensors="pt"
             )
             
-            # Move to device
+            # Move to device with non_blocking for async transfer
             if self.device == 'cuda':
-                inputs = {k: v.cuda() if hasattr(v, 'cuda') else v for k, v in inputs.items()}
+                inputs = {k: v.cuda(non_blocking=True) if hasattr(v, 'cuda') else v for k, v in inputs.items()}
             
-            # Generate response
+            # Generate response with optimized settings for RTX 3060
             logger.info("Running inference...")
-            with torch.no_grad():
+            with torch.no_grad(), torch.cuda.amp.autocast(dtype=torch.bfloat16):
                 output_ids = self.model.generate(
                     **inputs, 
-                    max_new_tokens=1500,  # Increased to ensure full JSON output (was 1200, 800 caused truncation)
+                    max_new_tokens=1500,  # Full JSON output
                     repetition_penalty=1.0,
                     do_sample=False,
-                    use_cache=True,  # Enable KV cache for faster autoregressive generation
+                    use_cache=True,  # KV cache for faster autoregressive generation
+                    num_beams=1,  # Greedy decoding (fastest)
+                    pad_token_id=self.processor.tokenizer.pad_token_id,
                     eos_token_id=self.processor.tokenizer.eos_token_id
                 )
             
@@ -1044,6 +1065,19 @@ class QwenAdvisor:
     def _get_default_system_prompt(self) -> str:
         """Fallback system prompt if database is unavailable"""
         return """You are a photography analysis assistant. **ALL OUTPUT MUST BE IN ENGLISH ONLY.** Output valid JSON only.
+
+**SCORING PHILOSOPHY:**
+- Score range is 3-10, NOT 7-10. Apply critical judgment.
+- Most scores should fall in the 6-8 range (majority of work).
+- Scores 9-10 are reserved for exceptional technical or artistic excellence.
+- Scores 3-5 indicate significant issues needing improvement.
+- Scores below 6 should be used when there are clear weaknesses or misalignment with the advisor's style.
+
+**STYLE & SUBJECT MATTER ALIGNMENT:**
+- If the image's subject matter or style drastically differs from the selected advisor's characteristic work, apply a SERIOUS PENALTY (reduce scores by 2-3 points).
+- Consider whether the content aligns with the advisor's typical themes, subject matter, and artistic vision.
+- Misalignment should be flagged in "technical_notes" and reflected proportionally across relevant dimensions.
+
 Required JSON Structure:
 {
   "image_description": "2-3 sentence description",
@@ -1134,6 +1168,7 @@ Required JSON Structure:
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
     <style>
         * {{ margin: 0; padding: 0; box-sizing: border-box; }}
+        html {{ height: 100%; }}
         body {{
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
             padding: 20px;
@@ -1142,6 +1177,9 @@ Required JSON Structure:
             line-height: 1.6;
             color: #ffffff;
             max-width: 100%;
+            overflow: auto;
+        }}
+        body.lightbox-open {{ overflow: hidden; }}
         }}
         @media (max-width: 768px) {{ body {{ padding: 15px; padding-bottom: 0; }} .analysis {{ padding: 15px; }} }}
         @media (max-width: 375px) {{ body {{ padding: 10px; padding-bottom: 0; font-size: 14px; }} .analysis {{ padding: 12px; }} }}
@@ -1267,8 +1305,8 @@ Required JSON Structure:
             display: flex;
         }}
         .lightbox img {{
-            max-width: 100%;
-            max-height: 100%;
+            max-width: 88%;
+            max-height: 88%;
             object-fit: contain;
             border-radius: 8px;
         }}
@@ -1302,9 +1340,11 @@ Required JSON Structure:
 function openLightbox(src) {{
     document.getElementById('lightbox-img').src = src + '?size=full';
     document.getElementById('lightbox').classList.add('active');
+    document.body.classList.add('lightbox-open');
 }}
 function closeLightbox() {{
     document.getElementById('lightbox').classList.remove('active');
+    document.body.classList.remove('lightbox-open');
 }}
 </script>
 <div class="advisor-section" data-advisor="{advisor}">
@@ -1516,11 +1556,15 @@ function closeLightbox() {{
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
+        html { height: 100%; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             padding: 16px;
             background: #000000;
             color: #ffffff;
+            overflow: auto;
+        }
+        body.lightbox-open { overflow: hidden; }
         }
         .summary-header { margin-bottom: 16px; padding-bottom: 12px; }
         .summary-header h1 { font-size: 24px; font-weight: 600; margin: 0; }
@@ -1610,8 +1654,8 @@ function closeLightbox() {{
             display: flex;
         }
         .lightbox img {
-            max-width: 100%;
-            max-height: 100%;
+            max-width: 88%;
+            max-height: 88%;
             object-fit: contain;
             border-radius: 8px;
         }
@@ -1645,9 +1689,11 @@ function closeLightbox() {{
 function openLightbox(src) {
     document.getElementById('lightbox-img').src = src + '?size=full';
     document.getElementById('lightbox').classList.add('active');
+    document.body.classList.add('lightbox-open');
 }
 function closeLightbox() {
     document.getElementById('lightbox').classList.remove('active');
+    document.body.classList.remove('lightbox-open');
 }
 </script>
 <div class="summary-header"><h1>Top 3 Recommendations</h1></div>
