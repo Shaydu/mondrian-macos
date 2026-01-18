@@ -1138,6 +1138,272 @@ Required JSON structure (use ONLY straight quotes, ASCII characters):
 
 Provide ONLY the JSON above with your scores. No explanations, no comments."""
     
+    def _run_inference(self, image: Image.Image, prompt: str, max_tokens: int = None) -> str:
+        """
+        Run model inference on image with given prompt.
+        Returns the raw text output from the model.
+        
+        Args:
+            image: PIL Image to analyze
+            prompt: Text prompt for the model
+            max_tokens: Override max_new_tokens (for fast scoring pass)
+        """
+        # Use chat template for proper image token handling
+        messages = [
+            {"role": "user", "content": [
+                {"type": "image"},
+                {"type": "text", "text": prompt}
+            ]}
+        ]
+        
+        # Prepare inputs using processor with chat template
+        text = self.processor.apply_chat_template(
+            messages,
+            tokenize=False,
+            add_generation_prompt=True
+        )
+        
+        inputs = self.processor(
+            text=text,
+            images=[image],
+            padding=True,
+            return_tensors="pt"
+        )
+        
+        # Move to device
+        if self.device == 'cuda':
+            inputs = {k: v.cuda() if hasattr(v, 'cuda') else v for k, v in inputs.items()}
+        
+        # Build generation config, optionally overriding max_tokens
+        gen_config = self.generation_config.copy()
+        if max_tokens is not None:
+            gen_config['max_new_tokens'] = max_tokens
+        
+        # Generate response
+        with torch.no_grad():
+            output_ids = self.model.generate(
+                **inputs, 
+                **gen_config,
+                eos_token_id=self.processor.tokenizer.eos_token_id
+            )
+        
+        # Decode only the generated tokens (exclude input prompt)
+        input_length = inputs['input_ids'].shape[1]
+        generated_ids = output_ids[:, input_length:]
+        
+        response = self.processor.batch_decode(
+            generated_ids, 
+            skip_special_tokens=True
+        )[0]
+        
+        return response
+    
+    def _parse_scoring_response(self, response: str) -> List[Dict[str, Any]]:
+        """Parse the quick scoring response (Pass 1) to extract dimensions."""
+        import re
+        
+        try:
+            # Find JSON in response
+            start_idx = response.find('{')
+            end_idx = response.rfind('}') + 1
+            
+            if start_idx != -1 and end_idx > start_idx:
+                json_str = response[start_idx:end_idx]
+                # Sanitize quotes
+                json_str = json_str.replace('"', '"').replace('"', '"')
+                data = json.loads(json_str)
+                dimensions = data.get('dimensions', [])
+                logger.info(f"Pass 1: Parsed {len(dimensions)} dimensional scores")
+                return dimensions
+        except Exception as e:
+            logger.warning(f"Pass 1: Failed to parse scoring response: {e}")
+        
+        return []
+    
+    def analyze_image_two_pass(self, image_path: str, advisor: str = "ansel",
+                                mode: str = "rag") -> Dict[str, Any]:
+        """
+        Two-pass image analysis:
+        Pass 1: Quick scoring to identify weak dimensions
+        Pass 2: Full analysis with targeted RAG (references + book passages)
+        
+        Args:
+            image_path: Path to image file
+            advisor: Photography advisor persona
+            mode: Analysis mode (rag modes get full two-pass)
+        
+        Returns:
+            Dictionary with analysis results
+        """
+        try:
+            # Load and validate image
+            image = Image.open(image_path).convert('RGB')
+            logger.info(f"[Two-Pass] Loaded image: {image_path} ({image.size})")
+            
+            # =================================================================
+            # PASS 1: Quick dimensional scoring
+            # =================================================================
+            logger.info("[Two-Pass] === PASS 1: Quick Scoring ===")
+            scoring_prompt = self._create_scoring_prompt()
+            
+            # Run inference with reduced token limit for speed
+            scoring_response = self._run_inference(image, scoring_prompt, max_tokens=300)
+            logger.info(f"[Two-Pass] Pass 1 response: {len(scoring_response)} chars")
+            
+            # Parse dimensional scores
+            dimensions = self._parse_scoring_response(scoring_response)
+            
+            if not dimensions:
+                logger.warning("[Two-Pass] Pass 1 failed to get scores, falling back to single-pass")
+                return self.analyze_image(image_path, advisor, mode)
+            
+            # Extract weak dimensions (score <= 5)
+            weak_dimensions = []
+            weak_dimension_names = []
+            sorted_dims = sorted(dimensions, key=lambda d: d.get('score', 10))
+            
+            for d in sorted_dims[:3]:  # Top 3 weakest
+                dim_name = d.get('name', '')
+                score = d.get('score', 10)
+                dim_index = get_dimension_index(dim_name)
+                if dim_index is not None:
+                    canonical = DIMENSIONS[dim_index]
+                    weak_dimensions.append({'name': canonical, 'score': score})
+                    weak_dimension_names.append(canonical)
+            
+            logger.info(f"[Two-Pass] Weak dimensions: {weak_dimension_names}")
+            
+            # =================================================================
+            # RETRIEVAL: Get targeted references and book passages
+            # =================================================================
+            logger.info("[Two-Pass] === RETRIEVAL: References + Passages ===")
+            
+            # Get reference images that excel in weak dimensions
+            reference_images = self._get_images_for_weak_dimensions(
+                advisor, weak_dimension_names, max_images=3
+            )
+            logger.info(f"[Two-Pass] Retrieved {len(reference_images)} reference images")
+            
+            # Get book passages for weak dimensions
+            book_passages = []
+            try:
+                from mondrian.embedding_retrieval import get_book_passages_for_dimensions
+                book_passages = get_book_passages_for_dimensions(
+                    advisor_id=advisor,
+                    weak_dimensions=weak_dimension_names,
+                    max_passages=2
+                )
+                logger.info(f"[Two-Pass] Retrieved {len(book_passages)} book passages")
+            except Exception as e:
+                logger.warning(f"[Two-Pass] Failed to retrieve book passages: {e}")
+            
+            # =================================================================
+            # PASS 2: Full analysis with RAG context
+            # =================================================================
+            logger.info("[Two-Pass] === PASS 2: Full Analysis with RAG ===")
+            
+            # Build augmented prompt with RAG context
+            full_prompt = self._create_prompt(advisor, mode)
+            full_prompt = self._augment_prompt_for_pass2(
+                full_prompt, 
+                weak_dimensions, 
+                reference_images, 
+                book_passages
+            )
+            
+            # Run full inference
+            logger.info(f"[Two-Pass] Pass 2 prompt: {len(full_prompt)} chars")
+            full_response = self._run_inference(image, full_prompt)
+            logger.info(f"[Two-Pass] Pass 2 response: {len(full_response)} chars")
+            
+            # Parse full response
+            analysis = self._parse_response(
+                full_response, advisor, mode, full_prompt, 
+                reference_images=reference_images
+            )
+            
+            # Add book passages to analysis for UI display
+            if book_passages:
+                analysis['analysis']['book_passages'] = [
+                    {
+                        'book_title': p['book_title'],
+                        'text': p['passage_text'],
+                        'dimensions': p['dimensions'],
+                        'relevance_score': p['relevance_score']
+                    }
+                    for p in book_passages
+                ]
+            
+            # Add metadata about two-pass
+            analysis['two_pass'] = True
+            analysis['pass1_dimensions'] = dimensions
+            analysis['weak_dimensions'] = weak_dimension_names
+            
+            return analysis
+            
+        except Exception as e:
+            logger.error(f"[Two-Pass] Error: {e}")
+            logger.error(traceback.format_exc())
+            # Fall back to single-pass
+            logger.info("[Two-Pass] Falling back to single-pass analysis")
+            return self.analyze_image(image_path, advisor, mode)
+    
+    def _augment_prompt_for_pass2(self, prompt: str, weak_dimensions: List[Dict],
+                                   reference_images: List[Dict], 
+                                   book_passages: List[Dict]) -> str:
+        """
+        Augment the full analysis prompt with targeted RAG context for Pass 2.
+        """
+        rag_context = "\n\n### TARGETED GUIDANCE FOR YOUR WEAKEST AREAS:\n"
+        
+        weak_names = [d['name'] for d in weak_dimensions]
+        rag_context += f"Focus your feedback on these dimensions where improvement is most needed: **{', '.join(weak_names)}**\n"
+        
+        # Add book passages
+        if book_passages:
+            rag_context += "\n#### TECHNICAL GUIDANCE FROM MY WRITINGS:\n"
+            for passage in book_passages:
+                book_title = passage['book_title']
+                text = passage['passage_text']
+                dims = passage['dimensions']
+                rag_context += f"\n**From \"{book_title}\" (relevant to: {', '.join(dims)}):**\n"
+                rag_context += f"> {text}\n"
+            
+            rag_context += "\n**CRITICAL INSTRUCTION:** Reference these passages ONLY when discussing their tagged dimensions. "
+            rag_context += "Zone System references MUST ONLY appear in Lighting dimension feedback. "
+            rag_context += "Cite as: 'As I wrote in The Print...' or 'In The Camera, I discussed...'\n"
+        
+        # Add reference images
+        if reference_images:
+            rag_context += "\n#### REFERENCE IMAGES THAT EXCEL IN YOUR WEAK AREAS:\n"
+            rag_context += "Study how these master works demonstrate excellence:\n\n"
+            
+            for i, img in enumerate(reference_images[:3], 1):
+                img_title = img.get('image_title') or img.get('image_path', '').split('/')[-1]
+                year = img.get('date_taken', '')
+                
+                # Find which weak dimensions this image excels in
+                excels_in = []
+                for weak in weak_dimensions:
+                    dim_col = f"{weak['name']}_score"
+                    score = img.get(dim_col, 0)
+                    if score and score >= 8:
+                        excels_in.append(f"{weak['name']}({score})")
+                
+                if excels_in:
+                    rag_context += f"- **\"{img_title}\"** ({year}): Excels in {', '.join(excels_in)}\n"
+                    if img.get('image_description'):
+                        rag_context += f"  {img['image_description'][:150]}...\n"
+            
+            rag_context += "\n**INSTRUCTION:** Reference these images as examples of excellence. "
+            rag_context += "Mention them by name when discussing how to improve the weak dimensions.\n"
+        
+        # Add final reminder about dimension-specific techniques
+        rag_context += "\n**CRITICAL REMINDER:** Zone System is ONLY for Lighting dimension. "
+        rag_context += "Do NOT mention Zone System in recommendations for Composition, Focus, Color, Balance, or other non-lighting dimensions.\n"
+        
+        return prompt + rag_context
+    
     def _get_default_system_prompt(self) -> str:
         """Fallback system prompt if database is unavailable"""
         return """You are a photography analysis assistant. **ALL OUTPUT MUST BE IN ENGLISH ONLY.** Output valid JSON only.
@@ -2010,9 +2276,16 @@ def analyze():
         advisor_name = request.form.get('advisor', 'ansel')
         mode_str = request.form.get('mode', 'baseline')
         
+        # Use two-pass analysis for RAG modes
+        use_two_pass = mode_str in ('rag', 'rag_lora', 'lora+rag', 'lora_rag')
+        
         # Run analysis
-        logger.info(f"Analyzing image with advisor={advisor_name}, mode={mode_str}")
-        result = advisor.analyze_image(temp_path, advisor=advisor_name, mode=mode_str)
+        if use_two_pass:
+            logger.info(f"[Two-Pass] Analyzing image with advisor={advisor_name}, mode={mode_str}")
+            result = advisor.analyze_image_two_pass(temp_path, advisor=advisor_name, mode=mode_str)
+        else:
+            logger.info(f"Analyzing image with advisor={advisor_name}, mode={mode_str}")
+            result = advisor.analyze_image(temp_path, advisor=advisor_name, mode=mode_str)
         
         # Clean up
         Path(temp_path).unlink()

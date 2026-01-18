@@ -49,17 +49,18 @@ def check_api_health():
 def analyze_image(image_path):
     """Send image to analyzer and get response."""
     print(f"\n📤 Analyzing image: {image_path.name}")
+    print("   Using two-pass RAG mode...")
     
     try:
         with open(image_path, 'rb') as f:
             files = {'image': f}
-            data = {'advisor': ADVISOR}
+            data = {'advisor': ADVISOR, 'mode': 'rag'}  # Use RAG mode for two-pass
             
             resp = requests.post(
                 f"{API_BASE}/analyze",
                 files=files,
                 data=data,
-                timeout=120
+                timeout=180  # Longer timeout for two-pass
             )
         
         if resp.status_code != 200:
@@ -83,6 +84,12 @@ def check_for_passages(analysis_result):
     
     if not analysis_result:
         return False
+    
+    # Check for two-pass metadata
+    if analysis_result.get('two_pass'):
+        print("\n✅ Two-pass analysis completed!")
+        print(f"   Pass 1 dimensions: {len(analysis_result.get('pass1_dimensions', []))}")
+        print(f"   Weak dimensions: {analysis_result.get('weak_dimensions', [])}")
     
     # Check if response has the expected structure
     if 'analysis' not in analysis_result:

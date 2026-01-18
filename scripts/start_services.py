@@ -200,6 +200,10 @@ def get_services_for_mode(mode="base", lora_path=None, model=None, db_path="mond
         sys.exit(1)
     
     services.append(ai_advisor_cmd)
+    
+    # Export Service (port 5007) - handles PDF/HTML export with image compression
+    services.append([PYTHON_EXECUTABLE, "mondrian/export_service_linux.py", "--port", "5007"])
+    
     return services
 
 
@@ -375,6 +379,11 @@ SERVICE_HEALTH_CONFIG = {
         "port": 5100,
         "health_url": "http://127.0.0.1:5100/health",
         "display_name": "AI Advisor"
+    },
+    "export_service": {
+        "port": 5007,
+        "health_url": "http://127.0.0.1:5007/health",
+        "display_name": "Export Service"
     }
 }
 
