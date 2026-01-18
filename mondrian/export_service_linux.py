@@ -95,8 +95,8 @@ class ExportService:
         self.max_image_width = 800  # Max width in pixels
         self.max_image_height = 600  # Max height in pixels
         self.image_quality = 75  # JPEG quality 0-100
-        self.max_pdf_size_mb = 1.5  # Maximum PDF size in MB
-        self.max_images_in_pdf = 10  # Maximum number of images to include
+        self.max_pdf_size_mb = 2.0  # Maximum PDF size in MB
+        self.max_images_in_pdf = 15  # Maximum number of images to include (user photo + case studies)
     
     def compress_base64_image(self, base64_str: str, max_kb: int = 30) -> str:
         """
@@ -167,18 +167,18 @@ class ExportService:
         pattern = r'src="(data:image/[^;]+;base64,[^"]+)"'
         matches = list(re.finditer(pattern, html))
         
-        # If too many images, remove extras (keep the first N images)
+        logger.info(f"Found {len(matches)} images in HTML for PDF export")
+        
+        # If too many images, we'll keep them all but compress more aggressively
         if len(matches) > self.max_images_in_pdf:
-            logger.info(f"PDF has {len(matches)} images, limiting to {self.max_images_in_pdf}")
-            # Replace excess images with a placeholder
-            for match in reversed(matches[self.max_images_in_pdf:]):
-                html = html[:match.start()] + html[match.end():]
+            logger.warning(f"PDF has {len(matches)} images, exceeding limit of {self.max_images_in_pdf}. Compressing more aggressively.")
+            # Don't remove images - just compress them more
+            max_kb_per_image = max(15, int((self.max_pdf_size_mb * 1024 * 0.6) / len(matches)))
+        else:
+            # Calculate max KB per remaining image
+            max_kb_per_image = max(20, int((self.max_pdf_size_mb * 1024 * 0.7) / max(1, len(matches))))
         
-        # Re-find matches after removal
-        matches = list(re.finditer(pattern, html))
-        
-        # Calculate max KB per remaining image
-        max_kb_per_image = max(20, int((self.max_pdf_size_mb * 1024 * 0.7) / max(1, len(matches))))
+        logger.info(f"Target size per image: {max_kb_per_image}KB")
         
         def replace_image(match):
             original = match.group(1)
@@ -210,7 +210,9 @@ class ExportService:
         try:
             response = requests.get(f"{self.job_service_url}/advisors/{advisor_id}", timeout=10)
             if response.status_code == 200:
-                return response.json()
+                data = response.json()
+                # Extract advisor data from wrapper
+                return data.get('advisor', {}) if 'advisor' in data else data
             logger.warning(f"Failed to fetch advisor {advisor_id}: {response.status_code}")
             return {}
         except Exception as e:
@@ -232,6 +234,51 @@ class ExportService:
             logger.error(f"Error extracting HTML body: {e}")
         
         return html
+    
+    def get_image_as_base64(self, filename: str) -> Optional[str]:
+        """Load an image file and convert to base64 for embedding"""
+        try:
+            # Try to find the file
+            if os.path.exists(filename):
+                filepath = filename
+            elif os.path.exists(os.path.join('uploads', filename)):
+                filepath = os.path.join('uploads', filename)
+            elif os.path.exists(os.path.join('/home/doo/dev/mondrian-macos', filename)):
+                filepath = os.path.join('/home/doo/dev/mondrian-macos', filename)
+            else:
+                logger.warning(f"Image file not found: {filename}")
+                return None
+            
+            with open(filepath, 'rb') as f:
+                img_data = f.read()
+            
+            # Compress if needed
+            if HAS_PILLOW:
+                img = Image.open(filepath)
+                
+                # Convert RGBA to RGB if needed
+                if img.mode == 'RGBA':
+                    rgb_img = Image.new('RGB', img.size, (255, 255, 255))
+                    rgb_img.paste(img, mask=img.split()[3])
+                    img = rgb_img
+                
+                # Resize to reasonable dimensions for top of report
+                max_width = 600
+                max_height = 400
+                img.thumbnail((max_width, max_height), Image.Resampling.LANCZOS)
+                
+                # Save as JPEG with compression
+                output = BytesIO()
+                img.save(output, format='JPEG', quality=85, optimize=True)
+                img_data = output.getvalue()
+                
+                logger.info(f"Loaded and compressed user image: {len(img_data)/1024:.1f}KB")
+            
+            return base64.b64encode(img_data).decode('utf-8')
+        
+        except Exception as e:
+            logger.error(f"Error loading image {filename}: {e}")
+            return None
     
     def generate_pdf_from_html(self, html: str, job_id: str) -> Optional[bytes]:
         """
@@ -299,6 +346,10 @@ class ExportService:
         # Extract bodies from HTML responses
         summary_body = self.extract_html_body(summary_html)
         analysis_body = self.extract_html_body(analysis_html)
+        
+        # Get user's uploaded image
+        filename = job.get('filename', '')
+        user_image_base64 = self.get_image_as_base64(filename) if filename else None
         
         # Get timestamp
         created_at = job.get('created_at', datetime.now().isoformat())
@@ -497,6 +548,30 @@ class ExportService:
             border-radius: 2px;
         }}
         
+        /* User's photo section */
+        .user-photo-section {{
+            background: #f5f5f5;
+            padding: 20px;
+            border-radius: 4px;
+            margin-bottom: 25px;
+            text-align: center;
+        }}
+        
+        .user-photo-section img {{
+            max-width: 600px;
+            max-height: 400px;
+            margin: 0 auto 12px auto;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }}
+        
+        .user-photo-caption {{
+            color: #666;
+            font-size: 12px;
+            font-style: italic;
+            margin-top: 8px;
+        }}
+        
         .case-study-box {{
             background: #ffffff;
             padding: 10px;
@@ -534,6 +609,16 @@ class ExportService:
             background: #ffffff;
             padding: 12px;
             border-radius: 2px;
+        }}
+        
+        .advisor-headshot {{
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 50%;
+            float: right;
+            margin-left: 15px;
+            margin-bottom: 10px;
         }}
         
         .advisor-profile h1 {{
@@ -648,6 +733,12 @@ class ExportService:
     <p>Detailed feedback and recommendations</p>
 </div>
 
+<!-- USER'S PHOTO -->
+{f'''<div class="user-photo-section">
+    <img src="data:image/jpeg;base64,{user_image_base64}" alt="Your photograph" />
+    <p class="user-photo-caption">Your photograph</p>
+</div>''' if user_image_base64 else ''}
+
 <!-- SUMMARY SECTION -->
 <div class="section-title">Summary - Top Recommendations</div>
 <div class="summary-container">
@@ -712,8 +803,25 @@ class ExportService:
         name = advisor_info.get('name', advisor_id.title())
         years = advisor_info.get('years', '')
         bio = advisor_info.get('bio', 'No biography available.')
-        wikipedia_url = advisor_info.get('wikipedia_url', '')
-        commons_url = advisor_info.get('commons_url', '')
+        
+        # Get links from learn_more nested structure
+        learn_more = advisor_info.get('learn_more', {})
+        wikipedia_url = learn_more.get('wikipedia', {}).get('url', '')
+        commons_url = learn_more.get('gallery', {}).get('url', '')
+        
+        # Get advisor image
+        image_url = advisor_info.get('image_url', '')
+        image_html = ''
+        if image_url:
+            try:
+                response = requests.get(image_url, timeout=10)
+                if response.status_code == 200:
+                    import base64
+                    b64_image = base64.b64encode(response.content).decode('utf-8')
+                    mime_type = response.headers.get('content-type', 'image/jpeg')
+                    image_html = f'<img src="data:{mime_type};base64,{b64_image}" alt="{name}" class="advisor-headshot" />'
+            except Exception as e:
+                logger.warning(f"Failed to fetch advisor image: {e}")
         
         years_html = f'<div class="advisor-years">{years}</div>' if years else ''
         
@@ -721,9 +829,10 @@ class ExportService:
         if wikipedia_url:
             links_html += f'<a href="{wikipedia_url}" class="link-button">Wikipedia</a>'
         if commons_url:
-            links_html += f'<a href="{commons_url}" class="link-button">Wikimedia Commons</a>'
+            links_html += f'<a href="{commons_url}" class="link-button">Gallery</a>'
         
         return f'''<div class="advisor-profile">
+    {image_html}
     <h1>{name}</h1>
     {years_html}
     <p class="advisor-bio">{bio}</p>
@@ -839,12 +948,24 @@ def export_consolidated(job_id: str):
             if not pdf_bytes:
                 return jsonify({"error": "Failed to generate PDF"}), 500
             
-            return send_file(
-                BytesIO(pdf_bytes),
+            # Create response with cache-busting headers and filename
+            import hashlib
+            timestamp = int(datetime.now().timestamp())
+            content_hash = hashlib.md5(f"{job_id}{timestamp}".encode()).hexdigest()[:6]
+            
+            response = Response(
+                pdf_bytes,
                 mimetype='application/pdf',
-                as_attachment=True,
-                download_name=f"analysis-{job_id[:8]}.pdf"
+                headers={
+                    'Cache-Control': 'no-cache, no-store, must-revalidate, max-age=0',
+                    'Pragma': 'no-cache',
+                    'Expires': '0',
+                    'Content-Disposition': f'attachment; filename="analysis-{job_id[:8]}-{content_hash}.pdf"',
+                    'Last-Modified': datetime.now().strftime('%a, %d %b %Y %H:%M:%S GMT'),
+                    'ETag': f'"{job_id}-{timestamp}"'
+                }
             )
+            return response
         
         else:
             # Return consolidated HTML (default)
@@ -853,7 +974,13 @@ def export_consolidated(job_id: str):
             return Response(
                 html,
                 mimetype='text/html; charset=utf-8',
-                headers={'Cache-Control': 'no-cache'}
+                headers={
+                    'Cache-Control': 'no-cache, no-store, must-revalidate, max-age=0',
+                    'Pragma': 'no-cache',
+                    'Expires': '0',
+                    'Last-Modified': datetime.now().strftime('%a, %d %b %Y %H:%M:%S GMT'),
+                    'ETag': f'"{job_id}-{int(datetime.now().timestamp())}"'
+                }
             )
     
     except Exception as e:
