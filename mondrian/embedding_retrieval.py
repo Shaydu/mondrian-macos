@@ -371,6 +371,71 @@ def get_images_hybrid_retrieval(
     return visual_results[:top_k]
 
 
+def get_book_passages_for_dimensions(advisor_id, weak_dimensions, max_passages=2, db_path=None):
+    """
+    Retrieve book passages tagged with weak dimensions for prompt augmentation.
+    
+    Args:
+        advisor_id: ID of the advisor (e.g., "ansel")
+        weak_dimensions: List of dimension names (e.g., ["lighting", "composition"])
+        max_passages: Maximum passages to return (default 2, user constraint)
+        db_path: Path to database (default: mondrian.db)
+    
+    Returns:
+        List of dicts with keys: passage_text, book_title, dimensions, relevance_score
+    """
+    if db_path is None:
+        db_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'mondrian.db')
+    
+    if not weak_dimensions:
+        logger.info("No weak dimensions specified, returning empty passages")
+        return []
+    
+    logger.info(f"Retrieving book passages for advisor {advisor_id}, dimensions: {weak_dimensions}")
+    
+    conn = sqlite3.connect(db_path)
+    conn.row_factory = sqlite3.Row
+    cursor = conn.cursor()
+    
+    # Build query to find passages matching any of the weak dimensions
+    # dimension_tags is stored as JSON array
+    dimension_conditions = []
+    params = [advisor_id]
+    
+    for dim in weak_dimensions:
+        # Match dimension in JSON array (SQLite JSON functions)
+        dimension_conditions.append("json_extract(dimension_tags, '$') LIKE ?")
+        params.append(f'%"{dim}"%')
+    
+    where_clause = f"advisor_id = ? AND ({' OR '.join(dimension_conditions)})"
+    
+    query = f"""
+        SELECT passage_text, book_title, dimension_tags, relevance_score
+        FROM book_passages
+        WHERE {where_clause}
+        ORDER BY relevance_score DESC
+        LIMIT ?
+    """
+    params.append(max_passages)
+    
+    cursor.execute(query, params)
+    rows = cursor.fetchall()
+    conn.close()
+    
+    passages = []
+    for row in rows:
+        import json
+        passages.append({
+            'passage_text': row['passage_text'],
+            'book_title': row['book_title'],
+            'dimensions': json.loads(row['dimension_tags']),
+            'relevance_score': row['relevance_score']
+        })
+    
+    logger.info(f"Retrieved {len(passages)} book passages for weak dimensions")
+    return passages
+
+
 # Export functions for use in ai_advisor_service
 __all__ = [
     'compute_image_embedding',
@@ -378,6 +443,7 @@ __all__ = [
     'get_similar_images_by_visual_embedding',
     'get_similar_images_by_text_embedding',
     'get_images_hybrid_retrieval',
+    'get_book_passages_for_dimensions',
     'cosine_similarity',
     'load_embedding_from_blob'
 ]
