@@ -99,7 +99,7 @@ def get_database_path():
 
 
 # Default services (will be configured based on mode)
-def get_services_for_mode(mode="base", lora_path=None, model=None, db_path="mondrian.db"):
+def get_services_for_mode(mode="base", lora_path=None, model=None, db_path="mondrian.db", backend="bnb"):
     """
     Get service configurations based on mode.
     
@@ -108,6 +108,11 @@ def get_services_for_mode(mode="base", lora_path=None, model=None, db_path="mond
         - rag: Base model with RAG enabled
         - lora: Base model with LoRA adapter (requires --lora-path)
         - lora+rag: LoRA model with RAG enabled
+    
+    Backends (Linux only):
+        - bnb: BitsAndBytes 4-bit quantization (default)
+        - vllm: vLLM high-performance server
+        - awq: AutoAWQ quantization
     """
     # Summary Service should start first (port 5006)
     services = [
@@ -121,6 +126,10 @@ def get_services_for_mode(mode="base", lora_path=None, model=None, db_path="mond
     import platform
     if platform.system() == "Linux":
         ai_advisor_cmd = [PYTHON_EXECUTABLE, "mondrian/ai_advisor_service_linux.py", "--port", "5100"]
+        # Add backend argument for Linux (switchable inference backends)
+        if backend:
+            ai_advisor_cmd.extend(["--backend", backend])
+            print(f"[BACKEND] Using {backend.upper()} inference backend")
     else:
         ai_advisor_cmd = [PYTHON_EXECUTABLE, "mondrian/ai_advisor_service.py", "--port", "5100"]
     
@@ -764,6 +773,7 @@ def main():
     model_arg = None
     db_path_arg = None
     all_services = False
+    backend = "bnb"  # Default backend (BitsAndBytes - current implementation)
     
     for arg in sys.argv:
         if arg.startswith("--mode="):
@@ -776,6 +786,11 @@ def main():
             db_path_arg = arg.split("=", 1)[1]
         elif arg == "--all-services" or arg == "--full":
             all_services = True
+        elif arg.startswith("--backend="):
+            backend = arg.split("=", 1)[1].lower()
+            if backend not in ['bnb', 'vllm', 'awq']:
+                print(f"ERROR: Unknown backend '{backend}'. Valid options: bnb, vllm, awq")
+                sys.exit(1)
     
     # Show usage if --help
     if '--help' in sys.argv or '-h' in sys.argv:
@@ -795,6 +810,10 @@ Options:
     --model=<model>             Base model to use (overrides config)
     --db=<path>                 Database path (overrides config, default: mondrian.db)
     --ab-split=<ratio>          A/B test split ratio (default: 0.5)
+    --backend=<backend>         Inference backend for benchmarking (Linux only):
+                                  bnb  = BitsAndBytes 4-bit (default)
+                                  vllm = vLLM high-performance
+                                  awq  = AutoAWQ quantization
     --help, -h                  Show this help
 
 Model Presets (configured in model_config.json):
@@ -809,6 +828,11 @@ Modes:
     lora                LoRA fine-tuned model (DEFAULT)
     lora+rag            LoRA model with RAG enabled
     ab-test             A/B testing (base vs LoRA)
+
+Inference Backends (Linux/CUDA only - for benchmarking):
+    bnb                 BitsAndBytes 4-bit quantization (DEFAULT, current impl)
+    vllm                vLLM server (requires: pip install vllm)
+    awq                 AutoAWQ quantization (requires: pip install autoawq)
 
 Examples:
     # Start with default model preset
@@ -828,6 +852,12 @@ Examples:
 
     # Override with custom model (ignores preset)
     ./mondrian.sh --restart --model="Qwen/Custom-Model" --lora-path=./adapters/custom
+
+    # Benchmark with vLLM backend (Linux only)
+    ./mondrian.sh --restart --backend=vllm
+    
+    # Benchmark with AWQ backend (Linux only)
+    ./mondrian.sh --restart --backend=awq
 
     # Check active jobs
     ./mondrian.sh --status
@@ -939,10 +969,12 @@ Examples:
         print(f"[CONFIG] Using database path: {final_db_path}")
     
     # Get services for the selected mode
-    services = get_services_for_mode(mode, lora_path, model_arg, final_db_path)
+    services = get_services_for_mode(mode, lora_path, model_arg, final_db_path, backend)
     
     print("\n" + "=" * 60)
     print(f"Starting Mondrian services in {mode.upper()} mode")
+    if backend != 'bnb':
+        print(f"Using {backend.upper()} inference backend (benchmarking mode)")
     print("=" * 60)
 
     # Create log directory if doesn't exist

@@ -20,9 +20,10 @@ VENV_ACTIVATE="$VENV_DIR/bin/activate"
 SYSTEM_PYTHON="/Library/Frameworks/Python.framework/Versions/3.12/bin/python3"
 SERVICES_SCRIPT="$SCRIPT_DIR/scripts/start_services.py"
 
-# Parse model and db arguments
+# Parse model, db, and backend arguments
 MODEL_ARG=""
 DB_ARG=""
+BACKEND_ARG=""
 ALL_SERVICES=false
 for arg in "$@"; do
     if [[ $arg == --model=* ]]; then
@@ -33,6 +34,9 @@ for arg in "$@"; do
         DB_ARG="${arg#--db=}"
         # Remove this from arguments passed to start_services
         set -- "${@/$arg}"
+    elif [[ $arg == --backend=* ]]; then
+        BACKEND_ARG="${arg#--backend=}"
+        # Keep in arguments - will be passed to start_services
     elif [[ $arg == "--all-services" ]] || [[ $arg == "--full" ]]; then
         ALL_SERVICES=true
         # Remove this from arguments passed to start_services

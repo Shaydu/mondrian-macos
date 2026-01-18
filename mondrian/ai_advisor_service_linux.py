@@ -14,15 +14,8 @@ import sqlite3
 import base64
 import io
 
-# ============================================================================
-# CUDA Performance Optimizations for RTX 3060
-# ============================================================================
-# Memory optimization: reduce fragmentation with expandable segments
-os.environ['PYTORCH_CUDA_ALLOC_CONF'] = 'expandable_segments:True,garbage_collection_threshold:0.8'
-# Enable TF32 for faster matrix ops on Ampere GPUs (RTX 30xx series)
-os.environ['TORCH_ALLOW_TF32_CUBLAS_OVERRIDE'] = '1'
-# Disable tokenizers parallelism to avoid deadlocks with multiprocessing
-os.environ['TOKENIZERS_PARALLELISM'] = 'false'
+# Set PyTorch memory optimization to reduce fragmentation
+os.environ['PYTORCH_CUDA_ALLOC_CONF'] = 'expandable_segments:True'
 import logging
 import argparse
 from pathlib import Path
@@ -40,18 +33,6 @@ from flask_cors import CORS
 from PIL import Image
 import io
 
-# ============================================================================
-# Enable CUDA performance optimizations after torch import
-# ============================================================================
-if torch.cuda.is_available():
-    # Enable cuDNN benchmark mode - finds optimal convolution algorithms
-    # This adds ~1-2s warmup on first inference but speeds up subsequent runs
-    torch.backends.cudnn.benchmark = True
-    
-    # Enable TF32 for Ampere GPUs (RTX 30xx) - ~2x faster matrix ops with minimal precision loss
-    torch.backends.cuda.matmul.allow_tf32 = True
-    torch.backends.cudnn.allow_tf32 = True
-
 # Add parent directory to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
@@ -67,28 +48,6 @@ logger = logging.getLogger(__name__)
 # ============================================================================
 # Database Helper Functions
 # ============================================================================
-
-def get_base_url():
-    """Get base URL for generating full image URLs"""
-    # Check for environment variable first (for Cloudflare Tunnel, etc.)
-    base_url = os.environ.get('MONDRIAN_BASE_URL')
-    if base_url:
-        return base_url.rstrip('/')
-    
-    # Auto-detect local network IP (job service runs on 5005)
-    import socket
-    try:
-        # Connect to external address to determine local IP
-        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-        s.connect(('8.8.8.8', 80))
-        local_ip = s.getsockname()[0]
-        s.close()
-        return f"http://{local_ip}:5005"
-    except Exception:
-        # Last resort - try to get hostname
-        hostname = socket.gethostname()
-        local_ip = socket.gethostbyname(hostname)
-        return f"http://{local_ip}:5005"
 
 def get_config(db_path: str, key: str) -> Optional[str]:
     """Get a configuration value from the database config table"""
@@ -131,7 +90,8 @@ class QwenAdvisor:
     
     def __init__(self, model_name: str = "Qwen/Qwen2-VL-7B-Instruct", 
                  load_in_4bit: bool = True, device: Optional[str] = None,
-                 adapter_path: Optional[str] = None):
+                 adapter_path: Optional[str] = None, generation_config: Optional[Dict] = None,
+                 backend: str = 'bnb'):
         """
         Initialize Qwen advisor with specified configuration
         
@@ -140,11 +100,36 @@ class QwenAdvisor:
             load_in_4bit: Use 4-bit quantization (recommended for RTX 3060)
             device: Compute device ('cuda', 'cpu', or None for auto)
             adapter_path: Path to LoRA adapter (optional)
+            generation_config: Generation parameters (max_new_tokens, temperature, etc.)
+            backend: Inference backend ('bnb', 'vllm', 'awq')
         """
         self.model_name = model_name
         self.load_in_4bit = load_in_4bit
         self.adapter_path = adapter_path
+        self.backend = backend.lower() if backend else 'bnb'
         self._offload_dir = None  # Track offload directory for cleanup
+        
+        # Store generation config with defaults
+        self.generation_config = {
+            "max_new_tokens": 3500,
+            "num_beams": 1,
+            "do_sample": False,
+            "repetition_penalty": 1.0,
+            "temperature": 0.7,
+            "top_p": 0.95
+        }
+        if generation_config:
+            # Filter out non-generation parameters (e.g., 'description')
+            valid_gen_keys = {
+                'max_new_tokens', 'num_beams', 'do_sample', 'repetition_penalty',
+                'temperature', 'top_p', 'top_k', 'min_length', 'length_penalty',
+                'early_stopping', 'no_repeat_ngram_size', 'encoder_no_repeat_ngram_size',
+                'bad_words_ids', 'force_words_ids', 'renormalize_logits', 'diversity_penalty',
+                'num_beam_groups', 'diversity_penalty', 'output_scores', 'return_dict_in_generate',
+                'output_hidden_states', 'output_attentions'
+            }
+            filtered_config = {k: v for k, v in generation_config.items() if k in valid_gen_keys}
+            self.generation_config.update(filtered_config)
         
         # Determine device
         if device is None:
@@ -154,6 +139,7 @@ class QwenAdvisor:
         
         logger.info(f"Initializing Qwen advisor on {self.device}")
         logger.info(f"Model: {model_name}")
+        logger.info(f"Backend: {self.backend.upper()}")
         logger.info(f"4-bit quantization: {load_in_4bit}")
         if adapter_path:
             logger.info(f"LoRA adapter: {adapter_path}")
@@ -207,37 +193,23 @@ class QwenAdvisor:
                 
                 quantization_config = BitsAndBytesConfig(
                     load_in_4bit=True,
-                    bnb_4bit_compute_dtype=torch.bfloat16,  # BFloat16 is faster and more stable
+                    bnb_4bit_compute_dtype=torch.float16,
                     bnb_4bit_use_double_quant=True,
                     bnb_4bit_quant_type="nf4"
                 )
                 
-                # Try to load with Flash Attention 2 for faster inference
-                try:
-                    self.model = model_loader.from_pretrained(
-                        self.model_name,
-                        quantization_config=quantization_config,
-                        device_map="auto",
-                        low_cpu_mem_usage=True,
-                        local_files_only=False,
-                        trust_remote_code=True,
-                        attn_implementation="flash_attention_2"  # Enable Flash Attention 2 during loading
-                    )
-                    logger.info("Flash Attention 2 enabled for faster inference")
-                except Exception as fa_error:
-                    logger.warning(f"Flash Attention 2 not available ({fa_error}), using standard attention")
-                    self.model = model_loader.from_pretrained(
-                        self.model_name,
-                        quantization_config=quantization_config,
-                        device_map="auto",
-                        low_cpu_mem_usage=True,
-                        local_files_only=False,
-                        trust_remote_code=True
-                    )
+                self.model = model_loader.from_pretrained(
+                    self.model_name,
+                    quantization_config=quantization_config,
+                    device_map="auto",
+                    low_cpu_mem_usage=True,
+                    local_files_only=False,
+                    trust_remote_code=True
+                )
             else:
                 self.model = model_loader.from_pretrained(
                     self.model_name,
-                    torch_dtype=torch.bfloat16 if self.device == 'cuda' else torch.float32,
+                    torch_dtype=torch.float16 if self.device == 'cuda' else torch.float32,
                     device_map="auto" if self.device == 'cuda' else None,
                     low_cpu_mem_usage=True,
                     local_files_only=False,
@@ -246,20 +218,20 @@ class QwenAdvisor:
                 if self.device == 'cpu':
                     self.model = self.model.to('cpu')
             
-            # Note: Gradient checkpointing is for training only, disabled for inference
-            # It slows down inference while saving memory during backprop
+            # Enable gradient checkpointing to save memory during inference
+            if hasattr(self.model, 'gradient_checkpointing_enable'):
+                self.model.gradient_checkpointing_enable()
+                logger.info("Gradient checkpointing enabled for memory efficiency")
             
-            # Apply torch.compile for faster inference (PyTorch 2.0+)
-            # Note: torch.compile may not be fully compatible with 4-bit quantized models
-            # We use mode="max-autotune" for best performance on RTX 3060
-            if self.device == 'cuda' and hasattr(torch, 'compile') and not self.load_in_4bit:
-                try:
-                    self.model = torch.compile(self.model, mode="max-autotune")
-                    logger.info("torch.compile() applied with max-autotune mode")
-                except Exception as compile_error:
-                    logger.warning(f"torch.compile() not available ({compile_error}), using standard execution")
-            elif self.load_in_4bit:
-                logger.info("Skipping torch.compile() - not fully compatible with 4-bit quantization")
+            # Enable Flash Attention if available (RTX 3060+ supports it)
+            try:
+                if self.device == 'cuda':
+                    # For PyTorch 2.0+, enable scaled_dot_product_attention with Flash Attention backend
+                    self.model.config.attn_implementation = "flash_attention_2"
+                    logger.info("Flash Attention 2 enabled for faster inference")
+            except (AttributeError, ImportError):
+                # Flash Attention not available, fall back to standard attention
+                logger.debug("Flash Attention 2 not available, using standard attention")
             
             logger.info("Model loaded successfully")
             
@@ -369,8 +341,7 @@ class QwenAdvisor:
                 if image_path and os.path.exists(image_path):
                     try:
                         img_filename = os.path.basename(image_path)
-                        base_url = get_base_url()
-                        img_dict['image_url'] = f"{base_url}/api/reference-image/{img_filename}"
+                        img_dict['image_url'] = f"/api/reference-image/{img_filename}"
                         img_dict['image_filename'] = img_filename
                         result_images.append(img_dict)
                     except Exception as e:
@@ -558,8 +529,7 @@ class QwenAdvisor:
                 if image_path and os.path.exists(image_path):
                     try:
                         img_filename = os.path.basename(image_path)
-                        base_url = get_base_url()
-                        img_dict['image_url'] = f"{base_url}/api/reference-image/{img_filename}"
+                        img_dict['image_url'] = f"/api/reference-image/{img_filename}"
                         img_dict['image_filename'] = img_filename
                         result_images.append(img_dict)
                     except Exception as e:
@@ -703,8 +673,7 @@ class QwenAdvisor:
                 if image_path and os.path.exists(image_path):
                     try:
                         img_filename = os.path.basename(image_path)
-                        base_url = get_base_url()
-                        img['image_url'] = f"{base_url}/api/reference-image/{img_filename}"
+                        img['image_url'] = f"/api/reference-image/{img_filename}"
                         img['image_filename'] = img_filename
                         encoded_results.append(img)
                     except Exception as e:
@@ -825,8 +794,7 @@ class QwenAdvisor:
             
             # Get image URL for inline display
             img_filename = os.path.basename(img.get('image_path', ''))
-            base_url = get_base_url()
-            img_url = f"{base_url}/api/reference-image/{img_filename}" if img_filename else ""
+            img_url = f"/api/reference-image/{img_filename}" if img_filename else ""
             
             # Build case study container with inline image
             rag_context += f"""
@@ -901,21 +869,19 @@ class QwenAdvisor:
             rag_context += "\n"
         
         if user_dimensions:
-            rag_context += "\n**CRITICAL - CASE STUDIES OUTPUT:** "
+            rag_context += "\n**CRITICAL - In your dimensional recommendations:** "
             rag_context += "**ALL OUTPUT MUST BE IN ENGLISH ONLY.** "
-            rag_context += "You MUST include a 'case_studies' array in your JSON response with 1-3 entries (max 3). "
-            rag_context += "Each case study must reference ONE of the above reference images by exact title and year. "
-            rag_context += "Format: {\"image_title\": \"Moon and Half Dome\", \"year\": \"1960\", \"dimension\": \"Lighting\", \"explanation\": \"Study how Adams used the zone system to capture tonal range...\"} "
-            rag_context += "Focus on dimensions where the user has the widest gaps. "
-            rag_context += "NEVER repeat the same image_title twice in the case_studies array.\n"
+            rag_context += "You MUST cite these reference images by their exact title when providing improvement guidance. "
+            rag_context += "For each dimension's recommendation, reference specific images like: 'Increase contrast by shooting in brighter light like Moon and Half Dome, Yosemite National Park (1960)'. "
+            rag_context += "Explain how each reference demonstrates mastery in the specific dimensions where the user has the widest gaps. "
+            rag_context += "Calculate dimensional deltas and provide actionable guidance on how to close those gaps.\n"
         else:
-            rag_context += "\n**CRITICAL - CASE STUDIES OUTPUT:** "
+            rag_context += "\n**CRITICAL - In your dimensional recommendations:** "
             rag_context += "**ALL OUTPUT MUST BE IN ENGLISH ONLY.** "
-            rag_context += "You MUST include a 'case_studies' array in your JSON response with 1-3 entries (max 3). "
-            rag_context += "Each case study must cite ONE of the above reference images by exact title and year. "
-            rag_context += "Format: {\"image_title\": \"Old Faithful Geyser\", \"year\": \"1944\", \"dimension\": \"Lighting\", \"explanation\": \"Improve lighting by studying the zone system technique...\"} "
-            rag_context += "Select images that demonstrate best practices for the user's weakest dimensions. "
-            rag_context += "NEVER repeat the same image_title twice in the case_studies array.\n"
+            rag_context += "You MUST cite these reference images by their exact title when providing improvement guidance. "
+            rag_context += "When analyzing the user's image, compare their dimensional scores to these references. "
+            rag_context += "For each dimension's recommendation, cite specific reference images like: 'Improve lighting by studying the zone system technique in Old Faithful Geyser (1944)'. "
+            rag_context += "Calculate the delta (difference) for each dimension and cite which reference image demonstrates the best practice for areas needing improvement.\n"
         
         # Augment prompt
         augmented_prompt = f"{prompt}\n{rag_context}"
@@ -944,36 +910,28 @@ class QwenAdvisor:
         try:
             # Load and validate image
             image = Image.open(image_path).convert('RGB')
-            original_size = image.size
-            
-            # Resize large images to reduce vision encoder processing time
-            max_image_size = 1024
-            if max(image.size) > max_image_size:
-                image.thumbnail((max_image_size, max_image_size), Image.LANCZOS)
-                logger.info(f"Loaded image: {image_path} (resized from {original_size} to {image.size})")
-            else:
-                logger.info(f"Loaded image: {image_path} ({image.size})")
+            logger.info(f"Loaded image: {image_path} ({image.size})")
             
             # Create analysis prompt
             prompt = self._create_prompt(advisor, mode)
             
-            # Always augment prompt with reference images for case study generation
-            # This ensures the LLM has reference context to generate case_studies
+            # Apply RAG augmentation if requested
             reference_images = []
-            logger.info(f"Augmenting prompt with reference images for case study generation")
-            
-            # Try to get user's existing dimensional profile for targeted reference retrieval
-            user_dims = self._get_user_dimensional_profile(image_path)
-            if user_dims:
-                logger.info("Using gap-based reference retrieval with user's existing dimensional profile")
-                prompt, reference_images = self._augment_prompt_with_rag_context(
-                    prompt, advisor, user_dimensions=user_dims, user_image_path=image_path
-                )
-            else:
-                logger.info("Using standard reference retrieval based on advisor's top-rated images")
-                prompt, reference_images = self._augment_prompt_with_rag_context(
-                    prompt, advisor, user_image_path=image_path
-                )
+            if mode in ('rag', 'rag_lora', 'lora+rag', 'lora_rag'):
+                logger.info(f"Augmenting prompt with RAG context for mode={mode}")
+                
+                # Try to get user's existing dimensional profile for gap-based RAG
+                user_dims = self._get_user_dimensional_profile(image_path)
+                if user_dims:
+                    logger.info("Using gap-based RAG with user's existing dimensional profile and visual embeddings")
+                    prompt, reference_images = self._augment_prompt_with_rag_context(
+                        prompt, advisor, user_dimensions=user_dims, user_image_path=image_path
+                    )
+                else:
+                    logger.info("No existing user profile found, using standard RAG with visual embeddings")
+                    prompt, reference_images = self._augment_prompt_with_rag_context(
+                        prompt, advisor, user_image_path=image_path
+                    )
             
             # Use chat template for proper image token handling
             messages = [
@@ -997,21 +955,17 @@ class QwenAdvisor:
                 return_tensors="pt"
             )
             
-            # Move to device with non_blocking for async transfer
+            # Move to device
             if self.device == 'cuda':
-                inputs = {k: v.cuda(non_blocking=True) if hasattr(v, 'cuda') else v for k, v in inputs.items()}
+                inputs = {k: v.cuda() if hasattr(v, 'cuda') else v for k, v in inputs.items()}
             
-            # Generate response with optimized settings for RTX 3060
+            # Generate response
             logger.info("Running inference...")
-            with torch.no_grad(), torch.cuda.amp.autocast(dtype=torch.bfloat16):
+            logger.info(f"Generation config: {self.generation_config}")
+            with torch.no_grad():
                 output_ids = self.model.generate(
                     **inputs, 
-                    max_new_tokens=1500,  # Full JSON output
-                    repetition_penalty=1.0,
-                    do_sample=False,
-                    use_cache=True,  # KV cache for faster autoregressive generation
-                    num_beams=1,  # Greedy decoding (fastest)
-                    pad_token_id=self.processor.tokenizer.pad_token_id,
+                    **self.generation_config,
                     eos_token_id=self.processor.tokenizer.eos_token_id
                 )
             
@@ -1069,19 +1023,11 @@ class QwenAdvisor:
     def _get_default_system_prompt(self) -> str:
         """Fallback system prompt if database is unavailable"""
         return """You are a photography analysis assistant. **ALL OUTPUT MUST BE IN ENGLISH ONLY.** Output valid JSON only.
-
-**SCORING PHILOSOPHY:**
-- Score range is 3-10, NOT 7-10. Apply critical judgment.
-- Most scores should fall in the 6-8 range (majority of work).
-- Scores 9-10 are reserved for exceptional technical or artistic excellence.
-- Scores 3-5 indicate significant issues needing improvement.
-- Scores below 6 should be used when there are clear weaknesses or misalignment with the advisor's style.
-
-**STYLE & SUBJECT MATTER ALIGNMENT:**
-- If the image's subject matter or style drastically differs from the selected advisor's characteristic work, apply a SERIOUS PENALTY (reduce scores by 2-3 points).
-- Consider whether the content aligns with the advisor's typical themes, subject matter, and artistic vision.
-- Misalignment should be flagged in "technical_notes" and reflected proportionally across relevant dimensions.
-
+**CRITICAL JSON REQUIREMENTS:**
+- Use ONLY straight quotes (") for all strings, NEVER curved/fancy quotes (" or ")
+- Use ONLY ASCII characters in all text fields (no Unicode dashes, em-dashes, or special characters)
+- Replace special characters: use regular hyphen (-) instead of em-dash (–)
+- All JSON must be valid and parseable by standard JSON parsers
 Required JSON Structure:
 {
   "image_description": "2-3 sentence description",
@@ -1097,46 +1043,19 @@ Required JSON Structure:
   "overall_score": 7.4,
   "key_strengths": ["strength 1", "strength 2"],
   "priority_improvements": ["improvement 1", "improvement 2"],
-  "technical_notes": "Technical observations",
-  "case_studies": [
-    {"image_title": "Moon and Half Dome", "year": "1960", "dimension": "Lighting", "explanation": "Study the zone system technique..."},
-    {"image_title": "The Tetons and the Snake River", "year": "1942", "dimension": "Composition", "explanation": "..."}
-  ]
-}
-
-**CRITICAL**: If reference images are provided in the prompt, you MUST include a case_studies array with up to 3 entries. Each case study must cite the EXACT image title from the references and explain how it demonstrates mastery in a specific dimension."""
-    
-    def _match_case_study_to_reference(self, case_study: Dict[str, Any], reference_images: List[Dict[str, Any]]) -> Dict[str, Any]:
-        """Match a case study entry to a reference image by title"""
-        if not case_study or not reference_images:
-            return None
-        
-        case_title = case_study.get('image_title', '').strip()
-        if not case_title:
-            return None
-        
-        # Try exact match first
-        for ref in reference_images:
-            ref_title = ref.get('image_title', '').strip()
-            if ref_title and ref_title.lower() == case_title.lower():
-                return ref
-        
-        # Try partial match (case study might be abbreviated)
-        for ref in reference_images:
-            ref_title = ref.get('image_title', '').strip()
-            if ref_title and case_title.lower() in ref_title.lower():
-                return ref
-            if ref_title and ref_title.lower() in case_title.lower():
-                return ref
-        
-        logger.warning(f"Could not match case study title '{case_title}' to any reference image")
-        return None
+  "technical_notes": "Technical observations"
+}"""
     
     def _generate_ios_detailed_html(self, analysis_data: Dict[str, Any], advisor: str, mode: str, reference_images: List[Dict[str, Any]] = None) -> str:
         """Generate iOS-compatible dark theme HTML for detailed analysis"""
         
         if reference_images is None:
             reference_images = []
+        
+        # Track used images and limit to 4 total case studies
+        used_image_paths = set()
+        case_study_count = 0
+        max_case_studies = 4
         
         def format_dimension_name(name: str) -> str:
             """Format dimension names to have proper spacing (e.g., ColorHarmony -> Color Harmony)"""
@@ -1169,31 +1088,25 @@ Required JSON Structure:
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         * {{ margin: 0; padding: 0; box-sizing: border-box; }}
-        html {{ height: 100%; }}
         body {{
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
             padding: 20px;
-            padding-bottom: 0;
             background: #000000;
             line-height: 1.6;
             color: #ffffff;
             max-width: 100%;
-            overflow: auto;
         }}
-        body.lightbox-open {{ overflow: hidden; }}
-        }}
-        @media (max-width: 768px) {{ body {{ padding: 15px; padding-bottom: 0; }} .analysis {{ padding: 15px; }} }}
-        @media (max-width: 375px) {{ body {{ padding: 10px; padding-bottom: 0; font-size: 14px; }} .analysis {{ padding: 12px; }} }}
-        @media (min-width: 1024px) {{ body {{ max-width: 800px; margin: 0 auto; padding: 30px; padding-bottom: 0; }} }}
+        @media (max-width: 768px) {{ body {{ padding: 15px; }} .analysis {{ padding: 15px; }} }}
+        @media (max-width: 375px) {{ body {{ padding: 10px; font-size: 14px; }} .analysis {{ padding: 12px; }} }}
+        @media (min-width: 1024px) {{ body {{ max-width: 800px; margin: 0 auto; padding: 30px; }} }}
         .analysis {{
             background: #1c1c1e;
             padding: 20px;
-            padding-bottom: 12px;
             border-radius: 12px;
-            margin-bottom: -10px;
+            margin-bottom: 20px;
             text-align: left;
         }}
         .analysis h2 {{
@@ -1211,146 +1124,79 @@ Required JSON Structure:
             text-align: left;
         }}
         .feedback-card {{
-            background: #2c2c2e;
-            margin: 12px 0;
-            padding: 12px;
-            border: 1px solid #3c3c3e;
+            background: #fff;
+            margin: 20px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
             border-radius: 8px;
-            color: #ffffff;
         }}
         .feedback-card h3 {{
-            margin: 0 0 8px 0;
+            margin-top: 0;
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
-            gap: 8px;
-            color: #ffffff;
-            font-size: clamp(14px, 4vw, 16px);
-            flex-wrap: wrap;
+            align-items: center;
+            color: #333;
         }}
         .feedback-comment {{
-            margin: 10px 0;
-            padding: 10px;
-            background: #1c1c1e;
+            margin: 15px 0;
+            padding: 12px;
+            background: #f8f9fa;
             border-radius: 4px;
-            font-size: clamp(13px, 3.5vw, 15px);
         }}
-        .feedback-comment p {{ margin: 0; line-height: 1.5; color: #d1d1d6; font-size: clamp(13px, 3.5vw, 15px); }}
+        .feedback-comment p {{ margin: 0; line-height: 1.6; color: #333; }}
         .feedback-recommendation {{
-            margin-top: 10px;
-            padding: 10px;
-            background: #1c1c1e;
-            border-left: 4px solid #2a9aaa;
+            margin-top: 15px;
+            padding: 12px;
+            background: #e3f2fd;
+            border-left: 4px solid #2196f3;
             border-radius: 4px;
         }}
         .feedback-recommendation strong {{
             display: block;
-            margin-bottom: 6px;
-            color: #ffffff;
-            font-size: clamp(13px, 3.5vw, 15px);
+            margin-bottom: 8px;
+            color: #1976d2;
         }}
-        .feedback-recommendation p {{ margin: 0; line-height: 1.5; color: #d1d1d6; font-size: clamp(13px, 3.5vw, 15px); }}
-        .feedback-recommendation .reference-text {{ margin-top: 8px; color: #30b0c0; font-style: italic; }}
+        .feedback-recommendation p {{ margin: 0; line-height: 1.6; color: #333; }}
         .reference-citation {{
-            margin-top: 12px;
+            margin-top: 16px;
             padding: 0;
             background: transparent;
             border: none;
             border-radius: 0;
-            font-size: clamp(12px, 3vw, 14px);
+            font-size: 14px;
         }}
         .reference-citation .case-study-box {{
             background: #2c2c2e;
             border-radius: 8px;
-            padding: 12px;
-            margin-top: 8px;
+            padding: 16px;
+            border-left: 4px solid #30b0c0;
+            overflow: hidden;
         }}
         .reference-citation .case-study-image {{
-            display: block;
             width: 100%;
             height: auto;
+            max-width: 100%;
             border-radius: 6px;
-            margin-bottom: 8px;
+            margin-bottom: 12px;
+            display: block;
             box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-            background: #1c1c1e;
-            cursor: pointer;
         }}
         .reference-citation .case-study-title {{
             color: #ffffff;
-            font-size: clamp(14px, 4vw, 16px);
-            margin: 0 0 8px 0;
+            font-size: 16px;
+            margin: 0 0 12px 0;
             font-weight: 600;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
         }}
         .reference-citation .case-study-metadata {{
             color: #d1d1d6;
-            font-size: clamp(12px, 3vw, 13px);
-            line-height: 1.4;
-            margin: 6px 0 0 0;
+            font-size: 13px;
+            line-height: 1.5;
+            margin: 8px 0 0 0;
         }}
         .reference-citation strong {{ color: #30b0c0; }}
-        /* Lightbox styles */
-        .lightbox {{
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.95);
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            box-sizing: border-box;
-        }}
-        .lightbox.active {{
-            display: flex;
-        }}
-        .lightbox img {{
-            max-width: 88%;
-            max-height: 88%;
-            object-fit: contain;
-            border-radius: 8px;
-        }}
-        .lightbox-close {{
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            color: white;
-            font-size: 40px;
-            font-weight: bold;
-            cursor: pointer;
-            z-index: 10000;
-            padding: 15px;
-            background: rgba(0,0,0,0.5);
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            line-height: 1;
-        }}
     </style>
 </head>
 <body>
-<div id="lightbox" class="lightbox" onclick="closeLightbox()">
-    <span class="lightbox-close" onclick="event.stopPropagation(); closeLightbox();">✕</span>
-    <img id="lightbox-img" src="" alt="Full size image">
-</div>
-<script>
-function openLightbox(src) {{
-    document.getElementById('lightbox-img').src = src + '?size=full';
-    document.getElementById('lightbox').classList.add('active');
-    document.body.classList.add('lightbox-open');
-}}
-function closeLightbox() {{
-    document.getElementById('lightbox').classList.remove('active');
-    document.body.classList.remove('lightbox-open');
-}}
-</script>
 <div class="advisor-section" data-advisor="{advisor}">
   <div class="analysis">
   <h2>Description</h2>
@@ -1385,95 +1231,144 @@ function closeLightbox() {{
             'emotion': 'emotional_impact_score',
         }
         
-        # Build case study map from LLM output (dimension -> case study)
-        case_studies = analysis_data.get('case_studies', [])
-        case_study_map = {}
-        used_image_paths = set()
-        case_study_count = 0
-        
-        if case_studies and reference_images:
-            logger.info(f"Processing {len(case_studies)} case studies from LLM output")
-            for cs in case_studies:
-                if case_study_count >= 3:
-                    logger.info("Reached maximum of 3 case studies, skipping remaining")
-                    break
-                
-                dimension = cs.get('dimension', '').strip()
-                if not dimension:
-                    continue
-                
-                # Match case study to reference image
-                matched_ref = self._match_case_study_to_reference(cs, reference_images)
-                if matched_ref:
-                    img_path = matched_ref.get('image_path')
-                    # Enforce deduplication
-                    if img_path and img_path not in used_image_paths:
-                        case_study_map[dimension.lower()] = {
-                            'reference': matched_ref,
-                            'explanation': cs.get('explanation', '')
-                        }
-                        used_image_paths.add(img_path)
-                        case_study_count += 1
-                        logger.info(f"Added case study for {dimension}: {matched_ref.get('image_title', 'Unknown')}")
-                    else:
-                        logger.warning(f"Skipped duplicate image for {dimension}: {matched_ref.get('image_title')}")
-                else:
-                    logger.warning(f"Could not match case study for {dimension}")
-        
         # Add dimension cards
         for dim in dimensions:
+            # Stop adding case studies if we've reached the maximum
+            if case_study_count >= max_case_studies:
+                break
+                
             name = dim.get('name', 'Unknown')
             score = dim.get('score', 0)
             comment = dim.get('comment', 'No analysis available.')
             recommendation = dim.get('recommendation', 'No recommendation available.')
             color, rating = get_rating_style(score)
             
-            # Check if this dimension has a case study from LLM output
+            # Find the best reference image for this dimension based on largest gap
             reference_citation = ""
-            title_with_year = ""
-            dim_key = name.lower().strip()
-            if dim_key in case_study_map:
-                case_study_data = case_study_map[dim_key]
-                best_ref = case_study_data['reference']
-                explanation = case_study_data['explanation']
+            if reference_images and len(reference_images) > 0:
+                dim_key = name.lower().strip()
+                db_column = dimension_to_column.get(dim_key)
                 
-                ref_title = best_ref.get('image_title', 'Reference Image')
-                ref_year = best_ref.get('date_taken', '')
-                
-                # Format title with year if available
-                if ref_year and str(ref_year).strip():
-                    title_with_year = f"{ref_title} ({ref_year})"
-                else:
-                    title_with_year = ref_title
-                
-                # Get image URL
-                ref_image_url = best_ref.get('image_url', '')
-                if not ref_image_url and best_ref.get('image_path'):
-                    img_filename = os.path.basename(best_ref.get('image_path', ''))
-                    if img_filename:
-                        base_url = get_base_url()
-                        ref_image_url = f"{base_url}/api/reference-image/{img_filename}"
-                
-                # Build case study box with image (only if image URL exists)
-                if ref_image_url:
-                    reference_citation = '<div class="reference-citation"><div class="case-study-box">'
-                    reference_citation += f'<div class="case-study-title">Case Study: {title_with_year}</div>'
-                    reference_citation += f'<img src="{ref_image_url}" alt="{title_with_year}" class="case-study-image" onclick="openLightbox(\'{ref_image_url}\')" />'
+                if db_column:
+                    # First, try to extract the image title from the recommendation text
+                    best_ref = None
+                    best_gap = 0
+                    matched_from_text = False  # Track if we matched from recommendation text
                     
-                    # Add metadata
-                    metadata_parts = []
-                    if explanation:
-                        metadata_parts.append(f'<strong>Study:</strong> {explanation}')
-                    if best_ref.get('location'):
-                        metadata_parts.append(f'<strong>Location:</strong> {best_ref["location"]}')
+                    # Parse recommendation text for referenced image title (e.g., "Old Faithful Geyser (1944)")
+                    # Pattern: "Study ... in <Image Title> (<Year>)"
+                    import re
+                    image_refs = re.findall(r'(?:in|by|studying)\s+([A-Z][^(]+)\s*\((\d{4})\)', recommendation)
                     
-                    reference_citation += f'<div class="case-study-metadata">' + '<br/>'.join(metadata_parts) + '</div>'
-                    reference_citation += '</div></div>'
-            
-            # Build reference text for the recommendation section
-            reference_text = ''
-            if title_with_year:
-                reference_text = f'<p class="reference-text">See Case Study: {title_with_year}</p>'
+                    if image_refs:
+                        # Try to match the first referenced image in the recommendation
+                        ref_title_from_text, ref_year_from_text = image_refs[0]
+                        ref_title_from_text = ref_title_from_text.strip()
+                        
+                        # STRICT MATCHING: If recommendation references a specific image, we MUST use that one or skip
+                        # First try: exact year + title match and not already used
+                        for ref in reference_images:
+                            ref_img_title = ref.get('image_title', '').strip()
+                            ref_img_year = str(ref.get('date_taken', '')).strip()
+                            ref_path = ref.get('image_path', '')
+                            
+                            # Check for title match (flexible matching)
+                            if (ref_title_from_text.lower() in ref_img_title.lower() or 
+                                ref_img_title.lower() in ref_title_from_text.lower()):
+                                # Year match is a bonus but not required
+                                if ref_img_year == ref_year_from_text and ref_path not in used_image_paths:
+                                    best_ref = ref
+                                    matched_from_text = True
+                                    best_gap = 0  # Found exact recommendation match
+                                    break
+                        
+                        # Second try: title match only (no year requirement) and not already used
+                        if not best_ref:
+                            for ref in reference_images:
+                                ref_img_title = ref.get('image_title', '').strip()
+                                ref_path = ref.get('image_path', '')
+                                
+                                # Skip if already used
+                                if ref_path in used_image_paths:
+                                    continue
+                                
+                                # Check for title match (flexible matching)
+                                if (ref_title_from_text.lower() in ref_img_title.lower() or 
+                                    ref_img_title.lower() in ref_title_from_text.lower()):
+                                    best_ref = ref
+                                    matched_from_text = True
+                                    best_gap = 0  # Found recommendation match
+                                    break
+                    
+                    # If no match from recommendation text, find best image by score gap
+                    # But ONLY if we didn't extract a reference from the text (image_refs is empty)
+                    if not best_ref and not image_refs:
+                        for ref in reference_images:
+                            ref_score = ref.get(db_column)
+                            ref_path = ref.get('image_path', '')
+                            
+                            # Skip if image already used
+                            if ref_path in used_image_paths:
+                                continue
+                                
+                            if ref_score is not None:
+                                gap = ref_score - score
+                                if gap > best_gap and ref_score >= 8.0:
+                                    best_gap = gap
+                                    best_ref = ref
+                    
+                    # Only show citation if:
+                    # 1. We matched from recommendation text (must show to avoid mismatch), OR
+                    # 2. Score gap is meaningful (>= 2 points) and no specific reference was mentioned
+                    if best_ref and (matched_from_text or best_gap >= 2) and case_study_count < max_case_studies:
+                        ref_title = best_ref.get('image_title', 'Reference Image')
+                        ref_year = best_ref.get('date_taken', '')
+                        ref_score_val = best_ref.get(db_column, 0)
+                        ref_path = best_ref.get('image_path', '')
+                        
+                        # Format title with year if available
+                        if ref_year and str(ref_year).strip():
+                            title_with_year = f"{ref_title} ({ref_year})"
+                        else:
+                            title_with_year = ref_title
+                        
+                        # Get image data and convert to base64 for embedding
+                        ref_image_url = ''
+                        if best_ref.get('image_path') and os.path.exists(best_ref.get('image_path')):
+                            try:
+                                image_path = best_ref.get('image_path')
+                                with open(image_path, 'rb') as img_file:
+                                    image_data = img_file.read()
+                                    b64_image = base64.b64encode(image_data).decode('utf-8')
+                                    # Determine MIME type based on file extension
+                                    img_ext = os.path.splitext(image_path)[1].lower()
+                                    mime_type = 'image/png' if img_ext == '.png' else 'image/jpeg' if img_ext in ['.jpg', '.jpeg'] else 'image/png'
+                                    ref_image_url = f"data:{mime_type};base64,{b64_image}"
+                            except Exception as e:
+                                logger.warning(f"Failed to embed image as base64: {e}")
+                        
+                        # Build case study box with image
+                        reference_citation = '<div class="reference-citation"><div class="case-study-box">'
+                        reference_citation += f'<div class="case-study-title">Case Study: {title_with_year}</div>'
+                        
+                        # Add image if available
+                        if ref_image_url:
+                            reference_citation += f'<img src="{ref_image_url}" alt="{title_with_year}" class="case-study-image" />'
+                        
+                        # Add metadata
+                        metadata_parts = []
+                        if best_ref.get('image_description'):
+                            metadata_parts.append(f'<strong>Description:</strong> {best_ref["image_description"]}')
+                        if best_ref.get('location'):
+                            metadata_parts.append(f'<strong>Location:</strong> {best_ref["location"]}')
+                        metadata_parts.append(f'<strong>Score:</strong> {ref_score_val}/10 in {name}')
+                        
+                        reference_citation += f'<div class="case-study-metadata">' + '<br/>'.join(metadata_parts) + '</div>'
+                        reference_citation += '</div></div>'
+                        
+                        # Mark image as used and increment counter
+                        used_image_paths.add(ref_path)
+                        case_study_count += 1
             
             html += f'''
   <div class="feedback-card">
@@ -1486,7 +1381,7 @@ function closeLightbox() {{
     </div>
     <div class="feedback-recommendation">
       <strong>How to Improve:</strong>
-      <p>{recommendation}</p>{reference_text}
+      <p>{recommendation}</p>
     </div>{reference_citation}
   </div>
 '''
@@ -1505,8 +1400,8 @@ function closeLightbox() {{
         
         return html
     
-    def _generate_summary_html(self, analysis_data: Dict[str, Any], advisor_id: str = None, reference_images: List[Dict[str, Any]] = None) -> str:
-        """Generate iOS-compatible summary HTML with Top 3 recommendations with case study images"""
+    def _generate_summary_html(self, analysis_data: Dict[str, Any]) -> str:
+        """Generate iOS-compatible summary HTML with Top 3 recommendations (lowest scoring dimensions)"""
         
         def format_dimension_name(name: str) -> str:
             """Format dimension names to have proper spacing (e.g., ColorHarmony -> Color Harmony)"""
@@ -1525,66 +1420,29 @@ function closeLightbox() {{
         # Sort by score ascending to get lowest/weakest areas first
         sorted_dims = sorted(dimensions, key=lambda d: d.get('score', 10))[:3]
         
-        # Build case study map from LLM output (dimension -> case study)
-        case_studies = analysis_data.get('case_studies', [])
-        case_study_map = {}
-        used_image_paths = set()
-        
-        if case_studies and reference_images:
-            case_study_count = 0
-            for cs in case_studies:
-                if case_study_count >= 3:
-                    break
-                
-                dimension = cs.get('dimension', '').strip()
-                if not dimension:
-                    continue
-                
-                # Match case study to reference image
-                matched_ref = self._match_case_study_to_reference(cs, reference_images)
-                if matched_ref:
-                    img_path = matched_ref.get('image_path')
-                    # Enforce deduplication
-                    if img_path and img_path not in used_image_paths:
-                        case_study_map[dimension.lower()] = {
-                            'reference': matched_ref,
-                            'explanation': cs.get('explanation', '')
-                        }
-                        used_image_paths.add(img_path)
-                        case_study_count += 1
-        
         html = '''<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        html { height: 100%; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
             padding: 16px;
             background: #000000;
             color: #ffffff;
-            overflow: auto;
         }
-        body.lightbox-open { overflow: hidden; }
-        }
-        .summary-header { margin-bottom: 16px; padding-bottom: 12px; }
-        .summary-header h1 { font-size: 24px; font-weight: 600; margin: 0; }
+        .summary-header { margin-bottom: 8px; padding-bottom: 16px; }
+        .summary-header h1 { font-size: 24px; font-weight: 600; margin-bottom: 8px; }
         .recommendations-list { display: flex; flex-direction: column; gap: 12px; }
         .recommendation-item {
             display: flex;
-            flex-direction: column;
+            gap: 12px;
             padding: 10px;
             background: #1c1c1e;
             border-radius: 6px;
             border-left: 3px solid #30b0c0;
-        }
-        .rec-header {
-            display: flex;
-            gap: 12px;
-            align-items: flex-start;
         }
         .rec-number {
             display: flex;
@@ -1600,37 +1458,7 @@ function closeLightbox() {{
             flex-shrink: 0;
         }
         .rec-content { flex: 1; }
-        .rec-text { font-size: 14px; line-height: 1.4; color: #e0e0e0; margin: 0; }
-        .case-study-box {
-            margin-top: 8px;
-            padding: 8px;
-            background: #2c2c2e;
-            border-radius: 6px;
-        }
-        .case-study-title {
-            font-size: 12px;
-            font-weight: 600;
-            color: #30b0c0;
-            margin-bottom: 6px;
-        }
-        .case-study-image {
-            display: block;
-            width: 100%;
-            height: auto;
-            border-radius: 4px;
-            margin-bottom: 6px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-            background: #1c1c1e;
-            cursor: pointer;
-        }
-        .case-study-metadata {
-            font-size: 11px;
-            line-height: 1.3;
-            color: #d1d1d6;
-        }
-        .case-study-metadata strong {
-            color: #30b0c0;
-        }
+        .rec-text { font-size: 14px; line-height: 1.4; color: #e0e0e0; }
         .disclaimer {
             margin-top: 24px;
             padding: 16px;
@@ -1639,67 +1467,9 @@ function closeLightbox() {{
             border-left: 3px solid #ff9500;
         }
         .disclaimer p { font-size: 12px; line-height: 1.4; color: #d1d1d6; margin: 0; }
-        /* Lightbox styles */
-        .lightbox {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0,0,0,0.95);
-            z-index: 9999;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            box-sizing: border-box;
-        }
-        .lightbox.active {
-            display: flex;
-        }
-        .lightbox img {
-            max-width: 88%;
-            max-height: 88%;
-            object-fit: contain;
-            border-radius: 8px;
-        }
-        .lightbox-close {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            color: white;
-            font-size: 40px;
-            font-weight: bold;
-            cursor: pointer;
-            z-index: 10000;
-            padding: 15px;
-            background: rgba(0,0,0,0.5);
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            line-height: 1;
-        }
     </style>
 </head>
 <body>
-<div id="lightbox" class="lightbox" onclick="closeLightbox()">
-    <span class="lightbox-close" onclick="event.stopPropagation(); closeLightbox();">✕</span>
-    <img id="lightbox-img" src="" alt="Full size image">
-</div>
-<script>
-function openLightbox(src) {
-    document.getElementById('lightbox-img').src = src + '?size=full';
-    document.getElementById('lightbox').classList.add('active');
-    document.body.classList.add('lightbox-open');
-}
-function closeLightbox() {
-    document.getElementById('lightbox').classList.remove('active');
-    document.body.classList.remove('lightbox-open');
-}
-</script>
 <div class="summary-header"><h1>Top 3 Recommendations</h1></div>
 <div class="recommendations-list">
 '''
@@ -1709,52 +1479,11 @@ function closeLightbox() {
             score = dim.get('score', 0)
             recommendation = dim.get('recommendation', 'No recommendation available.')
             
-            # Check if this dimension has a case study
-            case_study_html = ""
-            dim_key = name.lower().strip()
-            if dim_key in case_study_map:
-                case_study_data = case_study_map[dim_key]
-                best_ref = case_study_data['reference']
-                explanation = case_study_data['explanation']
-                
-                ref_title = best_ref.get('image_title', 'Reference Image')
-                ref_year = best_ref.get('date_taken', '')
-                
-                # Format title with year if available
-                if ref_year and str(ref_year).strip():
-                    title_with_year = f"{ref_title} ({ref_year})"
-                else:
-                    title_with_year = ref_title
-                
-                # Get image URL
-                ref_image_url = best_ref.get('image_url', '')
-                if not ref_image_url and best_ref.get('image_path'):
-                    img_filename = os.path.basename(best_ref.get('image_path', ''))
-                    if img_filename:
-                        base_url = get_base_url()
-                        ref_image_url = f"{base_url}/api/reference-image/{img_filename}"
-                
-                # Build case study box with image (only if image URL exists)
-                if ref_image_url:
-                    case_study_html = '<div class="case-study-box">'
-                    case_study_html += f'<div class="case-study-title">Case Study: {title_with_year}</div>'
-                    case_study_html += f'<img src="{ref_image_url}" alt="{title_with_year}" class="case-study-image" onclick="openLightbox(\'{ref_image_url}\')" />'
-                    
-                    # Add metadata
-                    if explanation:
-                        case_study_html += f'<div class="case-study-metadata"><strong>Study:</strong> {explanation}</div>'
-                    if best_ref.get('location'):
-                        case_study_html += f'<div class="case-study-metadata"><strong>Location:</strong> {best_ref["location"]}</div>'
-                    
-                    case_study_html += '</div>'
-            
             html += f'''  <div class="recommendation-item">
-    <div class="rec-header">
-        <div class="rec-number">{i}</div>
-        <div class="rec-content">
-            <p class="rec-text"><strong>{name}</strong> ({score}/10): {recommendation}</p>
-        </div>
-    </div>{case_study_html}
+    <div class="rec-number">{i}</div>
+    <div class="rec-content">
+      <p class="rec-text"><strong>{name}</strong> ({score}/10): {recommendation}</p>
+    </div>
   </div>
 '''
         
@@ -1780,72 +1509,51 @@ function closeLightbox() {
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         * {{ margin: 0; padding: 0; box-sizing: border-box; }}
-        html, body {{
-            width: 100%;
-            height: 100%;
-            margin: 0;
-            padding: 0;
-        }}
         body {{
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            padding: 12px;
+            padding: 20px;
             background: #000000;
             color: #ffffff;
             line-height: 1.6;
-            font-size: 16px;
-            -webkit-text-size-adjust: 100%;
-            overflow-x: hidden;
         }}
         .advisor-profile {{
             background: #1c1c1e;
-            padding: 16px;
+            padding: 24px;
             border-radius: 12px;
-            margin-bottom: 12px;
-            max-width: 100%;
-            overflow: hidden;
+            margin-bottom: 24px;
         }}
         .advisor-profile h1 {{
             color: #ffffff;
-            font-size: clamp(20px, 6vw, 28px);
+            font-size: 28px;
             font-weight: 600;
-            margin-bottom: 6px;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
+            margin-bottom: 8px;
         }}
         .advisor-years {{
             color: #98989d;
-            font-size: clamp(13px, 4vw, 16px);
+            font-size: 16px;
             font-weight: 400;
-            margin-bottom: 12px;
+            margin-bottom: 16px;
         }}
         .advisor-bio {{
             color: #d1d1d6;
-            font-size: clamp(14px, 4vw, 16px);
-            line-height: 1.5;
-            margin-bottom: 12px;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 16px;
         }}
         .link-button {{
             display: inline-block;
             color: #007AFF;
             text-decoration: none;
-            font-size: clamp(13px, 3.5vw, 16px);
+            font-size: 16px;
             font-weight: 500;
-            padding: 6px 12px;
+            padding: 8px 16px;
             border: 1px solid #007AFF;
             border-radius: 6px;
-            margin-right: 8px;
-            margin-bottom: 8px;
-            white-space: nowrap;
-        }}
-        @media (max-width: 480px) {{
-            body {{ padding: 8px; }}
-            .advisor-profile {{ padding: 12px; margin-bottom: 8px; }}
-            .link-button {{ margin-right: 6px; padding: 5px 10px; }}
+            margin-right: 10px;
+            margin-bottom: 10px;
         }}
     </style>
 </head>
@@ -1907,6 +1615,13 @@ function closeLightbox() {
                 if len(json_str) < 100:
                     logger.warning("⚠️  JSON response too short - likely incomplete or malformed")
 
+                # SANITIZE: Replace Unicode quotes and special characters with ASCII equivalents
+                # This handles cases where the model generates fancy quotes or dashes
+                json_str = json_str.replace('"', '"').replace('"', '"')  # Unicode quotes -> ASCII quotes
+                json_str = json_str.replace(''', "'").replace(''', "'")  # Unicode apostrophes -> ASCII apostrophes
+                json_str = json_str.replace('–', '-').replace('—', '-')  # Em-dashes and en-dashes -> hyphen
+                json_str = json_str.replace('…', '...')  # Ellipsis -> three dots
+
                 analysis_data = json.loads(json_str)
                 parse_success = True
                 
@@ -1945,18 +1660,26 @@ function closeLightbox() {
         # Load advisor data from database for bio
         advisor_data = get_advisor_from_db(DB_PATH, advisor)
         
-        # Reference images are already populated from the inference phase
-        # They are retrieved based on either user's existing dimensional profile (gap-based)
-        # or advisor's top-rated images, both of which are already optimal matches
-        if reference_images:
-            logger.info(f"Using {len(reference_images)} reference images from inference phase for case study matching")
-        else:
-            logger.warning("No reference images available for case study matching")
-            reference_images = []
+        # Extract weak dimensions from analysis and retrieve targeted reference images
+        weak_dimensions = []
+        dimensions = analysis_data.get('dimensions', [])
+        if dimensions and len(dimensions) > 0:
+            # Sort by score (ascending) to find weakest
+            sorted_dims = sorted(dimensions, key=lambda d: d.get('score', 10))
+            # Get the 3 weakest dimensions
+            weak_dimensions = [d.get('name', '').lower().replace(' ', '_') for d in sorted_dims[:3]]
+            
+            if weak_dimensions:
+                logger.info(f"User's weakest dimensions: {weak_dimensions}")
+                # Retrieve reference images that excel in these weak areas
+                targeted_refs = self._get_images_for_weak_dimensions(advisor, weak_dimensions, max_images=4)
+                if targeted_refs:
+                    reference_images = targeted_refs
+                    logger.info(f"Retrieved {len(reference_images)} targeted reference images for weak dimensions")
         
         # Generate HTML outputs
         analysis_html = self._generate_ios_detailed_html(analysis_data, advisor, mode, reference_images=reference_images)
-        summary_html = self._generate_summary_html(analysis_data, advisor_id=advisor, reference_images=reference_images)
+        summary_html = self._generate_summary_html(analysis_data)
         
         # Generate advisor bio HTML from database
         if advisor_data:
@@ -2020,7 +1743,7 @@ loading_status = {
     'message': 'Not started'
 }
 
-def init_advisor(model_name: str, load_in_4bit: bool, adapter_path: Optional[str] = None):
+def init_advisor(model_name: str, load_in_4bit: bool, adapter_path: Optional[str] = None, generation_config: Optional[Dict] = None, backend: str = 'bnb'):
     """Initialize the advisor service"""
     global advisor, loading_status
     try:
@@ -2031,7 +1754,9 @@ def init_advisor(model_name: str, load_in_4bit: bool, adapter_path: Optional[str
         advisor = QwenAdvisor(
             model_name=model_name,
             load_in_4bit=load_in_4bit,
-            adapter_path=adapter_path
+            adapter_path=adapter_path,
+            generation_config=generation_config,
+            backend=backend
         )
         
         loading_status['completed'] = True
@@ -2325,10 +2050,30 @@ def main():
     parser.add_argument('--adapter', default='adapters/ansel_qwen3_4b_v2/epoch_20', help='Path to LoRA adapter')
     parser.add_argument('--load_in_4bit', action='store_true', help='Use 4-bit quantization')
     parser.add_argument('--load_in_8bit', action='store_true', help='Use 8-bit quantization')
+    parser.add_argument('--backend', default='bnb', choices=['bnb', 'vllm', 'awq'], help='Inference backend: bnb (BitsAndBytes, default), vllm (vLLM), awq (AutoAWQ)')
     parser.add_argument('--host', default='0.0.0.0', help='Host to bind to')
     parser.add_argument('--debug', action='store_true', help='Run in debug mode')
+    parser.add_argument('--generation-profile', default=None, help='Generation profile from model_config.json (fast_greedy, beam_search, sampling)')
     
     args = parser.parse_args()
+    
+    # Load generation config from model_config.json
+    generation_config = None
+    config_path = Path(__file__).parent.parent / 'model_config.json'
+    if config_path.exists():
+        try:
+            with open(config_path) as f:
+                config = json.load(f)
+            
+            # Use specified profile or try to get from model preset
+            profile_name = args.generation_profile or config.get('defaults', {}).get('generation_profile', 'fast_greedy')
+            if profile_name in config.get('generation_profiles', {}):
+                generation_config = config['generation_profiles'][profile_name]
+                logger.info(f"Loaded generation profile '{profile_name}' from model_config.json")
+            else:
+                logger.warning(f"Generation profile '{profile_name}' not found in model_config.json")
+        except Exception as e:
+            logger.warning(f"Could not load model_config.json: {e}")
     
     # Log startup info
     logger.info("Starting AI Advisor Service")
@@ -2336,6 +2081,8 @@ def main():
     logger.info(f"Model: {args.model}")
     logger.info(f"Adapter: {args.adapter}")
     logger.info(f"4-bit quantization: {args.load_in_4bit}")
+    if generation_config:
+        logger.info(f"Generation config: {generation_config}")
     
     # Start Flask server in a background thread BEFORE loading the model
     # This ensures the service responds to health checks while loading
@@ -2352,7 +2099,7 @@ def main():
     # NOW load the model in the main thread
     try:
         logger.info("Loading model (this may take several minutes)...")
-        init_advisor(args.model, args.load_in_4bit, adapter_path=args.adapter)
+        init_advisor(args.model, args.load_in_4bit, adapter_path=args.adapter, generation_config=generation_config, backend=args.backend)
         
         # Keep the main thread alive
         flask_thread.join()

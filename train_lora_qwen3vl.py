@@ -190,19 +190,43 @@ def load_model_and_processor(model_name, use_4bit=True, device_map="auto"):
     # Load processor
     processor = AutoProcessor.from_pretrained(model_name, trust_remote_code=True)
     
-    # Load model - use AutoModelForCausalLM for automatic model class detection (supports Qwen2-VL and Qwen3-VL)
-    model = AutoModelForCausalLM.from_pretrained(
-        model_name,
-        quantization_config=bnb_config,
-        device_map=device_map,
-        trust_remote_code=True,
-        low_cpu_mem_usage=True,
-        max_memory={0: "10GB", "cpu": "30GB"}
-    )
+    # Load model - use AutoModelForVision2Seq for Qwen3-VL vision-language models
+    try:
+        from transformers import AutoModelForVision2Seq
+        model = AutoModelForVision2Seq.from_pretrained(
+            model_name,
+            quantization_config=bnb_config,
+            device_map=device_map,
+            trust_remote_code=True,
+            low_cpu_mem_usage=True,
+            max_memory={0: "10GB", "cpu": "30GB"}
+        )
+        logger.info("Loaded model using AutoModelForVision2Seq")
+    except Exception as e:
+        logger.warning(f"AutoModelForVision2Seq failed ({e}), trying Qwen2VLForConditionalGeneration")
+        from transformers import Qwen2VLForConditionalGeneration
+        model = Qwen2VLForConditionalGeneration.from_pretrained(
+            model_name,
+            quantization_config=bnb_config,
+            device_map=device_map,
+            trust_remote_code=True,
+            low_cpu_mem_usage=True,
+            max_memory={0: "10GB", "cpu": "30GB"}
+        )
     
-    # Prepare for k-bit training
+    # Prepare for k-bit training - handle Qwen3-VL compatibility
     if use_4bit:
-        model = prepare_model_for_kbit_training(model)
+        try:
+            model = prepare_model_for_kbit_training(model)
+        except NotImplementedError:
+            # Qwen3-VL doesn't support get_input_embeddings for the vision model
+            # Manually enable gradient checkpointing and input gradients
+            logger.warning("prepare_model_for_kbit_training failed, applying manual fixes for Qwen3-VL")
+            model.gradient_checkpointing_enable()
+            # Enable requires_grad for input embeddings manually
+            for param in model.parameters():
+                param.requires_grad = False  # Freeze all first
+            # We'll let LoRA handle which params need gradients
     
     logger.info("Model loaded successfully")
     return model, processor
