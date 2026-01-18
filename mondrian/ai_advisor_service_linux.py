@@ -250,12 +250,16 @@ class QwenAdvisor:
             # It slows down inference while saving memory during backprop
             
             # Apply torch.compile for faster inference (PyTorch 2.0+)
-            if self.device == 'cuda' and hasattr(torch, 'compile'):
+            # Note: torch.compile may not be fully compatible with 4-bit quantized models
+            # We use mode="max-autotune" for best performance on RTX 3060
+            if self.device == 'cuda' and hasattr(torch, 'compile') and not self.load_in_4bit:
                 try:
-                    self.model = torch.compile(self.model, mode="reduce-overhead")
-                    logger.info("torch.compile() applied for optimized inference")
+                    self.model = torch.compile(self.model, mode="max-autotune")
+                    logger.info("torch.compile() applied with max-autotune mode")
                 except Exception as compile_error:
                     logger.warning(f"torch.compile() not available ({compile_error}), using standard execution")
+            elif self.load_in_4bit:
+                logger.info("Skipping torch.compile() - not fully compatible with 4-bit quantization")
             
             logger.info("Model loaded successfully")
             
