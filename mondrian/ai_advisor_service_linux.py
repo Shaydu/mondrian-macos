@@ -1060,16 +1060,47 @@ Required JSON structure (use ONLY straight quotes, ASCII characters):
 
 Provide ONLY the JSON above with your scores. No explanations, no comments."""
     
+    def _resize_for_inference(self, image: Image.Image, max_size: int = 800) -> Image.Image:
+        """
+        Resize image for model inference, preserving aspect ratio.
+
+        Args:
+            image: PIL Image to resize
+            max_size: Maximum dimension (longest side) in pixels
+
+        Returns:
+            Resized PIL Image (or original if already smaller)
+        """
+        width, height = image.size
+
+        # Skip if already small enough
+        if width <= max_size and height <= max_size:
+            return image
+
+        # Calculate new dimensions preserving aspect ratio
+        if width > height:
+            new_width = max_size
+            new_height = int(height * (max_size / width))
+        else:
+            new_height = max_size
+            new_width = int(width * (max_size / height))
+
+        logger.info(f"[Inference] Resizing image from {width}x{height} to {new_width}x{new_height}")
+        return image.resize((new_width, new_height), Image.Resampling.LANCZOS)
+
     def _run_inference(self, image: Image.Image, prompt: str, max_tokens: int = None) -> str:
         """
         Run model inference on image with given prompt.
         Returns the raw text output from the model.
-        
+
         Args:
             image: PIL Image to analyze
             prompt: Text prompt for the model
             max_tokens: Override max_new_tokens (for fast scoring pass)
         """
+        # Resize image for efficient inference (max 800px on longest side)
+        image = self._resize_for_inference(image, max_size=800)
+
         # Use chat template for proper image token handling
         messages = [
             {"role": "user", "content": [

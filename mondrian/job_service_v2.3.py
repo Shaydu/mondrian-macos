@@ -700,7 +700,7 @@ def upload_image():
         advisor = request.form.get('advisor', 'ansel')
         mode = request.form.get('mode', 'baseline')
         enable_rag = request.form.get('enable_rag', 'false').lower() in ('true', '1', 'yes')
-        auto_analyze = request.form.get('auto_analyze', 'false').lower() in ('true', '1', 'yes')
+        auto_analyze = request.form.get('auto_analyze', 'true').lower() in ('true', '1', 'yes')
         
         # Save file - extract just the basename to avoid path traversal issues
         import uuid
@@ -715,22 +715,25 @@ def upload_image():
         # Create job with enable_rag parameter
         job_id = job_db.create_job(advisor, mode, str(filepath), enable_rag=enable_rag)
         
-        # Format response - keep job_id clean for URLs, add mode to display_id
-        display_job_id = f"{job_id} ({mode})"
-        base_url = f"http://{request.host.split(':')[0]}:5005"
+        # If auto_analyze is true, update status to 'queued' to trigger immediate processing
+        if auto_analyze:
+            with sqlite3.connect(job_db.db_path) as conn:
+                conn.execute("""
+                    UPDATE jobs SET status = 'queued' WHERE id = ?
+                """, (job_id,))
+                conn.commit()
+        
+        # Format response - use get_base_url() helper for consistency
+        base_url = get_base_url()
         
         return jsonify({
             "job_id": job_id,
-            "display_job_id": display_job_id,
-            "filename": file.filename,
+            "filename": unique_filename,
             "advisor": advisor,
             "advisors_used": [advisor],
             "status": "queued",
-            "mode": mode,
-            "enable_rag": enable_rag,
             "status_url": f"{base_url}/status/{job_id}",
-            "stream_url": f"{base_url}/stream/{job_id}",
-            "analysis_url": f"{base_url}/analysis/{job_id}"
+            "stream_url": f"{base_url}/stream/{job_id}"
         }), 201
     
     except Exception as e:
