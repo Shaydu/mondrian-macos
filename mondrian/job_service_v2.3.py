@@ -1459,9 +1459,10 @@ def process_job_worker(db_path: str):
         try:
             with sqlite3.connect(db_path) as conn:
                 # Find pending jobs or jobs with retries available
+                # Include 'analyzing' status for recovery (in case of connection drops)
                 cursor = conn.execute("""
-                    SELECT id, filename, advisor, mode, error FROM jobs 
-                    WHERE (status IN ('pending', 'queued') AND COALESCE(retry_count, 0) = 0)
+                    SELECT id, filename, advisor, mode, error FROM jobs
+                    WHERE (status IN ('pending', 'queued', 'analyzing') AND COALESCE(retry_count, 0) = 0)
                        OR (status = 'failed' AND COALESCE(retry_count, 0) < 3)
                     ORDER BY created_at ASC
                     LIMIT 1
@@ -1473,11 +1474,18 @@ def process_job_worker(db_path: str):
                     continue
                 
                 job_id, filename, advisor, mode, previous_error = job
-                
-                # Get current retry count
-                cursor = conn.execute("SELECT COALESCE(retry_count, 0) FROM jobs WHERE id = ?", (job_id,))
-                retry_count = cursor.fetchone()[0]
-                
+
+                # Get current retry count and status
+                cursor = conn.execute("SELECT COALESCE(retry_count, 0), status, last_activity FROM jobs WHERE id = ?", (job_id,))
+                retry_row = cursor.fetchone()
+                retry_count = retry_row[0]
+                current_status = retry_row[1]
+                last_activity = retry_row[2]
+
+                # If job is stuck in analyzing state, log recovery attempt
+                if current_status == 'analyzing':
+                    logger.warning(f"Recovering stuck job {job_id} from 'analyzing' state (last activity: {last_activity})")
+
                 if retry_count > 0:
                     logger.info(f"Processing job {job_id}: {advisor} ({mode}) - RETRY {retry_count}/3 (prev error: {previous_error})")
                 else:
