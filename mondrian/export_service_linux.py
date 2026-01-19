@@ -35,12 +35,8 @@ from flask import Flask, request, jsonify, Response, send_file
 from flask_cors import CORS
 
 # Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='[%(asctime)s] [%(levelname)s] %(message)s',
-    datefmt='%Y-%m-%d %H:%M:%S'
-)
-logger = logging.getLogger(__name__)
+from mondrian.logging_config import setup_service_logging
+logger = setup_service_logging('export_service_linux')
 
 # Service URLs
 JOB_SERVICE_URL = "http://127.0.0.1:5005"

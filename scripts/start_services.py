@@ -987,13 +987,15 @@ Examples:
     print("=" * 60)
 
     # Create log directory if doesn't exist
-    log_dir = os.path.join(working_dir, "logs")
-    os.makedirs(log_dir, exist_ok=True)
+    log_base_dir = os.path.join(working_dir, "logs")
+    os.makedirs(log_base_dir, exist_ok=True)
 
     processes = []
     for cmd in services:
         service_name = os.path.basename(cmd[1]).replace('.py', '')
-        log_file = os.path.join(log_dir, f"{service_name}_{int(time.time())}.log")
+        service_log_dir = os.path.join(log_base_dir, service_name)
+        os.makedirs(service_log_dir, exist_ok=True)
+        log_file = os.path.join(service_log_dir, f"{service_name}_{int(time.time())}.log")
 
         print(f"\nStarting: {' '.join(cmd)}")
         print(f"  Logging to: {log_file}")

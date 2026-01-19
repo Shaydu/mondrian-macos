@@ -57,12 +57,8 @@ import io
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 # Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='[%(asctime)s] [%(levelname)s] %(message)s',
-    datefmt='%Y-%m-%d %H:%M:%S'
-)
-logger = logging.getLogger(__name__)
+from mondrian.logging_config import setup_service_logging
+logger = setup_service_logging('ai_advisor_service_linux')
 
 
 # ============================================================================
@@ -650,7 +646,7 @@ class QwenAdvisor:
             
             if not results:
                 logger.info("No embedding results, falling back to score-based retrieval")
-                return self._get_images_for_weak_dimensions(advisor_id, weak_dimensions, max_images)
+                return get_images_for_weak_dimensions(DB_PATH, advisor_id, weak_dimensions, max_images)
             
             # Encode images as URLs instead of base64
             encoded_results = []
@@ -671,10 +667,10 @@ class QwenAdvisor:
         except ImportError as e:
             logger.warning(f"Embedding retrieval not available: {e}")
             logger.info("Falling back to score-based retrieval")
-            return self._get_images_for_weak_dimensions(advisor_id, weak_dimensions, max_images)
+            return get_images_for_weak_dimensions(DB_PATH, advisor_id, weak_dimensions, max_images)
         except Exception as e:
             logger.error(f"Embedding retrieval failed: {e}")
-            return self._get_images_for_weak_dimensions(advisor_id, weak_dimensions, max_images)
+            return get_images_for_weak_dimensions(DB_PATH, advisor_id, weak_dimensions, max_images)
     
     def _augment_prompt_with_rag_context(self, prompt: str, advisor_id: str, user_dimensions: Dict[str, float] = None, user_image_path: str = None) -> str:
         """
@@ -717,7 +713,7 @@ class QwenAdvisor:
                 )
             else:
                 # Fall back to score-based retrieval
-                reference_images = self._get_images_for_weak_dimensions(advisor_id, weak_dimensions, max_images=4)
+                reference_images = get_images_for_weak_dimensions(DB_PATH, advisor_id, weak_dimensions, max_images=4)
             
             # Log what we got before deduplication
             logger.info(f"Retrieved {len(reference_images)} reference images before deduplication")
@@ -1201,8 +1197,8 @@ Provide ONLY the JSON above with your scores. No explanations, no comments."""
             logger.info("[Two-Pass] === RETRIEVAL: References + Passages ===")
             
             # Get reference images that excel in weak dimensions
-            reference_images = self._get_images_for_weak_dimensions(
-                advisor, weak_dimension_names, max_images=3
+            reference_images = get_images_for_weak_dimensions(
+                DB_PATH, advisor, weak_dimension_names, max_images=3
             )
             logger.info(f"[Two-Pass] Retrieved {len(reference_images)} reference images")
             
@@ -1512,6 +1508,33 @@ Required JSON Structure:
             margin: 8px 0 0 0;
         }}
         .reference-citation strong {{ color: #30b0c0; }}
+        .advisor-quote-box {{
+            background: #2c2c2e;
+            border-radius: 8px;
+            padding: 16px;
+            border-left: 4px solid #ff9500;
+            overflow: hidden;
+            margin-top: 12px;
+        }}
+        .advisor-quote-box .advisor-quote-title {{
+            color: #ffffff;
+            font-size: 14px;
+            margin: 0 0 12px 0;
+            font-weight: 600;
+        }}
+        .advisor-quote-box .advisor-quote-text {{
+            color: #d1d1d6;
+            font-size: 14px;
+            line-height: 1.6;
+            font-style: italic;
+            margin: 0;
+        }}
+        .advisor-quote-box .advisor-quote-source {{
+            color: #a1a1a6;
+            font-size: 12px;
+            margin-top: 8px;
+            font-style: normal;
+        }}
     </style>
 </head>
 <body>
@@ -1622,6 +1645,27 @@ Required JSON Structure:
   <p><strong>Grade Note:</strong> {technical_notes}</p>
 '''
         
+        # Add advisor quotes if available
+        book_passages = analysis_data.get('book_passages', [])
+        if book_passages:
+            html += '''
+  <h2>Advisor Insights</h2>
+  <p style="color: #d1d1d6; margin-bottom: 12px; font-size: 14px;">Relevant passages from my writings:</p>
+'''
+            for passage in book_passages:
+                book_title = passage.get('book_title', 'Unknown Book')
+                text = passage.get('text', passage.get('passage_text', ''))
+                dims = passage.get('dimensions', [])
+                
+                dims_str = ', '.join(dims) if dims else 'General'
+                
+                html += f'''  <div class="advisor-quote-box">
+    <div class="advisor-quote-title">Advisor Quote</div>
+    <div class="advisor-quote-text">"{text}"</div>
+    <div class="advisor-quote-source"><strong>From:</strong> {book_title} — <strong>Topics:</strong> {dims_str}</div>
+  </div>
+'''
+        
         html += '''
 </div>
 </div>
@@ -1697,6 +1741,33 @@ Required JSON Structure:
             border-left: 3px solid #ff9500;
         }
         .disclaimer p { font-size: 12px; line-height: 1.4; color: #d1d1d6; margin: 0; }
+        .advisor-quote-box {{
+            background: #2c2c2e;
+            border-radius: 8px;
+            padding: 12px;
+            border-left: 4px solid #ff9500;
+            overflow: hidden;
+            margin-top: 10px;
+        }}
+        .advisor-quote-box .advisor-quote-title {{
+            color: #ffffff;
+            font-size: 12px;
+            margin: 0 0 8px 0;
+            font-weight: 600;
+        }}
+        .advisor-quote-box .advisor-quote-text {{
+            color: #d1d1d6;
+            font-size: 12px;
+            line-height: 1.4;
+            font-style: italic;
+            margin: 0;
+        }}
+        .advisor-quote-box .advisor-quote-source {{
+            color: #a1a1a6;
+            font-size: 10px;
+            margin-top: 6px;
+            font-style: normal;
+        }}
     </style>
 </head>
 <body>
@@ -1919,7 +1990,7 @@ Required JSON Structure:
             if weak_dimension_names:
                 logger.info(f"User's weakest dimensions: indices={weak_dimension_indices}, names={weak_dimension_names}")
                 # Retrieve reference images that excel in these weak areas
-                targeted_refs = self._get_images_for_weak_dimensions(advisor, weak_dimension_names, max_images=4)
+                targeted_refs = get_images_for_weak_dimensions(DB_PATH, advisor, weak_dimension_names, max_images=4)
                 if targeted_refs:
                     reference_images = targeted_refs
                     logger.info(f"Retrieved {len(reference_images)} targeted reference images for weak dimensions")

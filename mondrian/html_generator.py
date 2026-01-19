@@ -198,6 +198,33 @@ def generate_ios_detailed_html(
             margin: 8px 0 0 0;
         }}
         .reference-citation strong {{ color: #30b0c0; }}
+        .advisor-quote-box {{
+            background: #2c2c2e;
+            border-radius: 8px;
+            padding: 16px;
+            border-left: 4px solid #ff9500;
+            overflow: hidden;
+            margin-top: 12px;
+        }}
+        .advisor-quote-box .advisor-quote-title {{
+            color: #ffffff;
+            font-size: 14px;
+            margin: 0 0 12px 0;
+            font-weight: 600;
+        }}
+        .advisor-quote-box .advisor-quote-text {{
+            color: #d1d1d6;
+            font-size: 14px;
+            line-height: 1.6;
+            font-style: italic;
+            margin: 0;
+        }}
+        .advisor-quote-box .advisor-quote-source {{
+            color: #a1a1a6;
+            font-size: 12px;
+            margin-top: 8px;
+            font-style: normal;
+        }}
     </style>
 </head>
 <body>

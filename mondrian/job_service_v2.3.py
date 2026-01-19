@@ -24,12 +24,8 @@ from PIL import Image
 from io import BytesIO
 
 # Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='[%(asctime)s] [%(levelname)s] %(message)s',
-    datefmt='%Y-%m-%d %H:%M:%S'
-)
-logger = logging.getLogger(__name__)
+from mondrian.logging_config import setup_service_logging
+logger = setup_service_logging('job_service_v2.3')
 
 # AI Advisor service URL
 AI_ADVISOR_URL = "http://127.0.0.1:5100"

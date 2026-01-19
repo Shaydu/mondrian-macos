@@ -17,12 +17,8 @@ from datetime import datetime
 from flask import Flask, request, jsonify, Response
 
 # Configure logging
-logging.basicConfig(
-    level=logging.INFO,
-    format='[%(asctime)s] [%(levelname)s] %(message)s',
-    datefmt='%Y-%m-%d %H:%M:%S'
-)
-logger = logging.getLogger(__name__)
+from mondrian.logging_config import setup_service_logging
+logger = setup_service_logging('summary_service')
 
 app = Flask(__name__)
 
