@@ -137,13 +137,16 @@ class QwenAdvisor:
         self._offload_dir = None  # Track offload directory for cleanup
         
         # Store generation config with defaults
+        # Beam search with sampling for better GPU utilization and quality
         self.generation_config = {
             "max_new_tokens": 3500,
-            "num_beams": 1,
-            "do_sample": False,
-            "repetition_penalty": 1.0,
+            "num_beams": 4,
+            "do_sample": True,
             "temperature": 0.7,
-            "top_p": 0.95
+            "top_p": 0.9,
+            "top_k": 50,
+            "repetition_penalty": 1.0,
+            "early_stopping": True,
         }
         if generation_config:
             # Filter out non-generation parameters (e.g., 'description')
@@ -218,12 +221,17 @@ class QwenAdvisor:
             if self.load_in_4bit and self.device == 'cuda':
                 from transformers import BitsAndBytesConfig
                 
+                # Use bfloat16 for RTX 30xx+ (Ampere) - better numeric stability
+                compute_dtype = torch.bfloat16 if torch.cuda.is_bf16_supported() else torch.float16
+                
                 quantization_config = BitsAndBytesConfig(
                     load_in_4bit=True,
-                    bnb_4bit_compute_dtype=torch.float16,
+                    bnb_4bit_compute_dtype=compute_dtype,
                     bnb_4bit_use_double_quant=True,
                     bnb_4bit_quant_type="nf4"
                 )
+                
+                logger.info(f"Using compute dtype: {compute_dtype}")
                 
                 self.model = model_loader.from_pretrained(
                     self.model_name,
@@ -245,10 +253,10 @@ class QwenAdvisor:
                 if self.device == 'cpu':
                     self.model = self.model.to('cpu')
             
-            # Enable gradient checkpointing to save memory during inference
-            if hasattr(self.model, 'gradient_checkpointing_enable'):
-                self.model.gradient_checkpointing_enable()
-                logger.info("Gradient checkpointing enabled for memory efficiency")
+            # Disable gradient checkpointing for inference (only needed for training)
+            if hasattr(self.model, 'gradient_checkpointing_disable'):
+                self.model.gradient_checkpointing_disable()
+                logger.info("Gradient checkpointing disabled for faster inference")
             
             # Enable Flash Attention if available (RTX 3060+ supports it)
             try:
@@ -317,9 +325,11 @@ class QwenAdvisor:
             raise
     
     # NOTE: RAG retrieval methods moved to mondrian/rag_retrieval.py
-    # Use module functions: get_similar_images_from_db, get_images_for_weak_dimensions, etc.
+    # Use module functions: deduplicate_reference_images, get_best_image_per_dimension, 
+    # compute_visual_relevance, compute_case_studies, get_user_dimensional_profile,
+    # get_images_with_embedding_retrieval, augment_prompt_with_rag_context
     
-    def _deduplicate_reference_images(self, images: List[Dict[str, Any]], used_paths: set, min_images: int = 1) -> List[Dict[str, Any]]:
+    def _create_prompt(self, advisor: str, mode: str) -> str:
         """
         Remove duplicate images based on image_path to ensure each reference is used only once.
         
@@ -474,7 +484,7 @@ class QwenAdvisor:
             - relevance: Visual similarity score (if computed)
         """
         # Get best reference image for each dimension
-        best_per_dim = self._get_best_image_per_dimension(advisor_id)
+        best_per_dim = get_best_image_per_dimension(DB_PATH, advisor_id)
         
         if not best_per_dim:
             logger.warning("[CaseStudy] No reference images found for any dimension")
@@ -530,7 +540,7 @@ class QwenAdvisor:
             # Compute visual relevance if user image provided
             relevance = 1.0  # Default to high relevance if no user image
             if user_image_path and ref_path and os.path.exists(ref_path):
-                relevance = self._compute_visual_relevance(user_image_path, ref_path)
+                relevance = compute_visual_relevance(user_image_path, ref_path)
                 logger.info(f"[CaseStudy] {dim_name}: gap={gap:.1f}, relevance={relevance:.2f}, ref='{ref_img.get('image_title')}'")
             else:
                 logger.info(f"[CaseStudy] {dim_name}: gap={gap:.1f}, relevance=N/A, ref='{ref_img.get('image_title')}'")
@@ -709,8 +719,8 @@ class QwenAdvisor:
             # Try embedding-based retrieval if user image path is available
             if user_image_path:
                 logger.info("Using embedding-based retrieval for visually similar references")
-                reference_images = self._get_images_with_embedding_retrieval(
-                    advisor_id, user_image_path, weak_dimensions, user_dimensions, max_images=4
+                reference_images = get_images_with_embedding_retrieval(
+                    DB_PATH, advisor_id, user_image_path, weak_dimensions, user_dimensions, max_images=4
                 )
             else:
                 # Fall back to score-based retrieval
@@ -723,7 +733,7 @@ class QwenAdvisor:
                 logger.info(f"Images before dedup: {titles}")
             
             # Deduplicate images
-            reference_images = self._deduplicate_reference_images(reference_images, used_image_paths, min_images=2)
+            reference_images = deduplicate_reference_images(reference_images, used_image_paths, min_images=2)
             
             # Log after deduplication
             logger.info(f"After deduplication: {len(reference_images)} unique images")
@@ -749,8 +759,8 @@ class QwenAdvisor:
             # No user dimensions yet - try visual embedding retrieval first
             if user_image_path:
                 logger.info("Using visual embedding retrieval for first-time analysis")
-                reference_images = self._get_images_with_embedding_retrieval(
-                    advisor_id, user_image_path, weak_dimensions=None, 
+                reference_images = get_images_with_embedding_retrieval(
+                    DB_PATH, advisor_id, user_image_path, weak_dimensions=None, 
                     user_scores=None, max_images=3
                 )
             
@@ -759,7 +769,7 @@ class QwenAdvisor:
                 reference_images = get_top_reference_images(DB_PATH, advisor_id, max_total=3)
             
             # Deduplicate images
-            reference_images = self._deduplicate_reference_images(reference_images, used_image_paths, min_images=2)
+            reference_images = deduplicate_reference_images(reference_images, used_image_paths, min_images=2)
             
             if not reference_images:
                 logger.info("No unique reference images found after deduplication - skipping RAG augmentation")
@@ -906,108 +916,7 @@ class QwenAdvisor:
         
         return augmented_prompt, reference_images
     
-    def analyze_image(self, image_path: str, advisor: str = "ansel", 
-                     mode: str = "baseline") -> Dict[str, Any]:
-        """
-        Analyze an image and return structured insights
-        
-        Args:
-            image_path: Path to image file
-            advisor: Photography advisor persona (e.g., 'ansel')
-            mode: Analysis mode ('baseline', 'rag', 'lora', 'lora+rag', 'rag_lora')
-        
-        Returns:
-            Dictionary with analysis results
-        """
-        try:
-            # Load and validate image
-            image = Image.open(image_path).convert('RGB')
-            logger.info(f"Loaded image: {image_path} ({image.size})")
-            
-            # Create analysis prompt
-            prompt = self._create_prompt(advisor, mode)
-            
-            # Apply RAG augmentation if requested
-            reference_images = []
-            if mode in ('rag', 'rag_lora', 'lora+rag', 'lora_rag'):
-                logger.info(f"Augmenting prompt with RAG context for mode={mode}")
-                
-                # Try to get user's existing dimensional profile for gap-based RAG
-                user_dims = self._get_user_dimensional_profile(image_path)
-                if user_dims:
-                    logger.info("Using gap-based RAG with user's existing dimensional profile and visual embeddings")
-                    prompt, reference_images = self._augment_prompt_with_rag_context(
-                        prompt, advisor, user_dimensions=user_dims, user_image_path=image_path
-                    )
-                else:
-                    logger.info("No existing user profile found, using standard RAG with visual embeddings")
-                    prompt, reference_images = self._augment_prompt_with_rag_context(
-                        prompt, advisor, user_image_path=image_path
-                    )
-            
-            # Use chat template for proper image token handling
-            messages = [
-                {"role": "user", "content": [
-                    {"type": "image"},
-                    {"type": "text", "text": prompt}
-                ]}
-            ]
-            
-            # Prepare inputs using processor with chat template
-            text = self.processor.apply_chat_template(
-                messages,
-                tokenize=False,
-                add_generation_prompt=True
-            )
-            
-            inputs = self.processor(
-                text=text,
-                images=[image],
-                padding=True,
-                return_tensors="pt"
-            )
-            
-            # Move to device
-            if self.device == 'cuda':
-                inputs = {k: v.cuda() if hasattr(v, 'cuda') else v for k, v in inputs.items()}
-            
-            # Generate response
-            logger.info("Running inference...")
-            logger.info(f"Generation config: {self.generation_config}")
-            with torch.no_grad():
-                output_ids = self.model.generate(
-                    **inputs, 
-                    **self.generation_config,
-                    eos_token_id=self.processor.tokenizer.eos_token_id
-                )
-            
-            # Decode only the generated tokens (exclude input prompt)
-            input_length = inputs['input_ids'].shape[1]
-            generated_ids = output_ids[:, input_length:]
-            
-            response = self.processor.batch_decode(
-                generated_ids, 
-                skip_special_tokens=True
-            )[0]
-            
-            logger.info(f"Generated response: {len(response)} chars")
-            
-            # Parse response into structured format
-            analysis = self._parse_response(
-                response, advisor, mode, prompt, 
-                reference_images=reference_images,
-                user_image_path=image_path
-            )
-            
-            return analysis
-            
-        except FileNotFoundError:
-            logger.error(f"Image file not found: {image_path}")
-            raise
-        except Exception as e:
-            logger.error(f"Error analyzing image: {e}")
-            logger.error(traceback.format_exc())
-            raise
+
     
     def _create_prompt(self, advisor: str, mode: str) -> str:
         """Create analysis prompt by loading from database"""
@@ -1132,11 +1041,21 @@ Provide ONLY the JSON above with your scores. No explanations, no comments."""
         if max_tokens is not None:
             gen_config['max_new_tokens'] = max_tokens
         
+        # Filter generation config based on do_sample
+        if not gen_config.get('do_sample', False):
+            # Remove sampling-only parameters for greedy decoding
+            gen_config.pop('temperature', None)
+            gen_config.pop('top_p', None)
+            gen_config.pop('top_k', None)
+        
+        logger.info(f"[_run_inference] Final gen_config: {gen_config}")
+        
         # Generate response
         with torch.no_grad():
             output_ids = self.model.generate(
                 **inputs, 
                 **gen_config,
+                use_cache=True,
                 eos_token_id=self.processor.tokenizer.eos_token_id
             )
         
@@ -1151,35 +1070,10 @@ Provide ONLY the JSON above with your scores. No explanations, no comments."""
         
         return response
     
-    def _parse_scoring_response(self, response: str) -> List[Dict[str, Any]]:
+    def analyze_image(self, image_path: str, advisor: str = "ansel",
+                     mode: str = "baseline") -> Dict[str, Any]:
         """
-        [DEPRECATED - no longer used in single-pass]
-        Parse the quick scoring response (Pass 1) to extract dimensions.
-        """
-        import re
-        
-        try:
-            # Find JSON in response
-            start_idx = response.find('{')
-            end_idx = response.rfind('}') + 1
-            
-            if start_idx != -1 and end_idx > start_idx:
-                json_str = response[start_idx:end_idx]
-                # Sanitize quotes
-                json_str = json_str.replace('"', '"').replace('"', '"')
-                data = json.loads(json_str)
-                dimensions = data.get('dimensions', [])
-                logger.info(f"Pass 1: Parsed {len(dimensions)} dimensional scores")
-                return dimensions
-        except Exception as e:
-            logger.warning(f"Pass 1: Failed to parse scoring response: {e}")
-        
-        return []
-    
-    def analyze_image_single_pass(self, image_path: str, advisor: str = "ansel",
-                                   mode: str = "rag") -> Dict[str, Any]:
-        """
-        Single-pass image analysis with RAG.
+        Single-pass image analysis with optional RAG.
         Retrieves ALL top references and passages, lets LLM decide which to cite.
         
         Args:
@@ -1193,6 +1087,16 @@ Provide ONLY the JSON above with your scores. No explanations, no comments."""
         try:
             # Load and validate image
             image = Image.open(image_path).convert('RGB')
+            original_size = image.size
+            
+            # Resize large images to prevent memory issues and speed up processing
+            max_dimension = 1280
+            if max(image.size) > max_dimension:
+                ratio = max_dimension / max(image.size)
+                new_size = tuple(int(dim * ratio) for dim in image.size)
+                image = image.resize(new_size, Image.Resampling.LANCZOS)
+                logger.info(f"[Single-Pass] Resized image: {original_size} -> {image.size}")
+            
             logger.info(f"[Single-Pass] Loaded image: {image_path} ({image.size})")
             
             # =================================================================
@@ -1258,96 +1162,7 @@ Provide ONLY the JSON above with your scores. No explanations, no comments."""
         except Exception as e:
             logger.error(f"[Single-Pass] Error: {e}")
             logger.error(traceback.format_exc())
-            # Fall back to basic analysis
-            logger.info("[Single-Pass] Falling back to basic analysis")
-            return self.analyze_image(image_path, advisor, mode)
-    
-    # Keep old function name as alias for backwards compatibility
-    def analyze_image_two_pass(self, image_path: str, advisor: str = "ansel",
-                                mode: str = "rag") -> Dict[str, Any]:
-        """
-        [DEPRECATED] Alias for analyze_image_single_pass.
-        Two-pass has been replaced with single-pass for efficiency.
-        """
-        return self.analyze_image_single_pass(image_path, advisor, mode)
-    
-    def _augment_prompt_for_pass2(self, prompt: str, weak_dimensions: List[Dict],
-                                   reference_images: List[Dict], 
-                                   book_passages: List[Dict]) -> str:
-        """
-        [DEPRECATED - use _build_rag_prompt for single-pass]
-        Augment the full analysis prompt with targeted RAG context for Pass 2.
-        Assigns citation IDs to each candidate for LLM to reference.
-        """
-        rag_context = "\n\n### TARGETED GUIDANCE FOR YOUR WEAKEST AREAS:\n"
-        
-        weak_names = [d['name'] for d in weak_dimensions]
-        rag_context += f"Focus your feedback on these dimensions where improvement is most needed: **{', '.join(weak_names)}**\n"
-        
-        # Add book passages with citation IDs
-        if book_passages:
-            rag_context += "\n#### AVAILABLE QUOTES FROM MY WRITINGS:\n"
-            rag_context += "You may cite UP TO 3 of these quotes total across all dimensions. Each dimension may cite ONE quote maximum. Never reuse quote IDs.\n\n"
-            
-            for idx, passage in enumerate(book_passages, 1):
-                book_title = passage['book_title']
-                text = passage['passage_text']
-                dims = passage['dimensions']
-                quote_id = f"QUOTE_{idx}"
-                
-                # Truncate to 75 words for preview
-                words = text.split()
-                preview = ' '.join(words[:75])
-                if len(words) > 75:
-                    preview += "..."
-                
-                rag_context += f"[{quote_id}] From \"{book_title}\" (relevant to: {', '.join(dims)})\n"
-                rag_context += f'  "{preview}"\n\n'
-            
-            rag_context += "**CITATION INSTRUCTION:** To cite a quote, include its ID in your JSON response: `\"quote_id\": \"QUOTE_1\"`\n"
-            rag_context += "Cite ONLY when the quote directly supports your specific feedback for that dimension.\n"
-        
-        # Add reference images with citation IDs
-        if reference_images:
-            rag_context += "\n#### AVAILABLE REFERENCE IMAGES:\n"
-            rag_context += "You may cite UP TO 3 of these images total across all dimensions. Each dimension may cite ONE image maximum. Never reuse image IDs.\n\n"
-            
-            for idx, img in enumerate(reference_images, 1):
-                img_title = img.get('image_title') or img.get('image_path', '').split('/')[-1]
-                year = img.get('date_taken', '')
-                location = img.get('location', '')
-                img_id = f"IMG_{idx}"
-                
-                # Get all dimension scores >= 8.0
-                strong_dims = []
-                for dim in ['composition', 'lighting', 'focus_sharpness', 'color_harmony', 
-                           'subject_isolation', 'depth_perspective', 'visual_balance', 'emotional_impact']:
-                    score = img.get(f"{dim}_score", 0)
-                    if score and score >= 8.0:
-                        dim_display = dim.replace('_', ' ').title()
-                        strong_dims.append(f"{dim_display}={score:.1f}")
-                
-                rag_context += f"[{img_id}] \"{img_title}\" ({year})\n"
-                if location:
-                    rag_context += f"  Location: {location}\n"
-                rag_context += f"  Strengths: {', '.join(strong_dims)}\n"
-                if img.get('image_description'):
-                    desc = img['image_description'][:120]
-                    rag_context += f"  Description: {desc}...\n"
-                rag_context += "\n"
-            
-            rag_context += "**CITATION INSTRUCTION:** To cite an image, include its ID in your JSON response: `\"case_study_id\": \"IMG_3\"`\n"
-            rag_context += "Cite ONLY when the image's strong dimensions match what the user needs to improve.\n"
-        
-        # Add final reminder about dimension-specific techniques
-        rag_context += "\n**CRITICAL CITATION RULES:**\n"
-        rag_context += "- Maximum 3 images and 3 quotes total across ALL dimensions\n"
-        rag_context += "- Each dimension: cite at most ONE image and ONE quote\n"
-        rag_context += "- NEVER reuse an ID once cited in another dimension\n"
-        rag_context += "- Only cite if directly relevant to your specific feedback\n"
-        rag_context += "- Zone System quotes ONLY for Lighting dimension\n"
-        
-        return prompt + rag_context
+            raise
     
     def _build_rag_prompt(self, prompt: str, reference_images: List[Dict], 
                           book_passages: List[Dict]) -> str:
@@ -1755,208 +1570,6 @@ Required JSON Structure:
         
         return html
     
-    def _generate_summary_html(self, analysis_data: Dict[str, Any]) -> str:
-        """Generate iOS-compatible summary HTML with Top 3 recommendations (lowest scoring dimensions)"""
-        
-        def format_dimension_name(name: str) -> str:
-            """Format dimension names to have proper spacing (e.g., ColorHarmony -> Color Harmony)"""
-            import re
-            # Insert space before uppercase letters that follow lowercase letters
-            formatted = re.sub(r'([a-z])([A-Z])', r'\1 \2', name)
-            return formatted
-        
-        dimensions = analysis_data.get('dimensions', [])
-        
-        # Format dimension names
-        for dim in dimensions:
-            if 'name' in dim and dim['name']:
-                dim['name'] = format_dimension_name(dim['name'])
-        
-        # Sort by score ascending to get lowest/weakest areas first
-        sorted_dims = sorted(dimensions, key=lambda d: d.get('score', 10))[:3]
-        
-        html = '''<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            padding: 16px;
-            background: #000000;
-            color: #ffffff;
-        }
-        .summary-header { margin-bottom: 8px; padding-bottom: 16px; }
-        .summary-header h1 { font-size: 24px; font-weight: 600; margin-bottom: 8px; }
-        .recommendations-list { display: flex; flex-direction: column; gap: 12px; }
-        .recommendation-item {
-            display: flex;
-            gap: 12px;
-            padding: 10px;
-            background: #1c1c1e;
-            border-radius: 6px;
-            border-left: 3px solid #30b0c0;
-        }
-        .rec-number {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 28px;
-            height: 28px;
-            background: #0a84ff;
-            color: #ffffff;
-            border-radius: 50%;
-            font-weight: 600;
-            font-size: 12px;
-            flex-shrink: 0;
-        }
-        .rec-content { flex: 1; }
-        .rec-text { font-size: 14px; line-height: 1.4; color: #e0e0e0; }
-        .disclaimer {
-            margin-top: 24px;
-            padding: 16px;
-            background: #1c1c1e;
-            border-radius: 8px;
-            border-left: 3px solid #ff9500;
-        }
-        .disclaimer p { font-size: 12px; line-height: 1.4; color: #d1d1d6; margin: 0; }
-        .advisor-quote-box {{
-            background: #2c2c2e;
-            border-radius: 8px;
-            padding: 12px;
-            border-left: 4px solid #ff9500;
-            overflow: hidden;
-            margin-top: 10px;
-        }}
-        .advisor-quote-box .advisor-quote-title {{
-            color: #ffffff;
-            font-size: 12px;
-            margin: 0 0 8px 0;
-            font-weight: 600;
-        }}
-        .advisor-quote-box .advisor-quote-text {{
-            color: #d1d1d6;
-            font-size: 12px;
-            line-height: 1.4;
-            font-style: italic;
-            margin: 0;
-        }}
-        .advisor-quote-box .advisor-quote-source {{
-            color: #a1a1a6;
-            font-size: 10px;
-            margin-top: 6px;
-            font-style: normal;
-        }}
-    </style>
-</head>
-<body>
-<div class="summary-header"><h1>Top 3 Recommendations</h1></div>
-<div class="recommendations-list">
-'''
-        
-        for i, dim in enumerate(sorted_dims, 1):
-            name = dim.get('name', 'Unknown')
-            score = dim.get('score', 0)
-            recommendation = dim.get('recommendation', 'No recommendation available.')
-            
-            html += f'''  <div class="recommendation-item">
-    <div class="rec-number">{i}</div>
-    <div class="rec-content">
-      <p class="rec-text"><strong>{name}</strong> ({score}/10): {recommendation}</p>
-    </div>
-  </div>
-'''
-        
-        html += f'''</div>
-<div class="disclaimer">
-    <p><strong>Note:</strong> {get_disclaimer_text(DB_PATH)}</p>
-</div>
-</body>
-</html>'''
-        
-        return html
-    
-    def _generate_advisor_bio_html(self, advisor_data: Dict[str, Any]) -> str:
-        """Generate iOS-compatible advisor bio HTML from database"""
-        
-        name = advisor_data.get('name', 'Unknown Advisor')
-        bio = advisor_data.get('bio', 'No biography available.')
-        years = advisor_data.get('years', '')
-        wikipedia_url = advisor_data.get('wikipedia_url', '')
-        commons_url = advisor_data.get('commons_url', '')
-        
-        html = f'''<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        * {{ margin: 0; padding: 0; box-sizing: border-box; }}
-        body {{
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-            padding: 20px;
-            background: #000000;
-            color: #ffffff;
-            line-height: 1.6;
-        }}
-        .advisor-profile {{
-            background: #1c1c1e;
-            padding: 24px;
-            border-radius: 12px;
-            margin-bottom: 24px;
-        }}
-        .advisor-profile h1 {{
-            color: #ffffff;
-            font-size: 28px;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }}
-        .advisor-years {{
-            color: #98989d;
-            font-size: 16px;
-            font-weight: 400;
-            margin-bottom: 16px;
-        }}
-        .advisor-bio {{
-            color: #d1d1d6;
-            font-size: 16px;
-            line-height: 1.6;
-            margin-bottom: 16px;
-        }}
-        .link-button {{
-            display: inline-block;
-            color: #007AFF;
-            text-decoration: none;
-            font-size: 16px;
-            font-weight: 500;
-            padding: 8px 16px;
-            border: 1px solid #007AFF;
-            border-radius: 6px;
-            margin-right: 10px;
-            margin-bottom: 10px;
-        }}
-    </style>
-</head>
-<body>
-<div class="advisor-profile">
-    <h1>{name}</h1>
-    <p class="advisor-years">{years}</p>
-    <p class="advisor-bio">{bio}</p>
-'''
-        
-        if wikipedia_url:
-            html += f'    <a href="{wikipedia_url}" class="link-button">Wikipedia</a>\n'
-        if commons_url:
-            html += f'    <a href="{commons_url}" class="link-button">Wikimedia Commons</a>\n'
-        
-        html += '''</div>
-</body>
-</html>'''
-        
-        return html
-    
     def _parse_response(self, response: str, advisor: str, mode: str, prompt: str, 
                         reference_images: List[Dict[str, Any]] = None,
                         book_passages: List[Dict[str, Any]] = None,
@@ -2169,7 +1782,8 @@ Required JSON Structure:
         # This replaces the old reference_images approach with smarter selection
         case_studies = []
         if dimensions and user_image_path:
-            case_studies = self._compute_case_studies(
+            case_studies = compute_case_studies(
+                db_path=DB_PATH,
                 advisor_id=advisor,
                 user_dimensions=dimensions,
                 user_image_path=user_image_path,
@@ -2180,7 +1794,8 @@ Required JSON Structure:
                 logger.info(f"✓ Computed {len(case_studies)} case studies for weak dimensions")
         elif dimensions:
             # No user image path - fall back to gap-only selection (no relevance filtering)
-            case_studies = self._compute_case_studies(
+            case_studies = compute_case_studies(
+                db_path=DB_PATH,
                 advisor_id=advisor,
                 user_dimensions=dimensions,
                 user_image_path=None,
@@ -2191,12 +1806,12 @@ Required JSON Structure:
                 logger.info(f"✓ Computed {len(case_studies)} case studies (gap-only, no user image)")
         
         # Generate HTML outputs
-        analysis_html = self._generate_ios_detailed_html(analysis_data, advisor, mode, case_studies=case_studies)
-        summary_html = self._generate_summary_html(analysis_data)
+        analysis_html = generate_ios_detailed_html(analysis_data, advisor, mode, case_studies=case_studies)
+        summary_html = generate_summary_html(analysis_data)
         
         # Generate advisor bio HTML from database
         if advisor_data:
-            advisor_bio_html = self._generate_advisor_bio_html(advisor_data)
+            advisor_bio_html = generate_advisor_bio_html(advisor_data)
             advisor_bio = advisor_data.get('bio', f"Analysis by {advisor.title()}")
         else:
             advisor_bio_html = f"<html><body><p>Analysis by {advisor.title()}</p></body></html>"
@@ -2379,13 +1994,9 @@ def analyze():
         # Use single-pass RAG analysis for RAG modes
         use_rag = mode_str in ('rag', 'rag_lora', 'lora+rag', 'lora_rag')
         
-        # Run analysis
-        if use_rag:
-            logger.info(f"[Single-Pass RAG] Analyzing image with advisor={advisor_name}, mode={mode_str}")
-            result = advisor.analyze_image_single_pass(temp_path, advisor=advisor_name, mode=mode_str)
-        else:
-            logger.info(f"Analyzing image with advisor={advisor_name}, mode={mode_str}")
-            result = advisor.analyze_image(temp_path, advisor=advisor_name, mode=mode_str)
+        # Run analysis (always use single-pass)
+        logger.info(f"Analyzing image with advisor={advisor_name}, mode={mode_str}")
+        result = advisor.analyze_image(temp_path, advisor=advisor_name, mode=mode_str)
         
         # Clean up
         Path(temp_path).unlink()
