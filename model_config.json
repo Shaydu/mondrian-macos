@@ -44,6 +44,42 @@
   "defaults": {
     "model_preset": "qwen3-4b-instruct",
     "mode": "lora",
-    "description": "Default: Qwen3-VL-4B-Instruct with LoRA adapter for fast, good quality analysis"
+    "generation_profile": "optimized",
+    "description": "Default: Qwen3-VL-4B-Instruct with LoRA adapter, 4-beam search with 2500 tokens"
+  },
+  "generation_profiles": {
+    "optimized": {
+      "max_new_tokens": 2500,
+      "num_beams": 4,
+      "do_sample": false,
+      "repetition_penalty": 1.0,
+      "early_stopping": true,
+      "description": "4-beam search with 2500 token limit for balanced quality and speed"
+    },
+    "fast_greedy": {
+      "max_new_tokens": 1500,
+      "num_beams": 1,
+      "do_sample": false,
+      "repetition_penalty": 1.0,
+      "description": "Greedy decoding, fast inference (~2-3x faster than beam search)"
+    },
+    "beam_search": {
+      "max_new_tokens": 2000,
+      "num_beams": 4,
+      "do_sample": false,
+      "repetition_penalty": 1.0,
+      "early_stopping": true,
+      "description": "Beam search for better quality, slower inference"
+    },
+    "sampling": {
+      "max_new_tokens": 1500,
+      "num_beams": 1,
+      "do_sample": true,
+      "temperature": 0.7,
+      "top_p": 0.9,
+      "top_k": 50,
+      "repetition_penalty": 1.0,
+      "description": "Nucleus sampling for more varied responses"
+    }
   }
 }

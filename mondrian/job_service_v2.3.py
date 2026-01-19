@@ -1515,8 +1515,7 @@ def process_job_worker(db_path: str):
                                 'mode': mode,
                                 'enable_rag': str(enable_rag).lower()
                             },
-                            timeout=300,
-                            stream=True
+                            timeout=300
                         )
                     
                     if response.status_code == 200:
