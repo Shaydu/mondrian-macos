@@ -23,41 +23,28 @@ from typing import Optional, Dict, Any, List
 from datetime import datetime
 import traceback
 
-# Database path - project root
-DB_PATH = str(Path(__file__).parent.parent / 'mondrian.db')
-
-# Standard dimension ordering (indexed 0-7)
-DIMENSIONS = [
-    'composition',
-    'lighting',
-    'focus_sharpness',
-    'color_harmony',
-    'subject_isolation',
-    'depth_perspective',
-    'visual_balance',
-    'emotional_impact'
-]
-
-# Map dimension names to database column names
-DIMENSION_TO_DB_COLUMN = {
-    'composition': 'composition_score',
-    'lighting': 'lighting_score',
-    'focus_sharpness': 'focus_sharpness_score',
-    'focus': 'focus_sharpness_score',
-    'sharpness': 'focus_sharpness_score',
-    'color_harmony': 'color_harmony_score',
-    'color': 'color_harmony_score',
-    'subject_isolation': 'subject_isolation_score',
-    'isolation': 'subject_isolation_score',
-    'depth_perspective': 'depth_perspective_score',
-    'depth': 'depth_perspective_score',
-    'perspective': 'depth_perspective_score',
-    'visual_balance': 'visual_balance_score',
-    'balance': 'visual_balance_score',
-    'emotional_impact': 'emotional_impact_score',
-    'emotion': 'emotional_impact_score',
-    'impact': 'emotional_impact_score'
-}
+# Import refactored modules
+from mondrian.html_generator import (
+    generate_ios_detailed_html,
+    generate_summary_html,
+    generate_advisor_bio_html
+)
+from mondrian.rag_retrieval import (
+    DIMENSIONS,
+    DIMENSION_TO_DB_COLUMN,
+    DB_PATH,
+    get_dimension_index,
+    get_similar_images_from_db,
+    get_images_for_weak_dimensions,
+    deduplicate_reference_images,
+    get_best_image_per_dimension,
+    compute_visual_relevance,
+    compute_case_studies,
+    get_user_dimensional_profile,
+    get_images_with_embedding_retrieval,
+    augment_prompt_with_rag_context,
+    augment_prompt_for_pass2
+)
 
 import torch
 import torch.cuda
@@ -99,43 +86,6 @@ def get_config(db_path: str, key: str) -> Optional[str]:
     except Exception as e:
         logger.error(f"Failed to get config {key}: {e}")
         return None
-
-
-def get_dimension_index(name: str) -> Optional[int]:
-    """
-    Get the dimension index (0-7) from a dimension name.
-    Examples:
-      "Composition" → 0
-      "Focus & Sharpness" → 2
-      "Depth & Perspective" → 5
-    
-    Returns None if dimension is not recognized.
-    """
-    if not name:
-        return None
-    
-    # Convert to lowercase and replace & (and surrounding spaces) with just underscore
-    normalized = (
-        name.lower()
-        .replace(' & ', '_')  # "Focus & Sharpness" → "focus_sharpness"
-        .replace(' ', '_')    # "Color Harmony" → "color_harmony"
-    )
-    
-    # Check if it matches a known dimension
-    if normalized in DIMENSIONS:
-        return DIMENSIONS.index(normalized)
-    
-    # Check dimension_to_db_column for variations
-    if normalized in DIMENSION_TO_DB_COLUMN:
-        # Get the canonical form by looking up what column it maps to
-        col = DIMENSION_TO_DB_COLUMN[normalized]
-        # Convert "focus_sharpness_score" → "focus_sharpness"
-        canonical = col.replace('_score', '')
-        if canonical in DIMENSIONS:
-            return DIMENSIONS.index(canonical)
-    
-    logger.debug(f"Could not normalize dimension name: {name}")
-    return None
 
 
 def get_advisor_from_db(db_path: str, advisor_id: str) -> Optional[Dict[str, Any]]:
@@ -369,186 +319,8 @@ class QwenAdvisor:
             logger.warning("Continuing with base model only")
             raise
     
-    def _get_similar_images_from_db(self, advisor_id: str, top_k: int = 3) -> List[Dict[str, Any]]:
-        """
-        Retrieve similar reference images from the dimensional_profiles table.
-        This provides RAG context by finding reference images with similar dimensional scores.
-        
-        Args:
-            advisor_id: Advisor to search (e.g., 'ansel')
-            top_k: Number of similar images to return
-            
-        Returns:
-            List of similar image records with their dimensional scores
-        """
-        try:
-            conn = sqlite3.connect(DB_PATH)
-            conn.row_factory = sqlite3.Row
-            cursor = conn.cursor()
-            
-            # Get reference images for this advisor
-            # For now, just get the best-rated images as context
-            query = """
-                SELECT id, image_path, composition_score, lighting_score, 
-                       focus_sharpness_score, color_harmony_score, overall_grade,
-                       image_description, image_title, date_taken,
-                       subject_isolation_score, depth_perspective_score,
-                       visual_balance_score, emotional_impact_score
-                FROM dimensional_profiles
-                WHERE advisor_id = ?
-                  AND composition_score IS NOT NULL
-                ORDER BY (
-                    composition_score + lighting_score + focus_sharpness_score + 
-                    color_harmony_score
-                ) / 4.0 DESC
-                LIMIT ?
-            """
-            
-            cursor.execute(query, (advisor_id, top_k))
-            rows = cursor.fetchall()
-            conn.close()
-            
-            if not rows:
-                logger.warning(f"No reference images found for advisor: {advisor_id}")
-                return []
-            
-            result_images = []
-            for row in rows:
-                img_dict = dict(row)
-                image_path = img_dict.get('image_path')
-                
-                # Serve image via endpoint instead of base64
-                if image_path and os.path.exists(image_path):
-                    try:
-                        img_filename = os.path.basename(image_path)
-                        img_dict['image_url'] = f"/api/reference-image/{img_filename}"
-                        img_dict['image_filename'] = img_filename
-                        result_images.append(img_dict)
-                    except Exception as e:
-                        logger.warning(f"Failed to process image {image_path}: {e}")
-                        continue
-                else:
-                    logger.warning(f"Image path not found: {image_path}")
-            
-            logger.info(f"Retrieved and prepared {len(result_images)} similar reference images for RAG context")
-            
-            return result_images
-            
-        except Exception as e:
-            logger.error(f"Failed to retrieve similar images: {e}")
-            return []
-    
-    def _get_images_for_weak_dimensions(self, advisor_id: str, weak_dimensions: List[str], max_images: int = 4) -> List[Dict[str, Any]]:
-        """
-        Retrieve reference images that excel in the user's weakest dimensions.
-        This helps provide specific examples showing how to improve in areas where the user needs the most help.
-        
-        Args:
-            advisor_id: Advisor to search (e.g., 'ansel')
-            weak_dimensions: List of dimension names where user needs improvement (e.g., ['composition', 'lighting'])
-            max_images: Maximum number of reference images to return (default 4)
-            
-        Returns:
-            List of reference images that excel in the specified dimensions
-        """
-        try:
-            if not weak_dimensions:
-                return []
-            
-            conn = sqlite3.connect(DB_PATH)
-            conn.row_factory = sqlite3.Row
-            cursor = conn.cursor()
-            
-            # Map dimension names to database columns
-            dimension_map = {
-                'composition': 'composition_score',
-                'lighting': 'lighting_score',
-                'focus_sharpness': 'focus_sharpness_score',
-                'focus': 'focus_sharpness_score',
-                'sharpness': 'focus_sharpness_score',
-                'color_harmony': 'color_harmony_score',
-                'color': 'color_harmony_score',
-                'subject_isolation': 'subject_isolation_score',
-                'depth_perspective': 'depth_perspective_score',
-                'depth': 'depth_perspective_score',
-                'perspective': 'depth_perspective_score',
-                'visual_balance': 'visual_balance_score',
-                'balance': 'visual_balance_score',
-                'emotional_impact': 'emotional_impact_score',
-                'emotion': 'emotional_impact_score',
-                'impact': 'emotional_impact_score'
-            }
-            
-            # Build query to find images that excel in the weak dimensions
-            score_columns = []
-            for dim in weak_dimensions[:3]:  # Limit to top 3 weak dimensions
-                dim_col = dimension_map.get(dim.lower().replace(' ', '_').replace('&', ''))
-                if dim_col:
-                    score_columns.append(dim_col)
-            
-            if not score_columns:
-                logger.warning(f"Could not map weak dimensions {weak_dimensions} to database columns")
-                return []
-            
-            # Calculate average score across weak dimensions and get images that excel
-            # Prioritize images with highest scores in the specific weak dimensions the user needs to improve
-            avg_calc = " + ".join(score_columns)
-            
-            query = f"""
-                SELECT id, image_path, composition_score, lighting_score, 
-                       focus_sharpness_score, color_harmony_score,
-                       subject_isolation_score, depth_perspective_score,
-                       visual_balance_score, emotional_impact_score,
-                       overall_grade, image_description, image_title, date_taken
-                FROM dimensional_profiles
-                WHERE advisor_id = ?
-                  AND composition_score IS NOT NULL
-                  AND ({" AND ".join([f"{col} >= 8.0" for col in score_columns])})
-                ORDER BY ({avg_calc}) / {len(score_columns)} DESC
-                LIMIT ?
-            """
-            
-            cursor.execute(query, (advisor_id, max_images))
-            rows = cursor.fetchall()
-            conn.close()
-            
-            if not rows:
-                logger.warning(f"No reference images found with high scores (>= 8.0) in target dimensions: {weak_dimensions}")
-                return []
-            
-            result_images = []
-            for row in rows:
-                img_dict = dict(row)
-                image_path = img_dict.get('image_path')
-                
-                # Construct image URL if image_path exists
-                if image_path and os.path.exists(image_path):
-                    try:
-                        img_filename = os.path.basename(image_path)
-                        img_dict['image_url'] = f"/api/reference-image/{img_filename}"
-                        img_dict['image_filename'] = img_filename
-                        result_images.append(img_dict)
-                    except Exception as e:
-                        logger.warning(f"Failed to process image {image_path}: {e}")
-                        continue
-                else:
-                    # If image doesn't exist but we have the dict, still add it (without image_url)
-                    result_images.append(img_dict)
-            
-            # Log selected images and their scores in weak dimensions for debugging
-            if result_images:
-                score_summary = []
-                for img in result_images[:min(3, len(result_images))]:  # Show first 3
-                    title = img.get('image_title', 'untitled')
-                    dim_scores = {weak_dimensions[i]: img.get(score_columns[i]) for i in range(min(len(weak_dimensions), len(score_columns)))}
-                    score_summary.append(f"{title}: {dim_scores}")
-                logger.info(f"Selected {len(result_images)} reference images excelling in {weak_dimensions}: {score_summary}")
-            
-            return result_images
-            
-        except Exception as e:
-            logger.error(f"Failed to retrieve images for weak dimensions: {e}")
-            return []
+    # NOTE: RAG retrieval methods moved to mondrian/rag_retrieval.py
+    # Use module functions: get_similar_images_from_db, get_images_for_weak_dimensions, etc.
     
     def _deduplicate_reference_images(self, images: List[Dict[str, Any]], used_paths: set, min_images: int = 1) -> List[Dict[str, Any]]:
         """
