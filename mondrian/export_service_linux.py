@@ -354,21 +354,15 @@ class ExportService:
         # Get timestamp
         created_at = job.get('created_at', datetime.now().isoformat())
         
-        # Build consolidated HTML
-        html = f'''<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mondrian Analysis Export - {job_id[:8]}</title>
-    <style>
-        * {{
+        # Define CSS separately to avoid f-string curly brace escaping issues
+        css_styles = """
+        * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-        }}
+        }
         
-        body {{
+        body {
             font-family: 'Segoe UI', 'Roboto', sans-serif;
             line-height: 1.5;
             color: #1a1a1a;
@@ -376,76 +370,91 @@ class ExportService:
             padding: 30px 20px;
             max-width: 850px;
             margin: 0 auto;
-        }}
+        }
+
+        /* Force single-page PDF: set large page size to fit all content on one page */
+        @page {
+            size: 8.5in 200in;
+            margin: 0;
+            padding: 0;
+        }
+        body, * {
+            page-break-before: avoid !important;
+            page-break-after: avoid !important;
+            page-break-inside: avoid !important;
+            break-before: avoid !important;
+            break-after: avoid !important;
+            break-inside: avoid !important;
+        }
         
         /* Page breaks for PDF - avoid breaks in the middle of cards */
         .summary-container,
         .feedback-card,
         .case-study-box,
-        .advisor-section {{
+        .advisor-section {
             page-break-inside: avoid;
-        }}
-        
+        }
+
         /* Header */
-        .export-header {{
+        .export-header {
             border-bottom: 2px solid #333;
             padding-bottom: 15px;
             margin-bottom: 25px;
-        }}
-        
-        .export-header h1 {{
-            font-size: 26px;
-            font-weight: 600;
-            color: #1a1a1a;
+        }
+
+        .export-header h1 {
+            font-size: 14px;
+            font-weight: 400;
+            color: #999999;
             margin-bottom: 5px;
-        }}
+        }
         
-        .export-header p {{
+        .export-header p {
             color: #666;
             font-size: 13px;
-        }}
+        }
         
         /* Section headings */
-        .section-title {{
+        .section-title {
             font-size: 18px;
             font-weight: 600;
             color: #1a1a1a;
             margin: 25px 0 15px 0;
             padding-bottom: 8px;
             border-bottom: 1px solid #ddd;
-        }}
+        }
         
-        .section-title:first-of-type {{
+        .section-title:first-of-type {
             margin-top: 0;
-        }}
+        }
         
         /* Summary section */
-        .summary-container {{
+        .summary-container {
             background: #f5f5f5;
             padding: 15px;
             border-radius: 4px;
             margin: 15px 0;
-        }}
+        }
         
         .summary-container h1,
-        .summary-header {{
+        .summary-header {
             display: none;
-        }}
+        }
         
-        .recommendations-list {{
+        .recommendations-list {
             display: flex;
             flex-direction: column;
             gap: 10px;
-        }}
+        }
         
-        .recommendation-item {{
+        .recommendation-item {
             background: #ffffff;
             padding: 10px;
             border-left: 3px solid #0066cc;
             border-radius: 2px;
-        }}
+        }
         
-        .rec-number {{
+        .rec-number {
             display: inline-block;
             width: 22px;
             height: 22px;
@@ -457,15 +466,15 @@ class ExportService:
             font-weight: 600;
             font-size: 11px;
             margin-right: 6px;
-        }}
+        }
         
-        .rec-text {{
+        .rec-text {
             display: inline;
             color: #1a1a1a;
             font-size: 13px;
-        }}
+        }
         
-        .disclaimer {{
+        .disclaimer {
             background: #fff3cd;
             border-left: 3px solid #ff9500;
             padding: 10px;
@@ -473,145 +482,145 @@ class ExportService:
             border-radius: 2px;
             font-size: 11px;
             color: #333;
-        }}
+        }
         
         /* Analysis section */
-        .analysis {{
+        .analysis {
             background: #ffffff;
             padding: 0;
             margin: 15px 0;
-        }}
+        }
         
-        .analysis h2 {{
+        .analysis h2 {
             font-size: 16px;
             font-weight: 600;
             color: #1a1a1a;
             margin: 15px 0 10px 0;
-        }}
+        }
         
-        .analysis p {{
+        .analysis p {
             color: #333;
             font-size: 13px;
             margin-bottom: 10px;
             line-height: 1.5;
-        }}
+        }
         
-        .feedback-card {{
+        .feedback-card {
             background: #f5f5f5;
             margin: 12px 0;
             padding: 12px;
             border-left: 3px solid #0066cc;
             border-radius: 2px;
-        }}
+        }
         
-        .feedback-card h3 {{
+        .feedback-card h3 {
             color: #1a1a1a;
             font-size: 14px;
             margin: 0 0 6px 0;
             font-weight: 600;
-        }}
+        }
         
-        .feedback-comment {{
+        .feedback-comment {
             background: #ffffff;
             padding: 8px;
             margin: 8px 0;
             border-left: 2px solid #ddd;
             border-radius: 2px;
-        }}
+        }
         
-        .feedback-comment p {{
+        .feedback-comment p {
             margin: 0;
             color: #333;
             font-size: 12px;
-        }}
+        }
         
-        .feedback-recommendation {{
+        .feedback-recommendation {
             background: #e8f4f8;
             padding: 8px;
             margin: 8px 0;
             border-left: 2px solid #0066cc;
             border-radius: 2px;
-        }}
+        }
         
-        .feedback-recommendation p {{
+        .feedback-recommendation p {
             margin: 0;
             color: #333;
             font-size: 12px;
-        }}
+        }
         
         /* Images - optimized for PDF */
-        img {{
+        img {
             max-width: 100%;
             height: auto;
             display: block;
             margin: 10px 0;
             border-radius: 2px;
-        }}
+        }
         
         /* User's photo section */
-        .user-photo-section {{
+        .user-photo-section {
             background: #f5f5f5;
             padding: 20px;
             border-radius: 4px;
             margin-bottom: 25px;
             text-align: center;
-        }}
+        }
         
-        .user-photo-section img {{
+        .user-photo-section img {
             max-width: 600px;
             max-height: 400px;
             margin: 0 auto 12px auto;
             border-radius: 4px;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }}
+        }
         
-        .user-photo-caption {{
+        .user-photo-caption {
             color: #666;
             font-size: 12px;
             font-style: italic;
             margin-top: 8px;
-        }}
+        }
         
-        .case-study-box {{
+        .case-study-box {
             background: #ffffff;
             padding: 10px;
             margin: 10px 0;
             border: 1px solid #ddd;
             border-radius: 2px;
-        }}
+        }
         
-        .case-study-title {{
+        .case-study-title {
             font-weight: 600;
             color: #1a1a1a;
             margin-bottom: 6px;
             font-size: 12px;
-        }}
+        }
         
-        .case-study-box img {{
+        .case-study-box img {
             margin: 6px 0;
-        }}
+        }
         
-        .case-study-metadata {{
+        .case-study-metadata {
             font-size: 11px;
             color: #666;
             margin-top: 6px;
-        }}
+        }
         
         /* Advisor section */
-        .advisor-section {{
+        .advisor-section {
             background: #f5f5f5;
             padding: 15px;
             border-radius: 4px;
             margin-top: 25px;
-        }}
+        }
         
-        .advisor-profile {{
+        .advisor-profile {
             background: #ffffff;
             padding: 12px;
             border-radius: 2px;
-        }}
+        }
         
-        .advisor-headshot {{
+        .advisor-headshot {
             width: 120px;
             height: 120px;
             object-fit: cover;
@@ -619,39 +628,39 @@ class ExportService:
             float: right;
             margin-left: 15px;
             margin-bottom: 10px;
-        }}
+        }
         
-        .advisor-profile h1 {{
+        .advisor-profile h1 {
             font-size: 18px;
             font-weight: 600;
             color: #1a1a1a;
             margin: 0 0 3px 0;
-        }}
+        }
         
-        .advisor-years {{
+        .advisor-years {
             color: #666;
             font-size: 12px;
             margin-bottom: 8px;
-        }}
+        }
         
-        .advisor-bio {{
+        .advisor-bio {
             color: #333;
             font-size: 12px;
             line-height: 1.5;
             margin-bottom: 8px;
-        }}
+        }
         
-        .link-button {{
+        .link-button {
             display: inline-block;
             color: #0066cc;
             text-decoration: none;
             font-size: 12px;
             margin-right: 10px;
             margin-top: 6px;
-        }}
+        }
         
         /* Footer */
-        .export-footer {{
+        .export-footer {
             border-top: 1px solid #ddd;
             margin-top: 30px;
             padding-top: 15px;
@@ -661,25 +670,25 @@ class ExportService:
             justify-content: space-between;
             flex-wrap: wrap;
             gap: 15px;
-        }}
+        }
         
-        .footer-item {{
+        .footer-item {
             display: flex;
             flex-direction: column;
-        }}
+        }
         
-        .footer-label {{
+        .footer-label {
             font-weight: 600;
             color: #666;
             margin-bottom: 2px;
-        }}
+        }
         
-        .footer-value {{
+        .footer-value {
             color: #999;
-        }}
+        }
         
         /* Disclaimer section */
-        .disclaimer-section {{
+        .disclaimer-section {
             background: #f9f9f9;
             border: 1px solid #e0e0e0;
             border-left: 3px solid #ff9500;
@@ -689,55 +698,70 @@ class ExportService:
             font-size: 10px;
             color: #555;
             line-height: 1.4;
-        }}
+        }
         
-        .disclaimer-section h3 {{
+        .disclaimer-section h3 {
             font-size: 11px;
             font-weight: 600;
             color: #1a1a1a;
             margin: 0 0 6px 0;
-        }}
+        }
         
-        .disclaimer-section p {{
+        .disclaimer-section p {
             margin: 0 0 4px 0;
-        }}
+        }
         
-        .disclaimer-section ul {{
+        .disclaimer-section ul {
             margin: 4px 0;
             padding-left: 15px;
-        }}
+        }
         
-        .disclaimer-section li {{
+        .disclaimer-section li {
             margin: 2px 0;
-        }}
+        }
         
         /* Mobile adjustments */
-        @media (max-width: 600px) {{
-            body {{
+        @media (max-width: 600px) {
+            body {
                 padding: 15px 10px;
-            }}
-            .export-header h1 {{
+            }
+            .export-header h1 {
                 font-size: 20px;
-            }}
-            .section-title {{
+            }
+            .section-title {
                 font-size: 16px;
-            }}
-        }}
+            }
+        }
+        """
+        
+        # Build HTML using the separate css_styles variable
+        user_photo_html = f'''<div class="user-photo-section">
+    <img src="data:image/jpeg;base64,{user_image_base64}" alt="Your photograph" />
+    <p class="user-photo-caption">Your photograph</p>
+</div>''' if user_image_base64 else ''
+        
+        advisor_footer = self._generate_advisor_footer_html(advisor_info, advisor_id)
+        report_date = datetime.fromisoformat(created_at).strftime('%Y-%m-%d %H:%M')
+        
+        html = f'''<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Photo Analysis and Recommendations</title>
+    <style>
+{css_styles}
     </style>
 </head>
 <body>
 
 <!-- HEADER -->
 <div class="export-header">
-    <h1>Photography Analysis Report</h1>
-    <p>Detailed feedback and recommendations</p>
+    <h1>Photo Analysis and Recommendations</h1>
 </div>
 
 <!-- USER'S PHOTO -->
-{f'''<div class="user-photo-section">
-    <img src="data:image/jpeg;base64,{user_image_base64}" alt="Your photograph" />
-    <p class="user-photo-caption">Your photograph</p>
-</div>''' if user_image_base64 else ''}
+{user_photo_html}
 
 <!-- SUMMARY SECTION -->
 <div class="section-title">Summary - Top Recommendations</div>
@@ -754,7 +778,7 @@ class ExportService:
 <!-- ADVISOR SECTION -->
 <div class="section-title">About Your Advisor</div>
 <div class="advisor-section">
-    {self._generate_advisor_footer_html(advisor_info, advisor_id)}
+    {advisor_footer}
 </div>
 
 <!-- METADATA FOOTER -->
@@ -769,7 +793,7 @@ class ExportService:
     </div>
     <div class="footer-item">
         <span class="footer-label">Generated</span>
-        <span class="footer-value">{datetime.fromisoformat(created_at).strftime('%Y-%m-%d %H:%M')}</span>
+        <span class="footer-value">{report_date}</span>
     </div>
     <div class="footer-item">
         <span class="footer-label">Service</span>

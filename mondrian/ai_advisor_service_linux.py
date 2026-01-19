@@ -441,92 +441,6 @@ class QwenAdvisor:
     def _get_images_for_weak_dimensions(self, advisor_id: str, weak_dimensions: List[str], max_images: int = 4) -> List[Dict[str, Any]]:
         """
         Retrieve reference images that excel in the user's weakest dimensions.
-        This provides targeted improvement guidance by showing mastery in areas needing work.
-        
-        Args:
-            advisor_id: Advisor to search (e.g., 'ansel')
-            weak_dimensions: List of dimension names where user needs improvement (e.g., ['composition', 'lighting'])
-            max_images: Maximum number of reference images to return (default 4)
-            
-        Returns:
-            List of reference images that excel in the specified dimensions
-        """
-        try:
-            if not weak_dimensions:
-                return []
-            
-            conn = sqlite3.connect(DB_PATH)
-            conn.row_factory = sqlite3.Row
-            cursor = conn.cursor()
-            
-            # Map dimension names to database columns
-            dimension_map = {
-                'composition': 'composition_score',
-                'lighting': 'lighting_score',
-                'focus_sharpness': 'focus_sharpness_score',
-                'focus': 'focus_sharpness_score',
-                'sharpness': 'focus_sharpness_score',
-                'color_harmony': 'color_harmony_score',
-                'color': 'color_harmony_score',
-                'subject_isolation': 'subject_isolation_score',
-                'isolation': 'subject_isolation_score',
-                'depth_perspective': 'depth_perspective_score',
-                'depth': 'depth_perspective_score',
-                'perspective': 'depth_perspective_score',
-                'visual_balance': 'visual_balance_score',
-                'balance': 'visual_balance_score',
-                'emotional_impact': 'emotional_impact_score',
-                'emotion': 'emotional_impact_score',
-                'impact': 'emotional_impact_score'
-            }
-            
-            # Build query to find images that excel in the weak dimensions
-            score_columns = []
-            for dim in weak_dimensions[:3]:  # Limit to top 3 weak dimensions
-                dim_col = dimension_map.get(dim.lower().replace(' ', '_').replace('&', ''))
-                if dim_col:
-                    score_columns.append(dim_col)
-            
-            if not score_columns:
-                logger.warning(f"Could not map weak dimensions {weak_dimensions} to database columns")
-                return []
-            
-            # Calculate average score across weak dimensions and get images that excel
-            avg_calc = " + ".join(score_columns)
-            query = f"""
-                SELECT id, image_path, composition_score, lighting_score, 
-                       focus_sharpness_score, color_harmony_score,
-                       subject_isolation_score, depth_perspective_score,
-                       visual_balance_score, emotional_impact_score,
-                       overall_grade, image_description, image_title, date_taken
-                FROM dimensional_profiles
-                WHERE advisor_id = ?
-                  AND composition_score IS NOT NULL
-                  AND ({" AND ".join([f"{col} >= 8.0" for col in score_columns])})
-                ORDER BY ({avg_calc}) / {len(score_columns)} DESC
-                LIMIT ?
-            """
-            
-            cursor.execute(query, (advisor_id, max_images))
-            rows = cursor.fetchall()
-            conn.close()
-            
-            if not rows:
-                logger.info(f"No reference images found with high scores in dimensions: {weak_dimensions}")
-                return []
-            
-            result_images = [dict(row) for row in rows]
-            logger.info(f"Retrieved {len(result_images)} reference images that excel in weak dimensions: {weak_dimensions}")
-            
-            return result_images
-            
-        except Exception as e:
-            logger.error(f"Failed to retrieve images for weak dimensions: {e}")
-            return []
-    
-    def _get_images_for_weak_dimensions(self, advisor_id: str, weak_dimensions: List[str], max_images: int = 4) -> List[Dict[str, Any]]:
-        """
-        Retrieve reference images that excel in the user's weakest dimensions.
         This helps provide specific examples showing how to improve in areas where the user needs the most help.
         
         Args:
@@ -577,7 +491,9 @@ class QwenAdvisor:
                 return []
             
             # Calculate average score across weak dimensions and get images that excel
+            # Prioritize images with highest scores in the specific weak dimensions the user needs to improve
             avg_calc = " + ".join(score_columns)
+            
             query = f"""
                 SELECT id, image_path, composition_score, lighting_score, 
                        focus_sharpness_score, color_harmony_score,
@@ -597,7 +513,7 @@ class QwenAdvisor:
             conn.close()
             
             if not rows:
-                logger.info(f"No reference images found with high scores in dimensions: {weak_dimensions}")
+                logger.warning(f"No reference images found with high scores (>= 8.0) in target dimensions: {weak_dimensions}")
                 return []
             
             result_images = []
@@ -619,7 +535,14 @@ class QwenAdvisor:
                     # If image doesn't exist but we have the dict, still add it (without image_url)
                     result_images.append(img_dict)
             
-            logger.info(f"Retrieved {len(result_images)} reference images that excel in weak dimensions: {weak_dimensions}")
+            # Log selected images and their scores in weak dimensions for debugging
+            if result_images:
+                score_summary = []
+                for img in result_images[:min(3, len(result_images))]:  # Show first 3
+                    title = img.get('image_title', 'untitled')
+                    dim_scores = {weak_dimensions[i]: img.get(score_columns[i]) for i in range(min(len(weak_dimensions), len(score_columns)))}
+                    score_summary.append(f"{title}: {dim_scores}")
+                logger.info(f"Selected {len(result_images)} reference images excelling in {weak_dimensions}: {score_summary}")
             
             return result_images
             

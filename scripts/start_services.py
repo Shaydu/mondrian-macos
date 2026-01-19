@@ -207,7 +207,7 @@ def get_services_for_mode(mode="base", lora_path=None, model=None, db_path="mond
     return services
 
 
-SERVICE_SCRIPTS = ["job_service_v2.3.py", "ai_advisor_service.py"]
+SERVICE_SCRIPTS = ["job_service_v2.3.py", "ai_advisor_service.py", "ai_advisor_service_linux.py", "export_service_linux.py", "summary_service.py"]
 
 
 def port_in_use(port):
@@ -344,7 +344,7 @@ def stop_services():
             print(f"Stopped {killed} Mondrian service process(es).")
 
         # Port-based cleanup as fallback
-        service_ports = [5006, 5005, 5100]
+        service_ports = [5006, 5005, 5100, 5007]
         for port in service_ports:
             if port_in_use(port):
                 print(f"Port {port} still in use, attempting port-based cleanup...")
