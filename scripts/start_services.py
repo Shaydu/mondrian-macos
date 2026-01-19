@@ -497,11 +497,11 @@ def get_job_queue_status():
         
         status_counts = {row["status"]: row["count"] for row in cursor.fetchall()}
         
-        # Get active jobs details
+        # Get active jobs details (only jobs actually running, not just queued)
         cursor.execute("""
             SELECT id, filename, status, current_step, current_advisor, total_advisors, mode
-            FROM jobs 
-            WHERE status NOT IN ('completed', 'failed')
+            FROM jobs
+            WHERE status IN ('processing', 'analyzing')
             ORDER BY created_at DESC
             LIMIT 5
         """)
@@ -699,11 +699,11 @@ def show_active_jobs():
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
         
-        # Get active jobs (not completed or failed)
+        # Get active jobs (only jobs actually running, not pending/queued)
         cursor.execute("""
             SELECT id, filename, advisor, status, current_step, current_advisor, total_advisors, mode
-            FROM jobs 
-            WHERE status NOT IN ('completed', 'failed')
+            FROM jobs
+            WHERE status IN ('processing', 'analyzing')
             ORDER BY created_at DESC
             LIMIT 10
         """)
@@ -1081,6 +1081,14 @@ Examples:
             print(f"  ./mondrian.sh --restart --mode=lora --lora-path={lora_path}")
         print(f"\nTo stop services:")
         print(f"  ./mondrian.sh --stop")
+
+        # Show job queue status with continuous monitoring
+        print("\nJob Queue Status (Ctrl+C to exit):")
+        try:
+            monitor_services(duration=None, interval=5)
+        except KeyboardInterrupt:
+            print("\n\nMonitoring stopped.")
+            sys.exit(0)
 
 if __name__ == "__main__":
     main()

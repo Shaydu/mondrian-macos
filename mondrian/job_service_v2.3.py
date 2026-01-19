@@ -953,7 +953,15 @@ def list_jobs():
 
 @app.route('/jobs/<job_id>', methods=['GET'])
 def get_job(job_id: str):
-    """Get job details - returns JSON or HTML based on view parameter"""
+    """Get job details - returns JSON job metadata (excludes HTML content)
+    
+    Query params:
+        view: 'json' (default) or 'detail' (HTML debug view)
+    
+    For HTML content, use dedicated endpoints:
+        - GET /summary/{job_id} - Quick preview HTML (top 3 recommendations)
+        - GET /analysis/{job_id} - Full detailed analysis HTML
+    """
     if not job_db:
         return jsonify({"error": "Database not initialized"}), 503
     
@@ -962,12 +970,15 @@ def get_job(job_id: str):
     if not job:
         return jsonify({"error": "Job not found"}), 404
     
-    # Check if requesting HTML detail view
+    # Check if requesting HTML detail view (for debugging)
     view = request.args.get('view', 'json')
     if view == 'detail':
         return render_job_detail_html(job)
     
-    return jsonify(job), 200
+    # Always exclude large HTML fields to optimize polling performance
+    # Clients must use /summary/{job_id} or /analysis/{job_id} to get HTML
+    job_response = {k: v for k, v in job.items() if k not in ('analysis_html', 'summary_html')}
+    return jsonify(job_response), 200
 
 
 def render_job_detail_html(job):

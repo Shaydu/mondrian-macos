@@ -756,7 +756,7 @@ class QwenAdvisor:
             
             # Fall back to score-based if no embedding results
             if not reference_images:
-                reference_images = self._get_similar_images_from_db(advisor_id, top_k=3)
+                reference_images = get_top_reference_images(DB_PATH, advisor_id, max_total=3)
             
             # Deduplicate images
             reference_images = self._deduplicate_reference_images(reference_images, used_image_paths, min_images=2)
@@ -1434,18 +1434,18 @@ Required JSON Structure:
         dimensions = analysis_data.get('dimensions', [])
         overall_score = analysis_data.get('overall_score', 'N/A')
         technical_notes = analysis_data.get('technical_notes', '')
-        
-        # Format dimension names
-        for dim in dimensions:
-            if 'name' in dim and dim['name']:
-                dim['name'] = format_dimension_name(dim['name'])
-        
+
         def format_dimension_name(name: str) -> str:
             """Format dimension names to have proper spacing (e.g., ColorHarmony -> Color Harmony)"""
             import re
             # Insert space before uppercase letters that follow lowercase letters
             formatted = re.sub(r'([a-z])([A-Z])', r'\1 \2', name)
             return formatted
+
+        # Format dimension names
+        for dim in dimensions:
+            if 'name' in dim and dim['name']:
+                dim['name'] = format_dimension_name(dim['name'])
         
         def get_rating_style(score: int) -> tuple:
             """Return color and rating text based on score"""
