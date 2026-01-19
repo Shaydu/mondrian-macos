@@ -1478,6 +1478,11 @@ def process_job_worker(db_path: str):
                 # Get current retry count and status
                 cursor = conn.execute("SELECT COALESCE(retry_count, 0), status, last_activity FROM jobs WHERE id = ?", (job_id,))
                 retry_row = cursor.fetchone()
+
+                if not retry_row:
+                    logger.warning(f"Job {job_id} not found during retry check, skipping")
+                    continue
+
                 retry_count = retry_row[0]
                 current_status = retry_row[1]
                 last_activity = retry_row[2]
