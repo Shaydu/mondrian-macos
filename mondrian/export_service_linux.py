@@ -215,6 +215,30 @@ class ExportService:
             logger.warning(f"Error fetching advisor info: {e}")
             return {}
     
+    def get_summary_html(self, job_id: str) -> str:
+        """Fetch summary HTML from job service"""
+        try:
+            response = requests.get(f"{self.job_service_url}/summary/{job_id}", timeout=10)
+            if response.status_code == 200:
+                return response.text
+            logger.warning(f"Failed to fetch summary for job {job_id}: {response.status_code}")
+            return ""
+        except Exception as e:
+            logger.error(f"Error fetching summary HTML: {e}")
+            return ""
+    
+    def get_analysis_html(self, job_id: str) -> str:
+        """Fetch analysis HTML from job service"""
+        try:
+            response = requests.get(f"{self.job_service_url}/analysis/{job_id}", timeout=10)
+            if response.status_code == 200:
+                return response.text
+            logger.warning(f"Failed to fetch analysis for job {job_id}: {response.status_code}")
+            return ""
+        except Exception as e:
+            logger.error(f"Error fetching analysis HTML: {e}")
+            return ""
+    
     def extract_html_body(self, html: str) -> str:
         """Extract body content from HTML string"""
         if not html:
@@ -251,6 +275,35 @@ class ExportService:
             # Compress if needed
             if HAS_PILLOW:
                 img = Image.open(filepath)
+                
+                # Handle EXIF orientation to display portrait/landscape correctly
+                try:
+                    exif = img._getexif()
+                    if exif is not None:
+                        orientation_key = 274  # EXIF orientation tag
+                        if orientation_key in exif:
+                            orientation = exif[orientation_key]
+                            
+                            # Rotate/flip based on EXIF orientation
+                            if orientation == 3:
+                                img = img.rotate(180, expand=True)
+                            elif orientation == 6:
+                                img = img.rotate(270, expand=True)
+                            elif orientation == 8:
+                                img = img.rotate(90, expand=True)
+                            elif orientation == 2:
+                                img = img.transpose(Image.FLIP_LEFT_RIGHT)
+                            elif orientation == 4:
+                                img = img.transpose(Image.FLIP_TOP_BOTTOM)
+                            elif orientation == 5:
+                                img = img.transpose(Image.FLIP_LEFT_RIGHT).rotate(270, expand=True)
+                            elif orientation == 7:
+                                img = img.transpose(Image.FLIP_LEFT_RIGHT).rotate(90, expand=True)
+                            
+                            logger.info(f"Applied EXIF orientation {orientation} to image")
+                except (AttributeError, KeyError, IndexError) as e:
+                    # No EXIF data or orientation tag
+                    logger.debug(f"No EXIF orientation data: {e}")
                 
                 # Convert RGBA to RGB if needed
                 if img.mode == 'RGBA':
@@ -336,8 +389,9 @@ class ExportService:
         advisor_id = job.get('advisor', 'unknown')
         advisor_info = self.get_advisor_info(advisor_id)
         
-        summary_html = job.get('summary_html', '')
-        analysis_html = job.get('analysis_html', '')
+        # Fetch HTML content from dedicated endpoints (not included in job response)
+        summary_html = self.get_summary_html(job_id)
+        analysis_html = self.get_analysis_html(job_id)
         
         # Extract bodies from HTML responses
         summary_body = self.extract_html_body(summary_html)
