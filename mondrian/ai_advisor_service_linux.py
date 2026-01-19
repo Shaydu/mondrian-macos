@@ -1806,7 +1806,7 @@ Required JSON Structure:
                 logger.info(f"✓ Computed {len(case_studies)} case studies (gap-only, no user image)")
         
         # Generate HTML outputs
-        analysis_html = generate_ios_detailed_html(analysis_data, advisor, mode, case_studies=case_studies)
+        analysis_html = self._generate_ios_detailed_html(analysis_data, advisor, mode, case_studies=case_studies)
         summary_html = generate_summary_html(analysis_data)
         
         # Generate advisor bio HTML from database

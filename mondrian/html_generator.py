@@ -50,20 +50,18 @@ def normalize_dimension_key(name: str) -> str:
     return dim_key
 
 
+# DEPRECATED: Use QwenAdvisor._generate_ios_detailed_html() instead
+# This standalone function has been moved to ai_advisor_service_linux.py as a class method
+# The class method has full support for rendering quotes from book_passages
 def generate_ios_detailed_html(
     analysis_data: Dict[str, Any], 
     advisor: str, 
     mode: str, 
     case_studies: List[Dict[str, Any]] = None
 ) -> str:
-    """Generate iOS-compatible dark theme HTML for detailed analysis
+    """DEPRECATED: Do not use this function - use QwenAdvisor._generate_ios_detailed_html() instead
     
-    Args:
-        analysis_data: Parsed analysis from LLM
-        advisor: Advisor name
-        mode: Analysis mode
-        case_studies: Pre-computed case studies from _compute_case_studies()
-            Each entry has: dimension_name, user_score, ref_image, ref_score, gap, relevance
+    This function is kept for backwards compatibility but does NOT support quote rendering.
     """
     
     if case_studies is None:
@@ -300,6 +298,27 @@ def generate_ios_detailed_html(
             
             logger.info(f"[HTML Gen] Added case study for {name}: '{ref_title}' (gap={best_gap:.1f})")
         
+        # Check if LLM cited a quote for this dimension
+        quote_citation_html = ""
+        cited_quote = dim.get('_cited_quote')
+        if cited_quote:
+            book_title = cited_quote.get('book_title', 'Unknown Book')
+            passage_text = cited_quote.get('passage_text', cited_quote.get('text', ''))
+            
+            # Truncate to 75 words
+            words = passage_text.split()
+            truncated_text = ' '.join(words[:75])
+            if len(words) > 75:
+                truncated_text += "..."
+            
+            quote_citation_html = '<div class="advisor-quote-box">'
+            quote_citation_html += '<div class="advisor-quote-title">Advisor Insight</div>'
+            quote_citation_html += f'<div class="advisor-quote-text">"{truncated_text}"</div>'
+            quote_citation_html += f'<div class="advisor-quote-source"><strong>From:</strong> {book_title}</div>'
+            quote_citation_html += '</div>'
+            
+            logger.info(f"[HTML Gen] Added LLM-cited quote for {name} from '{book_title}'")
+        
         html += f'''
   <div class="feedback-card">
     <h3>
@@ -312,7 +331,7 @@ def generate_ios_detailed_html(
     <div class="feedback-recommendation">
       <strong>How to Improve:</strong>
       <p>{recommendation}</p>
-    </div>{reference_citation}
+    </div>{reference_citation}{quote_citation_html}
   </div>
 '''
     
