@@ -586,6 +586,217 @@ class QwenAdvisor:
         
         return deduplicated
 
+    def _get_best_image_per_dimension(self, advisor_id: str) -> Dict[str, Dict[str, Any]]:
+        """
+        Retrieve the single best reference image for EACH dimension separately.
+        This ensures diversity - each dimension gets its own best exemplar.
+        
+        Args:
+            advisor_id: Advisor to search (e.g., 'ansel')
+            
+        Returns:
+            Dict mapping dimension name to best image for that dimension
+            e.g., {'composition': {...}, 'lighting': {...}, ...}
+        """
+        try:
+            conn = sqlite3.connect(DB_PATH)
+            conn.row_factory = sqlite3.Row
+            cursor = conn.cursor()
+            
+            result = {}
+            
+            for dim_name in DIMENSIONS:
+                db_column = DIMENSION_TO_DB_COLUMN.get(dim_name)
+                if not db_column:
+                    continue
+                
+                # Get the single best image for this dimension (score >= 8.0, ordered by score DESC)
+                query = f"""
+                    SELECT id, image_path, composition_score, lighting_score, 
+                           focus_sharpness_score, color_harmony_score,
+                           subject_isolation_score, depth_perspective_score,
+                           visual_balance_score, emotional_impact_score,
+                           overall_grade, image_description, image_title, date_taken, embedding
+                    FROM dimensional_profiles
+                    WHERE advisor_id = ?
+                      AND {db_column} >= 8.0
+                      AND {db_column} IS NOT NULL
+                    ORDER BY {db_column} DESC
+                    LIMIT 1
+                """
+                
+                cursor.execute(query, (advisor_id,))
+                row = cursor.fetchone()
+                
+                if row:
+                    img_dict = dict(row)
+                    # Don't include raw embedding in dict to avoid log clutter
+                    if 'embedding' in img_dict:
+                        img_dict['has_embedding'] = img_dict['embedding'] is not None
+                        del img_dict['embedding']
+                    result[dim_name] = img_dict
+            
+            conn.close()
+            
+            logger.info(f"[CaseStudy] Retrieved best images for {len(result)}/{len(DIMENSIONS)} dimensions")
+            return result
+            
+        except Exception as e:
+            logger.error(f"Failed to retrieve best images per dimension: {e}")
+            return {}
+
+    def _compute_visual_relevance(self, user_image_path: str, ref_image_path: str) -> float:
+        """
+        Compute CLIP embedding similarity between user image and reference image.
+        Higher similarity = more relevant reference for the user's photo.
+        
+        Args:
+            user_image_path: Path to user's uploaded image
+            ref_image_path: Path to reference image
+            
+        Returns:
+            Similarity score between 0.0 and 1.0
+        """
+        try:
+            from mondrian.embedding_retrieval import compute_image_embedding, cosine_similarity
+            
+            user_emb = compute_image_embedding(user_image_path)
+            ref_emb = compute_image_embedding(ref_image_path)
+            
+            if user_emb is None or ref_emb is None:
+                logger.warning(f"Could not compute embeddings for relevance check")
+                return 0.5  # Default to moderate relevance if we can't compute
+            
+            similarity = cosine_similarity(user_emb, ref_emb)
+            return float(similarity)
+            
+        except Exception as e:
+            logger.warning(f"Failed to compute visual relevance: {e}")
+            return 0.5  # Default to moderate relevance on error
+
+    def _compute_case_studies(
+        self, 
+        advisor_id: str,
+        user_dimensions: List[Dict[str, Any]], 
+        user_image_path: str = None,
+        max_case_studies: int = 3,
+        relevance_threshold: float = 0.25
+    ) -> List[Dict[str, Any]]:
+        """
+        Compute which dimensions should get case studies based on:
+        1. Gap between reference score and user score (larger = more learning opportunity)
+        2. Visual relevance between user image and reference image
+        3. Unique images only (first match wins for tie-breaking)
+        
+        Args:
+            advisor_id: Advisor to use for reference images
+            user_dimensions: List of user's dimension scores from LLM analysis
+            user_image_path: Path to user's image for relevance scoring
+            max_case_studies: Maximum number of case studies to include (1-3)
+            relevance_threshold: Minimum visual similarity to include (0.0-1.0)
+            
+        Returns:
+            List of case study dicts, each containing:
+            - dimension_name: Which dimension this case study is for
+            - user_score: User's score in this dimension
+            - ref_image: Reference image dict
+            - ref_score: Reference image's score in this dimension
+            - gap: ref_score - user_score
+            - relevance: Visual similarity score (if computed)
+        """
+        # Get best reference image for each dimension
+        best_per_dim = self._get_best_image_per_dimension(advisor_id)
+        
+        if not best_per_dim:
+            logger.warning("[CaseStudy] No reference images found for any dimension")
+            return []
+        
+        # Build user score lookup (normalize dimension names)
+        user_scores = {}
+        for dim in user_dimensions:
+            dim_name = dim.get('name', '').lower().strip()
+            # Normalize common variations
+            dim_name = dim_name.replace(' & ', '_').replace(' and ', '_').replace(' ', '_')
+            if 'focus' in dim_name:
+                dim_name = 'focus_sharpness'
+            elif 'color' in dim_name:
+                dim_name = 'color_harmony'
+            elif 'depth' in dim_name:
+                dim_name = 'depth_perspective'
+            elif 'balance' in dim_name:
+                dim_name = 'visual_balance'
+            elif 'emotion' in dim_name or 'impact' in dim_name:
+                dim_name = 'emotional_impact'
+            elif 'isolation' in dim_name:
+                dim_name = 'subject_isolation'
+            user_scores[dim_name] = dim.get('score', 10)
+        
+        logger.info(f"[CaseStudy] User scores: {user_scores}")
+        
+        # Calculate gaps and relevance for each dimension
+        candidates = []
+        used_image_paths = set()
+        
+        for dim_name, ref_img in best_per_dim.items():
+            db_column = DIMENSION_TO_DB_COLUMN.get(dim_name)
+            if not db_column:
+                continue
+                
+            ref_score = ref_img.get(db_column, 0)
+            user_score = user_scores.get(dim_name, 10)
+            ref_path = ref_img.get('image_path', '')
+            
+            # Skip if this image path already used (ensures uniqueness, first match wins)
+            if ref_path in used_image_paths:
+                logger.info(f"[CaseStudy] Skipping {dim_name}: image '{ref_img.get('image_title')}' already used")
+                continue
+            
+            gap = ref_score - user_score
+            
+            # Only consider if there's a meaningful gap (user can learn something)
+            if gap <= 0:
+                logger.info(f"[CaseStudy] Skipping {dim_name}: no gap (user={user_score}, ref={ref_score})")
+                continue
+            
+            # Compute visual relevance if user image provided
+            relevance = 1.0  # Default to high relevance if no user image
+            if user_image_path and ref_path and os.path.exists(ref_path):
+                relevance = self._compute_visual_relevance(user_image_path, ref_path)
+                logger.info(f"[CaseStudy] {dim_name}: gap={gap:.1f}, relevance={relevance:.2f}, ref='{ref_img.get('image_title')}'")
+            else:
+                logger.info(f"[CaseStudy] {dim_name}: gap={gap:.1f}, relevance=N/A, ref='{ref_img.get('image_title')}'")
+            
+            # Filter by relevance threshold
+            if relevance < relevance_threshold:
+                logger.info(f"[CaseStudy] Skipping {dim_name}: relevance {relevance:.2f} below threshold {relevance_threshold}")
+                continue
+            
+            # Mark this image as used (first match wins for tie-breaking)
+            used_image_paths.add(ref_path)
+            
+            candidates.append({
+                'dimension_name': dim_name,
+                'user_score': user_score,
+                'ref_image': ref_img,
+                'ref_score': ref_score,
+                'gap': gap,
+                'relevance': relevance
+            })
+        
+        # Sort by gap descending (largest learning opportunity first)
+        candidates.sort(key=lambda x: x['gap'], reverse=True)
+        
+        # Take top N case studies
+        selected = candidates[:max_case_studies]
+        
+        if selected:
+            selected_info = [(c['dimension_name'], f"gap={c['gap']:.1f}", c['ref_image'].get('image_title')) for c in selected]
+            logger.info(f"[CaseStudy] Selected {len(selected)} case studies: {selected_info}")
+        else:
+            logger.info(f"[CaseStudy] No case studies selected (no gaps or low relevance)")
+        
+        return selected
+
     def _get_user_dimensional_profile(self, image_path: str) -> Dict[str, float]:
         """
         Retrieve user's dimensional profile from database if it exists.
@@ -736,8 +947,20 @@ class QwenAdvisor:
                 # Fall back to score-based retrieval
                 reference_images = self._get_images_for_weak_dimensions(advisor_id, weak_dimensions, max_images=4)
             
+            # Log what we got before deduplication
+            logger.info(f"Retrieved {len(reference_images)} reference images before deduplication")
+            if reference_images:
+                titles = [img.get('image_title', 'Unknown') for img in reference_images]
+                logger.info(f"Images before dedup: {titles}")
+            
             # Deduplicate images
             reference_images = self._deduplicate_reference_images(reference_images, used_image_paths, min_images=2)
+            
+            # Log after deduplication
+            logger.info(f"After deduplication: {len(reference_images)} unique images")
+            if reference_images:
+                titles = [img.get('image_title', 'Unknown') for img in reference_images]
+                logger.info(f"Images after dedup: {titles}")
             
             if not reference_images:
                 logger.info("No targeted reference images found for weak dimensions - skipping RAG augmentation")
@@ -1001,7 +1224,11 @@ class QwenAdvisor:
             logger.info(f"Generated response: {len(response)} chars")
             
             # Parse response into structured format
-            analysis = self._parse_response(response, advisor, mode, prompt, reference_images=reference_images)
+            analysis = self._parse_response(
+                response, advisor, mode, prompt, 
+                reference_images=reference_images,
+                user_image_path=image_path
+            )
             
             return analysis
             
@@ -1242,7 +1469,8 @@ Provide ONLY the JSON above with your scores. No explanations, no comments."""
             # Parse full response
             analysis = self._parse_response(
                 full_response, advisor, mode, full_prompt, 
-                reference_images=reference_images
+                reference_images=reference_images,
+                user_image_path=image_path
             )
             
             # Add book passages to analysis for UI display
@@ -1353,16 +1581,27 @@ Required JSON Structure:
   "technical_notes": "Technical observations"
 }"""
     
-    def _generate_ios_detailed_html(self, analysis_data: Dict[str, Any], advisor: str, mode: str, reference_images: List[Dict[str, Any]] = None) -> str:
-        """Generate iOS-compatible dark theme HTML for detailed analysis"""
+    def _generate_ios_detailed_html(self, analysis_data: Dict[str, Any], advisor: str, mode: str, case_studies: List[Dict[str, Any]] = None) -> str:
+        """Generate iOS-compatible dark theme HTML for detailed analysis
         
-        if reference_images is None:
-            reference_images = []
+        Args:
+            analysis_data: Parsed analysis from LLM
+            advisor: Advisor name
+            mode: Analysis mode
+            case_studies: Pre-computed case studies from _compute_case_studies()
+                Each entry has: dimension_name, user_score, ref_image, ref_score, gap, relevance
+        """
         
-        # Track used images and limit to 4 total case studies
-        used_image_paths = set()
-        case_study_count = 0
-        max_case_studies = 4
+        if case_studies is None:
+            case_studies = []
+        
+        # Build lookup for case studies by normalized dimension name
+        case_study_lookup = {}
+        for cs in case_studies:
+            dim_name = cs.get('dimension_name', '').lower().replace(' ', '_')
+            case_study_lookup[dim_name] = cs
+        
+        logger.info(f"[HTML Gen] Generating HTML with {len(case_studies)} pre-computed case studies for dimensions: {list(case_study_lookup.keys())}")
         
         def format_dimension_name(name: str) -> str:
             """Format dimension names to have proper spacing (e.g., ColorHarmony -> Color Harmony)"""
@@ -1513,169 +1752,81 @@ Required JSON Structure:
   <p style="color: #666; margin-bottom: 20px;">Each dimension is analyzed with specific feedback and actionable recommendations for improvement.</p>
 '''
         
-        # Map dimension names to database column names for reference lookup
-        dimension_to_column = {
-            'composition': 'composition_score',
-            'lighting': 'lighting_score',
-            'focus': 'focus_sharpness_score',
-            'focus & sharpness': 'focus_sharpness_score',
-            'focus and sharpness': 'focus_sharpness_score',
-            'focus_sharpness': 'focus_sharpness_score',
-            'color': 'color_harmony_score',
-            'color harmony': 'color_harmony_score',
-            'color_harmony': 'color_harmony_score',
-            'subject isolation': 'subject_isolation_score',
-            'subject_isolation': 'subject_isolation_score',
-            'depth': 'depth_perspective_score',
-            'depth & perspective': 'depth_perspective_score',
-            'depth and perspective': 'depth_perspective_score',
-            'depth_perspective': 'depth_perspective_score',
-            'visual balance': 'visual_balance_score',
-            'visual_balance': 'visual_balance_score',
-            'balance': 'visual_balance_score',
-            'emotional impact': 'emotional_impact_score',
-            'emotional_impact': 'emotional_impact_score',
-            'emotion': 'emotional_impact_score',
-        }
-        
         # Add dimension cards
         for dim in dimensions:
-            # Stop adding case studies if we've reached the maximum
-            if case_study_count >= max_case_studies:
-                break
-                
             name = dim.get('name', 'Unknown')
             score = dim.get('score', 0)
             comment = dim.get('comment', 'No analysis available.')
             recommendation = dim.get('recommendation', 'No recommendation available.')
             color, rating = get_rating_style(score)
             
-            # Find the best reference image for this dimension based on largest gap
+            # Check if this dimension has a pre-computed case study
             reference_citation = ""
-            if reference_images and len(reference_images) > 0:
-                dim_key = name.lower().strip()
-                db_column = dimension_to_column.get(dim_key)
+            dim_key = name.lower().strip().replace(' & ', '_').replace(' and ', '_').replace(' ', '_')
+            # Normalize dimension key for lookup
+            if 'focus' in dim_key:
+                dim_key = 'focus_sharpness'
+            elif 'color' in dim_key:
+                dim_key = 'color_harmony'
+            elif 'depth' in dim_key:
+                dim_key = 'depth_perspective'
+            elif 'balance' in dim_key:
+                dim_key = 'visual_balance'
+            elif 'emotion' in dim_key or 'impact' in dim_key:
+                dim_key = 'emotional_impact'
+            elif 'isolation' in dim_key:
+                dim_key = 'subject_isolation'
+            
+            case_study = case_study_lookup.get(dim_key)
+            if case_study:
+                best_ref = case_study.get('ref_image', {})
+                best_gap = case_study.get('gap', 0)
+                ref_score_val = case_study.get('ref_score', 0)
                 
-                if db_column:
-                    # First, try to extract the image title from the recommendation text
-                    best_ref = None
-                    best_gap = 0
-                    matched_from_text = False  # Track if we matched from recommendation text
-                    
-                    # Parse recommendation text for referenced image title (e.g., "Old Faithful Geyser (1944)")
-                    # Pattern: "Study ... in <Image Title> (<Year>)"
-                    import re
-                    image_refs = re.findall(r'(?:in|by|studying)\s+([A-Z][^(]+)\s*\((\d{4})\)', recommendation)
-                    
-                    if image_refs:
-                        # Try to match the first referenced image in the recommendation
-                        ref_title_from_text, ref_year_from_text = image_refs[0]
-                        ref_title_from_text = ref_title_from_text.strip()
-                        
-                        # STRICT MATCHING: If recommendation references a specific image, we MUST use that one or skip
-                        # First try: exact year + title match and not already used
-                        for ref in reference_images:
-                            ref_img_title = ref.get('image_title', '').strip()
-                            ref_img_year = str(ref.get('date_taken', '')).strip()
-                            ref_path = ref.get('image_path', '')
-                            
-                            # Check for title match (flexible matching)
-                            if (ref_title_from_text.lower() in ref_img_title.lower() or 
-                                ref_img_title.lower() in ref_title_from_text.lower()):
-                                # Year match is a bonus but not required
-                                if ref_img_year == ref_year_from_text and ref_path not in used_image_paths:
-                                    best_ref = ref
-                                    matched_from_text = True
-                                    best_gap = 0  # Found exact recommendation match
-                                    break
-                        
-                        # Second try: title match only (no year requirement) and not already used
-                        if not best_ref:
-                            for ref in reference_images:
-                                ref_img_title = ref.get('image_title', '').strip()
-                                ref_path = ref.get('image_path', '')
-                                
-                                # Skip if already used
-                                if ref_path in used_image_paths:
-                                    continue
-                                
-                                # Check for title match (flexible matching)
-                                if (ref_title_from_text.lower() in ref_img_title.lower() or 
-                                    ref_img_title.lower() in ref_title_from_text.lower()):
-                                    best_ref = ref
-                                    matched_from_text = True
-                                    best_gap = 0  # Found recommendation match
-                                    break
-                    
-                    # If no match from recommendation text, find best image by score gap
-                    # But ONLY if we didn't extract a reference from the text (image_refs is empty)
-                    if not best_ref and not image_refs:
-                        for ref in reference_images:
-                            ref_score = ref.get(db_column)
-                            ref_path = ref.get('image_path', '')
-                            
-                            # Skip if image already used
-                            if ref_path in used_image_paths:
-                                continue
-                                
-                            if ref_score is not None:
-                                gap = ref_score - score
-                                if gap > best_gap and ref_score >= 8.0:
-                                    best_gap = gap
-                                    best_ref = ref
-                    
-                    # Only show citation if:
-                    # 1. We matched from recommendation text (must show to avoid mismatch), OR
-                    # 2. Score gap is meaningful (>= 2 points) and no specific reference was mentioned
-                    if best_ref and (matched_from_text or best_gap >= 2) and case_study_count < max_case_studies:
-                        ref_title = best_ref.get('image_title', 'Reference Image')
-                        ref_year = best_ref.get('date_taken', '')
-                        ref_score_val = best_ref.get(db_column, 0)
-                        ref_path = best_ref.get('image_path', '')
-                        
-                        # Format title with year if available
-                        if ref_year and str(ref_year).strip():
-                            title_with_year = f"{ref_title} ({ref_year})"
-                        else:
-                            title_with_year = ref_title
-                        
-                        # Get image data and convert to base64 for embedding
-                        ref_image_url = ''
-                        if best_ref.get('image_path') and os.path.exists(best_ref.get('image_path')):
-                            try:
-                                image_path = best_ref.get('image_path')
-                                with open(image_path, 'rb') as img_file:
-                                    image_data = img_file.read()
-                                    b64_image = base64.b64encode(image_data).decode('utf-8')
-                                    # Determine MIME type based on file extension
-                                    img_ext = os.path.splitext(image_path)[1].lower()
-                                    mime_type = 'image/png' if img_ext == '.png' else 'image/jpeg' if img_ext in ['.jpg', '.jpeg'] else 'image/png'
-                                    ref_image_url = f"data:{mime_type};base64,{b64_image}"
-                            except Exception as e:
-                                logger.warning(f"Failed to embed image as base64: {e}")
-                        
-                        # Build case study box with image
-                        reference_citation = '<div class="reference-citation"><div class="case-study-box">'
-                        reference_citation += f'<div class="case-study-title">Case Study: {title_with_year}</div>'
-                        
-                        # Add image if available
-                        if ref_image_url:
-                            reference_citation += f'<img src="{ref_image_url}" alt="{title_with_year}" class="case-study-image" />'
-                        
-                        # Add metadata
-                        metadata_parts = []
-                        if best_ref.get('image_description'):
-                            metadata_parts.append(f'<strong>Description:</strong> {best_ref["image_description"]}')
-                        if best_ref.get('location'):
-                            metadata_parts.append(f'<strong>Location:</strong> {best_ref["location"]}')
-                        metadata_parts.append(f'<strong>Score:</strong> {ref_score_val}/10 in {name}')
-                        
-                        reference_citation += f'<div class="case-study-metadata">' + '<br/>'.join(metadata_parts) + '</div>'
-                        reference_citation += '</div></div>'
-                        
-                        # Mark image as used and increment counter
-                        used_image_paths.add(ref_path)
-                        case_study_count += 1
+                ref_title = best_ref.get('image_title', 'Reference Image')
+                ref_year = best_ref.get('date_taken', '')
+                ref_path = best_ref.get('image_path', '')
+                
+                # Format title with year if available
+                if ref_year and str(ref_year).strip():
+                    title_with_year = f"{ref_title} ({ref_year})"
+                else:
+                    title_with_year = ref_title
+                
+                # Get image data and convert to base64 for embedding
+                ref_image_url = ''
+                if ref_path and os.path.exists(ref_path):
+                    try:
+                        with open(ref_path, 'rb') as img_file:
+                            image_data = img_file.read()
+                            b64_image = base64.b64encode(image_data).decode('utf-8')
+                            img_ext = os.path.splitext(ref_path)[1].lower()
+                            mime_type = 'image/png' if img_ext == '.png' else 'image/jpeg' if img_ext in ['.jpg', '.jpeg'] else 'image/png'
+                            ref_image_url = f"data:{mime_type};base64,{b64_image}"
+                    except Exception as e:
+                        logger.warning(f"Failed to embed image as base64: {e}")
+                
+                # Build case study box with image
+                reference_citation = '<div class="reference-citation"><div class="case-study-box">'
+                reference_citation += f'<div class="case-study-title">Case Study: {title_with_year}</div>'
+                
+                # Add image if available
+                if ref_image_url:
+                    reference_citation += f'<img src="{ref_image_url}" alt="{title_with_year}" class="case-study-image" />'
+                
+                # Add metadata
+                metadata_parts = []
+                if best_ref.get('image_description'):
+                    metadata_parts.append(f'<strong>Description:</strong> {best_ref["image_description"]}')
+                if best_ref.get('location'):
+                    metadata_parts.append(f'<strong>Location:</strong> {best_ref["location"]}')
+                metadata_parts.append(f'<strong>Score:</strong> {ref_score_val}/10 in {name}')
+                metadata_parts.append(f'<strong>Your Gap:</strong> {best_gap:.1f} points to master this technique')
+                
+                reference_citation += f'<div class="case-study-metadata">' + '<br/>'.join(metadata_parts) + '</div>'
+                reference_citation += '</div></div>'
+                
+                logger.info(f"[HTML Gen] Added case study for {name}: '{ref_title}' (gap={best_gap:.1f})")
             
             html += f'''
   <div class="feedback-card">
@@ -1882,8 +2033,19 @@ Required JSON Structure:
         
         return html
     
-    def _parse_response(self, response: str, advisor: str, mode: str, prompt: str, reference_images: List[Dict[str, Any]] = None) -> Dict[str, Any]:
-        """Parse model response into structured format with iOS-compatible HTML"""
+    def _parse_response(self, response: str, advisor: str, mode: str, prompt: str, 
+                        reference_images: List[Dict[str, Any]] = None,
+                        user_image_path: str = None) -> Dict[str, Any]:
+        """Parse model response into structured format with iOS-compatible HTML
+        
+        Args:
+            response: Raw LLM response text
+            advisor: Advisor ID (e.g., 'ansel')
+            mode: Analysis mode
+            prompt: The prompt that was used
+            reference_images: Legacy parameter (deprecated, use case studies instead)
+            user_image_path: Path to user's image for computing visual relevance
+        """
 
         import re
         
@@ -1906,9 +2068,9 @@ Required JSON Structure:
         parse_success = False
 
         # Warn if response is too long (likely runaway generation in LoRA mode)
-        if len(response) > 5000:
-            logger.warning(f"⚠️  Response is unusually long ({len(response)} chars) - may indicate runaway generation. Truncating...")
-            response = response[:5000]
+        if len(response) > 6000:
+            logger.warning(f"⚠️  Response is unusually long ({len(response)} chars) - may indicate runaway generation")
+            # Don't truncate yet - we'll try to extract JSON first
 
         try:
             # Find JSON in response (handle both raw JSON and markdown-wrapped JSON)
@@ -2013,8 +2175,33 @@ Required JSON Structure:
                 except Exception as e:
                     logger.warning(f"Failed to retrieve book passages: {e}")
         
+        # Compute case studies using gap-based selection with visual relevance
+        # This replaces the old reference_images approach with smarter selection
+        case_studies = []
+        if dimensions and user_image_path:
+            case_studies = self._compute_case_studies(
+                advisor_id=advisor,
+                user_dimensions=dimensions,
+                user_image_path=user_image_path,
+                max_case_studies=3,
+                relevance_threshold=0.25
+            )
+            if case_studies:
+                logger.info(f"✓ Computed {len(case_studies)} case studies for weak dimensions")
+        elif dimensions:
+            # No user image path - fall back to gap-only selection (no relevance filtering)
+            case_studies = self._compute_case_studies(
+                advisor_id=advisor,
+                user_dimensions=dimensions,
+                user_image_path=None,
+                max_case_studies=3,
+                relevance_threshold=0.0  # No relevance filter when no user image
+            )
+            if case_studies:
+                logger.info(f"✓ Computed {len(case_studies)} case studies (gap-only, no user image)")
+        
         # Generate HTML outputs
-        analysis_html = self._generate_ios_detailed_html(analysis_data, advisor, mode, reference_images=reference_images)
+        analysis_html = self._generate_ios_detailed_html(analysis_data, advisor, mode, case_studies=case_studies)
         summary_html = self._generate_summary_html(analysis_data)
         
         # Generate advisor bio HTML from database
@@ -2350,7 +2537,10 @@ def analyze_stream():
                 thread.join()
                 
                 # Parse final response
-                result = advisor._parse_response(full_response, advisor_name, mode_str, prompt)
+                result = advisor._parse_response(
+                    full_response, advisor_name, mode_str, prompt,
+                    user_image_path=temp_path
+                )
                 
                 # Send complete event with parsed data
                 yield f"data: {json.dumps({'type': 'complete', 'result': result})}\n\n"
