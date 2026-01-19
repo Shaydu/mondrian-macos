@@ -36,6 +36,7 @@ from mondrian.rag_retrieval import (
     get_dimension_index,
     get_similar_images_from_db,
     get_images_for_weak_dimensions,
+    get_top_reference_images,  # Single-pass RAG
     deduplicate_reference_images,
     get_best_image_per_dimension,
     compute_visual_relevance,
@@ -1036,7 +1037,10 @@ class QwenAdvisor:
         return full_prompt
     
     def _create_scoring_prompt(self) -> str:
-        """Create a minimal prompt for quick dimensional scoring (Pass 1)"""
+        """
+        [DEPRECATED - no longer used in single-pass]
+        Create a minimal prompt for quick dimensional scoring (Pass 1)
+        """
         return """Analyze this photograph and score it across all 8 dimensions. 
 **OUTPUT ONLY JSON - NO OTHER TEXT.**
 
@@ -1117,7 +1121,10 @@ Provide ONLY the JSON above with your scores. No explanations, no comments."""
         return response
     
     def _parse_scoring_response(self, response: str) -> List[Dict[str, Any]]:
-        """Parse the quick scoring response (Pass 1) to extract dimensions."""
+        """
+        [DEPRECATED - no longer used in single-pass]
+        Parse the quick scoring response (Pass 1) to extract dimensions.
+        """
         import re
         
         try:
@@ -1138,17 +1145,16 @@ Provide ONLY the JSON above with your scores. No explanations, no comments."""
         
         return []
     
-    def analyze_image_two_pass(self, image_path: str, advisor: str = "ansel",
-                                mode: str = "rag") -> Dict[str, Any]:
+    def analyze_image_single_pass(self, image_path: str, advisor: str = "ansel",
+                                   mode: str = "rag") -> Dict[str, Any]:
         """
-        Two-pass image analysis:
-        Pass 1: Quick scoring to identify weak dimensions
-        Pass 2: Full analysis with targeted RAG (references + book passages)
+        Single-pass image analysis with RAG.
+        Retrieves ALL top references and passages, lets LLM decide which to cite.
         
         Args:
             image_path: Path to image file
             advisor: Photography advisor persona
-            mode: Analysis mode (rag modes get full two-pass)
+            mode: Analysis mode (rag modes get full RAG context)
         
         Returns:
             Dictionary with analysis results
@@ -1156,170 +1162,234 @@ Provide ONLY the JSON above with your scores. No explanations, no comments."""
         try:
             # Load and validate image
             image = Image.open(image_path).convert('RGB')
-            logger.info(f"[Two-Pass] Loaded image: {image_path} ({image.size})")
+            logger.info(f"[Single-Pass] Loaded image: {image_path} ({image.size})")
             
             # =================================================================
-            # PASS 1: Quick dimensional scoring
+            # RETRIEVAL: Get top references and book passages (no weak dim filter)
             # =================================================================
-            logger.info("[Two-Pass] === PASS 1: Quick Scoring ===")
-            scoring_prompt = self._create_scoring_prompt()
+            logger.info("[Single-Pass] === RETRIEVAL: References + Passages ===")
             
-            # Run inference with reduced token limit for speed
-            scoring_response = self._run_inference(image, scoring_prompt, max_tokens=300)
-            logger.info(f"[Two-Pass] Pass 1 response: {len(scoring_response)} chars")
-            
-            # Parse dimensional scores
-            dimensions = self._parse_scoring_response(scoring_response)
-            
-            if not dimensions:
-                logger.warning("[Two-Pass] Pass 1 failed to get scores, falling back to single-pass")
-                return self.analyze_image(image_path, advisor, mode)
-            
-            # Extract weak dimensions (score <= 5)
-            weak_dimensions = []
-            weak_dimension_names = []
-            sorted_dims = sorted(dimensions, key=lambda d: d.get('score', 10))
-            
-            for d in sorted_dims[:3]:  # Top 3 weakest
-                dim_name = d.get('name', '')
-                score = d.get('score', 10)
-                dim_index = get_dimension_index(dim_name)
-                if dim_index is not None:
-                    canonical = DIMENSIONS[dim_index]
-                    weak_dimensions.append({'name': canonical, 'score': score})
-                    weak_dimension_names.append(canonical)
-            
-            logger.info(f"[Two-Pass] Weak dimensions: {weak_dimension_names}")
-            
-            # =================================================================
-            # RETRIEVAL: Get targeted references and book passages
-            # =================================================================
-            logger.info("[Two-Pass] === RETRIEVAL: References + Passages ===")
-            
-            # Get reference images that excel in weak dimensions
-            reference_images = get_images_for_weak_dimensions(
-                DB_PATH, advisor, weak_dimension_names, max_images=3
+            # Get top reference images across ALL dimensions
+            reference_images = get_top_reference_images(
+                DB_PATH, advisor, max_total=10
             )
-            logger.info(f"[Two-Pass] Retrieved {len(reference_images)} reference images")
+            logger.info(f"[Single-Pass] Retrieved {len(reference_images)} reference image candidates")
             
-            # Get book passages for weak dimensions
+            # Get top book passages across ALL dimensions
             book_passages = []
             try:
-                from mondrian.embedding_retrieval import get_book_passages_for_dimensions
-                book_passages = get_book_passages_for_dimensions(
+                from mondrian.embedding_retrieval import get_top_book_passages
+                book_passages = get_top_book_passages(
                     advisor_id=advisor,
-                    weak_dimensions=weak_dimension_names,
-                    max_passages=2
+                    max_passages=6
                 )
-                logger.info(f"[Two-Pass] Retrieved {len(book_passages)} book passages")
+                logger.info(f"[Single-Pass] Retrieved {len(book_passages)} quote candidates")
             except Exception as e:
-                logger.warning(f"[Two-Pass] Failed to retrieve book passages: {e}")
+                logger.warning(f"[Single-Pass] Failed to retrieve book passages: {e}")
             
             # =================================================================
-            # PASS 2: Full analysis with RAG context
+            # BUILD PROMPT WITH RAG CONTEXT
             # =================================================================
-            logger.info("[Two-Pass] === PASS 2: Full Analysis with RAG ===")
+            logger.info("[Single-Pass] === Building RAG-Augmented Prompt ===")
             
-            # Build augmented prompt with RAG context
+            # Build augmented prompt with all RAG context
             full_prompt = self._create_prompt(advisor, mode)
-            full_prompt = self._augment_prompt_for_pass2(
+            full_prompt = self._build_rag_prompt(
                 full_prompt, 
-                weak_dimensions, 
                 reference_images, 
                 book_passages
             )
             
-            # Run full inference
-            logger.info(f"[Two-Pass] Pass 2 prompt: {len(full_prompt)} chars")
-            full_response = self._run_inference(image, full_prompt)
-            logger.info(f"[Two-Pass] Pass 2 response: {len(full_response)} chars")
+            # =================================================================
+            # INFERENCE: Single pass with full context
+            # =================================================================
+            logger.info(f"[Single-Pass] Prompt: {len(full_prompt)} chars")
+            response = self._run_inference(image, full_prompt)
+            logger.info(f"[Single-Pass] Response: {len(response)} chars")
             
-            # Parse full response
+            # Parse response with citation validation
             analysis = self._parse_response(
-                full_response, advisor, mode, full_prompt, 
+                response, advisor, mode, full_prompt, 
                 reference_images=reference_images,
+                book_passages=book_passages,
                 user_image_path=image_path
             )
             
-            # Add book passages to analysis for UI display
-            if book_passages:
-                analysis['analysis']['book_passages'] = [
-                    {
-                        'book_title': p['book_title'],
-                        'text': p['passage_text'],
-                        'dimensions': p['dimensions'],
-                        'relevance_score': p['relevance_score']
-                    }
-                    for p in book_passages
-                ]
-            
-            # Add metadata about two-pass
-            analysis['two_pass'] = True
-            analysis['pass1_dimensions'] = dimensions
-            analysis['weak_dimensions'] = weak_dimension_names
+            # Add metadata
+            analysis['single_pass'] = True
+            analysis['rag_candidates'] = {
+                'images': len(reference_images),
+                'quotes': len(book_passages)
+            }
             
             return analysis
             
         except Exception as e:
-            logger.error(f"[Two-Pass] Error: {e}")
+            logger.error(f"[Single-Pass] Error: {e}")
             logger.error(traceback.format_exc())
-            # Fall back to single-pass
-            logger.info("[Two-Pass] Falling back to single-pass analysis")
+            # Fall back to basic analysis
+            logger.info("[Single-Pass] Falling back to basic analysis")
             return self.analyze_image(image_path, advisor, mode)
+    
+    # Keep old function name as alias for backwards compatibility
+    def analyze_image_two_pass(self, image_path: str, advisor: str = "ansel",
+                                mode: str = "rag") -> Dict[str, Any]:
+        """
+        [DEPRECATED] Alias for analyze_image_single_pass.
+        Two-pass has been replaced with single-pass for efficiency.
+        """
+        return self.analyze_image_single_pass(image_path, advisor, mode)
     
     def _augment_prompt_for_pass2(self, prompt: str, weak_dimensions: List[Dict],
                                    reference_images: List[Dict], 
                                    book_passages: List[Dict]) -> str:
         """
+        [DEPRECATED - use _build_rag_prompt for single-pass]
         Augment the full analysis prompt with targeted RAG context for Pass 2.
+        Assigns citation IDs to each candidate for LLM to reference.
         """
         rag_context = "\n\n### TARGETED GUIDANCE FOR YOUR WEAKEST AREAS:\n"
         
         weak_names = [d['name'] for d in weak_dimensions]
         rag_context += f"Focus your feedback on these dimensions where improvement is most needed: **{', '.join(weak_names)}**\n"
         
-        # Add book passages
+        # Add book passages with citation IDs
         if book_passages:
-            rag_context += "\n#### TECHNICAL GUIDANCE FROM MY WRITINGS:\n"
-            for passage in book_passages:
+            rag_context += "\n#### AVAILABLE QUOTES FROM MY WRITINGS:\n"
+            rag_context += "You may cite UP TO 3 of these quotes total across all dimensions. Each dimension may cite ONE quote maximum. Never reuse quote IDs.\n\n"
+            
+            for idx, passage in enumerate(book_passages, 1):
                 book_title = passage['book_title']
                 text = passage['passage_text']
                 dims = passage['dimensions']
-                rag_context += f"\n**From \"{book_title}\" (relevant to: {', '.join(dims)}):**\n"
-                rag_context += f"> {text}\n"
+                quote_id = f"QUOTE_{idx}"
+                
+                # Truncate to 75 words for preview
+                words = text.split()
+                preview = ' '.join(words[:75])
+                if len(words) > 75:
+                    preview += "..."
+                
+                rag_context += f"[{quote_id}] From \"{book_title}\" (relevant to: {', '.join(dims)})\n"
+                rag_context += f'  "{preview}"\n\n'
             
-            rag_context += "\n**CRITICAL INSTRUCTION:** Reference these passages ONLY when discussing their tagged dimensions. "
-            rag_context += "Zone System references MUST ONLY appear in Lighting dimension feedback. "
-            rag_context += "Cite as: 'As I wrote in The Print...' or 'In The Camera, I discussed...'\n"
+            rag_context += "**CITATION INSTRUCTION:** To cite a quote, include its ID in your JSON response: `\"quote_id\": \"QUOTE_1\"`\n"
+            rag_context += "Cite ONLY when the quote directly supports your specific feedback for that dimension.\n"
         
-        # Add reference images
+        # Add reference images with citation IDs
         if reference_images:
-            rag_context += "\n#### REFERENCE IMAGES THAT EXCEL IN YOUR WEAK AREAS:\n"
-            rag_context += "Study how these master works demonstrate excellence:\n\n"
+            rag_context += "\n#### AVAILABLE REFERENCE IMAGES:\n"
+            rag_context += "You may cite UP TO 3 of these images total across all dimensions. Each dimension may cite ONE image maximum. Never reuse image IDs.\n\n"
             
-            for i, img in enumerate(reference_images[:3], 1):
+            for idx, img in enumerate(reference_images, 1):
                 img_title = img.get('image_title') or img.get('image_path', '').split('/')[-1]
                 year = img.get('date_taken', '')
+                location = img.get('location', '')
+                img_id = f"IMG_{idx}"
                 
-                # Find which weak dimensions this image excels in
-                excels_in = []
-                for weak in weak_dimensions:
-                    dim_col = f"{weak['name']}_score"
-                    score = img.get(dim_col, 0)
-                    if score and score >= 8:
-                        excels_in.append(f"{weak['name']}({score})")
+                # Get all dimension scores >= 8.0
+                strong_dims = []
+                for dim in ['composition', 'lighting', 'focus_sharpness', 'color_harmony', 
+                           'subject_isolation', 'depth_perspective', 'visual_balance', 'emotional_impact']:
+                    score = img.get(f"{dim}_score", 0)
+                    if score and score >= 8.0:
+                        dim_display = dim.replace('_', ' ').title()
+                        strong_dims.append(f"{dim_display}={score:.1f}")
                 
-                if excels_in:
-                    rag_context += f"- **\"{img_title}\"** ({year}): Excels in {', '.join(excels_in)}\n"
-                    if img.get('image_description'):
-                        rag_context += f"  {img['image_description'][:150]}...\n"
+                rag_context += f"[{img_id}] \"{img_title}\" ({year})\n"
+                if location:
+                    rag_context += f"  Location: {location}\n"
+                rag_context += f"  Strengths: {', '.join(strong_dims)}\n"
+                if img.get('image_description'):
+                    desc = img['image_description'][:120]
+                    rag_context += f"  Description: {desc}...\n"
+                rag_context += "\n"
             
-            rag_context += "\n**INSTRUCTION:** Reference these images as examples of excellence. "
-            rag_context += "Mention them by name when discussing how to improve the weak dimensions.\n"
+            rag_context += "**CITATION INSTRUCTION:** To cite an image, include its ID in your JSON response: `\"case_study_id\": \"IMG_3\"`\n"
+            rag_context += "Cite ONLY when the image's strong dimensions match what the user needs to improve.\n"
         
         # Add final reminder about dimension-specific techniques
-        rag_context += "\n**CRITICAL REMINDER:** Zone System is ONLY for Lighting dimension. "
-        rag_context += "Do NOT mention Zone System in recommendations for Composition, Focus, Color, Balance, or other non-lighting dimensions.\n"
+        rag_context += "\n**CRITICAL CITATION RULES:**\n"
+        rag_context += "- Maximum 3 images and 3 quotes total across ALL dimensions\n"
+        rag_context += "- Each dimension: cite at most ONE image and ONE quote\n"
+        rag_context += "- NEVER reuse an ID once cited in another dimension\n"
+        rag_context += "- Only cite if directly relevant to your specific feedback\n"
+        rag_context += "- Zone System quotes ONLY for Lighting dimension\n"
+        
+        return prompt + rag_context
+    
+    def _build_rag_prompt(self, prompt: str, reference_images: List[Dict], 
+                          book_passages: List[Dict]) -> str:
+        """
+        Build RAG-augmented prompt for single-pass analysis.
+        Assigns citation IDs to ALL candidates and lets LLM decide relevance.
+        """
+        rag_context = "\n\n### REFERENCE MATERIALS AVAILABLE:\n"
+        rag_context += "Here are reference images and quotes from my writings. Cite any that are directly relevant to your feedback on specific dimensions.\n"
+        
+        # Add book passages with citation IDs
+        if book_passages:
+            rag_context += "\n#### AVAILABLE QUOTES FROM MY WRITINGS:\n"
+            rag_context += "You may cite UP TO 3 of these quotes total across all dimensions. Each dimension may cite ONE quote maximum. Never reuse quote IDs.\n\n"
+            
+            for idx, passage in enumerate(book_passages, 1):
+                book_title = passage['book_title']
+                text = passage['passage_text']
+                dims = passage['dimensions']
+                quote_id = f"QUOTE_{idx}"
+                
+                # Truncate to 75 words for preview
+                words = text.split()
+                preview = ' '.join(words[:75])
+                if len(words) > 75:
+                    preview += "..."
+                
+                rag_context += f"[{quote_id}] From \"{book_title}\" (relevant to: {', '.join(dims)})\n"
+                rag_context += f'  "{preview}"\n\n'
+            
+            rag_context += "**CITATION INSTRUCTION:** To cite a quote, include its ID in your JSON response: `\"quote_id\": \"QUOTE_1\"`\n"
+            rag_context += "Cite ONLY when the quote directly supports your specific feedback for that dimension.\n"
+        
+        # Add reference images with citation IDs
+        if reference_images:
+            rag_context += "\n#### AVAILABLE REFERENCE IMAGES:\n"
+            rag_context += "You may cite UP TO 3 of these images total across all dimensions. Each dimension may cite ONE image maximum. Never reuse image IDs.\n\n"
+            
+            for idx, img in enumerate(reference_images, 1):
+                img_title = img.get('image_title') or img.get('image_path', '').split('/')[-1]
+                year = img.get('date_taken', '')
+                location = img.get('location', '')
+                img_id = f"IMG_{idx}"
+                
+                # Get all dimension scores >= 8.0
+                strong_dims = []
+                for dim in ['composition', 'lighting', 'focus_sharpness', 'color_harmony', 
+                           'subject_isolation', 'depth_perspective', 'visual_balance', 'emotional_impact']:
+                    score = img.get(f"{dim}_score", 0)
+                    if score and score >= 8.0:
+                        dim_display = dim.replace('_', ' ').title()
+                        strong_dims.append(f"{dim_display}={score:.1f}")
+                
+                rag_context += f"[{img_id}] \"{img_title}\" ({year})\n"
+                if location:
+                    rag_context += f"  Location: {location}\n"
+                if strong_dims:
+                    rag_context += f"  Strengths: {', '.join(strong_dims)}\n"
+                if img.get('image_description'):
+                    desc = img['image_description'][:120]
+                    rag_context += f"  Description: {desc}...\n"
+                rag_context += "\n"
+            
+            rag_context += "**CITATION INSTRUCTION:** To cite an image, include its ID in your JSON response: `\"case_study_id\": \"IMG_3\"`\n"
+            rag_context += "Cite when the image demonstrates excellence in dimensions where you have feedback.\n"
+        
+        # Add final reminder about dimension-specific techniques
+        rag_context += "\n**CRITICAL CITATION RULES:**\n"
+        rag_context += "- Maximum 3 images and 3 quotes total across ALL dimensions\n"
+        rag_context += "- Each dimension: cite at most ONE image and ONE quote\n"
+        rag_context += "- NEVER reuse an ID once cited in another dimension\n"
+        rag_context += "- Only cite if directly relevant to your specific feedback\n"
+        rag_context += "- Zone System quotes ONLY for Lighting dimension\n"
         
         return prompt + rag_context
     
@@ -1353,30 +1423,11 @@ Required JSON Structure:
         """Generate iOS-compatible dark theme HTML for detailed analysis
         
         Args:
-            analysis_data: Parsed analysis from LLM
+            analysis_data: Parsed analysis from LLM (with _cited_image and _cited_quote in dimensions)
             advisor: Advisor name
             mode: Analysis mode
-            case_studies: Pre-computed case studies from _compute_case_studies()
-                Each entry has: dimension_name, user_score, ref_image, ref_score, gap, relevance
+            case_studies: Deprecated parameter, no longer used (LLM now cites directly)
         """
-        
-        if case_studies is None:
-            case_studies = []
-        
-        # Build lookup for case studies by normalized dimension name
-        case_study_lookup = {}
-        for cs in case_studies:
-            dim_name = cs.get('dimension_name', '').lower().replace(' ', '_')
-            case_study_lookup[dim_name] = cs
-        
-        logger.info(f"[HTML Gen] Generating HTML with {len(case_studies)} pre-computed case studies for dimensions: {list(case_study_lookup.keys())}")
-        
-        def format_dimension_name(name: str) -> str:
-            """Format dimension names to have proper spacing (e.g., ColorHarmony -> Color Harmony)"""
-            import re
-            # Insert space before uppercase letters that follow lowercase letters
-            formatted = re.sub(r'([a-z])([A-Z])', r'\1 \2', name)
-            return formatted
         
         # Extract data from the expected JSON structure
         image_description = analysis_data.get('image_description', 'Image analysis')
@@ -1388,6 +1439,13 @@ Required JSON Structure:
         for dim in dimensions:
             if 'name' in dim and dim['name']:
                 dim['name'] = format_dimension_name(dim['name'])
+        
+        def format_dimension_name(name: str) -> str:
+            """Format dimension names to have proper spacing (e.g., ColorHarmony -> Color Harmony)"""
+            import re
+            # Insert space before uppercase letters that follow lowercase letters
+            formatted = re.sub(r'([a-z])([A-Z])', r'\1 \2', name)
+            return formatted
         
         def get_rating_style(score: int) -> tuple:
             """Return color and rating text based on score"""
@@ -1555,40 +1613,22 @@ Required JSON Structure:
             recommendation = dim.get('recommendation', 'No recommendation available.')
             color, rating = get_rating_style(score)
             
-            # Check if this dimension has a pre-computed case study
-            reference_citation = ""
-            dim_key = name.lower().strip().replace(' & ', '_').replace(' and ', '_').replace(' ', '_')
-            # Normalize dimension key for lookup
-            if 'focus' in dim_key:
-                dim_key = 'focus_sharpness'
-            elif 'color' in dim_key:
-                dim_key = 'color_harmony'
-            elif 'depth' in dim_key:
-                dim_key = 'depth_perspective'
-            elif 'balance' in dim_key:
-                dim_key = 'visual_balance'
-            elif 'emotion' in dim_key or 'impact' in dim_key:
-                dim_key = 'emotional_impact'
-            elif 'isolation' in dim_key:
-                dim_key = 'subject_isolation'
-            
-            case_study = case_study_lookup.get(dim_key)
-            if case_study:
-                best_ref = case_study.get('ref_image', {})
-                best_gap = case_study.get('gap', 0)
-                ref_score_val = case_study.get('ref_score', 0)
+            # Check if LLM cited an image for this dimension
+            cited_image = dim.get('_cited_image')
+            image_citation_html = ""
+            if cited_image:
+                ref_title = cited_image.get('image_title', 'Reference Image')
+                ref_year = cited_image.get('date_taken', '')
+                ref_path = cited_image.get('image_path', '')
+                ref_location = cited_image.get('location', '')
                 
-                ref_title = best_ref.get('image_title', 'Reference Image')
-                ref_year = best_ref.get('date_taken', '')
-                ref_path = best_ref.get('image_path', '')
-                
-                # Format title with year if available
+                # Format title with year
                 if ref_year and str(ref_year).strip():
                     title_with_year = f"{ref_title} ({ref_year})"
                 else:
                     title_with_year = ref_title
                 
-                # Get image data and convert to base64 for embedding
+                # Get image data and convert to base64
                 ref_image_url = ''
                 if ref_path and os.path.exists(ref_path):
                     try:
@@ -1601,27 +1641,58 @@ Required JSON Structure:
                     except Exception as e:
                         logger.warning(f"Failed to embed image as base64: {e}")
                 
-                # Build case study box with image
-                reference_citation = '<div class="reference-citation"><div class="case-study-box">'
-                reference_citation += f'<div class="case-study-title">Case Study: {title_with_year}</div>'
+                # Build case study box
+                image_citation_html = '<div class="reference-citation"><div class="case-study-box">'
+                image_citation_html += f'<div class="case-study-title">Case Study: {title_with_year}</div>'
                 
-                # Add image if available
                 if ref_image_url:
-                    reference_citation += f'<img src="{ref_image_url}" alt="{title_with_year}" class="case-study-image" />'
+                    image_citation_html += f'<img src="{ref_image_url}" alt="{title_with_year}" class="case-study-image" />'
                 
                 # Add metadata
                 metadata_parts = []
-                if best_ref.get('image_description'):
-                    metadata_parts.append(f'<strong>Description:</strong> {best_ref["image_description"]}')
-                if best_ref.get('location'):
-                    metadata_parts.append(f'<strong>Location:</strong> {best_ref["location"]}')
-                metadata_parts.append(f'<strong>Score:</strong> {ref_score_val}/10 in {name}')
-                metadata_parts.append(f'<strong>Your Gap:</strong> {best_gap:.1f} points to master this technique')
+                if cited_image.get('image_description'):
+                    metadata_parts.append(f'<strong>Description:</strong> {cited_image["image_description"]}')
+                if ref_location:
+                    metadata_parts.append(f'<strong>Location:</strong> {ref_location}')
                 
-                reference_citation += f'<div class="case-study-metadata">' + '<br/>'.join(metadata_parts) + '</div>'
-                reference_citation += '</div></div>'
+                # Show dimensional strengths
+                dim_strengths = []
+                for dim_key in ['composition', 'lighting', 'focus_sharpness', 'color_harmony',
+                               'subject_isolation', 'depth_perspective', 'visual_balance', 'emotional_impact']:
+                    dim_score = cited_image.get(f"{dim_key}_score", 0)
+                    if dim_score and dim_score >= 8.0:
+                        dim_display = dim_key.replace('_', ' ').title()
+                        dim_strengths.append(f"{dim_display}: {dim_score}/10")
                 
-                logger.info(f"[HTML Gen] Added case study for {name}: '{ref_title}' (gap={best_gap:.1f})")
+                if dim_strengths:
+                    metadata_parts.append(f'<strong>Strengths:</strong> {", ".join(dim_strengths)}')
+                
+                image_citation_html += f'<div class="case-study-metadata">' + '<br/>'.join(metadata_parts) + '</div>'
+                image_citation_html += '</div></div>'
+                
+                logger.info(f"[HTML Gen] Added LLM-cited image for {name}: '{ref_title}'")
+            
+            # Check if LLM cited a quote for this dimension
+            cited_quote = dim.get('_cited_quote')
+            quote_citation_html = ""
+            if cited_quote:
+                book_title = cited_quote.get('book_title', 'Unknown Book')
+                passage_text = cited_quote.get('passage_text', cited_quote.get('text', ''))
+                quote_dims = cited_quote.get('dimensions', [])
+                
+                # Truncate to 75 words
+                words = passage_text.split()
+                truncated_text = ' '.join(words[:75])
+                if len(words) > 75:
+                    truncated_text += "..."
+                
+                quote_citation_html = '<div class="advisor-quote-box">'
+                quote_citation_html += '<div class="advisor-quote-title">Advisor Insight</div>'
+                quote_citation_html += f'<div class="advisor-quote-text">"{truncated_text}"</div>'
+                quote_citation_html += f'<div class="advisor-quote-source"><strong>From:</strong> {book_title}</div>'
+                quote_citation_html += '</div>'
+                
+                logger.info(f"[HTML Gen] Added LLM-cited quote for {name} from '{book_title}'")
             
             html += f'''
   <div class="feedback-card">
@@ -1635,7 +1706,7 @@ Required JSON Structure:
     <div class="feedback-recommendation">
       <strong>How to Improve:</strong>
       <p>{recommendation}</p>
-    </div>{reference_citation}
+    </div>{image_citation_html}{quote_citation_html}
   </div>
 '''
         
@@ -1643,27 +1714,6 @@ Required JSON Structure:
   <h2>Overall Grade</h2>
   <p><strong>{overall_score}/10</strong></p>
   <p><strong>Grade Note:</strong> {technical_notes}</p>
-'''
-        
-        # Add advisor quotes if available
-        book_passages = analysis_data.get('book_passages', [])
-        if book_passages:
-            html += '''
-  <h2>Advisor Insights</h2>
-  <p style="color: #d1d1d6; margin-bottom: 12px; font-size: 14px;">Relevant passages from my writings:</p>
-'''
-            for passage in book_passages:
-                book_title = passage.get('book_title', 'Unknown Book')
-                text = passage.get('text', passage.get('passage_text', ''))
-                dims = passage.get('dimensions', [])
-                
-                dims_str = ', '.join(dims) if dims else 'General'
-                
-                html += f'''  <div class="advisor-quote-box">
-    <div class="advisor-quote-title">Advisor Quote</div>
-    <div class="advisor-quote-text">"{text}"</div>
-    <div class="advisor-quote-source"><strong>From:</strong> {book_title} — <strong>Topics:</strong> {dims_str}</div>
-  </div>
 '''
         
         html += '''
@@ -1878,6 +1928,7 @@ Required JSON Structure:
     
     def _parse_response(self, response: str, advisor: str, mode: str, prompt: str, 
                         reference_images: List[Dict[str, Any]] = None,
+                        book_passages: List[Dict[str, Any]] = None,
                         user_image_path: str = None) -> Dict[str, Any]:
         """Parse model response into structured format with iOS-compatible HTML
         
@@ -1886,7 +1937,8 @@ Required JSON Structure:
             advisor: Advisor ID (e.g., 'ansel')
             mode: Analysis mode
             prompt: The prompt that was used
-            reference_images: Legacy parameter (deprecated, use case studies instead)
+            reference_images: Candidate reference images for citation validation
+            book_passages: Candidate quotes for citation validation
             user_image_path: Path to user's image for computing visual relevance
         """
 
@@ -1894,6 +1946,8 @@ Required JSON Structure:
         
         if reference_images is None:
             reference_images = []
+        if book_passages is None:
+            book_passages = []
 
         # Extract thinking if present (for thinking models like Qwen3-VL-4B-Thinking)
         thinking_text = ""
@@ -1948,6 +2002,68 @@ Required JSON Structure:
                     # or mark as unparseable
                     analysis_data['image_description'] = "Unable to parse response - thinking model contaminated output"
                     analysis_data['contamination_detected'] = True
+                
+                # VALIDATE AND RESOLVE CITATIONS
+                dimensions = analysis_data.get('dimensions', [])
+                if dimensions:
+                    # Build lookup maps for candidates
+                    img_lookup = {}
+                    for idx, img in enumerate(reference_images, 1):
+                        img_id = f"IMG_{idx}"
+                        img_lookup[img_id] = img
+                    
+                    quote_lookup = {}
+                    for idx, passage in enumerate(book_passages, 1):
+                        quote_id = f"QUOTE_{idx}"
+                        quote_lookup[quote_id] = passage
+                    
+                    # Track used IDs to enforce no-repeat rule
+                    used_img_ids = set()
+                    used_quote_ids = set()
+                    img_citation_count = 0
+                    quote_citation_count = 0
+                    
+                    # Validate citations in each dimension
+                    for dim in dimensions:
+                        # Validate case_study_id (image citation)
+                        if 'case_study_id' in dim:
+                            img_id = dim['case_study_id']
+                            if img_id in used_img_ids:
+                                logger.warning(f"❌ Duplicate image citation: {img_id} in {dim['name']} - removing")
+                                del dim['case_study_id']
+                            elif img_id not in img_lookup:
+                                logger.warning(f"❌ Invalid image citation: {img_id} not in candidates - removing")
+                                del dim['case_study_id']
+                            elif img_citation_count >= 3:
+                                logger.warning(f"❌ Too many image citations (>3): removing {img_id} from {dim['name']}")
+                                del dim['case_study_id']
+                            else:
+                                # Valid citation - mark as used and attach full image data
+                                used_img_ids.add(img_id)
+                                img_citation_count += 1
+                                dim['_cited_image'] = img_lookup[img_id]
+                                logger.info(f"✓ Valid image citation: {img_id} in {dim['name']}")
+                        
+                        # Validate quote_id (quote citation)
+                        if 'quote_id' in dim:
+                            quote_id = dim['quote_id']
+                            if quote_id in used_quote_ids:
+                                logger.warning(f"❌ Duplicate quote citation: {quote_id} in {dim['name']} - removing")
+                                del dim['quote_id']
+                            elif quote_id not in quote_lookup:
+                                logger.warning(f"❌ Invalid quote citation: {quote_id} not in candidates - removing")
+                                del dim['quote_id']
+                            elif quote_citation_count >= 3:
+                                logger.warning(f"❌ Too many quote citations (>3): removing {quote_id} from {dim['name']}")
+                                del dim['quote_id']
+                            else:
+                                # Valid citation - mark as used and attach full quote data
+                                used_quote_ids.add(quote_id)
+                                quote_citation_count += 1
+                                dim['_cited_quote'] = quote_lookup[quote_id]
+                                logger.info(f"✓ Valid quote citation: {quote_id} in {dim['name']}")
+                    
+                    logger.info(f"[Citations] Validated: {img_citation_count} images, {quote_citation_count} quotes")
                 
                 logger.info(f"✓ Successfully parsed JSON response ({len(json_str)} chars)")
             else:
@@ -2229,13 +2345,13 @@ def analyze():
         advisor_name = request.form.get('advisor', 'ansel')
         mode_str = request.form.get('mode', 'baseline')
         
-        # Use two-pass analysis for RAG modes
-        use_two_pass = mode_str in ('rag', 'rag_lora', 'lora+rag', 'lora_rag')
+        # Use single-pass RAG analysis for RAG modes
+        use_rag = mode_str in ('rag', 'rag_lora', 'lora+rag', 'lora_rag')
         
         # Run analysis
-        if use_two_pass:
-            logger.info(f"[Two-Pass] Analyzing image with advisor={advisor_name}, mode={mode_str}")
-            result = advisor.analyze_image_two_pass(temp_path, advisor=advisor_name, mode=mode_str)
+        if use_rag:
+            logger.info(f"[Single-Pass RAG] Analyzing image with advisor={advisor_name}, mode={mode_str}")
+            result = advisor.analyze_image_single_pass(temp_path, advisor=advisor_name, mode=mode_str)
         else:
             logger.info(f"Analyzing image with advisor={advisor_name}, mode={mode_str}")
             result = advisor.analyze_image(temp_path, advisor=advisor_name, mode=mode_str)

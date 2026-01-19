@@ -55,8 +55,15 @@ For Ansel Adams:
 {
   "image_description": "2-3 sentence description of what you observe in the photograph",
   "dimensions": [
-    {"name": "Composition", "score": N, "comment": "What you observe technically...", "recommendation": "Specific actionable suggestion..."},
-    {"name": "Lighting", "score": N, "comment": "...", "recommendation": "..."},
+    {
+      "name": "Composition", 
+      "score": N, 
+      "comment": "What you observe technically...", 
+      "recommendation": "Specific actionable suggestion...",
+      "case_study_id": "IMG_3",
+      "quote_id": "QUOTE_1"
+    },
+    {"name": "Lighting", "score": N, "comment": "...", "recommendation": "...", "case_study_id": "IMG_1", "quote_id": "QUOTE_2"},
     {"name": "Focus & Sharpness", "score": N, "comment": "...", "recommendation": "..."},
     {"name": "Color Harmony", "score": N, "comment": "...", "recommendation": "..."},
     {"name": "Subject Isolation", "score": N, "comment": "...", "recommendation": "..."},
@@ -68,11 +75,16 @@ For Ansel Adams:
   "overall_score": N.N,
   "key_strengths": ["Specific strength observed in this image", "Another strength"],
   "priority_improvements": ["Most impactful area to focus on", "Second priority", "Third priority"],
-  "technical_notes": "Encouraging summary acknowledging effort and pointing toward growth path",
-  "case_studies": [
-    {"image_title": "EXACT TITLE FROM REFERENCES", "year": "YYYY", "dimension": "Dimension to improve", "explanation": "How studying this image will help..."}
-  ]
+  "technical_notes": "Encouraging summary acknowledging effort and pointing toward growth path"
 }
+
+**CITATION FIELDS (OPTIONAL):**
+- `case_study_id`: Reference image ID from prompt (e.g., "IMG_1", "IMG_5") - cite ONLY if directly relevant to your feedback for this dimension
+- `quote_id`: Quote ID from prompt (e.g., "QUOTE_1", "QUOTE_3") - cite ONLY if it supports your specific recommendation
+- Maximum 3 images and 3 quotes total across ALL dimensions
+- Each dimension may cite at most ONE image and ONE quote
+- NEVER reuse an ID once cited in another dimension
+- Leave fields absent if no relevant citation
 
 **EXAMPLE - SUPPORTIVE BUT HONEST FEEDBACK:**
 {

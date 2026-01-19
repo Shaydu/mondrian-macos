@@ -157,8 +157,80 @@ def get_similar_images_from_db(db_path: str, advisor_id: str, top_k: int = 3) ->
         return []
 
 
+def get_top_reference_images(db_path: str, advisor_id: str, max_total: int = 10) -> List[Dict[str, Any]]:
+    """
+    Retrieve top-quality reference images across ALL dimensions (single-pass RAG).
+    Does NOT filter by weak dimensions - returns best overall exemplars for LLM to choose from.
+    
+    Args:
+        db_path: Path to the SQLite database
+        advisor_id: Advisor to search (e.g., 'ansel')
+        max_total: Maximum number of images to return (default 10)
+        
+    Returns:
+        List of top reference images sorted by overall quality
+    """
+    try:
+        conn = sqlite3.connect(db_path)
+        conn.row_factory = sqlite3.Row
+        cursor = conn.cursor()
+        
+        # Get top images by average dimensional score (no weak dimension filter)
+        query = """
+            SELECT id, image_path, composition_score, lighting_score, 
+                   focus_sharpness_score, color_harmony_score,
+                   subject_isolation_score, depth_perspective_score,
+                   visual_balance_score, emotional_impact_score,
+                   overall_grade, image_description, image_title, date_taken
+            FROM dimensional_profiles
+            WHERE advisor_id = ?
+              AND composition_score IS NOT NULL
+            ORDER BY (
+                COALESCE(composition_score, 0) + COALESCE(lighting_score, 0) + 
+                COALESCE(focus_sharpness_score, 0) + COALESCE(color_harmony_score, 0) +
+                COALESCE(subject_isolation_score, 0) + COALESCE(depth_perspective_score, 0) +
+                COALESCE(visual_balance_score, 0) + COALESCE(emotional_impact_score, 0)
+            ) / 8.0 DESC
+            LIMIT ?
+        """
+        
+        cursor.execute(query, (advisor_id, max_total))
+        rows = cursor.fetchall()
+        conn.close()
+        
+        if not rows:
+            logger.warning(f"No reference images found for advisor: {advisor_id}")
+            return []
+        
+        result_images = []
+        for row in rows:
+            img_dict = dict(row)
+            image_path = img_dict.get('image_path')
+            
+            # Construct image URL if image_path exists
+            if image_path and os.path.exists(image_path):
+                try:
+                    img_filename = os.path.basename(image_path)
+                    img_dict['image_url'] = f"/api/reference-image/{img_filename}"
+                    img_dict['image_filename'] = img_filename
+                    result_images.append(img_dict)
+                except Exception as e:
+                    logger.warning(f"Failed to process image {image_path}: {e}")
+                    continue
+            else:
+                result_images.append(img_dict)
+        
+        logger.info(f"Retrieved {len(result_images)} top reference images for single-pass RAG")
+        return result_images
+        
+    except Exception as e:
+        logger.error(f"Failed to retrieve top reference images: {e}")
+        return []
+
+
 def get_images_for_weak_dimensions(db_path: str, advisor_id: str, weak_dimensions: List[str], max_images: int = 4) -> List[Dict[str, Any]]:
     """
+    [DEPRECATED - use get_top_reference_images for single-pass]
     Retrieve reference images that excel in the user's weakest dimensions.
     This helps provide specific examples showing how to improve in areas where the user needs the most help.
     
