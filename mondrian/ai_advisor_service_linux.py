@@ -115,10 +115,14 @@ def get_disclaimer_text(db_path: str) -> str:
 class QwenAdvisor:
     """AI Advisor using Qwen2-VL or Qwen3-VL models with LoRA adapter"""
     
+    # Class-level RAG configuration (loaded from model_config.json)
+    MAX_REFERENCE_IMAGES = 3
+    MAX_REFERENCE_QUOTES = 3
+    
     def __init__(self, model_name: str = "Qwen/Qwen2-VL-7B-Instruct", 
                  load_in_4bit: bool = True, device: Optional[str] = None,
                  adapter_path: Optional[str] = None, generation_config: Optional[Dict] = None,
-                 backend: str = 'bnb'):
+                 backend: str = 'bnb', max_ref_images: int = None, max_ref_quotes: int = None):
         """
         Initialize Qwen advisor with specified configuration
         
@@ -129,12 +133,20 @@ class QwenAdvisor:
             adapter_path: Path to LoRA adapter (optional)
             generation_config: Generation parameters (max_new_tokens, temperature, etc.)
             backend: Inference backend ('bnb', 'vllm', 'awq')
+            max_ref_images: Maximum reference images per response (from config)
+            max_ref_quotes: Maximum reference quotes per response (from config)
         """
         self.model_name = model_name
         self.load_in_4bit = load_in_4bit
         self.adapter_path = adapter_path
         self.backend = backend.lower() if backend else 'bnb'
         self._offload_dir = None  # Track offload directory for cleanup
+        
+        # Set RAG limits from config or use defaults
+        if max_ref_images is not None:
+            QwenAdvisor.MAX_REFERENCE_IMAGES = max_ref_images
+        if max_ref_quotes is not None:
+            QwenAdvisor.MAX_REFERENCE_QUOTES = max_ref_quotes
         
         # Store generation config with defaults
         # Beam search with sampling for better GPU utilization and quality
@@ -1678,8 +1690,8 @@ Required JSON Structure:
                             elif img_id not in img_lookup:
                                 logger.warning(f"❌ Invalid image citation: {img_id} not in candidates - removing")
                                 del dim['case_study_id']
-                            elif img_citation_count >= 3:
-                                logger.warning(f"❌ Too many image citations (>3): removing {img_id} from {dim['name']}")
+                            elif img_citation_count >= QwenAdvisor.MAX_REFERENCE_IMAGES:
+                                logger.warning(f"❌ Too many image citations (>{QwenAdvisor.MAX_REFERENCE_IMAGES}): removing {img_id} from {dim['name']}")
                                 del dim['case_study_id']
                             else:
                                 # Valid citation - mark as used and attach full image data
@@ -1697,8 +1709,8 @@ Required JSON Structure:
                             elif quote_id not in quote_lookup:
                                 logger.warning(f"❌ Invalid quote citation: {quote_id} not in candidates - removing")
                                 del dim['quote_id']
-                            elif quote_citation_count >= 3:
-                                logger.warning(f"❌ Too many quote citations (>3): removing {quote_id} from {dim['name']}")
+                            elif quote_citation_count >= QwenAdvisor.MAX_REFERENCE_QUOTES:
+                                logger.warning(f"❌ Too many quote citations (>{QwenAdvisor.MAX_REFERENCE_QUOTES}): removing {quote_id} from {dim['name']}")
                                 del dim['quote_id']
                             else:
                                 # Valid citation - mark as used and attach full quote data
@@ -1884,7 +1896,9 @@ def init_advisor(model_name: str, load_in_4bit: bool, adapter_path: Optional[str
             load_in_4bit=load_in_4bit,
             adapter_path=adapter_path,
             generation_config=generation_config,
-            backend=backend
+            backend=backend,
+            max_ref_images=rag_config.get('max_reference_images') if rag_config else None,
+            max_ref_quotes=rag_config.get('max_reference_quotes') if rag_config else None
         )
         
         loading_status['completed'] = True
@@ -2193,6 +2207,7 @@ def main():
     
     # Load generation config from model_config.json
     generation_config = None
+    rag_config = None
     config_path = Path(__file__).parent.parent / 'model_config.json'
     if config_path.exists():
         try:
@@ -2206,6 +2221,11 @@ def main():
                 logger.info(f"Loaded generation profile '{profile_name}' from model_config.json")
             else:
                 logger.warning(f"Generation profile '{profile_name}' not found in model_config.json")
+            
+            # Load RAG config
+            if 'rag' in config:
+                rag_config = config['rag']
+                logger.info(f"Loaded RAG config: max_images={rag_config.get('max_reference_images', 3)}, max_quotes={rag_config.get('max_reference_quotes', 3)}")
         except Exception as e:
             logger.warning(f"Could not load model_config.json: {e}")
     

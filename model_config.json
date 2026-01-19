@@ -47,6 +47,11 @@
     "generation_profile": "optimized",
     "description": "Default: Qwen3-VL-4B-Instruct with LoRA adapter, 4-beam search with 2500 tokens"
   },
+  "rag": {
+    "max_reference_images": 3,
+    "max_reference_quotes": 3,
+    "description": "Maximum number of reference images and quotes to include per LLM response"
+  },
   "generation_profiles": {
     "optimized": {
       "max_new_tokens": 2500,
