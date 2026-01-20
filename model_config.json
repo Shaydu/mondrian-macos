@@ -45,7 +45,8 @@
     "model_preset": "qwen3-4b-instruct",
     "mode": "lora",
     "generation_profile": "optimized",
-    "description": "Default: Qwen3-VL-4B-Instruct with LoRA adapter, 4-beam search with 2500 tokens"
+    "enable_rag": true,
+    "description": "Default: Qwen3-VL-4B-Instruct with LoRA adapter, 4-beam search with 2500 tokens, RAG enabled"
   },
   "rag": {
     "max_reference_images": 3,

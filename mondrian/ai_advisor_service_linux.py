@@ -61,6 +61,13 @@ sys.path.insert(0, str(Path(__file__).parent.parent))
 from mondrian.logging_config import setup_service_logging
 logger = setup_service_logging('ai_advisor_service_linux')
 
+# ============================================================================
+# Configuration Constants
+# ============================================================================
+
+# Enable/disable reference images and advisor quotes in analysis
+ENABLE_CITATIONS = True  # Set to False to disable citation retrieval and display
+
 
 # ============================================================================
 # Database Helper Functions
@@ -151,7 +158,7 @@ class QwenAdvisor:
         # Store generation config with defaults
         # Beam search with sampling for better GPU utilization and quality
         self.generation_config = {
-            "max_new_tokens": 3500,
+            "max_new_tokens": 5000,
             "num_beams": 4,
             "do_sample": True,
             "temperature": 0.7,
@@ -636,7 +643,7 @@ class QwenAdvisor:
                                               max_images: int = 4) -> List[Dict[str, Any]]:
         """
         Retrieve reference images using CLIP visual embeddings for semantic similarity.
-        Falls back to score-based retrieval if embeddings are not available.
+        Raises RuntimeError if embeddings are not available.
         
         Args:
             advisor_id: Advisor to search
@@ -647,6 +654,9 @@ class QwenAdvisor:
             
         Returns:
             List of reference images with base64 encoded thumbnails
+            
+        Raises:
+            RuntimeError: If embedding system is not initialized
         """
         try:
             # Try embedding-based retrieval first
@@ -668,8 +678,10 @@ class QwenAdvisor:
                 )
             
             if not results:
-                logger.info("No embedding results, falling back to score-based retrieval")
-                return get_images_for_weak_dimensions(DB_PATH, advisor_id, weak_dimensions, max_images)
+                raise RuntimeError(
+                    "Embedding system not initialized: No embeddings found in database. "
+                    "Run: python scripts/compute_embeddings.py --advisor ansel"
+                )
             
             # Encode images as URLs instead of base64
             encoded_results = []
@@ -688,12 +700,15 @@ class QwenAdvisor:
             return encoded_results
             
         except ImportError as e:
-            logger.warning(f"Embedding retrieval not available: {e}")
-            logger.info("Falling back to score-based retrieval")
-            return get_images_for_weak_dimensions(DB_PATH, advisor_id, weak_dimensions, max_images)
+            raise RuntimeError(
+                f"Embedding system dependencies not installed: {e}. "
+                "Run: pip install sentence-transformers transformers"
+            )
+        except RuntimeError:
+            # Re-raise our own RuntimeErrors
+            raise
         except Exception as e:
-            logger.error(f"Embedding retrieval failed: {e}")
-            return get_images_for_weak_dimensions(DB_PATH, advisor_id, weak_dimensions, max_images)
+            raise RuntimeError(f"Embedding retrieval failed: {e}")
     
     def _create_prompt(self, advisor: str, mode: str) -> str:
         """Create analysis prompt by loading from database"""
@@ -727,7 +742,7 @@ class QwenAdvisor:
         [DEPRECATED - no longer used in single-pass]
         Create a minimal prompt for quick dimensional scoring (Pass 1)
         """
-        return """Analyze this photograph and score it across all 8 dimensions. 
+        return """Analyze this photograph and score it across all 6 dimensions. 
 **OUTPUT ONLY JSON - NO OTHER TEXT.**
 
 Required JSON structure (use ONLY straight quotes, ASCII characters):
@@ -887,23 +902,37 @@ Provide ONLY the JSON above with your scores. No explanations, no comments."""
             # =================================================================
             logger.info(f"[{job_id}] [Single-Pass] === RETRIEVAL: References + Passages ===")
             
-            # Get top reference images across ALL dimensions
-            reference_images = get_top_reference_images(
-                DB_PATH, advisor, max_total=10
-            )
-            logger.info(f"[{job_id}] [Single-Pass] Retrieved {len(reference_images)} reference image candidates")
-            
-            # Get top book passages across ALL dimensions
+            # Get top reference images across ALL dimensions (if enabled)
+            reference_images = []
             book_passages = []
-            try:
-                from mondrian.embedding_retrieval import get_top_book_passages
-                book_passages = get_top_book_passages(
-                    advisor_id=advisor,
-                    max_passages=6
-                )
-                logger.info(f"[Single-Pass] Retrieved {len(book_passages)} quote candidates")
-            except Exception as e:
-                logger.warning(f"[Single-Pass] Failed to retrieve book passages: {e}")
+            
+            if ENABLE_CITATIONS:
+                try:
+                    reference_images = get_top_reference_images(
+                        DB_PATH, advisor, max_total=10
+                    )
+                    if reference_images is None:
+                        raise RuntimeError("get_top_reference_images returned None")
+                    logger.info(f"[{job_id}] [Single-Pass] Retrieved {len(reference_images)} reference image candidates")
+                except Exception as e:
+                    logger.error(f"[{job_id}] FAILED to retrieve reference images: {e}")
+                    raise RuntimeError(f"Citation retrieval failed for reference images: {e}") from e
+                
+                # Get top book passages across ALL dimensions
+                try:
+                    from mondrian.embedding_retrieval import get_top_book_passages
+                    book_passages = get_top_book_passages(
+                        advisor_id=advisor,
+                        max_passages=6
+                    )
+                    if book_passages is None:
+                        raise RuntimeError("get_top_book_passages returned None")
+                    logger.info(f"[{job_id}] [Single-Pass] Retrieved {len(book_passages)} quote candidates")
+                except Exception as e:
+                    logger.error(f"[{job_id}] FAILED to retrieve book passages: {e}")
+                    raise RuntimeError(f"Citation retrieval failed for book passages: {e}") from e
+            else:
+                logger.info(f"[{job_id}] Citations disabled (ENABLE_CITATIONS=False)")
             
             # =================================================================
             # BUILD PROMPT WITH RAG CONTEXT
@@ -1026,7 +1055,7 @@ Provide ONLY the JSON above with your scores. No explanations, no comments."""
         rag_context += "- Each dimension: cite at most ONE image and ONE quote\n"
         rag_context += "- NEVER reuse an ID once cited in another dimension\n"
         rag_context += "- Only cite if directly relevant to your specific feedback\n"
-        rag_context += "- Zone System quotes ONLY for Lighting dimension\n"
+        rag_context += "- Zone System references: ONLY mention in ONE dimension (Lighting preferred), never repeat\n"
         
         return prompt + rag_context
     
@@ -1045,7 +1074,6 @@ Required JSON Structure:
     {"name": "Composition", "score": 8, "comment": "...", "recommendation": "..."},
     {"name": "Lighting", "score": 7, "comment": "...", "recommendation": "..."},
     {"name": "Focus & Sharpness", "score": 9, "comment": "...", "recommendation": "..."},
-    {"name": "Color Harmony", "score": 6, "comment": "...", "recommendation": "..."},
     {"name": "Depth & Perspective", "score": 7, "comment": "...", "recommendation": "..."},
     {"name": "Visual Balance", "score": 8, "comment": "...", "recommendation": "..."},
     {"name": "Emotional Impact", "score": 7, "comment": "...", "recommendation": "..."}
@@ -1117,6 +1145,9 @@ Required JSON Structure:
             border-radius: 12px;
             margin-bottom: 20px;
             text-align: left;
+            width: 99%;
+            margin-left: auto;
+            margin-right: auto;
         }}
         .analysis h2 {{
             color: #ffffff;
@@ -1412,6 +1443,10 @@ Required JSON Structure:
                     # Validate citations in each dimension
                     for dim in dimensions:
                         # Validate case_study_id (image citation)
+                        # Handle null values - treat as if field is absent
+                        if 'case_study_id' in dim and dim['case_study_id'] is None:
+                            del dim['case_study_id']
+                        
                         if 'case_study_id' in dim:
                             img_id = dim['case_study_id']
                             if img_id in used_img_ids:
@@ -1431,6 +1466,10 @@ Required JSON Structure:
                                 logger.info(f"✓ Valid image citation: {img_id} in {dim['name']}")
                         
                         # Validate quote_id (quote citation)
+                        # Handle null values - treat as if field is absent
+                        if 'quote_id' in dim and dim['quote_id'] is None:
+                            del dim['quote_id']
+                        
                         if 'quote_id' in dim:
                             quote_id = dim['quote_id']
                             if quote_id in used_quote_ids:
@@ -1450,6 +1489,62 @@ Required JSON Structure:
                                 logger.info(f"✓ Valid quote citation: {quote_id} in {dim['name']}")
                     
                     logger.info(f"[Citations] Validated: {img_citation_count} images, {quote_citation_count} quotes")
+                
+                # ENFORCE: Zone System mentions ONLY in Lighting dimension
+                dimensions = analysis_data.get('dimensions', [])
+                zone_system_count = 0
+                zone_system_lit_dim = None
+                
+                for dim in dimensions:
+                    rec = dim.get('recommendation', '').lower()
+                    comment = dim.get('comment', '').lower()
+                    
+                    # Check if Zone System is mentioned
+                    has_zone_system = any(phrase in rec + ' ' + comment for phrase in 
+                                         ['zone system', 'zone i', 'zone ii', 'zone iii', 'zone iv', 
+                                          'zone v', 'zone vi', 'zone vii', 'zone viii', 'zone ix', 'zone x',
+                                          'zone 1', 'zone 2', 'zone 3', 'zone 4', 'zone 5', 'zone 6', 
+                                          'zone 7', 'zone 8', 'zone 9', 'zone 10'])
+                    
+                    if has_zone_system:
+                        dim_name = dim.get('name', '').lower()
+                        
+                        # Only Lighting dimension should have Zone System references
+                        if 'lighting' not in dim_name and 'exposure' not in dim_name:
+                            # Remove Zone System from non-Lighting dimension
+                            logger.warning(f"❌ Zone System mentioned in {dim['name']} - removing (not Lighting)")
+                            
+                            # Remove Zone System references from recommendation
+                            rec = dim.get('recommendation', '')
+                            rec_clean = re.sub(
+                                r'(?i)(zone\s+(?:system|[ivx0-9]+)|zone\s+[ivx]{1,3})',
+                                '', 
+                                rec
+                            ).strip()
+                            # Clean up extra spaces
+                            rec_clean = re.sub(r'\s+', ' ', rec_clean)
+                            dim['recommendation'] = rec_clean
+                            
+                            logger.info(f"✓ Cleaned Zone System from {dim['name']}")
+                        else:
+                            # This is a Lighting dimension with Zone System
+                            zone_system_count += 1
+                            if zone_system_count == 1:
+                                zone_system_lit_dim = dim['name']
+                                logger.info(f"✓ Zone System reference allowed in {dim['name']} (first mention)")
+                            else:
+                                # Remove duplicate Zone System from multiple Lighting mentions
+                                logger.warning(f"❌ Zone System already mentioned in {zone_system_lit_dim} - removing from {dim['name']}")
+                                rec = dim.get('recommendation', '')
+                                rec_clean = re.sub(
+                                    r'(?i)(zone\s+(?:system|[ivx0-9]+)|zone\s+[ivx]{1,3})',
+                                    '', 
+                                    rec
+                                ).strip()
+                                rec_clean = re.sub(r'\s+', ' ', rec_clean)
+                                dim['recommendation'] = rec_clean
+                                
+                                logger.info(f"✓ Removed duplicate Zone System from {dim['name']}")
                 
                 logger.info(f"✓ Successfully parsed JSON response ({len(json_str)} chars)")
             else:
@@ -1785,8 +1880,46 @@ def analyze_stream():
                 # Load and validate image
                 image = Image.open(temp_path).convert('RGB')
                 
-                # Create analysis prompt
+                # =================================================================
+                # RETRIEVAL: Get top references and book passages (no weak dim filter)
+                # =================================================================
+                reference_images = []
+                book_passages = []
+                
+                if ENABLE_CITATIONS:
+                    # Get top reference images across ALL dimensions
+                    try:
+                        reference_images = get_top_reference_images(
+                            DB_PATH, advisor_name, max_total=10
+                        )
+                        if reference_images is None:
+                            raise RuntimeError("get_top_reference_images returned None")
+                        logger.info(f"[Stream] Retrieved {len(reference_images)} reference image candidates")
+                    except Exception as e:
+                        logger.error(f"[Stream] FAILED to retrieve reference images: {e}")
+                        raise RuntimeError(f"Citation retrieval failed for reference images: {e}") from e
+                    
+                    # Get top book passages across ALL dimensions
+                    try:
+                        from mondrian.embedding_retrieval import get_top_book_passages
+                        book_passages = get_top_book_passages(
+                            advisor_id=advisor_name,
+                            max_passages=6
+                        )
+                        if book_passages is None:
+                            raise RuntimeError("get_top_book_passages returned None")
+                        logger.info(f"[Stream] Retrieved {len(book_passages)} quote candidates")
+                    except Exception as e:
+                        logger.error(f"[Stream] FAILED to retrieve book passages: {e}")
+                        raise RuntimeError(f"Citation retrieval failed for book passages: {e}") from e
+                else:
+                    logger.info(f"[Stream] Citations disabled (ENABLE_CITATIONS=False)")
+                
+                # Create base analysis prompt
                 prompt = advisor._create_prompt(advisor_name, mode_str)
+                
+                # Build augmented prompt with all RAG context
+                prompt = advisor._build_rag_prompt(prompt, reference_images, book_passages)
                 
                 # Use chat template for proper image token handling
                 messages = [
@@ -1882,13 +2015,112 @@ def analyze_stream():
                 
                 thread.join()
                 
-                # Parse final response
+                # Parse final response with citation validation
                 result = advisor._parse_response(
                     full_response, advisor_name, mode_str, prompt,
+                    reference_images=reference_images,
+                    book_passages=book_passages,
                     user_image_path=temp_path
                 )
                 
-                # Send complete event with parsed data
+                # =================================================================
+                # HTML GENERATION (mirroring non-streaming endpoint)
+                # =================================================================
+                analysis_data = result.get('analysis', {})
+                dimensions = analysis_data.get('dimensions', [])
+                
+                # Load advisor data from database for bio
+                advisor_data = get_advisor_from_db(DB_PATH, advisor_name)
+                if not advisor_data:
+                    raise RuntimeError(f"Failed to load advisor data for {advisor_name}")
+                
+                # Compute case studies using gap-based selection with visual relevance
+                case_studies = []
+                if dimensions and temp_path:
+                    try:
+                        case_studies = compute_case_studies(
+                            db_path=DB_PATH,
+                            advisor_id=advisor_name,
+                            user_dimensions=dimensions,
+                            user_image_path=temp_path,
+                            max_case_studies=3,
+                            relevance_threshold=0.25
+                        )
+                        if case_studies is None:
+                            raise RuntimeError("compute_case_studies returned None")
+                        logger.info(f"[Stream] ✓ Computed {len(case_studies)} case studies for weak dimensions")
+                    except Exception as e:
+                        logger.error(f"[Stream] FAILED to compute case studies: {e}")
+                        raise RuntimeError(f"Case study computation failed: {e}") from e
+                elif dimensions:
+                    # No user image path - fall back to gap-only selection (no relevance filtering)
+                    try:
+                        case_studies = compute_case_studies(
+                            db_path=DB_PATH,
+                            advisor_id=advisor_name,
+                            user_dimensions=dimensions,
+                            user_image_path=None,
+                            max_case_studies=3,
+                            relevance_threshold=0.0  # No relevance filter when no user image
+                        )
+                        if case_studies is None:
+                            raise RuntimeError("compute_case_studies returned None")
+                        logger.info(f"[Stream] ✓ Computed {len(case_studies)} case studies (gap-only, no user image)")
+                    except Exception as e:
+                        logger.error(f"[Stream] FAILED to compute case studies (gap-only): {e}")
+                        raise RuntimeError(f"Case study computation failed: {e}") from e
+                
+                # Generate HTML outputs
+                try:
+                    analysis_html = advisor._generate_ios_detailed_html(analysis_data, advisor_name, mode_str, case_studies=case_studies)
+                    if not analysis_html:
+                        raise RuntimeError("_generate_ios_detailed_html returned empty string")
+                except Exception as e:
+                    logger.error(f"[Stream] FAILED to generate analysis HTML: {e}")
+                    raise RuntimeError(f"Analysis HTML generation failed: {e}") from e
+                
+                try:
+                    summary_html = generate_summary_html(analysis_data)
+                    if not summary_html:
+                        raise RuntimeError("generate_summary_html returned empty string")
+                except Exception as e:
+                    logger.error(f"[Stream] FAILED to generate summary HTML: {e}")
+                    raise RuntimeError(f"Summary HTML generation failed: {e}") from e
+                
+                try:
+                    advisor_bio_html = generate_advisor_bio_html(advisor_data)
+                    if not advisor_bio_html:
+                        raise RuntimeError("generate_advisor_bio_html returned empty string")
+                    advisor_bio = advisor_data.get('bio', f"Analysis by {advisor_name.title()}")
+                except Exception as e:
+                    logger.error(f"[Stream] FAILED to generate advisor bio HTML: {e}")
+                    raise RuntimeError(f"Advisor bio HTML generation failed: {e}") from e
+                
+                # Extract text summary from image_description
+                summary = analysis_data.get('image_description', full_response[:500])
+                
+                # Calculate overall score if not provided
+                overall_score = analysis_data.get('overall_score', None)
+                if overall_score is None and dimensions:
+                    scores = [d.get('score', 0) for d in dimensions]
+                    overall_score = sum(scores) / len(scores) if scores else 0
+                
+                # Enhance result with HTML outputs and metadata (matching non-streaming format)
+                result.update({
+                    'analysis_html': analysis_html,
+                    'summary_html': summary_html,
+                    'advisor_bio_html': advisor_bio_html,
+                    'summary': summary,
+                    'advisor_bio': advisor_bio,
+                    'overall_score': overall_score,
+                    'advisor': advisor_name,
+                    'mode': mode_str,
+                    'timestamp': datetime.now().isoformat()
+                })
+                
+                logger.info(f"[Stream] ✓ Complete result with HTML generated: {len(dimensions)} dimensions, score={overall_score}")
+                
+                # Send complete event with full result structure
                 yield f"data: {json.dumps({'type': 'complete', 'result': result})}\n\n"
                 
                 # Clean up

@@ -145,7 +145,7 @@ class JobDatabase:
                 conn.execute("ALTER TABLE jobs ADD COLUMN adapter TEXT DEFAULT NULL")
                 conn.commit()
     
-    def create_job(self, advisor: str, mode: str, image_path: str, enable_rag: bool = False) -> str:
+    def create_job(self, advisor: str, mode: str, image_path: str, enable_rag: bool = True) -> str:
         """Create a new job"""
         job_id = str(uuid.uuid4())
         now = datetime.now().isoformat()
@@ -288,16 +288,21 @@ def health():
 
 @app.route('/advisors', methods=['GET'])
 def get_advisors():
-    """Get list of available advisors with representative works"""
+    """Get list of available (enabled) advisors with representative works"""
     try:
         import base64
         
         db_path = job_db.db_path if job_db else "mondrian.db"
         with sqlite3.connect(db_path) as conn:
             conn.row_factory = sqlite3.Row
-            cursor = conn.execute(
-                "SELECT id, name, bio, focus_areas, category FROM advisors ORDER BY id"
-            )
+            # Only fetch enabled advisors - strict check: enabled = 1 only
+            cursor = conn.execute("""
+                SELECT a.id, a.name, a.bio, a.focus_areas, a.category 
+                FROM advisors a
+                INNER JOIN advisor_config ac ON a.id = ac.advisor_id
+                WHERE ac.enabled = 1
+                ORDER BY a.id
+            """)
             rows = cursor.fetchall()
         
         advisors = []
@@ -372,14 +377,19 @@ def get_advisor_detail(advisor_id):
         db_path = job_db.db_path if job_db else "mondrian.db"
         with sqlite3.connect(db_path) as conn:
             conn.row_factory = sqlite3.Row
-            cursor = conn.execute(
-                "SELECT id, name, bio, focus_areas, category, years, wikipedia_url, commons_url FROM advisors WHERE id = ?",
+            # Check that advisor is enabled before returning details
+            cursor = conn.execute("""
+                SELECT a.id, a.name, a.bio, a.focus_areas, a.category, a.years, a.wikipedia_url, a.commons_url
+                FROM advisors a
+                INNER JOIN advisor_config ac ON a.id = ac.advisor_id
+                WHERE a.id = ? AND ac.enabled = 1
+            """,
                 (advisor_id,)
             )
             row = cursor.fetchone()
         
         if not row:
-            return jsonify({"error": f"Advisor '{advisor_id}' not found"}), 404
+            return jsonify({"error": f"Advisor '{advisor_id}' not found or not enabled"}), 404
         
         # Parse focus_areas JSON
         focus_areas_list = []
@@ -718,7 +728,7 @@ def upload_image():
         
         advisor = request.form.get('advisor', 'ansel')
         mode = request.form.get('mode', 'baseline')
-        enable_rag = request.form.get('enable_rag', 'false').lower() in ('true', '1', 'yes')
+        enable_rag = request.form.get('enable_rag', 'true').lower() in ('true', '1', 'yes')
         auto_analyze = request.form.get('auto_analyze', 'true').lower() in ('true', '1', 'yes')
         
         # Save file - extract just the basename to avoid path traversal issues
@@ -1824,17 +1834,26 @@ def main():
     logger.info(f"Port: {args.port}")
     logger.info(f"Database: {args.db}")
     
-    # Try to read db_path from config if it exists
+    # Use the database path from CLI argument (Docker entrypoint passes --db=/app/mondrian.db)
+    # DO NOT override with config table as it may contain outdated paths
     db_path = args.db
-    try:
-        with sqlite3.connect(db_path) as conn:
-            cursor = conn.execute("SELECT value FROM config WHERE key = 'db_path'")
-            config_db_path = cursor.fetchone()
-            if config_db_path:
-                db_path = config_db_path[0]
-                logger.info(f"Using database path from config: {db_path}")
-    except Exception as e:
-        logger.warning(f"Could not read db_path from config: {e}")
+    
+    # Only try to read from config if using the default path and it's a fresh installation
+    if db_path == 'mondrian.db':
+        try:
+            with sqlite3.connect(db_path) as conn:
+                cursor = conn.execute("SELECT value FROM config WHERE key = 'db_path'")
+                config_db_path = cursor.fetchone()
+                if config_db_path and config_db_path[0] != db_path:
+                    # Config has a different path - only use it if it's also valid
+                    config_path = config_db_path[0]
+                    if os.path.exists(config_path):
+                        db_path = config_path
+                        logger.info(f"Using database path from config: {db_path}")
+        except Exception as e:
+            logger.debug(f"Could not read db_path from config: {e}")
+    else:
+        logger.info(f"Using database path from CLI argument: {db_path}")
     
     init_db(db_path)
     

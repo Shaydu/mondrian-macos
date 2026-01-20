@@ -1,0 +1,110 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv/
+env/
+ENV/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+test_results/
+
+# Logs (exclude from image, will be mounted)
+logs/*.log
+*.log
+
+# Database backups
+*.bak
+*.corrupted
+mondrian.db.bak*
+mondrian.db.corrupted
+
+# Documentation (not needed in runtime)
+docs/
+docs/sql/
+*.sql
+*.md
+!requirements*.txt
+
+# Development scripts
+test_*.py
+debug_*.py
+diagnose_*.py
+analyze_*.py
+check_*.py
+compare_*.py
+investigate_*.py
+monitor_*.py
+evaluate_*.py
+
+# Training data and outputs
+training_data/
+lora_adapters/
+output_images/
+temp/
+uploads/
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Docker
+.dockerignore
+Dockerfile*
+docker-compose*.yml
+
+# OS specific
+Thumbs.db
+.directory
+
+# Large model files (download at runtime or mount)
+models/
+*.safetensors
+*.bin
+*.pth
+*.onnx
+
+# Misc (but allow critical advisor configs)
+# *.yaml  # Removed to allow advisor_image_manifest.yaml
+*.yml
+!docker-compose.yml
+analysis_output.html
+phase1_output*.html
+debug_job_latest.html
+service_output.txt
+resume_training_log.txt
+retest.txt

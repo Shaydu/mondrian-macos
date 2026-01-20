@@ -142,12 +142,33 @@ def get_similar_images_by_visual_embedding(
     
     Returns:
         List of reference images sorted by visual similarity
+        
+    Raises:
+        RuntimeError: If no embeddings found in database
     """
+    # First check if embeddings exist in database
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT COUNT(*) FROM dimensional_profiles 
+        WHERE advisor_id = ? AND embedding IS NOT NULL
+    """, (advisor_id,))
+    count = cursor.fetchone()[0]
+    conn.close()
+    
+    if count == 0:
+        raise RuntimeError(
+            f"Embedding system not initialized: No image embeddings found for advisor '{advisor_id}'. "
+            "Run: python scripts/compute_embeddings.py --advisor ansel"
+        )
+    
     # Compute user image embedding
     user_embedding = compute_image_embedding(user_image_path)
     if user_embedding is None:
-        logger.warning("Could not compute user image embedding, falling back to score-based retrieval")
-        return []
+        raise RuntimeError(
+            "Could not compute user image embedding. "
+            "Check that the image file exists and is valid."
+        )
     
     # Map dimension names to columns
     dim_to_col = {
@@ -239,12 +260,33 @@ def get_similar_images_by_text_embedding(
     
     Returns:
         List of reference images sorted by text similarity
+        
+    Raises:
+        RuntimeError: If no text embeddings found in database
     """
+    # First check if text embeddings exist in database
+    conn = sqlite3.connect(db_path)
+    cursor = conn.cursor()
+    cursor.execute("""
+        SELECT COUNT(*) FROM dimensional_profiles 
+        WHERE advisor_id = ? AND text_embedding IS NOT NULL
+    """, (advisor_id,))
+    count = cursor.fetchone()[0]
+    conn.close()
+    
+    if count == 0:
+        raise RuntimeError(
+            f"Embedding system not initialized: No text embeddings found for advisor '{advisor_id}'. "
+            "Run: python scripts/compute_embeddings.py --advisor ansel"
+        )
+    
     # Compute query embedding
     query_embedding = compute_text_embedding(query_text)
     if query_embedding is None:
-        logger.warning("Could not compute text embedding, falling back to score-based retrieval")
-        return []
+        raise RuntimeError(
+            "Could not compute text embedding for query. "
+            "Check that sentence-transformers is installed."
+        )
     
     # Fetch candidates
     conn = sqlite3.connect(db_path)
@@ -316,15 +358,19 @@ def get_images_hybrid_retrieval(
     
     Returns:
         List of reference images sorted by hybrid score
+        
+    Raises:
+        RuntimeError: If embeddings not initialized
     """
-    # Get visually similar images
+    # Get visually similar images (will raise RuntimeError if no embeddings)
     visual_results = get_similar_images_by_visual_embedding(
         db_path, user_image_path, advisor_id, weak_dimensions, top_k=20
     )
     
     if not visual_results:
-        logger.info("No visual results, falling back to score-based")
-        return []
+        raise RuntimeError(
+            "No visual similarity results found. This may indicate corrupted embeddings."
+        )
     
     # Map dimension names to columns
     dim_to_col = {

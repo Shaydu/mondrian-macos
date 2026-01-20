@@ -117,16 +117,12 @@ def normalize_dimension_key(name: str) -> str:
     
     if 'focus' in dim_key:
         return 'focus_sharpness'
-    elif 'color' in dim_key:
-        return 'color_harmony'
     elif 'depth' in dim_key:
         return 'depth_perspective'
     elif 'balance' in dim_key:
         return 'visual_balance'
     elif 'emotion' in dim_key or 'impact' in dim_key:
         return 'emotional_impact'
-    elif 'isolation' in dim_key:
-        return 'subject_isolation'
     
     return dim_key
 
@@ -191,6 +187,9 @@ def generate_ios_detailed_html(
             border-radius: 12px;
             margin-bottom: 20px;
             text-align: left;
+            width: 99%;
+            margin-left: auto;
+            margin-right: auto;
         }}
         .analysis h2 {{
             color: #ffffff;
@@ -403,6 +402,32 @@ def generate_summary_html(analysis_data: Dict[str, Any], disclaimer_text: str = 
     
     dimensions = analysis_data.get('dimensions', [])
     
+    # Check if dimensions are missing or empty
+    if not dimensions or len(dimensions) == 0:
+        logger.warning(f"⚠️  generate_summary_html: No dimensions found in analysis_data. Keys: {list(analysis_data.keys())}")
+        if 'parse_error' in analysis_data:
+            logger.error(f"❌ Parse error detected: {analysis_data.get('parse_error', 'Unknown')}")
+        # Return fallback HTML
+        return f'''<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {{ font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; padding: 16px; background: #000000; color: #ffffff; }}
+        .error {{ background: #1c1c1e; padding: 20px; border-radius: 8px; border-left: 3px solid #ff3b30; margin: 16px 0; }}
+        .error p {{ margin: 8px 0; color: #d1d1d6; }}
+    </style>
+</head>
+<body>
+<div class="error">
+    <p><strong>⚠️ Unable to Generate Recommendations</strong></p>
+    <p>The analysis failed to parse properly. Error: {analysis_data.get('parse_error', 'JSON parsing failed - dimensions array is empty')}</p>
+    <p>This typically indicates the model response was incomplete or truncated.</p>
+</div>
+</body>
+</html>'''
+    
     # Format dimension names
     for dim in dimensions:
         if 'name' in dim and dim['name']:
@@ -427,10 +452,13 @@ def generate_summary_html(analysis_data: Dict[str, Any], disclaimer_text: str = 
             padding: 16px;
             background: #000000;
             color: #ffffff;
+            width: 99%;
+            margin-left: auto;
+            margin-right: auto;
         }
         .summary-header { margin-bottom: 8px; padding-bottom: 16px; }
         .summary-header h1 { font-size: 24px; font-weight: 600; margin-bottom: 8px; }
-        .recommendations-list { display: flex; flex-direction: column; gap: 12px; }
+        .recommendations-list { display: flex; flex-direction: column; gap: 12px; width: 99%; margin-left: auto; margin-right: auto; }
         .recommendation-item {
             display: flex;
             gap: 12px;

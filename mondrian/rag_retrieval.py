@@ -20,8 +20,6 @@ DIMENSIONS = [
     'composition',
     'lighting',
     'focus_sharpness',
-    'color_harmony',
-    'subject_isolation',
     'depth_perspective',
     'visual_balance',
     'emotional_impact'
@@ -34,10 +32,6 @@ DIMENSION_TO_DB_COLUMN = {
     'focus_sharpness': 'focus_sharpness_score',
     'focus': 'focus_sharpness_score',
     'sharpness': 'focus_sharpness_score',
-    'color_harmony': 'color_harmony_score',
-    'color': 'color_harmony_score',
-    'subject_isolation': 'subject_isolation_score',
-    'isolation': 'subject_isolation_score',
     'depth_perspective': 'depth_perspective_score',
     'depth': 'depth_perspective_score',
     'perspective': 'depth_perspective_score',
@@ -646,7 +640,7 @@ def get_images_with_embedding_retrieval(
 ) -> List[Dict[str, Any]]:
     """
     Retrieve reference images using CLIP visual embeddings for semantic similarity.
-    Falls back to score-based retrieval if embeddings are not available.
+    Raises RuntimeError if embeddings are not available.
     
     Args:
         db_path: Path to the SQLite database
@@ -658,6 +652,9 @@ def get_images_with_embedding_retrieval(
         
     Returns:
         List of reference images with base64 encoded thumbnails
+        
+    Raises:
+        RuntimeError: If embedding system is not initialized
     """
     try:
         # Try embedding-based retrieval first
@@ -679,8 +676,10 @@ def get_images_with_embedding_retrieval(
             )
         
         if not results:
-            logger.info("No embedding results, falling back to score-based retrieval")
-            return get_images_for_weak_dimensions(db_path, advisor_id, weak_dimensions, max_images)
+            raise RuntimeError(
+                "Embedding system not initialized: No embeddings found in database. "
+                "Run: python scripts/compute_embeddings.py --advisor ansel"
+            )
         
         # Encode images as URLs instead of base64
         encoded_results = []
@@ -699,12 +698,15 @@ def get_images_with_embedding_retrieval(
         return encoded_results
         
     except ImportError as e:
-        logger.warning(f"Embedding retrieval not available: {e}")
-        logger.info("Falling back to score-based retrieval")
-        return get_images_for_weak_dimensions(db_path, advisor_id, weak_dimensions, max_images)
+        raise RuntimeError(
+            f"Embedding system dependencies not installed: {e}. "
+            "Run: pip install sentence-transformers transformers"
+        )
+    except RuntimeError:
+        # Re-raise our own RuntimeErrors
+        raise
     except Exception as e:
-        logger.error(f"Embedding retrieval failed: {e}")
-        return get_images_for_weak_dimensions(db_path, advisor_id, weak_dimensions, max_images)
+        raise RuntimeError(f"Embedding retrieval failed: {e}")
 
 
 def augment_prompt_with_rag_context(
@@ -749,15 +751,17 @@ def augment_prompt_with_rag_context(
         
         logger.info(f"User's weakest dimensions: {weak_dimensions}")
         
-        # Try embedding-based retrieval if user image path is available
-        if user_image_path:
-            logger.info("Using embedding-based retrieval for visually similar references")
-            reference_images = get_images_with_embedding_retrieval(
-                db_path, advisor_id, user_image_path, weak_dimensions, user_dimensions, max_images=4
+        # Use embedding-based retrieval (required)
+        if not user_image_path:
+            raise RuntimeError(
+                "Embedding system requires user image path for visual similarity. "
+                "User image path not provided."
             )
-        else:
-            # Fall back to score-based retrieval
-            reference_images = get_images_for_weak_dimensions(db_path, advisor_id, weak_dimensions, max_images=4)
+        
+        logger.info("Using embedding-based retrieval for visually similar references")
+        reference_images = get_images_with_embedding_retrieval(
+            db_path, advisor_id, user_image_path, weak_dimensions, user_dimensions, max_images=4
+        )
         
         # Log what we got before deduplication
         logger.info(f"Retrieved {len(reference_images)} reference images before deduplication")
@@ -789,17 +793,18 @@ def augment_prompt_with_rag_context(
             rag_context += "Study how these master works demonstrate excellence in the dimensions where improvement is most needed.\n"
         
     else:
-        # No user dimensions yet - try visual embedding retrieval first
-        if user_image_path:
-            logger.info("Using visual embedding retrieval for first-time analysis")
-            reference_images = get_images_with_embedding_retrieval(
-                db_path, advisor_id, user_image_path, weak_dimensions=None, 
-                user_scores=None, max_images=3
+        # No user dimensions yet - use visual embedding retrieval (required)
+        if not user_image_path:
+            raise RuntimeError(
+                "Embedding system requires user image path for visual similarity. "
+                "User image path not provided."
             )
         
-        # Fall back to score-based if no embedding results
-        if not reference_images:
-            reference_images = get_similar_images_from_db(db_path, advisor_id, top_k=3)
+        logger.info("Using visual embedding retrieval for first-time analysis")
+        reference_images = get_images_with_embedding_retrieval(
+            db_path, advisor_id, user_image_path, weak_dimensions=None, 
+            user_scores=None, max_images=3
+        )
         
         # Deduplicate images
         reference_images = deduplicate_reference_images(reference_images, used_image_paths, min_images=2)
@@ -870,7 +875,7 @@ def augment_prompt_with_rag_context(
         if img.get('image_description'):
             rag_context += f"<p style='margin: 0 0 12px 0;'><strong>Description:</strong> {img['image_description']}</p>"
         
-        # Add dimensional profile with ALL 8 dimensions
+        # Add dimensional profile with ALL 6 dimensions
         all_dims = ['composition_score', 'lighting_score', 'focus_sharpness_score', 
                    'color_harmony_score', 'subject_isolation_score', 'depth_perspective_score',
                    'visual_balance_score', 'emotional_impact_score']

@@ -778,7 +778,7 @@ def cleanup_stale_jobs_on_restart():
 def main():
     # Parse mode argument
     mode = "lora"  # Default mode (using LoRA adapter for best performance)
-    lora_path = "./adapters/ansel_qwen3_4b_instruct/epoch_10"  # Default LoRA adapter for Qwen3-VL-4B-Instruct
+    lora_path = "./adapters/ansel_qwen3_4b_full_9dim/epoch_20"  # Default LoRA adapter - using latest trained model
     model_arg = None
     db_path_arg = None
     all_services = False

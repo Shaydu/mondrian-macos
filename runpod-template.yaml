@@ -1,0 +1,66 @@
+# RunPod Template Configuration
+# Use this file to configure your RunPod template via their web UI
+
+name: Mondrian Photography Advisor
+description: AI-powered photography analysis and advice system with LoRA and RAG support
+
+# Container Configuration
+container:
+  image: shaydu/mondrian:latest
+  
+# Exposed Ports
+expose:
+  - 5100/http  # AI Advisor Service (main API)
+  - 5005/http  # Job Service
+  - 5006/http  # Summary Service
+
+# Environment Variables
+env:
+  - name: CUDA_VISIBLE_DEVICES
+    value: "0"
+  - name: PYTORCH_CUDA_ALLOC_CONF
+    value: "expandable_segments:True"
+  - name: PYTHONUNBUFFERED
+    value: "1"
+  - name: TRANSFORMERS_CACHE
+    value: "/root/.cache/huggingface"
+  - name: HF_HOME
+    value: "/root/.cache/huggingface"
+  - name: MODE
+    value: "base"
+    description: "Service mode: base, rag, lora, or lora+rag"
+  - name: BACKEND
+    value: "bnb"
+    description: "Inference backend: bnb, vllm, or awq"
+
+# Volume Mounts (configure in RunPod UI)
+volumes:
+  - /app/mondrian.db              # SQLite database
+  - /app/logs                      # Service logs
+  - /app/uploads                   # Uploaded images
+  - /app/models                    # Model weights cache
+  - /root/.cache/huggingface       # HuggingFace cache
+
+# GPU Requirements
+gpu:
+  min_vram_gb: 12
+  recommended: "NVIDIA RTX 3060, RTX 3090, or A5000"
+  
+# Resource Requirements
+resources:
+  min_cpu_cores: 4
+  min_ram_gb: 16
+  min_disk_gb: 20
+  recommended_ram_gb: 32
+  recommended_disk_gb: 50
+
+# Health Check
+healthcheck:
+  path: /health
+  port: 5100
+  interval_seconds: 30
+  timeout_seconds: 10
+  start_period_seconds: 120
+
+# Startup Command (optional - uses CMD from Dockerfile by default)
+# command: ["python3", "scripts/start_services.py", "start-comprehensive"]

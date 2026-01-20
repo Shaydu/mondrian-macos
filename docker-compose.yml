@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  mondrian:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: mondrian-macos:latest
+    container_name: mondrian-services
+    
+    # GPU configuration for NVIDIA
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: all
+              capabilities: [gpu]
+    
+    # Port mappings
+    ports:
+      - "5100:5100"  # AI Advisor Service
+      - "5005:5005"  # Job Service
+      - "5006:5006"  # Summary Service
+    
+    # Volume mappings
+    volumes:
+      # Persist database
+      - ./mondrian.db:/app/mondrian.db
+      # Persist logs
+      - ./logs:/app/logs
+      # Persist uploaded images
+      - ./uploads:/app/uploads
+      # Model cache (optional - speeds up startup)
+      - ./models:/app/models
+      - huggingface_cache:/root/.cache/huggingface
+    
+    # Environment variables
+    environment:
+      - CUDA_VISIBLE_DEVICES=0
+      - PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+      - TRANSFORMERS_CACHE=/root/.cache/huggingface
+      - HF_HOME=/root/.cache/huggingface
+      - PYTHONUNBUFFERED=1
+      # Service URLs (internal communication)
+      - AI_ADVISOR_URL=http://localhost:5100
+      - JOB_SERVICE_URL=http://localhost:5005
+      - SUMMARY_SERVICE_URL=http://localhost:5006
+    
+    # Restart policy
+    restart: unless-stopped
+    
+    # Health check
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5100/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 120s
+    
+    # Resource limits (adjust based on RunPod instance)
+    # shm_size: 8gb  # Increase shared memory for PyTorch
+
+volumes:
+  huggingface_cache:
+    driver: local
