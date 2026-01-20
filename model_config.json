@@ -54,12 +54,12 @@
   },
   "generation_profiles": {
     "optimized": {
-      "max_new_tokens": 2500,
-      "num_beams": 4,
+      "max_new_tokens": 2000,
+      "num_beams": 2,
       "do_sample": false,
       "repetition_penalty": 1.0,
       "early_stopping": true,
-      "description": "4-beam search with 2500 token limit for balanced quality and speed"
+      "description": "2-beam search with 2000 token limit for balanced quality and speed"
     },
     "fast_greedy": {
       "max_new_tokens": 1500,
@@ -85,6 +85,13 @@
       "top_k": 50,
       "repetition_penalty": 1.0,
       "description": "Nucleus sampling for more varied responses"
+    },
+    "ultra_fast": {
+      "max_new_tokens": 1200,
+      "num_beams": 1,
+      "do_sample": false,
+      "repetition_penalty": 1.05,
+      "description": "Maximum speed: greedy decoding with minimal tokens. Best for quick iterations and testing. ~3-5x faster than beam search."
     }
   }
 }

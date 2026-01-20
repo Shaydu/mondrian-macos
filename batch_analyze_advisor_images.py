@@ -266,20 +266,11 @@ def batch_analyze_advisor(advisor_id, skip_existing=True):
         if analyze_image(img_path, advisor_id):
             success_count += 1
             
-            # Wait for profile to be saved
-            print(f"  [INFO] Waiting for profile to be saved...")
-            time.sleep(3)
-            
             # Verify dimensional profile
             if verify_dimensional_profile(img_path):
                 verified_count += 1
         else:
             failed_count += 1
-        
-        # Rate limiting between images
-        if i < len(images_to_analyze):
-            print(f"  [INFO] Waiting 5s before next image...")
-            time.sleep(5)
     
     print(f"\n{'='*70}")
     print(f"Batch Analysis Complete: {advisor_id}")

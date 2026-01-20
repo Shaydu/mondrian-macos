@@ -1009,7 +1009,7 @@ Provide ONLY the JSON above with your scores. No explanations, no comments."""
         logger.info(f"[Inference] Resizing image from {width}x{height} to {new_width}x{new_height}")
         return image.resize((new_width, new_height), Image.Resampling.LANCZOS)
 
-    def _run_inference(self, image: Image.Image, prompt: str, max_tokens: int = None) -> str:
+    def _run_inference(self, image: Image.Image, prompt: str, max_tokens: int = None, job_id: str = "unknown") -> str:
         """
         Run model inference on image with given prompt.
         Returns the raw text output from the model.
@@ -1018,6 +1018,7 @@ Provide ONLY the JSON above with your scores. No explanations, no comments."""
             image: PIL Image to analyze
             prompt: Text prompt for the model
             max_tokens: Override max_new_tokens (for fast scoring pass)
+            job_id: Job identifier for logging correlation
         """
         # Resize image for efficient inference (max 800px on longest side)
         image = self._resize_for_inference(image, max_size=800)
@@ -1060,9 +1061,13 @@ Provide ONLY the JSON above with your scores. No explanations, no comments."""
             gen_config.pop('top_p', None)
             gen_config.pop('top_k', None)
         
-        logger.info(f"[_run_inference] Final gen_config: {gen_config}")
+        input_tokens = inputs['input_ids'].shape[1]
+        logger.info(f"[{job_id}] [_run_inference] Final gen_config: {gen_config}")
+        logger.info(f"[{job_id}] [_run_inference] Input tokens: {input_tokens}")
         
-        # Generate response
+        # Generate response with timing
+        inference_start = time.time()
+        logger.info(f"[{job_id}] [_run_inference] Starting generation...")
         with torch.no_grad():
             output_ids = self.model.generate(
                 **inputs, 
@@ -1070,20 +1075,28 @@ Provide ONLY the JSON above with your scores. No explanations, no comments."""
                 use_cache=True,
                 eos_token_id=self.processor.tokenizer.eos_token_id
             )
+        inference_time = time.time() - inference_start
         
         # Decode only the generated tokens (exclude input prompt)
         input_length = inputs['input_ids'].shape[1]
         generated_ids = output_ids[:, input_length:]
+        output_tokens = generated_ids.shape[1]
         
         response = self.processor.batch_decode(
             generated_ids, 
             skip_special_tokens=True
         )[0]
         
+        # Log timing and token statistics
+        tokens_per_sec = output_tokens / inference_time if inference_time > 0 else 0
+        logger.info(f"[{job_id}] [_run_inference] ✓ Generation complete in {inference_time:.2f}s")
+        logger.info(f"[{job_id}] [_run_inference] Output tokens: {output_tokens} | Speed: {tokens_per_sec:.1f} tok/s")
+        logger.info(f"[{job_id}] [_run_inference] Total tokens: {input_tokens + output_tokens} (input: {input_tokens}, output: {output_tokens})")
+        
         return response
     
     def analyze_image(self, image_path: str, advisor: str = "ansel",
-                     mode: str = "baseline") -> Dict[str, Any]:
+                     mode: str = "baseline", job_id: str = "unknown") -> Dict[str, Any]:
         """
         Single-pass image analysis with optional RAG.
         Retrieves ALL top references and passages, lets LLM decide which to cite.
@@ -1092,6 +1105,7 @@ Provide ONLY the JSON above with your scores. No explanations, no comments."""
             image_path: Path to image file
             advisor: Photography advisor persona
             mode: Analysis mode (rag modes get full RAG context)
+            job_id: Job identifier for logging correlation
         
         Returns:
             Dictionary with analysis results
@@ -1101,26 +1115,18 @@ Provide ONLY the JSON above with your scores. No explanations, no comments."""
             image = Image.open(image_path).convert('RGB')
             original_size = image.size
             
-            # Resize large images to prevent memory issues and speed up processing
-            max_dimension = 1280
-            if max(image.size) > max_dimension:
-                ratio = max_dimension / max(image.size)
-                new_size = tuple(int(dim * ratio) for dim in image.size)
-                image = image.resize(new_size, Image.Resampling.LANCZOS)
-                logger.info(f"[Single-Pass] Resized image: {original_size} -> {image.size}")
-            
-            logger.info(f"[Single-Pass] Loaded image: {image_path} ({image.size})")
+            logger.info(f"[{job_id}] [Single-Pass] Loaded image: {image_path} ({image.size})")
             
             # =================================================================
             # RETRIEVAL: Get top references and book passages (no weak dim filter)
             # =================================================================
-            logger.info("[Single-Pass] === RETRIEVAL: References + Passages ===")
+            logger.info(f"[{job_id}] [Single-Pass] === RETRIEVAL: References + Passages ===")
             
             # Get top reference images across ALL dimensions
             reference_images = get_top_reference_images(
                 DB_PATH, advisor, max_total=10
             )
-            logger.info(f"[Single-Pass] Retrieved {len(reference_images)} reference image candidates")
+            logger.info(f"[{job_id}] [Single-Pass] Retrieved {len(reference_images)} reference image candidates")
             
             # Get top book passages across ALL dimensions
             book_passages = []
@@ -1150,9 +1156,11 @@ Provide ONLY the JSON above with your scores. No explanations, no comments."""
             # =================================================================
             # INFERENCE: Single pass with full context
             # =================================================================
-            logger.info(f"[Single-Pass] Prompt: {len(full_prompt)} chars")
-            response = self._run_inference(image, full_prompt)
-            logger.info(f"[Single-Pass] Response: {len(response)} chars")
+            logger.info(f"[{job_id}] [Single-Pass] Prompt: {len(full_prompt)} chars")
+            total_start = time.time()
+            response = self._run_inference(image, full_prompt, job_id=job_id)
+            total_time = time.time() - total_start
+            logger.info(f"[{job_id}] [Single-Pass] Response: {len(response)} chars | Total time: {total_time:.2f}s")
             
             # Parse response with citation validation
             analysis = self._parse_response(
@@ -1172,7 +1180,7 @@ Provide ONLY the JSON above with your scores. No explanations, no comments."""
             return analysis
             
         except Exception as e:
-            logger.error(f"[Single-Pass] Error: {e}")
+            logger.error(f"[{job_id}] [Single-Pass] Error: {e}")
             logger.error(traceback.format_exc())
             raise
     
@@ -1883,7 +1891,7 @@ loading_status = {
     'message': 'Not started'
 }
 
-def init_advisor(model_name: str, load_in_4bit: bool, adapter_path: Optional[str] = None, generation_config: Optional[Dict] = None, backend: str = 'bnb'):
+def init_advisor(model_name: str, load_in_4bit: bool, adapter_path: Optional[str] = None, generation_config: Optional[Dict] = None, backend: str = 'bnb', rag_config: Optional[Dict] = None):
     """Initialize the advisor service"""
     global advisor, loading_status
     try:
@@ -2004,12 +2012,13 @@ def analyze():
         # Get parameters
         advisor_name = request.form.get('advisor', 'ansel')
         mode_str = request.form.get('mode', 'baseline')
+        job_id = request.form.get('job_id', 'unknown')
         
         # Use single-pass RAG analysis for RAG modes
         use_rag = mode_str in ('rag', 'rag_lora', 'lora+rag', 'lora_rag')
         
         # Run analysis (always use single-pass)
-        logger.info(f"Analyzing image with advisor={advisor_name}, mode={mode_str}")
+        logger.info(f"[{job_id}] Analyzing image with advisor={advisor_name}, mode={mode_str}")
         result = advisor.analyze_image(temp_path, advisor=advisor_name, mode=mode_str)
         
         # Clean up
@@ -2253,7 +2262,7 @@ def main():
     # NOW load the model in the main thread
     try:
         logger.info("Loading model (this may take several minutes)...")
-        init_advisor(args.model, args.load_in_4bit, adapter_path=args.adapter, generation_config=generation_config, backend=args.backend)
+        init_advisor(args.model, args.load_in_4bit, adapter_path=args.adapter, generation_config=generation_config, backend=args.backend, rag_config=rag_config)
         
         # Keep the main thread alive
         flask_thread.join()

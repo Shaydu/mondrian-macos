@@ -1,7 +1,16 @@
 #!/usr/bin/env python3
 """
-E2E iOS Test Suite for LoRA+RAG Mode
-Tests the complete workflow: upload image → analyze with LoRA → stream progress → get results
+E2E iOS API Integration Test for LoRA+RAG Mode
+Tests the complete iOS API flow as documented in docs/API/ios/API_INTEGRATION.md:
+  1. Fetch available advisors
+  2. Upload image with auto_analyze
+  3. Listen to SSE stream for progress
+  4. Poll status (fallback)
+  5. Fetch summary HTML (quick preview)
+  6. Fetch full analysis HTML (on demand)
+  7. Index image for RAG
+  8. Search for similar images
+
 Requires the service to be running with LoRA adapter loaded.
 
 Usage:
@@ -53,6 +62,48 @@ def get_test_image():
         if jpgs:
             return jpgs[0]
     return None
+
+
+def test_fetch_advisors(verbose=False):
+    """Test Step 1: Fetch Available Advisors"""
+    print("\n🔷 Test 1: Fetch Available Advisors")
+    
+    try:
+        response = requests.get(f"{JOB_SERVICE_URL}/advisors", timeout=10)
+        
+        if response.status_code == 200:
+            data = response.json()
+            advisors = data.get("advisors", [])
+            print(f"  ✅ Found {len(advisors)} advisors")
+            
+            # Validate advisor structure
+            for advisor in advisors[:3]:  # Show first 3
+                advisor_id = advisor.get("id", "unknown")
+                name = advisor.get("name", "unknown")
+                specialty = advisor.get("specialty", "")
+                focus_areas = advisor.get("focus_areas", [])
+                print(f"     • {name} ({advisor_id}): {specialty}")
+                if verbose and focus_areas:
+                    print(f"       Focus: {', '.join(focus_areas)}")
+            
+            # Validate Ansel is available
+            ansel = next((a for a in advisors if a.get("id") == "ansel"), None)
+            if ansel:
+                print(f"  ✅ Target advisor 'ansel' is available")
+                if verbose:
+                    print(f"     Full data: {json.dumps(ansel, indent=6)}")
+            else:
+                print(f"  ⚠️  Warning: 'ansel' advisor not found in list")
+            
+            return {"success": True, "advisors": advisors}
+        else:
+            print(f"  ❌ Failed to fetch advisors: {response.status_code}")
+            if verbose:
+                print(f"     Response: {response.text[:200]}")
+            return {"success": False}
+    except Exception as e:
+        print(f"  ❌ Error fetching advisors: {str(e)}")
+        return {"success": False}
 
 
 def check_health(verbose=False):
@@ -119,8 +170,8 @@ def check_health(verbose=False):
 
 
 def test_image_upload(test_image, verbose=False):
-    """Test image upload with LoRA+RAG mode"""
-    print(f"\n🔷 Test 1: Image Upload & Job Creation (mode={MODE})")
+    """Test Step 2: Upload Image and Start Analysis"""
+    print(f"\n🔷 Test 2: Upload Image & Job Creation (advisor={ADVISOR})")
     
     try:
         with open(test_image, "rb") as f:
@@ -129,8 +180,7 @@ def test_image_upload(test_image, verbose=False):
                 files={"image": (test_image.name, f, "image/jpeg")},
                 data={
                     "advisor": ADVISOR,
-                    "mode": MODE,
-                    "enable_rag": "true"
+                    "auto_analyze": "true"  # Start analysis automatically (iOS API pattern)
                 },
                 timeout=UPLOAD_TIMEOUT
             )
@@ -138,10 +188,15 @@ def test_image_upload(test_image, verbose=False):
         if response.status_code in [200, 201]:
             data = response.json()
             job_id = data.get("job_id")
+            stream_url = data.get("stream_url", "")
+            status_url = data.get("status_url", "")
+            advisors_used = data.get("advisors_used", [])
             print(f"  ✅ Job created: {job_id}")
+            print(f"     Advisors: {', '.join(advisors_used)}")
+            print(f"     Stream URL: {stream_url}")
             if verbose:
-                print(f"     Response: {json.dumps(data, indent=6)}")
-            return job_id
+                print(f"     Full Response: {json.dumps(data, indent=6)}")
+            return {"job_id": job_id, "data": data}
         else:
             print(f"  ❌ Upload failed: {response.status_code}")
             print(f"     Response: {response.text[:300]}")
@@ -152,8 +207,8 @@ def test_image_upload(test_image, verbose=False):
 
 
 def test_stream_progress(job_id, verbose=False):
-    """Test SSE streaming with LoRA+RAG specific event handling"""
-    print(f"\n🔷 Test 2: SSE Stream Progress (Job: {job_id})")
+    """Test Step 3: Listen to SSE Stream"""
+    print(f"\n🔷 Test 3: SSE Stream Progress (Job: {job_id})")
     
     try:
         stream_url = f"{JOB_SERVICE_URL}/stream/{job_id}"
@@ -232,7 +287,10 @@ def test_stream_progress(job_id, verbose=False):
                                 print(f"    🧠 Thinking: {thinking[:100]}...")
                         
                         elif event_type == "analysis_complete":
-                            print(f"    ✅ Analysis complete event received")
+                            # Note: analysis_complete does NOT include HTML (per API docs)
+                            # Client should fetch /summary/{job_id} separately
+                            print(f"    ✅ Analysis complete event received (signals completion)")
+                            print(f"       Client should now fetch /summary/{job_id} for quick preview")
                         
                         elif event_type == "error":
                             error_message = msg.get("error", msg.get("message", "Unknown error"))
@@ -291,8 +349,8 @@ def test_stream_progress(job_id, verbose=False):
 
 
 def test_job_status(job_id, verbose=False):
-    """Poll job status until completion"""
-    print(f"\n🔷 Test 3: Job Status Polling (Job: {job_id})")
+    """Test Step 4: Poll Status (Fallback)"""
+    print(f"\n🔷 Test 4: Job Status Polling (Job: {job_id})")
     
     start_time = time.time()
     last_status = None
@@ -333,8 +391,9 @@ def test_job_status(job_id, verbose=False):
 
 
 def test_get_summary(job_id, verbose=False):
-    """Test retrieving summary HTML"""
-    print(f"\n🔷 Test 4: Get Summary HTML (Job: {job_id})")
+    """Test Step 5: Fetch Summary HTML (Quick Preview)"""
+    print(f"\n🔷 Test 5: Fetch Summary HTML - Quick Preview (~3.9 KB)")
+    print(f"   Purpose: Lightweight preview showing top issues to address")
     
     try:
         response = requests.get(f"{JOB_SERVICE_URL}/summary/{job_id}", timeout=ANALYSIS_TIMEOUT)
@@ -364,8 +423,9 @@ def test_get_summary(job_id, verbose=False):
 
 
 def test_get_analysis(job_id, verbose=False):
-    """Test retrieving full analysis HTML"""
-    print(f"\n🔷 Test 5: Get Full Analysis HTML (Job: {job_id})")
+    """Test Step 6: Fetch Full Analysis HTML (Detailed View - On Demand)"""
+    print(f"\n🔷 Test 6: Fetch Full Analysis HTML - Complete Details (~463 KB)")
+    print(f"   Purpose: Complete detailed analysis (fetch only if user requests)")
     
     try:
         response = requests.get(f"{JOB_SERVICE_URL}/analysis/{job_id}", timeout=ANALYSIS_TIMEOUT)
@@ -405,12 +465,12 @@ def test_get_analysis(job_id, verbose=False):
 
 
 def test_rag_features(job_id, test_image, verbose=False):
-    """Test RAG-specific features (optional)"""
-    print(f"\n🔷 Test 6: RAG Features (Optional)")
+    """Test Steps 7 & 8: Index Image and Search for Similar Images (RAG)"""
+    print(f"\n🔷 Test 7 & 8: RAG Features (Index + Search)")
     
     results = {"index": None, "search": None}
     
-    # Test indexing
+    # Step 7: Index image for semantic search
     try:
         payload = {
             "job_id": job_id,
@@ -431,7 +491,7 @@ def test_rag_features(job_id, test_image, verbose=False):
     except Exception as e:
         print(f"  ⚠️  RAG Index error: {str(e)[:50]} (optional)")
     
-    # Test search
+    # Step 8: Search for similar images
     try:
         payload = {"query": "dramatic landscape photography", "top_k": 3}
         response = requests.post(f"{RAG_SERVICE_URL}/search", json=payload, timeout=10)
@@ -496,17 +556,28 @@ def main():
     
     print("\n" + "=" * 70)
     print("iOS API Flow Test - LoRA+RAG Mode")
+    print("Following: docs/API/ios/API_INTEGRATION.md")
     print("=" * 70)
     
-    # Test 1: Upload image with lora+rag mode
-    job_id = test_image_upload(test_image, args.verbose)
-    if not job_id:
+    # Test 1: Fetch available advisors
+    advisors_result = test_fetch_advisors(args.verbose)
+    test_results["results"]["advisors"] = advisors_result
+    if not advisors_result.get("success"):
+        print("\n⚠️  Warning: Failed to fetch advisors (continuing anyway)")
+    
+    # Test 2: Upload image with auto_analyze
+    upload_result = test_image_upload(test_image, args.verbose)
+    if not upload_result:
         print("\n❌ Failed to upload image (critical)")
         sys.exit(1)
-    test_results["results"]["job_id"] = job_id
-    test_results["results"]["upload"] = {"success": True, "job_id": job_id}
     
-    # Test 2: SSE Stream
+    job_id = upload_result.get("job_id") if isinstance(upload_result, dict) else upload_result
+    upload_data = upload_result.get("data", {}) if isinstance(upload_result, dict) else {}
+    
+    test_results["results"]["job_id"] = job_id
+    test_results["results"]["upload"] = {"success": True, "job_id": job_id, "data": upload_data}
+    
+    # Test 3: SSE Stream
     stream_result = test_stream_progress(job_id, args.verbose)
     if stream_result:
         test_results["results"]["stream"] = stream_result
@@ -515,7 +586,7 @@ def main():
     else:
         test_results["results"]["stream"] = {"success": False}
     
-    # Test 3: Poll status
+    # Test 4: Poll status
     status_data = test_job_status(job_id, args.verbose)
     if not status_data:
         print("\n❌ Job did not complete (critical)")
@@ -527,21 +598,21 @@ def main():
             "final_status": status_data.get("status", "unknown")
         }
     
-    # Test 4: Get summary
+    # Test 5: Get summary (quick preview - ~3.9 KB)
     summary_result = test_get_summary(job_id, args.verbose)
     test_results["results"]["summary"] = {
         "success": summary_result is not None,
         "html_length": summary_result.get("length", 0) if summary_result else 0
     }
     
-    # Test 5: Get full analysis
+    # Test 6: Get full analysis (on-demand - ~463 KB)
     analysis_result = test_get_analysis(job_id, args.verbose)
     test_results["results"]["analysis"] = {
         "success": analysis_result is not None,
         "html_length": analysis_result.get("length", 0) if analysis_result else 0
     }
     
-    # Test 6: RAG features (optional)
+    # Tests 7 & 8: RAG features (index + search)
     if not args.skip_rag:
         rag_result = test_rag_features(job_id, test_image, args.verbose)
         test_results["results"]["rag"] = {
@@ -575,15 +646,17 @@ def main():
         print("=" * 70)
     
     print(f"\n📊 Test Results:")
-    print(f"   Upload:   {'✅' if test_results['results'].get('upload', {}).get('success') else '❌'}")
-    print(f"   Stream:   {'✅' if stream_passed else '⚠️ '}")
-    print(f"   Status:   {'✅' if test_results['results'].get('status', {}).get('success') else '❌'}")
-    print(f"   Summary:  {'✅' if test_results['results'].get('summary', {}).get('success') else '❌'}")
-    print(f"   Analysis: {'✅' if test_results['results'].get('analysis', {}).get('success') else '❌'}")
+    print(f"   1. Advisors:  {'✅' if test_results['results'].get('advisors', {}).get('success') else '⚠️ '}")
+    print(f"   2. Upload:    {'✅' if test_results['results'].get('upload', {}).get('success') else '❌'}")
+    print(f"   3. Stream:    {'✅' if stream_passed else '⚠️ '}")
+    print(f"   4. Status:    {'✅' if test_results['results'].get('status', {}).get('success') else '❌'}")
+    print(f"   5. Summary:   {'✅' if test_results['results'].get('summary', {}).get('success') else '❌'} ({test_results['results'].get('summary', {}).get('html_length', 0)} bytes)")
+    print(f"   6. Analysis:  {'✅' if test_results['results'].get('analysis', {}).get('success') else '❌'} ({test_results['results'].get('analysis', {}).get('html_length', 0)} bytes)")
     
     if not args.skip_rag:
         rag_res = test_results["results"].get("rag", {})
-        print(f"   RAG:      {'✅' if rag_res.get('index_success') or rag_res.get('search_success') else '⚠️ '} (optional)")
+        print(f"   7. Index:     {'✅' if rag_res.get('index_success') else '⚠️ '} (RAG - optional)")
+        print(f"   8. Search:    {'✅' if rag_res.get('search_success') else '⚠️ '} (RAG - optional)")
     
     print(f"\nJob ID: {job_id}")
     if status_data:

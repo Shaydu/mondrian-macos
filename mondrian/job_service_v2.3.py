@@ -157,20 +157,39 @@ class JobDatabase:
             """, (job_id, image_path, advisor, mode, 'pending', now, now, 1 if enable_rag else 0))
             conn.commit()
         
-        logger.info(f"Created job {job_id} (RAG={'enabled' if enable_rag else 'disabled'})\"")
+        logger.info(f"Created job {job_id} (RAG={'enabled' if enable_rag else 'disabled'})")
+        
+        # Verify job was created (catch database write issues early)
+        try:
+            verify_job = self.get_job(job_id)
+            if verify_job:
+                logger.info(f"✓ Verified job exists in DB: {job_id}")
+            else:
+                logger.error(f"❌ Job verification failed: {job_id} not found immediately after creation!")
+        except Exception as e:
+            logger.error(f"❌ Error verifying job creation: {e}")
+        
         return job_id
     
     def get_job(self, job_id: str) -> Optional[Dict[str, Any]]:
         """Get job details"""
-        with sqlite3.connect(self.db_path) as conn:
-            cursor = conn.execute(
-                """SELECT id, filename, status, advisor, mode, created_at, current_step, progress_percentage, enable_rag,
-                          prompt, llm_prompt, analysis_markdown, llm_thinking, analysis_html, advisor_bio, llm_outputs,
-                          summary_html, advisor_bio_html, model, adapter
-                   FROM jobs WHERE id = ?""",
-                (job_id,)
-            )
-            row = cursor.fetchone()
+        try:
+            with sqlite3.connect(self.db_path) as conn:
+                conn.row_factory = sqlite3.Row  # Better error messages
+                cursor = conn.execute(
+                    """SELECT id, filename, status, advisor, mode, created_at, current_step, progress_percentage, enable_rag,
+                              prompt, llm_prompt, analysis_markdown, llm_thinking, analysis_html, advisor_bio, llm_outputs,
+                              summary_html, advisor_bio_html, model, adapter
+                       FROM jobs WHERE id = ?""",
+                    (job_id,)
+                )
+                row = cursor.fetchone()
+        except sqlite3.DatabaseError as e:
+            logger.error(f"Database error retrieving job {job_id}: {e}")
+            return None
+        except Exception as e:
+            logger.error(f"Unexpected error retrieving job {job_id}: {e}")
+            return None
 
         if not row:
             return None
@@ -714,6 +733,7 @@ def upload_image():
         
         # Create job with enable_rag parameter
         job_id = job_db.create_job(advisor, mode, str(filepath), enable_rag=enable_rag)
+        logger.info(f"[UPLOAD] Job created: {job_id} (DB: {job_db.db_path})")
         
         # If auto_analyze is true, update status to 'queued' to trigger immediate processing
         if auto_analyze:
@@ -722,11 +742,12 @@ def upload_image():
                     UPDATE jobs SET status = 'queued' WHERE id = ?
                 """, (job_id,))
                 conn.commit()
+            logger.info(f"[UPLOAD] Job queued: {job_id}")
         
         # Format response - use get_base_url() helper for consistency
         base_url = get_base_url()
         
-        return jsonify({
+        response_data = {
             "job_id": job_id,
             "filename": unique_filename,
             "advisor": advisor,
@@ -734,7 +755,9 @@ def upload_image():
             "status": "queued",
             "status_url": f"{base_url}/status/{job_id}",
             "stream_url": f"{base_url}/stream/{job_id}"
-        }), 201
+        }
+        logger.info(f"[UPLOAD] Returning response: {response_data}")
+        return jsonify(response_data), 201
     
     except Exception as e:
         logger.error(f"Error uploading file: {e}")
@@ -966,11 +989,21 @@ def get_job(job_id: str):
         - GET /analysis/{job_id} - Full detailed analysis HTML
     """
     if not job_db:
+        logger.error(f"[STATUS] Job database not initialized when checking job {job_id}")
         return jsonify({"error": "Database not initialized"}), 503
     
     job = job_db.get_job(job_id)
     
     if not job:
+        logger.warning(f"[STATUS] Job not found: {job_id} (checking DB at {job_db.db_path})")
+        # Additional debugging
+        try:
+            with sqlite3.connect(job_db.db_path) as conn:
+                cursor = conn.execute("SELECT COUNT(*) FROM jobs")
+                count = cursor.fetchone()[0]
+                logger.warning(f"[STATUS] Total jobs in database: {count}")
+        except Exception as e:
+            logger.error(f"[STATUS] Failed to check job count: {e}")
         return jsonify({"error": "Job not found"}), 404
     
     # Check if requesting HTML detail view (for debugging)
@@ -1625,12 +1658,72 @@ def process_job_worker(db_path: str):
             time.sleep(1)
 
 
+def check_and_recover_stale_jobs(db_path: str, stale_threshold_minutes: int = 5):
+    """Check for jobs stuck in analyzing/processing state and recover them"""
+    try:
+        from datetime import datetime, timedelta
+        
+        with sqlite3.connect(db_path) as conn:
+            # Find jobs that have been in analyzing/processing state too long
+            stale_cutoff = (datetime.now() - timedelta(minutes=stale_threshold_minutes)).isoformat()
+            
+            cursor = conn.execute("""
+                SELECT id, status, last_activity, filename, advisor, mode, COALESCE(retry_count, 0) as retry_count
+                FROM jobs
+                WHERE status IN ('analyzing', 'processing')
+                  AND last_activity < ?
+            """, (stale_cutoff,))
+            
+            stale_jobs = cursor.fetchall()
+            
+            for job in stale_jobs:
+                job_id = job[0]
+                status = job[1]
+                last_activity = job[2]
+                filename = job[3]
+                retry_count = job[6]
+                
+                logger.warning(f"🔧 Detected stale job {job_id[:8]}... stuck in '{status}' for >5min (last activity: {last_activity})")
+                
+                # Mark as failed or queued for retry
+                current_retry = retry_count + 1
+                if current_retry < 3:
+                    error_msg = f"Job timed out after 5 minutes in '{status}' state"
+                    conn.execute("""
+                        UPDATE jobs SET status = 'queued', error = ?, retry_count = ?, 
+                                       last_activity = ?, current_step = 'Recovering from timeout...'
+                        WHERE id = ?
+                    """, (error_msg, current_retry, datetime.now().isoformat(), job_id))
+                    logger.info(f"   ↳ Queued for retry {current_retry}/3")
+                else:
+                    error_msg = f"Job permanently failed after timing out (5+ minutes in '{status}' state)"
+                    conn.execute("""
+                        UPDATE jobs SET status = 'failed', error = ?, retry_count = ?, 
+                                       last_activity = ?, current_step = 'Failed: Timeout'
+                        WHERE id = ?
+                    """, (error_msg, current_retry, datetime.now().isoformat(), job_id))
+                    logger.error(f"   ↳ Marked as failed after {current_retry} retries")
+                
+                conn.commit()
+                
+    except Exception as e:
+        logger.error(f"Error checking for stale jobs: {e}")
+
+
 def monitor_queue_status(db_path: str):
     """Background monitor that logs queue status every 3-5 seconds for iOS UI monitoring"""
     logger.info("Queue status monitor started")
     
+    check_counter = 0  # Check for stale jobs every 15 iterations (60 seconds)
+    
     while True:
         try:
+            # Periodically check for stale jobs
+            check_counter += 1
+            if check_counter >= 15:
+                check_and_recover_stale_jobs(db_path, stale_threshold_minutes=5)
+                check_counter = 0
+            
             with sqlite3.connect(db_path) as conn:
                 conn.row_factory = sqlite3.Row
                 
