@@ -89,55 +89,63 @@ DESCRIPTION: {image_desc}
 TECHNICAL ANALYSIS: {dimension_comment}
 SCORE: {score}/10 in {dimension.replace('_', ' ')}
 
-Generate a 2-3 sentence explanation that:
+Generate a 2-3 sentence explanation (approximately 150-200 words) that:
 1. Points out the SPECIFIC technique or quality in THIS image that demonstrates mastery
 2. Explains WHY this technique works and what effect it creates  
-3. Gives ACTIONABLE guidance on what the student should learn and try
+3. Gives ACTIONABLE guidance on what the student should learn and apply to their own work
+4. Provides teaching context - not just what's in the image, but what photographers can learn from it
 
 CONSTRAINTS:
-- Write in FIRST PERSON as Ansel Adams (use "I", "my")
+- Write in instructional voice (NOT first person - use "Study how...", "Notice the...", "Observe...")
 - Focus ONLY on: {focus_areas}
 - AVOID discussing: {avoid_topics}{zone_system_instruction}
-- Be specific to THIS image - don't give generic advice
-- Maximum 100 words
-- Be encouraging but technically precise
+- Be specific to THIS image - use concrete details from the image, not generic advice
+- 2-3 full sentences with rich technical detail
+- Be encouraging but technically precise and educational
 
 Example format:
-"Study how [specific technique in this image]. This [explains the effect it creates]. When you photograph [subject type], try [actionable specific guidance]."
+"Study how [specific technique in this image] creates [specific visual effect]. This [explains why it works and the principle behind it]. [Actionable guidance about what to observe and how to apply this to their photography]."
 
 Generate the instructive explanation now:"""
     
     return prompt
 
 def call_llm(prompt, max_retries=3):
-    """Call LLM via AI Advisor Service"""
-    for attempt in range(max_retries):
-        try:
-            # Use the chat endpoint for text generation
-            response = requests.post(
-                f"{AI_ADVISOR_URL}/chat",
-                json={"message": prompt},
-                timeout=60
-            )
-            
-            if response.status_code == 200:
-                result = response.json()
-                return result.get('response', '').strip()
-            else:
-                print(f"  [WARN] LLM call failed: {response.status_code}")
-                if attempt < max_retries - 1:
-                    time.sleep(2)
-                    continue
-                return None
-                
-        except Exception as e:
-            print(f"  [ERROR] LLM call exception: {e}")
-            if attempt < max_retries - 1:
-                time.sleep(2)
-                continue
-            return None
-    
-    return None
+    """Call LLM directly using transformers"""
+    try:
+        from transformers import AutoProcessor, AutoTokenizer, pipeline
+        import torch
+        
+        # Use a simple text generation model
+        model_name = "meta-llama/Llama-3.2-3B-Instruct"
+        
+        # Create a simple text generation pipeline
+        generator = pipeline(
+            "text-generation",
+            model=model_name,
+            device="cuda" if torch.cuda.is_available() else "cpu",
+            torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32
+        )
+        
+        # Generate response
+        result = generator(
+            prompt,
+            max_new_tokens=300,
+            temperature=0.7,
+            do_sample=True,
+            top_p=0.9,
+            pad_token_id=generator.tokenizer.eos_token_id
+        )
+        
+        if result and len(result) > 0:
+            return result[0]['generated_text'][len(prompt):].strip()
+        return None
+        
+    except Exception as e:
+        print(f"  [ERROR] LLM call exception: {e}")
+        import traceback
+        traceback.print_exc()
+        return None
 
 def get_reference_images(advisor_id, min_score=8.0):
     """Get reference images that need instructive text"""
