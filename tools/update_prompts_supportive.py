@@ -80,6 +80,9 @@ For Ansel Adams:
 
 **CITATION FIELDS (OPTIONAL):**
 - `case_study_id`: Reference image ID from prompt (e.g., "IMG_1", "IMG_5") - cite ONLY if directly relevant to your feedback for this dimension
+- When you cite an image, your `recommendation` field MUST explain WHY this specific image demonstrates mastery and WHAT the user should learn from it
+- Be specific: don't say "good composition" - explain WHAT compositional technique is used, WHY it works, and HOW the user can apply it
+- Example: "Notice how the foreground rock anchors the viewer while the S-curve of the river draws your eye to the peaks. This layering creates depth that makes viewers feel they can step into the scene."
 - `quote_id`: Quote ID from prompt (e.g., "QUOTE_1", "QUOTE_3") - cite ONLY if it supports your specific recommendation
 - Maximum 3 images and 3 quotes total across ALL dimensions
 - Each dimension may cite at most ONE image and ONE quote

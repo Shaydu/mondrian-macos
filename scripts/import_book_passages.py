@@ -123,15 +123,63 @@ def import_passages(passages: List[Dict], dry_run: bool = False):
             skipped += 1
             continue
         
+        # Get text field (handle both 'text' and 'passage_text' keys)
+        text = passage.get('passage_text') or passage.get('text')
+        if not text:
+            print(f"  Skip {i+1}/{len(passages)}: {passage_id} (no text field)")
+            skipped += 1
+            continue
+        
+        # Get dimensions (handle both 'dimensions' array and 'dimension_tags' JSON string)
+        dimensions = passage.get('dimensions', [])
+        if not dimensions and 'dimension_tags' in passage:
+            # Parse if it's a JSON string
+            tags_str = passage['dimension_tags']
+            if isinstance(tags_str, str):
+                dimensions = json.loads(tags_str)
+            else:
+                dimensions = tags_str
+        
+        if not dimensions:
+            # Prompt user to provide dimensions
+            print(f"\n⚠ Passage needs dimension assignment: {passage_id}")
+            print(f"   Text: {text[:80]}...")
+            print("\nAvailable dimensions:")
+            available_dims = [
+                'composition', 'lighting', 'focus_sharpness', 
+                'depth_perspective', 'visual_balance', 'color_harmony', 
+                'emotional_impact', 'texture', 'contrast'
+            ]
+            for idx, dim in enumerate(available_dims, 1):
+                print(f"   {idx}. {dim}")
+            print("   (Enter comma-separated numbers, or 'skip' to skip this passage)")
+            
+            user_input = input("   Dimensions: ").strip().lower()
+            if user_input == 'skip':
+                skipped += 1
+                continue
+            
+            try:
+                dim_indices = [int(x.strip()) - 1 for x in user_input.split(',')]
+                dimensions = [available_dims[i] for i in dim_indices if 0 <= i < len(available_dims)]
+                if not dimensions:
+                    print("   Invalid selection, skipping...")
+                    skipped += 1
+                    continue
+            except (ValueError, IndexError):
+                print("   Invalid input, skipping...")
+                skipped += 1
+                continue
+        
         # Compute embedding
-        embedding = compute_text_embedding(passage['text'])
+        embedding = compute_text_embedding(text)
         if embedding is None:
             print(f"  Skip {i+1}/{len(passages)}: {passage_id} (embedding failed)")
             skipped += 1
             continue
         
         # Prepare data
-        dimension_tags_json = json.dumps(passage['dimensions'])
+        dimension_tags_json = json.dumps(dimensions)
         embedding_blob = embedding.tobytes()
         
         # Insert
@@ -145,7 +193,7 @@ def import_passages(passages: List[Dict], dry_run: bool = False):
             passage_id,
             passage['advisor_id'],
             passage['book_title'],
-            passage['text'],
+            text,
             dimension_tags_json,
             embedding_blob,
             passage.get('relevance_score', 0),

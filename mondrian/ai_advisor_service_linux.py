@@ -887,9 +887,17 @@ class QwenAdvisor:
         
         # Add structured list of available reference images for case_studies field
         if reference_images:
-            rag_context += "\n### AVAILABLE REFERENCE IMAGES FOR case_studies FIELD:\n"
-            rag_context += "Use ONLY these images in your case_studies output (select 0-3 that are strong in user's weak areas):\n\n"
-            
+            rag_context += "\n### AVAILABLE REFERENCE IMAGES - HOW TO CITE THEM:\n"
+            rag_context += (
+                "When you cite a reference image in a dimension (using case_study_id), your 'recommendation' field for that dimension MUST explain:\n"
+                "1. WHY this specific photo demonstrates mastery in this dimension\n"
+                "2. WHAT the user should notice, study, or emulate from this image\n"
+                "3. HOW applying these techniques will improve their work\n\n"
+                "Be specific and instructive. Don't say 'has good composition' - explain WHAT compositional technique is used and WHY it works. "
+                "For example: 'Notice how the foreground boulder creates a visual anchor, leading your eye through the S-curve of the river to the distant peaks. "
+                "This layering technique gives your landscapes the depth that makes viewers feel they can step into the scene.'\n\n"
+                "Available images to cite:\n"
+            )
             dim_map = {
                 'composition_score': 'Composition',
                 'lighting_score': 'Lighting', 
@@ -900,32 +908,31 @@ class QwenAdvisor:
                 'visual_balance_score': 'Visual Balance',
                 'emotional_impact_score': 'Emotional Impact'
             }
-            
             for img in reference_images[:3]:  # Limit to 3 max
                 img_title = img.get('image_title') or img.get('image_path', '').split('/')[-1]
                 year = img.get('date_taken', 'Unknown')
-                
                 # List dimensions where this image excels (score >= 8)
                 strong_dims = []
                 for dim_key, dim_name in dim_map.items():
                     score = img.get(dim_key)
                     if score is not None and score >= 8:
                         strong_dims.append(f"{dim_name}({score})")
-                
                 if strong_dims:
-                    rag_context += f"- \"{img_title}\" ({year}): Excels in [{', '.join(strong_dims)}]\n"
-        
-        rag_context += "\n**FOR case_studies OUTPUT:** Only cite images from the list above. Match reference strengths (>=8) to user weaknesses (<=5).\n"
-        
+                    rag_context += f"- ID: \"{img_title}\" ({year}) - Excels in [{', '.join(strong_dims)}]\n"
+        rag_context += (
+            "\n**CRITICAL:** When you cite an image (case_study_id), your recommendation MUST teach why this image is instructive for that dimension. "
+            "The user sees the image but needs YOU to explain what makes it a master example and what specific techniques they should learn from it.\n"
+        )
+
         # Augment prompt
         augmented_prompt = f"{prompt}\n{rag_context}"
         logger.info(f"Augmented prompt with RAG context ({len(rag_context)} chars, {len(reference_images)} unique references)")
-        
+
         # Log image titles for debugging duplication
         if reference_images:
             image_titles = [img.get('image_title', img.get('image_path', '').split('/')[-1]) for img in reference_images]
             logger.info(f"Reference images used: {image_titles}")
-        
+
         return augmented_prompt, reference_images
     
 
