@@ -742,7 +742,7 @@ class QwenAdvisor:
         [DEPRECATED - no longer used in single-pass]
         Create a minimal prompt for quick dimensional scoring (Pass 1)
         """
-        return """Analyze this photograph and score it across all 6 dimensions. 
+        return """Analyze this photograph and score it across all 8 dimensions. 
 **OUTPUT ONLY JSON - NO OTHER TEXT.**
 
 Required JSON structure (use ONLY straight quotes, ASCII characters):
@@ -923,7 +923,8 @@ Provide ONLY the JSON above with your scores. No explanations, no comments."""
                     from mondrian.embedding_retrieval import get_top_book_passages
                     book_passages = get_top_book_passages(
                         advisor_id=advisor,
-                        max_passages=6
+                        user_image_path=image_path,
+                        max_passages=10
                     )
                     if book_passages is None:
                         raise RuntimeError("get_top_book_passages returned None")
@@ -990,7 +991,7 @@ Provide ONLY the JSON above with your scores. No explanations, no comments."""
         # Add book passages with citation IDs
         if book_passages:
             rag_context += "\n#### AVAILABLE QUOTES FROM MY WRITINGS:\n"
-            rag_context += "You may cite UP TO 3 of these quotes total across all dimensions. Each dimension may cite ONE quote maximum. Never reuse quote IDs.\n\n"
+            rag_context += "You may cite UP TO 3 of these quotes total across all dimensions. Each dimension may cite ONE quote maximum. Never reuse quote IDs. These quotes are semantically matched to your image.\n\n"
             
             for idx, passage in enumerate(book_passages, 1):
                 book_title = passage['book_title']
@@ -1074,6 +1075,7 @@ Required JSON Structure:
     {"name": "Composition", "score": 8, "comment": "...", "recommendation": "..."},
     {"name": "Lighting", "score": 7, "comment": "...", "recommendation": "..."},
     {"name": "Focus & Sharpness", "score": 9, "comment": "...", "recommendation": "..."},
+    {"name": "Color Harmony", "score": 6, "comment": "...", "recommendation": "..."},
     {"name": "Depth & Perspective", "score": 7, "comment": "...", "recommendation": "..."},
     {"name": "Visual Balance", "score": 8, "comment": "...", "recommendation": "..."},
     {"name": "Emotional Impact", "score": 7, "comment": "...", "recommendation": "..."}
@@ -1145,9 +1147,6 @@ Required JSON Structure:
             border-radius: 12px;
             margin-bottom: 20px;
             text-align: left;
-            width: 99%;
-            margin-left: auto;
-            margin-right: auto;
         }}
         .analysis h2 {{
             color: #ffffff;

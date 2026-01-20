@@ -74,7 +74,7 @@ COPY docker-entrypoint.sh ./
 RUN chmod +x start_mondrian.sh mondrian.sh docker-entrypoint.sh
 
 # Expose all service ports
-EXPOSE 5100 5005 5006
+EXPOSE 5100 5005 5006 5007
 
 # Health check for the main AI Advisor service
 HEALTHCHECK --interval=30s --timeout=10s --start-period=120s --retries=3 \

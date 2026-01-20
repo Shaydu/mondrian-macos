@@ -64,3 +64,5 @@ TEST_CREATION_SUMMARY.txt
 # OS
 .DS_Store
 Thumbs.db
+# Database backups
+backups/
