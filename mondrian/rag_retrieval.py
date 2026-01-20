@@ -111,7 +111,11 @@ def get_similar_images_from_db(db_path: str, advisor_id: str, top_k: int = 3) ->
                    focus_sharpness_score, color_harmony_score, overall_grade,
                    image_description, image_title, date_taken,
                    subject_isolation_score, depth_perspective_score,
-                   visual_balance_score, emotional_impact_score
+                   visual_balance_score, emotional_impact_score,
+                   composition_instructive, lighting_instructive,
+                   focus_sharpness_instructive, color_harmony_instructive,
+                   subject_isolation_instructive, depth_perspective_instructive,
+                   visual_balance_instructive, emotional_impact_instructive
             FROM dimensional_profiles
             WHERE advisor_id = ?
               AND composition_score IS NOT NULL
@@ -181,7 +185,11 @@ def get_top_reference_images(db_path: str, advisor_id: str, max_total: int = 10)
                    focus_sharpness_score, color_harmony_score,
                    subject_isolation_score, depth_perspective_score,
                    visual_balance_score, emotional_impact_score,
-                   overall_grade, image_description, image_title, date_taken
+                   overall_grade, image_description, image_title, date_taken,
+                   composition_instructive, lighting_instructive,
+                   focus_sharpness_instructive, color_harmony_instructive,
+                   subject_isolation_instructive, depth_perspective_instructive,
+                   visual_balance_instructive, emotional_impact_instructive
             FROM dimensional_profiles
             WHERE advisor_id = ?
               AND composition_score IS NOT NULL
@@ -271,7 +279,11 @@ def get_images_for_weak_dimensions(db_path: str, advisor_id: str, weak_dimension
                    focus_sharpness_score, color_harmony_score,
                    subject_isolation_score, depth_perspective_score,
                    visual_balance_score, emotional_impact_score,
-                   overall_grade, image_description, image_title, date_taken
+                   overall_grade, image_description, image_title, date_taken,
+                   composition_instructive, lighting_instructive,
+                   focus_sharpness_instructive, color_harmony_instructive,
+                   subject_isolation_instructive, depth_perspective_instructive,
+                   visual_balance_instructive, emotional_impact_instructive
             FROM dimensional_profiles
             WHERE advisor_id = ?
               AND composition_score IS NOT NULL
@@ -391,7 +403,11 @@ def get_best_image_per_dimension(db_path: str, advisor_id: str) -> Dict[str, Dic
                        focus_sharpness_score, color_harmony_score,
                        subject_isolation_score, depth_perspective_score,
                        visual_balance_score, emotional_impact_score,
-                       overall_grade, image_description, image_title, date_taken, embedding
+                       overall_grade, image_description, image_title, date_taken, embedding,
+                       composition_instructive, lighting_instructive,
+                       focus_sharpness_instructive, color_harmony_instructive,
+                       subject_isolation_instructive, depth_perspective_instructive,
+                       visual_balance_instructive, emotional_impact_instructive
                 FROM dimensional_profiles
                 WHERE advisor_id = ?
                   AND {db_column} >= 8.0

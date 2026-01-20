@@ -1254,60 +1254,11 @@ Required JSON Structure:
             cited_image = dim.get('_cited_image')
             image_citation_html = ""
             if cited_image:
-                ref_title = cited_image.get('image_title', 'Reference Image')
-                ref_year = cited_image.get('date_taken', '')
-                ref_path = cited_image.get('image_path', '')
-                ref_location = cited_image.get('location', '')
-                
-                # Format title with year
-                if ref_year and str(ref_year).strip():
-                    title_with_year = f"{ref_title} ({ref_year})"
-                else:
-                    title_with_year = ref_title
-                
-                # Get image data and convert to base64
-                ref_image_url = ''
-                if ref_path and os.path.exists(ref_path):
-                    try:
-                        with open(ref_path, 'rb') as img_file:
-                            image_data = img_file.read()
-                            b64_image = base64.b64encode(image_data).decode('utf-8')
-                            img_ext = os.path.splitext(ref_path)[1].lower()
-                            mime_type = 'image/png' if img_ext == '.png' else 'image/jpeg' if img_ext in ['.jpg', '.jpeg'] else 'image/png'
-                            ref_image_url = f"data:{mime_type};base64,{b64_image}"
-                    except Exception as e:
-                        logger.warning(f"Failed to embed image as base64: {e}")
-                
-                # Build case study box
-                image_citation_html = '<div class="reference-citation"><div class="case-study-box">'
-                image_citation_html += f'<div class="case-study-title">Case Study: {title_with_year}</div>'
-                
-                if ref_image_url:
-                    image_citation_html += f'<img src="{ref_image_url}" alt="{title_with_year}" class="case-study-image" />'
-                
-                # Add metadata
-                metadata_parts = []
-                if cited_image.get('image_description'):
-                    metadata_parts.append(f'<strong>Description:</strong> {cited_image["image_description"]}')
-                if ref_location:
-                    metadata_parts.append(f'<strong>Location:</strong> {ref_location}')
-                
-                # Show dimensional strengths
-                dim_strengths = []
-                for dim_key in ['composition', 'lighting', 'focus_sharpness', 'color_harmony',
-                               'subject_isolation', 'depth_perspective', 'visual_balance', 'emotional_impact']:
-                    dim_score = cited_image.get(f"{dim_key}_score", 0)
-                    if dim_score and dim_score >= 8.0:
-                        dim_display = dim_key.replace('_', ' ').title()
-                        dim_strengths.append(f"{dim_display}: {dim_score}/10")
-                
-                if dim_strengths:
-                    metadata_parts.append(f'<strong>Strengths:</strong> {", ".join(dim_strengths)}')
-                
-                image_citation_html += f'<div class="case-study-metadata">' + '<br/>'.join(metadata_parts) + '</div>'
-                image_citation_html += '</div></div>'
-                
-                logger.info(f"[HTML Gen] Added LLM-cited image for {name}: '{ref_title}'")
+                from mondrian.html_generator import generate_reference_image_html
+                image_citation_html = generate_reference_image_html(
+                    ref_image=cited_image,
+                    dimension_name=name
+                )
             
             # Check if LLM cited a quote for this dimension
             cited_quote = dim.get('_cited_quote')

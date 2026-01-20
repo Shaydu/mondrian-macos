@@ -30,6 +30,87 @@ def format_dimension_name(name: str) -> str:
     return formatted
 
 
+def generate_reference_image_html(
+    ref_image: Dict[str, Any],
+    dimension_name: str,
+    ref_score: Optional[float] = None,
+    user_gap: Optional[float] = None
+) -> str:
+    """
+    Generate consolidated HTML for reference image case study box.
+    
+    Args:
+        ref_image: Dictionary containing reference image data from database
+        dimension_name: Display name of the dimension (e.g., "Composition")
+        ref_score: Optional reference score to display
+        user_gap: Optional gap between user and reference score
+    
+    Returns:
+        HTML string for case study box
+    """
+    ref_title = ref_image.get('image_title', 'Reference Image')
+    ref_year = ref_image.get('date_taken', '')
+    ref_path = ref_image.get('image_path', '')
+    ref_location = ref_image.get('location', '')
+    
+    # Format title with year
+    if ref_year and str(ref_year).strip():
+        title_with_year = f"{ref_title} ({ref_year})"
+    else:
+        title_with_year = ref_title
+    
+    # Get image data and convert to base64
+    ref_image_url = ''
+    if ref_path and os.path.exists(ref_path):
+        try:
+            with open(ref_path, 'rb') as img_file:
+                image_data = img_file.read()
+                b64_image = base64.b64encode(image_data).decode('utf-8')
+                img_ext = os.path.splitext(ref_path)[1].lower()
+                mime_type = 'image/png' if img_ext == '.png' else 'image/jpeg' if img_ext in ['.jpg', '.jpeg'] else 'image/png'
+                ref_image_url = f"data:{mime_type};base64,{b64_image}"
+        except Exception as e:
+            logger.warning(f"Failed to embed image as base64: {e}")
+    
+    # Build case study box
+    html = '<div class="reference-citation"><div class="case-study-box">'
+    html += f'<div class="case-study-title">Case Study: {title_with_year}</div>'
+    
+    if ref_image_url:
+        html += f'<img src="{ref_image_url}" alt="{title_with_year}" class="case-study-image" />'
+    
+    # Add metadata - use instructive text if available
+    metadata_parts = []
+    
+    # Get dimension-specific instructive text
+    dim_key = dimension_name.lower().replace(' ', '_')
+    instructive_key = f"{dim_key}_instructive"
+    instructive_text = ref_image.get(instructive_key)
+    
+    if instructive_text:
+        # Use pre-generated instructive explanation
+        metadata_parts.append(f'<strong>Focus On:</strong> {instructive_text}')
+    elif ref_image.get('image_description'):
+        # Fallback to description if no instructive text
+        metadata_parts.append(f'<strong>Focus On:</strong> {ref_image["image_description"][:200]}...')
+    
+    if ref_location:
+        metadata_parts.append(f'<strong>Location:</strong> {ref_location}')
+    
+    if ref_score is not None:
+        metadata_parts.append(f'<strong>Reference Score:</strong> {ref_score}/10 in {dimension_name}')
+    
+    if user_gap is not None:
+        metadata_parts.append(f'<strong>Your Gap:</strong> {user_gap:.1f} points')
+    
+    html += f'<div class="case-study-metadata">' + '<br/>'.join(metadata_parts) + '</div>'
+    html += '</div></div>'
+    
+    logger.info(f"[HTML Gen] Generated case study for {dimension_name}: '{ref_title}'")
+    
+    return html
+
+
 def normalize_dimension_key(name: str) -> str:
     """Normalize dimension name for lookup"""
     dim_key = name.lower().strip().replace(' & ', '_').replace(' and ', '_').replace(' ', '_')
@@ -253,50 +334,12 @@ def generate_ios_detailed_html(
             best_gap = case_study.get('gap', 0)
             ref_score_val = case_study.get('ref_score', 0)
             
-            ref_title = best_ref.get('image_title', 'Reference Image')
-            ref_year = best_ref.get('date_taken', '')
-            ref_path = best_ref.get('image_path', '')
-            
-            # Format title with year if available
-            if ref_year and str(ref_year).strip():
-                title_with_year = f"{ref_title} ({ref_year})"
-            else:
-                title_with_year = ref_title
-            
-            # Get image data and convert to base64 for embedding
-            ref_image_url = ''
-            if ref_path and os.path.exists(ref_path):
-                try:
-                    with open(ref_path, 'rb') as img_file:
-                        image_data = img_file.read()
-                        b64_image = base64.b64encode(image_data).decode('utf-8')
-                        img_ext = os.path.splitext(ref_path)[1].lower()
-                        mime_type = 'image/png' if img_ext == '.png' else 'image/jpeg' if img_ext in ['.jpg', '.jpeg'] else 'image/png'
-                        ref_image_url = f"data:{mime_type};base64,{b64_image}"
-                except Exception as e:
-                    logger.warning(f"Failed to embed image as base64: {e}")
-            
-            # Build case study box with image
-            reference_citation = '<div class="reference-citation"><div class="case-study-box">'
-            reference_citation += f'<div class="case-study-title">Case Study: {title_with_year}</div>'
-            
-            # Add image if available
-            if ref_image_url:
-                reference_citation += f'<img src="{ref_image_url}" alt="{title_with_year}" class="case-study-image" />'
-            
-            # Add metadata
-            metadata_parts = []
-            if best_ref.get('image_description'):
-                metadata_parts.append(f'<strong>Description:</strong> {best_ref["image_description"]}')
-            if best_ref.get('location'):
-                metadata_parts.append(f'<strong>Location:</strong> {best_ref["location"]}')
-            metadata_parts.append(f'<strong>Score:</strong> {ref_score_val}/10 in {name}')
-            metadata_parts.append(f'<strong>Your Gap:</strong> {best_gap:.1f} points to master this technique')
-            
-            reference_citation += f'<div class="case-study-metadata">' + '<br/>'.join(metadata_parts) + '</div>'
-            reference_citation += '</div></div>'
-            
-            logger.info(f"[HTML Gen] Added case study for {name}: '{ref_title}' (gap={best_gap:.1f})")
+            reference_citation = generate_reference_image_html(
+                ref_image=best_ref,
+                dimension_name=name,
+                ref_score=ref_score_val,
+                user_gap=best_gap
+            )
         
         # Check if LLM cited a quote for this dimension
         quote_citation_html = ""
