@@ -695,248 +695,6 @@ class QwenAdvisor:
             logger.error(f"Embedding retrieval failed: {e}")
             return get_images_for_weak_dimensions(DB_PATH, advisor_id, weak_dimensions, max_images)
     
-    def _augment_prompt_with_rag_context(self, prompt: str, advisor_id: str, user_dimensions: Dict[str, float] = None, user_image_path: str = None) -> str:
-        """
-        Augment the prompt with RAG context from reference images.
-        If user_dimensions are provided, finds images that excel in the user's weakest areas.
-        Otherwise, uses top-rated reference images.
-        
-        Args:
-            prompt: Original prompt
-            advisor_id: Advisor to search for reference images
-            user_dimensions: Optional dict of user's dimensional scores for gap analysis
-            
-        Returns:
-            Augmented prompt with RAG context
-        """
-        
-        # Track used images to prevent duplicates
-        used_image_paths = set()
-        
-        # If user dimensions are provided, do gap-based analysis
-        if user_dimensions:
-            # Find the user's 3 weakest dimensions
-            dimension_scores = []
-            for dim_name, score in user_dimensions.items():
-                if score is not None and dim_name.endswith('_score'):
-                    clean_name = dim_name.replace('_score', '')
-                    dimension_scores.append((clean_name, score))
-            
-            # Sort by score ascending (weakest first)
-            dimension_scores.sort(key=lambda x: x[1])
-            weak_dimensions = [name for name, score in dimension_scores[:3]]
-            
-            logger.info(f"User's weakest dimensions: {weak_dimensions}")
-            
-            # Try embedding-based retrieval if user image path is available
-            if user_image_path:
-                logger.info("Using embedding-based retrieval for visually similar references")
-                reference_images = get_images_with_embedding_retrieval(
-                    DB_PATH, advisor_id, user_image_path, weak_dimensions, user_dimensions, max_images=4
-                )
-            else:
-                # Fall back to score-based retrieval
-                reference_images = get_images_for_weak_dimensions(DB_PATH, advisor_id, weak_dimensions, max_images=4)
-            
-            # Log what we got before deduplication
-            logger.info(f"Retrieved {len(reference_images)} reference images before deduplication")
-            if reference_images:
-                titles = [img.get('image_title', 'Unknown') for img in reference_images]
-                logger.info(f"Images before dedup: {titles}")
-            
-            # Deduplicate images
-            reference_images = deduplicate_reference_images(reference_images, used_image_paths, min_images=2)
-            
-            # Log after deduplication
-            logger.info(f"After deduplication: {len(reference_images)} unique images")
-            if reference_images:
-                titles = [img.get('image_title', 'Unknown') for img in reference_images]
-                logger.info(f"Images after dedup: {titles}")
-            
-            if not reference_images:
-                logger.info("No targeted reference images found for weak dimensions - skipping RAG augmentation")
-                return prompt, []
-            
-            # Build targeted RAG context
-            rag_context = "\n\n### TARGETED REFERENCE IMAGES FOR IMPROVEMENT:\n"
-            rag_context += f"Based on the analysis, here are reference images that excel in the weakest areas ({', '.join(weak_dimensions)}).\n"
-            
-            # Add note about visual similarity if embedding retrieval was used
-            if user_image_path and any('visual_similarity' in img or 'hybrid_score' in img for img in reference_images):
-                rag_context += "These images are also visually similar to your photograph, making them excellent study references.\n"
-            else:
-                rag_context += "Study how these master works demonstrate excellence in the dimensions where improvement is most needed.\n"
-            
-        else:
-            # No user dimensions yet - try visual embedding retrieval first
-            if user_image_path:
-                logger.info("Using visual embedding retrieval for first-time analysis")
-                reference_images = get_images_with_embedding_retrieval(
-                    DB_PATH, advisor_id, user_image_path, weak_dimensions=None, 
-                    user_scores=None, max_images=3
-                )
-            
-            # Fall back to score-based if no embedding results
-            if not reference_images:
-                reference_images = get_top_reference_images(DB_PATH, advisor_id, max_total=3)
-            
-            # Deduplicate images
-            reference_images = deduplicate_reference_images(reference_images, used_image_paths, min_images=2)
-            
-            if not reference_images:
-                logger.info("No unique reference images found after deduplication - skipping RAG augmentation")
-                return prompt, []
-            
-            # Build RAG context with reference image names and dimensional comparisons
-            rag_context = "\n\n### REFERENCE IMAGES FOR COMPARATIVE ANALYSIS:\n"
-            if user_image_path and any('visual_similarity' in img for img in reference_images):
-                rag_context += "These master works are visually similar to your photograph and provide dimensional benchmarks.\n"
-            else:
-                rag_context += "These master works from the advisor's portfolio provide dimensional benchmarks.\n"
-        
-        # Add reference image details with case study containers
-        for i, img in enumerate(reference_images, 1):
-            # Use image_title (metadata name) if available, otherwise extract filename
-            img_title = img.get('image_title')
-            if not img_title:
-                img_path = img.get('image_path', '')
-                img_title = img_path.split('/')[-1] if img_path else f"Reference {i}"
-            
-            # Add year if available
-            year = img.get('date_taken')
-            if year and str(year).strip():
-                img_title_with_year = f"{img_title} ({year})"
-            else:
-                img_title_with_year = img_title
-            
-            # Get image URL for inline display
-            img_filename = os.path.basename(img.get('image_path', ''))
-            img_url = f"/api/reference-image/{img_filename}" if img_filename else ""
-            
-            # Build case study container with inline image
-            rag_context += f"""
-<div class="case-study-container" style="
-    background: #1c1c1e; 
-    border-radius: 12px; 
-    padding: 20px; 
-    margin: 20px 0;
-    border-left: 4px solid #30b0c0;
-">
-    <h3 style="color: #ffffff; margin-top: 0; margin-bottom: 16px; font-size: 18px;">
-        Case Study #{i}: {img_title_with_year}
-    </h3>
-    
-    <div style="display: flex; flex-direction: column; gap: 16px;">
-"""
-            
-            # Add image if available
-            if img_url:
-                rag_context += f"""
-        <img src="{img_url}" style="
-            width: 100%; 
-            max-width: 100%; 
-            height: auto; 
-            border-radius: 8px; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-        " alt="{img_title}" />
-"""
-            
-            rag_context += """
-        <div style="color: #d1d1d6; line-height: 1.6;">
-"""
-            
-            # Add description
-            if img.get('image_description'):
-                rag_context += f"<p style='margin: 0 0 12px 0;'><strong>Description:</strong> {img['image_description']}</p>"
-            
-            # Add dimensional profile with ALL 8 dimensions
-            all_dims = ['composition_score', 'lighting_score', 'focus_sharpness_score', 
-                       'color_harmony_score', 'subject_isolation_score', 'depth_perspective_score',
-                       'visual_balance_score', 'emotional_impact_score']
-            
-            if any(img.get(k) is not None for k in all_dims):
-                rag_context += "<p style='margin: 0;'><strong>Technical Excellence:</strong> "
-                scores = []
-                
-                dim_labels = {
-                    'composition_score': 'Composition',
-                    'lighting_score': 'Lighting',
-                    'focus_sharpness_score': 'Focus & Sharpness',
-                    'color_harmony_score': 'Color Harmony',
-                    'subject_isolation_score': 'Subject Isolation',
-                    'depth_perspective_score': 'Depth & Perspective',
-                    'visual_balance_score': 'Visual Balance',
-                    'emotional_impact_score': 'Emotional Impact'
-                }
-                
-                for dim_key, dim_label in dim_labels.items():
-                    if img.get(dim_key) is not None:
-                        scores.append(f"{dim_label} {img[dim_key]}/10")
-                
-                rag_context += ", ".join(scores)
-                if img.get('overall_grade'):
-                    rag_context += f" (Grade: {img['overall_grade']})"
-                rag_context += "</p>"
-            
-            rag_context += """
-        </div>
-    </div>
-</div>
-"""
-            rag_context += "\n"
-        
-        # Add structured list of available reference images for case_studies field
-        if reference_images:
-            rag_context += "\n### AVAILABLE REFERENCE IMAGES - HOW TO CITE THEM:\n"
-            rag_context += (
-                "When you cite a reference image in a dimension (using case_study_id), your 'recommendation' field for that dimension MUST explain:\n"
-                "1. WHY this specific photo demonstrates mastery in this dimension\n"
-                "2. WHAT the user should notice, study, or emulate from this image\n"
-                "3. HOW applying these techniques will improve their work\n\n"
-                "Be specific and instructive. Don't say 'has good composition' - explain WHAT compositional technique is used and WHY it works. "
-                "For example: 'Notice how the foreground boulder creates a visual anchor, leading your eye through the S-curve of the river to the distant peaks. "
-                "This layering technique gives your landscapes the depth that makes viewers feel they can step into the scene.'\n\n"
-                "Available images to cite:\n"
-            )
-            dim_map = {
-                'composition_score': 'Composition',
-                'lighting_score': 'Lighting', 
-                'focus_sharpness_score': 'Focus & Sharpness',
-                'color_harmony_score': 'Color Harmony',
-                'subject_isolation_score': 'Subject Isolation',
-                'depth_perspective_score': 'Depth & Perspective',
-                'visual_balance_score': 'Visual Balance',
-                'emotional_impact_score': 'Emotional Impact'
-            }
-            for img in reference_images[:3]:  # Limit to 3 max
-                img_title = img.get('image_title') or img.get('image_path', '').split('/')[-1]
-                year = img.get('date_taken', 'Unknown')
-                # List dimensions where this image excels (score >= 8)
-                strong_dims = []
-                for dim_key, dim_name in dim_map.items():
-                    score = img.get(dim_key)
-                    if score is not None and score >= 8:
-                        strong_dims.append(f"{dim_name}({score})")
-                if strong_dims:
-                    rag_context += f"- ID: \"{img_title}\" ({year}) - Excels in [{', '.join(strong_dims)}]\n"
-        rag_context += (
-            "\n**CRITICAL:** When you cite an image (case_study_id), your recommendation MUST teach why this image is instructive for that dimension. "
-            "The user sees the image but needs YOU to explain what makes it a master example and what specific techniques they should learn from it.\n"
-        )
-
-        # Augment prompt
-        augmented_prompt = f"{prompt}\n{rag_context}"
-        logger.info(f"Augmented prompt with RAG context ({len(rag_context)} chars, {len(reference_images)} unique references)")
-
-        # Log image titles for debugging duplication
-        if reference_images:
-            image_titles = [img.get('image_title', img.get('image_path', '').split('/')[-1]) for img in reference_images]
-            logger.info(f"Reference images used: {image_titles}")
-
-        return augmented_prompt, reference_images
-    
-
-    
     def _create_prompt(self, advisor: str, mode: str) -> str:
         """Create analysis prompt by loading from database"""
         
@@ -1246,15 +1004,21 @@ Provide ONLY the JSON above with your scores. No explanations, no comments."""
                 rag_context += f"[{img_id}] \"{img_title}\" ({year})\n"
                 if location:
                     rag_context += f"  Location: {location}\n"
+                    
+                # Show what this image teaches (dimensions >= 8.0)
                 if strong_dims:
-                    rag_context += f"  Strengths: {', '.join(strong_dims)}\n"
-                if img.get('image_description'):
-                    desc = img['image_description'][:120]
-                    rag_context += f"  Description: {desc}...\n"
+                    rag_context += f"  📸 Master-level in: {', '.join(strong_dims)}\n"
+                    rag_context += f"  💡 When citing this image: Explain the SPECIFIC TECHNIQUE that creates this excellence and HOW the user can apply it.\n"
+                    rag_context += f"     Example: Don't say 'good composition' - say 'three-plane depth with foreground anchor'\n"
                 rag_context += "\n"
             
-            rag_context += "**CITATION INSTRUCTION:** To cite an image, include its ID in your JSON response: `\"case_study_id\": \"IMG_3\"`\n"
-            rag_context += "Cite when the image demonstrates excellence in dimensions where you have feedback.\n"
+            rag_context += "**WHEN YOU CITE AN IMAGE (case_study_id):**\n"
+            rag_context += "Your 'recommendation' field MUST be a teaching moment that:\n"
+            rag_context += "1. Names the SPECIFIC TECHNIQUE (e.g., 'three-plane composition', 'Zone V-VII midtones')\n"
+            rag_context += "2. Explains WHY it works (e.g., 'creates dimensional depth', 'preserves highlight detail')\n"
+            rag_context += "3. Tells the user HOW to do it (actionable, specific steps)\n"
+            rag_context += "\n❌ GENERIC: 'This image has excellent composition.'\n"
+            rag_context += "✓ INSTRUCTIVE: 'Study the foreground boulder anchoring this composition while the river's S-curve draws your eye to the peaks. This three-plane structure creates dimensional depth. Position yourself so a rock or plant occupies your lower third.'\n\n"
         
         # Add final reminder about dimension-specific techniques
         rag_context += "\n**CRITICAL CITATION RULES:**\n"
