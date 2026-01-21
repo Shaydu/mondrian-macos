@@ -55,12 +55,12 @@
   },
   "generation_profiles": {
     "optimized": {
-      "max_new_tokens": 2000,
+      "max_new_tokens": 3500,
       "num_beams": 2,
       "do_sample": false,
       "repetition_penalty": 1.0,
       "early_stopping": true,
-      "description": "2-beam search with 2000 token limit for balanced quality and speed"
+      "description": "2-beam search with 3500 token limit for detailed, actionable feedback"
     },
     "fast_greedy": {
       "max_new_tokens": 1500,
@@ -70,12 +70,12 @@
       "description": "Greedy decoding, fast inference (~2-3x faster than beam search)"
     },
     "beam_search": {
-      "max_new_tokens": 2000,
+      "max_new_tokens": 3500,
       "num_beams": 4,
       "do_sample": false,
       "repetition_penalty": 1.0,
       "early_stopping": true,
-      "description": "Beam search for better quality, slower inference"
+      "description": "4-beam search for highest quality detailed feedback"
     },
     "sampling": {
       "max_new_tokens": 1500,
