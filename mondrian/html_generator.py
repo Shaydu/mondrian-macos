@@ -502,10 +502,16 @@ def generate_summary_html(analysis_data: Dict[str, Any], disclaimer_text: str = 
         score = dim.get('score', 0)
         recommendation = dim.get('recommendation', 'No recommendation available.')
         
+        # Remove IMG_<num> references from recommendation text
+        import re
+        recommendation_clean = re.sub(r'\bIMG_\d+\b|\s*\(IMG_\d+\)\s*', '', recommendation).strip()
+        # Clean up multiple spaces
+        recommendation_clean = re.sub(r'\s+', ' ', recommendation_clean)
+        
         html += f'''  <div class="recommendation-item">
     <div class="rec-number">{i}</div>
     <div class="rec-content">
-      <p class="rec-text"><strong>{name}</strong> ({score}/10): {recommendation}</p>
+      <p class="rec-text"><strong>{name}</strong> ({score}/10): {recommendation_clean}</p>
     </div>
   </div>
 '''

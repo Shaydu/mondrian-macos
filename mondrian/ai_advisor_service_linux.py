@@ -13,6 +13,7 @@ import time
 import sqlite3
 import base64
 import io
+import re
 
 # Set PyTorch memory optimization to reduce fragmentation
 os.environ['PYTORCH_CUDA_ALLOC_CONF'] = 'expandable_segments:True'
@@ -1093,7 +1094,7 @@ Required JSON Structure:
             analysis_data: Parsed analysis from LLM (with _cited_image and _cited_quote in dimensions)
             advisor: Advisor name
             mode: Analysis mode
-            case_studies: Deprecated parameter, no longer used (LLM now cites directly)
+            case_studies: Gap-based reference images for dimensions (shown when LLM doesn't cite)
         """
         
         # Extract data from the expected JSON structure
@@ -1278,9 +1279,36 @@ Required JSON Structure:
             score = dim.get('score', 0)
             comment = dim.get('comment', 'No analysis available.')
             recommendation = dim.get('recommendation', 'No recommendation available.')
+            
+            # Remove IMG_<num> references from recommendation text (keep QUOTE_<num>)
+            recommendation = re.sub(r'\bIMG_\d+\b|\s*\(IMG_\d+\)\s*', '', recommendation).strip()
+            recommendation = re.sub(r'\s+', ' ', recommendation)
+            
             color, rating = get_rating_style(score)
             
-            # Check if LLM cited an image for this dimension
+            # Check for case study for this dimension
+            reference_citation = ""
+            if case_studies:
+                # Build case study lookup
+                dim_key = name.lower().replace(' & ', '_').replace(' ', '_')
+                for cs in case_studies:
+                    cs_dim = cs.get('dimension_name', '').lower().replace(' ', '_')
+                    if cs_dim == dim_key:
+                        best_ref = cs.get('ref_image', {})
+                        best_gap = cs.get('gap', 0)
+                        ref_score_val = cs.get('ref_score', 0)
+                        
+                        from mondrian.html_generator import generate_reference_image_html
+                        reference_citation = generate_reference_image_html(
+                            ref_image=best_ref,
+                            dimension_name=name,
+                            ref_score=ref_score_val,
+                            user_gap=best_gap
+                        )
+                        logger.info(f"[HTML Gen] Added case study image for {name}")
+                        break
+            
+            # Check if LLM cited an image for this dimension (overrides case study)
             cited_image = dim.get('_cited_image')
             image_citation_html = ""
             if cited_image:
@@ -1289,6 +1317,12 @@ Required JSON Structure:
                     ref_image=cited_image,
                     dimension_name=name
                 )
+                # LLM citation overrides case study
+                reference_citation = image_citation_html
+                logger.info(f"[HTML Gen] Added LLM-cited image for {name} (overriding case study)")
+            elif reference_citation:
+                # Use case study if no LLM citation
+                image_citation_html = reference_citation
             
             # Check if LLM cited a quote for this dimension
             cited_quote = dim.get('_cited_quote')

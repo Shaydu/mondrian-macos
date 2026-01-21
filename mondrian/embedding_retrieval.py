@@ -496,7 +496,7 @@ def get_top_book_passages(advisor_id: str, user_image_path: str, max_passages: i
 
 def get_book_passages_for_dimensions(advisor_id, weak_dimensions, max_passages=2, db_path=None):
     """
-    [DEPRECATED - use get_top_book_passages for single-pass]
+    Legacy two-pass function. Use get_top_book_passages() for single-pass instead.
     Retrieve book passages tagged with weak dimensions for prompt augmentation.
     
     Args:
