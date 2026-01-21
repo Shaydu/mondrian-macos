@@ -23,6 +23,25 @@ from typing import Optional, Dict, Any, List
 from datetime import datetime
 import traceback
 
+# Load configuration early
+def load_model_config():
+    """Load model_config.json for dynamic settings"""
+    config_path = Path(__file__).parent.parent / 'model_config.json'
+    try:
+        with open(config_path, 'r') as f:
+            return json.load(f)
+    except Exception as e:
+        logging.warning(f"Failed to load model_config.json: {e}, using defaults")
+        return {
+            "runtime_config": {
+                "token_limits": {"default_max_new_tokens": 5000},
+                "streaming": {"update_interval_seconds": 3}
+            }
+        }
+
+MODEL_CONFIG = load_model_config()
+DEFAULT_MAX_TOKENS = MODEL_CONFIG.get("runtime_config", {}).get("token_limits", {}).get("default_max_new_tokens", 5000)
+
 # Import refactored modules
 from mondrian.html_generator import (
     generate_ios_detailed_html,
@@ -190,7 +209,7 @@ class QwenAdvisor:
         # Store generation config with defaults
         # Beam search with sampling for better GPU utilization and quality
         self.generation_config = {
-            "max_new_tokens": 5000,
+            "max_new_tokens": DEFAULT_MAX_TOKENS,
             "num_beams": 2,
             "do_sample": True,
             "temperature": 0.7,
@@ -443,8 +462,8 @@ class QwenAdvisor:
                 # Get the single best image for this dimension (score >= 8.0, ordered by score DESC)
                 query = f"""
                     SELECT id, image_path, composition_score, lighting_score, 
-                           focus_sharpness_score, color_harmony_score,
-                           subject_isolation_score, depth_perspective_score,
+                           focus_sharpness_score,
+                           depth_perspective_score,
                            visual_balance_score, emotional_impact_score,
                            overall_grade, image_description, image_title, date_taken, embedding
                     FROM dimensional_profiles
@@ -646,7 +665,7 @@ class QwenAdvisor:
             # Get most recent profile for this image
             cursor.execute("""
                 SELECT composition_score, lighting_score, focus_sharpness_score,
-                       color_harmony_score, subject_isolation_score, depth_perspective_score,
+                       depth_perspective_score,
                        visual_balance_score, emotional_impact_score
                 FROM dimensional_profiles
                 WHERE image_path = ?
@@ -1065,8 +1084,8 @@ Provide ONLY the JSON above with your scores. No explanations, no comments."""
                 
                 # Get all dimension scores >= 8.0
                 strong_dims = []
-                for dim in ['composition', 'lighting', 'focus_sharpness', 'color_harmony', 
-                           'subject_isolation', 'depth_perspective', 'visual_balance', 'emotional_impact']:
+                for dim in ['composition', 'lighting', 'focus_sharpness',
+                           'depth_perspective', 'visual_balance', 'emotional_impact']:
                     score = img.get(f"{dim}_score", 0)
                     if score and score >= 8.0:
                         dim_display = dim.replace('_', ' ').title()

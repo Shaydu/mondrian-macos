@@ -27,6 +27,25 @@ from io import BytesIO
 from mondrian.logging_config import setup_service_logging
 logger = setup_service_logging('job_service_v2.3')
 
+# Load configuration for dynamic settings
+def load_model_config():
+    """Load model_config.json for dynamic settings"""
+    config_path = Path(__file__).parent.parent / 'model_config.json'
+    try:
+        with open(config_path, 'r') as f:
+            return json.load(f)
+    except Exception as e:
+        logger.warning(f"Failed to load model_config.json: {e}, using defaults")
+        return {
+            "runtime_config": {
+                "token_limits": {"default_max_new_tokens": 5000},
+                "streaming": {"update_interval_seconds": 3}
+            }
+        }
+
+MODEL_CONFIG = load_model_config()
+STREAMING_UPDATE_INTERVAL = MODEL_CONFIG.get("runtime_config", {}).get("streaming", {}).get("update_interval_seconds", 3)
+
 # AI Advisor service URL
 AI_ADVISOR_URL = "http://127.0.0.1:5100"
 
@@ -1270,7 +1289,7 @@ def stream_job_updates(job_id: str):
         last_thinking = job.get('llm_thinking', '')
         last_step = job.get('current_step', '')
         last_update_time = time.time()
-        update_interval = 3  # Send status updates every 3 seconds for iOS UI
+        update_interval = STREAMING_UPDATE_INTERVAL  # Load from config
 
         # Send initial status update immediately after connected
         initial_update_event = {

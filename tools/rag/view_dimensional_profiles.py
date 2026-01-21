@@ -375,8 +375,6 @@ def generate_html(profiles, advisor_id=None):
                     'composition': 'Composition',
                     'lighting': 'Lighting',
                     'focus_sharpness': 'Focus & Sharpness',
-                    'color_harmony': 'Color Harmony',
-                    'subject_isolation': 'Subject Isolation',
                     'depth_perspective': 'Depth & Perspective',
                     'visual_balance': 'Visual Balance',
                     'emotional_impact': 'Emotional Impact'

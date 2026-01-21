@@ -102,21 +102,20 @@ def get_similar_images_from_db(db_path: str, advisor_id: str, top_k: int = 3) ->
         # For now, just get the best-rated images as context
         query = """
             SELECT id, image_path, composition_score, lighting_score, 
-                   focus_sharpness_score, color_harmony_score, overall_grade,
+                   focus_sharpness_score, overall_grade,
                    image_description, image_title, date_taken,
-                   subject_isolation_score, depth_perspective_score,
+                   depth_perspective_score,
                    visual_balance_score, emotional_impact_score,
                    composition_instructive, lighting_instructive,
-                   focus_sharpness_instructive, color_harmony_instructive,
-                   subject_isolation_instructive, depth_perspective_instructive,
+                   focus_sharpness_instructive,
+                   depth_perspective_instructive,
                    visual_balance_instructive, emotional_impact_instructive
             FROM dimensional_profiles
             WHERE advisor_id = ?
               AND composition_score IS NOT NULL
             ORDER BY (
-                composition_score + lighting_score + focus_sharpness_score + 
-                color_harmony_score
-            ) / 4.0 DESC
+                composition_score + lighting_score + focus_sharpness_score
+            ) / 3.0 DESC
             LIMIT ?
         """
         
@@ -176,23 +175,23 @@ def get_top_reference_images(db_path: str, advisor_id: str, max_total: int = 10)
         # Get top images by average dimensional score (no weak dimension filter)
         query = """
             SELECT id, image_path, composition_score, lighting_score, 
-                   focus_sharpness_score, color_harmony_score,
-                   subject_isolation_score, depth_perspective_score,
+                   focus_sharpness_score,
+                   depth_perspective_score,
                    visual_balance_score, emotional_impact_score,
                    overall_grade, image_description, image_title, date_taken,
                    composition_instructive, lighting_instructive,
-                   focus_sharpness_instructive, color_harmony_instructive,
-                   subject_isolation_instructive, depth_perspective_instructive,
+                   focus_sharpness_instructive,
+                   depth_perspective_instructive,
                    visual_balance_instructive, emotional_impact_instructive
             FROM dimensional_profiles
             WHERE advisor_id = ?
               AND composition_score IS NOT NULL
             ORDER BY (
                 COALESCE(composition_score, 0) + COALESCE(lighting_score, 0) + 
-                COALESCE(focus_sharpness_score, 0) + COALESCE(color_harmony_score, 0) +
-                COALESCE(subject_isolation_score, 0) + COALESCE(depth_perspective_score, 0) +
+                COALESCE(focus_sharpness_score, 0) +
+                COALESCE(depth_perspective_score, 0) +
                 COALESCE(visual_balance_score, 0) + COALESCE(emotional_impact_score, 0)
-            ) / 8.0 DESC
+            ) / 6.0 DESC
             LIMIT ?
         """
         
@@ -270,13 +269,13 @@ def get_images_for_weak_dimensions(db_path: str, advisor_id: str, weak_dimension
         
         query = f"""
             SELECT id, image_path, composition_score, lighting_score, 
-                   focus_sharpness_score, color_harmony_score,
-                   subject_isolation_score, depth_perspective_score,
+                   focus_sharpness_score,
+                   depth_perspective_score,
                    visual_balance_score, emotional_impact_score,
                    overall_grade, image_description, image_title, date_taken,
                    composition_instructive, lighting_instructive,
-                   focus_sharpness_instructive, color_harmony_instructive,
-                   subject_isolation_instructive, depth_perspective_instructive,
+                   focus_sharpness_instructive,
+                   depth_perspective_instructive,
                    visual_balance_instructive, emotional_impact_instructive
             FROM dimensional_profiles
             WHERE advisor_id = ?
@@ -394,13 +393,13 @@ def get_best_image_per_dimension(db_path: str, advisor_id: str) -> Dict[str, Dic
             # Get the single best image for this dimension (score >= 8.0, ordered by score DESC)
             query = f"""
                 SELECT id, image_path, composition_score, lighting_score, 
-                       focus_sharpness_score, color_harmony_score,
-                       subject_isolation_score, depth_perspective_score,
+                       focus_sharpness_score,
+                       depth_perspective_score,
                        visual_balance_score, emotional_impact_score,
                        overall_grade, image_description, image_title, date_taken, embedding,
                        composition_instructive, lighting_instructive,
-                       focus_sharpness_instructive, color_harmony_instructive,
-                       subject_isolation_instructive, depth_perspective_instructive,
+                       focus_sharpness_instructive,
+                       depth_perspective_instructive,
                        visual_balance_instructive, emotional_impact_instructive
                 FROM dimensional_profiles
                 WHERE advisor_id = ?
@@ -606,7 +605,7 @@ def get_user_dimensional_profile(db_path: str, image_path: str) -> Optional[Dict
         # Get most recent profile for this image
         cursor.execute("""
             SELECT composition_score, lighting_score, focus_sharpness_score,
-                   color_harmony_score, subject_isolation_score, depth_perspective_score,
+                   depth_perspective_score,
                    visual_balance_score, emotional_impact_score
             FROM dimensional_profiles
             WHERE image_path = ?
@@ -877,7 +876,7 @@ def augment_prompt_with_rag_context(
         
         # Add dimensional profile with ALL 6 dimensions
         all_dims = ['composition_score', 'lighting_score', 'focus_sharpness_score', 
-                   'color_harmony_score', 'subject_isolation_score', 'depth_perspective_score',
+                   'depth_perspective_score',
                    'visual_balance_score', 'emotional_impact_score']
         
         if any(img.get(k) is not None for k in all_dims):
@@ -888,8 +887,6 @@ def augment_prompt_with_rag_context(
                 'composition_score': 'Composition',
                 'lighting_score': 'Lighting',
                 'focus_sharpness_score': 'Focus & Sharpness',
-                'color_harmony_score': 'Color Harmony',
-                'subject_isolation_score': 'Subject Isolation',
                 'depth_perspective_score': 'Depth & Perspective',
                 'visual_balance_score': 'Visual Balance',
                 'emotional_impact_score': 'Emotional Impact'
@@ -920,8 +917,6 @@ def augment_prompt_with_rag_context(
             'composition_score': 'Composition',
             'lighting_score': 'Lighting', 
             'focus_sharpness_score': 'Focus & Sharpness',
-            'color_harmony_score': 'Color Harmony',
-            'subject_isolation_score': 'Subject Isolation',
             'depth_perspective_score': 'Depth & Perspective',
             'visual_balance_score': 'Visual Balance',
             'emotional_impact_score': 'Emotional Impact'

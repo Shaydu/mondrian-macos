@@ -206,7 +206,7 @@ def get_similar_images_by_visual_embedding(
     cursor.execute(f"""
         SELECT id, image_path, image_title, date_taken, image_description,
                composition_score, lighting_score, focus_sharpness_score,
-               color_harmony_score, subject_isolation_score, depth_perspective_score,
+               depth_perspective_score,
                visual_balance_score, emotional_impact_score, overall_grade,
                embedding
         FROM dimensional_profiles
@@ -296,7 +296,7 @@ def get_similar_images_by_text_embedding(
     cursor.execute("""
         SELECT id, image_path, image_title, date_taken, image_description,
                composition_score, lighting_score, focus_sharpness_score,
-               color_harmony_score, subject_isolation_score, depth_perspective_score,
+               depth_perspective_score,
                visual_balance_score, emotional_impact_score, overall_grade,
                text_embedding
         FROM dimensional_profiles
@@ -378,9 +378,6 @@ def get_images_hybrid_retrieval(
         'lighting': 'lighting_score',
         'focus': 'focus_sharpness_score',
         'focus_sharpness': 'focus_sharpness_score',
-        'color': 'color_harmony_score',
-        'color_harmony': 'color_harmony_score',
-        'subject_isolation': 'subject_isolation_score',
         'depth': 'depth_perspective_score',
         'depth_perspective': 'depth_perspective_score',
         'visual_balance': 'visual_balance_score',

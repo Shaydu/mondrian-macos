@@ -18,6 +18,7 @@ import sys
 import time
 import logging
 import threading
+import json
 from abc import ABC, abstractmethod
 from typing import Optional, Dict, Any, List, Generator
 from pathlib import Path
@@ -25,6 +26,24 @@ from pathlib import Path
 import torch
 
 logger = logging.getLogger(__name__)
+
+# Load configuration for dynamic settings
+def load_model_config():
+    """Load model_config.json for dynamic settings"""
+    config_path = Path(__file__).parent.parent / 'model_config.json'
+    try:
+        with open(config_path, 'r') as f:
+            return json.load(f)
+    except Exception as e:
+        logger.warning(f"Failed to load model_config.json: {e}, using defaults")
+        return {
+            "runtime_config": {
+                "token_limits": {"inference_backend_default": 2500}
+            }
+        }
+
+MODEL_CONFIG = load_model_config()
+DEFAULT_BACKEND_MAX_TOKENS = MODEL_CONFIG.get("runtime_config", {}).get("token_limits", {}).get("inference_backend_default", 2500)
 
 # ============================================================================
 # Backend Registry
@@ -79,7 +98,7 @@ class InferenceBackend(ABC):
         pass
     
     @abstractmethod
-    def generate(self, inputs: Dict[str, Any], max_new_tokens: int = 2500,
+    def generate(self, inputs: Dict[str, Any], max_new_tokens: int = None,
                  **generation_kwargs) -> str:
         """Generate response from inputs"""
         pass
@@ -232,9 +251,13 @@ class BitsAndBytesBackend(InferenceBackend):
             logger.error(f"[BNB Backend] Failed to load LoRA adapter: {e}")
             raise
     
-    def generate(self, inputs: Dict[str, Any], max_new_tokens: int = 2500,
+    def generate(self, inputs: Dict[str, Any], max_new_tokens: int = None,
                  **generation_kwargs) -> str:
         """Generate response using BitsAndBytes quantized model"""
+        # Use config default if not specified
+        if max_new_tokens is None:
+            max_new_tokens = DEFAULT_BACKEND_MAX_TOKENS
+        
         start_time = time.time()
         
         # Move inputs to CUDA
@@ -358,9 +381,13 @@ class VLLMBackend(InferenceBackend):
         
         logger.info("[vLLM Backend] Model loaded successfully")
     
-    def generate(self, inputs: Dict[str, Any], max_new_tokens: int = 2500,
+    def generate(self, inputs: Dict[str, Any], max_new_tokens: int = None,
                  **generation_kwargs) -> str:
         """Generate response using vLLM"""
+        # Use config default if not specified
+        if max_new_tokens is None:
+            max_new_tokens = DEFAULT_BACKEND_MAX_TOKENS
+        
         from vllm import SamplingParams
         
         start_time = time.time()
@@ -519,9 +546,13 @@ class AWQBackend(InferenceBackend):
             logger.error(f"[AWQ Backend] LoRA loading failed: {e}")
             logger.warning("[AWQ Backend] Continuing without LoRA adapter")
     
-    def generate(self, inputs: Dict[str, Any], max_new_tokens: int = 2500,
+    def generate(self, inputs: Dict[str, Any], max_new_tokens: int = None,
                  **generation_kwargs) -> str:
         """Generate response using AWQ-quantized model"""
+        # Use config default if not specified
+        if max_new_tokens is None:
+            max_new_tokens = DEFAULT_BACKEND_MAX_TOKENS
+        
         start_time = time.time()
         
         # Move inputs to CUDA
