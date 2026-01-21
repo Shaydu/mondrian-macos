@@ -13,6 +13,37 @@ from typing import Dict, Any, List, Optional
 logger = logging.getLogger(__name__)
 
 
+def strip_citation_markers(text: str) -> str:
+    """Remove citation markers like IMG_1, QUOTE_2, See IMG_3, (IMG_4) from text.
+    
+    Args:
+        text: Text potentially containing citation markers
+        
+    Returns:
+        Cleaned text with citation markers removed
+    """
+    if not text:
+        return text
+    
+    # Remove patterns: IMG_1, QUOTE_2, See IMG_3, (IMG_4), (See IMG_5), etc.
+    patterns = [
+        r'\b(?:See\s+)?(?:IMG|QUOTE)_\d+\b',  # Standalone or "See IMG_X"
+        r'\((?:See\s+)?(?:IMG|QUOTE)_\d+\)',  # Parenthetical citations
+        r'\[(?:IMG|QUOTE)_\d+\]',              # Bracketed citations
+    ]
+    
+    cleaned = text
+    for pattern in patterns:
+        cleaned = re.sub(pattern, '', cleaned, flags=re.IGNORECASE)
+    
+    # Clean up extra whitespace left by removal
+    cleaned = re.sub(r'\s{2,}', ' ', cleaned)
+    cleaned = re.sub(r'\s+([.,;:!?)])', r'\1', cleaned)  # Remove space before punctuation
+    cleaned = cleaned.strip()
+    
+    return cleaned
+
+
 def get_rating_style(score: int) -> tuple:
     """Return color and rating text based on score"""
     if score >= 8:
@@ -117,12 +148,16 @@ def normalize_dimension_key(name: str) -> str:
     
     if 'focus' in dim_key:
         return 'focus_sharpness'
+    elif 'color' in dim_key:
+        return 'color_harmony'
     elif 'depth' in dim_key:
         return 'depth_perspective'
     elif 'balance' in dim_key:
         return 'visual_balance'
     elif 'emotion' in dim_key or 'impact' in dim_key:
         return 'emotional_impact'
+    elif 'isolation' in dim_key:
+        return 'subject_isolation'
     
     return dim_key
 
@@ -187,9 +222,6 @@ def generate_ios_detailed_html(
             border-radius: 12px;
             margin-bottom: 20px;
             text-align: left;
-            width: 99%;
-            margin-left: auto;
-            margin-right: auto;
         }}
         .analysis h2 {{
             color: #ffffff;
@@ -452,13 +484,10 @@ def generate_summary_html(analysis_data: Dict[str, Any], disclaimer_text: str = 
             padding: 16px;
             background: #000000;
             color: #ffffff;
-            width: 99%;
-            margin-left: auto;
-            margin-right: auto;
         }
         .summary-header { margin-bottom: 8px; padding-bottom: 16px; }
         .summary-header h1 { font-size: 24px; font-weight: 600; margin-bottom: 8px; }
-        .recommendations-list { display: flex; flex-direction: column; gap: 12px; width: 99%; margin-left: auto; margin-right: auto; }
+        .recommendations-list { display: flex; flex-direction: column; gap: 12px; }
         .recommendation-item {
             display: flex;
             gap: 12px;
@@ -501,17 +530,13 @@ def generate_summary_html(analysis_data: Dict[str, Any], disclaimer_text: str = 
         name = dim.get('name', 'Unknown')
         score = dim.get('score', 0)
         recommendation = dim.get('recommendation', 'No recommendation available.')
-        
-        # Remove IMG_<num> references from recommendation text
-        import re
-        recommendation_clean = re.sub(r'\bIMG_\d+\b|\s*\(IMG_\d+\)\s*', '', recommendation).strip()
-        # Clean up multiple spaces
-        recommendation_clean = re.sub(r'\s+', ' ', recommendation_clean)
+        # Strip citation markers from recommendation text
+        recommendation = strip_citation_markers(recommendation)
         
         html += f'''  <div class="recommendation-item">
     <div class="rec-number">{i}</div>
     <div class="rec-content">
-      <p class="rec-text"><strong>{name}</strong> ({score}/10): {recommendation_clean}</p>
+      <p class="rec-text"><strong>{name}</strong> ({score}/10): {recommendation}</p>
     </div>
   </div>
 '''

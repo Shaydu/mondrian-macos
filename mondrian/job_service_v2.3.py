@@ -1024,6 +1024,11 @@ def get_job(job_id: str):
     # Always exclude large HTML fields to optimize polling performance
     # Clients must use /summary/{job_id} or /analysis/{job_id} to get HTML
     job_response = {k: v for k, v in job.items() if k not in ('analysis_html', 'summary_html')}
+    
+    # Add flags to indicate whether HTML content is available for the client
+    job_response['has_summary'] = bool(job.get('summary_html'))
+    job_response['has_analysis'] = bool(job.get('analysis_html'))
+    
     return jsonify(job_response), 200
 
 
@@ -1333,14 +1338,14 @@ def stream_job_updates(job_id: str):
             
             # Check if job is complete
             if current_status in ['completed', 'failed', 'done']:
-                # Send analysis_complete event
+                # Send analysis_complete event (no HTML - client fetches via /summary endpoint)
                 if current_status == 'completed':
                     analysis_complete_event = {
                         "type": "analysis_complete",
-                        "job_id": job_id,
-                        "analysis_html": job_data.get('analysis_html', '')
+                        "job_id": job_id
                     }
                     yield f"event: analysis_complete\ndata: {json.dumps(analysis_complete_event)}\n\n"
+                    logger.info(f"✅ Sent analysis_complete event for job {job_id} - client should fetch /summary/{job_id}")
                 
                 # Send final done event
                 done_event = {

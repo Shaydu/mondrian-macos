@@ -62,7 +62,7 @@ RUN mkdir -p mondrian/advisor_images
 COPY mondrian.db* ./
 
 # Copy only the trained LoRA adapter needed for inference (keep image lean)
-COPY adapters/ansel_qwen3_4b_full_9dim/ ./adapters/ansel_qwen3_4b_full_9dim/
+COPY adapters/ansel_qwen3_4b_v2/ ./adapters/ansel_qwen3_4b_v2/
 
 # Create necessary directories
 RUN mkdir -p logs data models uploads temp
