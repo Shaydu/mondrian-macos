@@ -761,15 +761,29 @@ class QwenAdvisor:
         except Exception as e:
             raise RuntimeError(f"Embedding retrieval failed: {e}")
     
-    def _create_prompt(self, advisor: str, mode: str) -> str:
-        """Create analysis prompt by loading from database"""
-        
+    def _create_prompt(self, advisor: str, mode: str, prompt_key: Optional[str] = None) -> str:
+        """Create analysis prompt by loading from database
+
+        Args:
+            advisor: Advisor ID to use
+            mode: Analysis mode (lora, rag_lora, etc.)
+            prompt_key: Optional config key for system prompt (default: from model_config.json)
+        """
+
+        # Determine which system prompt to use
+        if prompt_key is None:
+            # Use default from model_config.json
+            prompt_key = MODEL_CONFIG.get("defaults", {}).get("system_prompt_key", "system_prompt")
+
         # Load system prompt from config table
-        system_prompt = get_config(DB_PATH, "system_prompt")
+        system_prompt = get_config(DB_PATH, prompt_key)
         if not system_prompt:
-            logger.warning("No system_prompt in database, using default")
-            system_prompt = self._get_default_system_prompt()
-        
+            logger.warning(f"No '{prompt_key}' in database, trying fallback 'system_prompt'")
+            system_prompt = get_config(DB_PATH, "system_prompt")
+            if not system_prompt:
+                logger.warning("No system_prompt in database, using default")
+                system_prompt = self._get_default_system_prompt()
+
         # Load advisor-specific prompt from advisors table
         advisor_data = get_advisor_from_db(DB_PATH, advisor)
         advisor_prompt = ""
@@ -778,14 +792,14 @@ class QwenAdvisor:
             logger.info(f"Loaded advisor prompt for '{advisor}' ({len(advisor_prompt)} chars)")
         else:
             logger.warning(f"No prompt found for advisor '{advisor}'")
-        
+
         # Combine prompts: system prompt + advisor prompt
         if advisor_prompt:
             full_prompt = f"{system_prompt}\n\n{advisor_prompt}"
         else:
             full_prompt = system_prompt
-        
-        logger.info(f"Created prompt for advisor='{advisor}', mode='{mode}' ({len(full_prompt)} chars)")
+
+        logger.info(f"Created prompt using '{prompt_key}' for advisor='{advisor}', mode='{mode}' ({len(full_prompt)} chars)")
         return full_prompt
     
     def _create_scoring_prompt(self) -> str:
@@ -927,17 +941,18 @@ Provide ONLY the JSON above with your scores. No explanations, no comments."""
         return response
     
     def analyze_image(self, image_path: str, advisor: str = "ansel",
-                     mode: str = "baseline", job_id: str = "unknown") -> Dict[str, Any]:
+                     mode: str = "baseline", job_id: str = "unknown", enable_rag: bool = True) -> Dict[str, Any]:
         """
         Single-pass image analysis with optional RAG.
         Retrieves ALL top references and passages, lets LLM decide which to cite.
-        
+
         Args:
             image_path: Path to image file
             advisor: Photography advisor persona
             mode: Analysis mode (rag modes get full RAG context)
             job_id: Job identifier for logging correlation
-        
+            enable_rag: Whether to enable RAG retrieval and citations
+
         Returns:
             Dictionary with analysis results
         """
@@ -945,19 +960,19 @@ Provide ONLY the JSON above with your scores. No explanations, no comments."""
             # Load and validate image
             image = Image.open(image_path).convert('RGB')
             original_size = image.size
-            
+
             logger.info(f"[{job_id}] [Single-Pass] Loaded image: {image_path} ({image.size})")
-            
+
             # =================================================================
             # RETRIEVAL: Get top references and book passages (no weak dim filter)
             # =================================================================
             logger.info(f"[{job_id}] [Single-Pass] === RETRIEVAL: References + Passages ===")
-            
+
             # Get top reference images across ALL dimensions (if enabled)
             reference_images = []
             book_passages = []
-            
-            if ENABLE_CITATIONS:
+
+            if ENABLE_CITATIONS and enable_rag:
                 try:
                     reference_images = get_top_reference_images(
                         DB_PATH, advisor, max_total=10
@@ -1334,7 +1349,9 @@ Required JSON Structure:
   <p style="color: #666; margin-bottom: 20px;">Each dimension is analyzed with specific feedback and actionable recommendations for improvement.</p>
 '''
         
-        # Add dimension cards
+        # Add dimension cards with quote deduplication
+        rendered_quotes = set()  # Track quotes we've already shown (by passage_text)
+        
         for dim in dimensions:
             name = dim.get('name', 'Unknown')
             score = dim.get('score', 0)
@@ -1359,23 +1376,31 @@ Required JSON Structure:
             cited_quote = dim.get('_cited_quote')
             quote_citation_html = ""
             if cited_quote:
-                book_title = cited_quote.get('book_title', 'Unknown Book')
                 passage_text = cited_quote.get('passage_text', cited_quote.get('text', ''))
-                quote_dims = cited_quote.get('dimensions', [])
                 
-                # Truncate to 75 words
-                words = passage_text.split()
-                truncated_text = ' '.join(words[:75])
-                if len(words) > 75:
-                    truncated_text += "..."
-                
-                quote_citation_html = '<div class="advisor-quote-box">'
-                quote_citation_html += '<div class="advisor-quote-title">Advisor Insight</div>'
-                quote_citation_html += f'<div class="advisor-quote-text">"{truncated_text}"</div>'
-                quote_citation_html += f'<div class="advisor-quote-source"><strong>From:</strong> {book_title}</div>'
-                quote_citation_html += '</div>'
-                
-                logger.info(f"[HTML Gen] Added LLM-cited quote for {name} from '{book_title}'")
+                # CRITICAL: Check if we've already rendered this exact quote
+                if passage_text in rendered_quotes:
+                    logger.warning(f"[HTML Gen] ⚠️  Skipping duplicate quote in {name} - already rendered")
+                else:
+                    # Mark this quote as rendered
+                    rendered_quotes.add(passage_text)
+                    
+                    book_title = cited_quote.get('book_title', 'Unknown Book')
+                    quote_dims = cited_quote.get('dimensions', [])
+                    
+                    # Truncate to 75 words
+                    words = passage_text.split()
+                    truncated_text = ' '.join(words[:75])
+                    if len(words) > 75:
+                        truncated_text += "..."
+                    
+                    quote_citation_html = '<div class="advisor-quote-box">'
+                    quote_citation_html += '<div class="advisor-quote-title">Advisor Insight</div>'
+                    quote_citation_html += f'<div class="advisor-quote-text">"{truncated_text}"</div>'
+                    quote_citation_html += f'<div class="advisor-quote-source"><strong>From:</strong> {book_title}</div>'
+                    quote_citation_html += '</div>'
+                    
+                    logger.info(f"[HTML Gen] Added LLM-cited quote for {name} from '{book_title}'")
             
             html += f'''
   <div class="feedback-card">
@@ -1890,35 +1915,33 @@ def analyze():
     """Analyze an image"""
     if not advisor:
         return jsonify({"error": "Service not initialized"}), 503
-    
+
     try:
         # Get image from request
         if 'image' not in request.files:
             return jsonify({"error": "No image provided"}), 400
-        
+
         image_file = request.files['image']
-        
+
         # Save temporarily
         temp_path = f"/tmp/{image_file.filename}"
         image_file.save(temp_path)
-        
+
         # Get parameters
         advisor_name = request.form.get('advisor', 'ansel')
         mode_str = request.form.get('mode', 'baseline')
         job_id = request.form.get('job_id', 'unknown')
-        
-        # Use single-pass RAG analysis for RAG modes
-        use_rag = mode_str in ('rag', 'rag_lora', 'lora+rag', 'lora_rag')
-        
+        enable_rag = request.form.get('enable_rag', 'true').lower() == 'true'
+
         # Run analysis (always use single-pass)
-        logger.info(f"[{job_id}] Analyzing image with advisor={advisor_name}, mode={mode_str}")
-        result = advisor.analyze_image(temp_path, advisor=advisor_name, mode=mode_str)
-        
+        logger.info(f"[{job_id}] Analyzing image with advisor={advisor_name}, mode={mode_str}, rag={enable_rag}")
+        result = advisor.analyze_image(temp_path, advisor=advisor_name, mode=mode_str, enable_rag=enable_rag)
+
         # Clean up
         Path(temp_path).unlink()
-        
+
         return jsonify(result), 200
-        
+
     except Exception as e:
         logger.error(f"Analysis error: {e}")
         logger.error(traceback.format_exc())

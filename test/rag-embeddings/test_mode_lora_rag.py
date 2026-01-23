@@ -104,14 +104,14 @@ def check_prerequisites():
 def run_lora_rag_test(verbose=False):
     """Run single LoRA+RAG analysis."""
     print_header("Running LoRA+RAG Analysis Test")
-    
+
     print_info(f"Mode: {MODE}")
     print_info(f"Advisor: {ADVISOR}")
     print_info(f"Timeout: {TIMEOUT}s")
     print_info(f"Sending analysis request with LoRA adapter and RAG enabled...")
-    
+
     start_time = time.time()
-    
+
     try:
         with open(TEST_IMAGE_PATH, 'rb') as f:
             files = {'image': f}
@@ -121,23 +121,23 @@ def run_lora_rag_test(verbose=False):
                 'enable_rag': 'true',
                 'response_format': 'json'
             }
-            
+
             response = requests.post(
                 f"{AI_SERVICE_URL}/analyze",
                 files=files,
                 data=data,
                 timeout=TIMEOUT
             )
-        
+
         duration = time.time() - start_time
-        
+
         # Check response status
         if response.status_code != 200:
             print_fail(f"HTTP {response.status_code}")
             if verbose:
                 print(f"Response: {response.text[:500]}")
             return False
-        
+
         # Parse response
         try:
             result = response.json()
@@ -146,56 +146,84 @@ def run_lora_rag_test(verbose=False):
             if verbose:
                 print(f"Response: {response.text[:500]}")
             return False
-        
+
         # Validate response has analysis results
         # Be flexible about field names since API may vary
         required_fields = ['analysis', 'summary', 'advisor']
         missing = [f for f in required_fields if f not in result]
-        
+
         if missing:
             print_fail(f"Missing required fields: {missing}")
             if verbose:
                 print(f"Response keys: {list(result.keys())}")
             return False
-        
+
         # Extract and display results
         grade = result.get('overall_grade') or result.get('overall_score', 'N/A')
         dims_count = len(result.get('dimensional_analysis', {}))
         mode_used = result.get('mode_used', result.get('mode', MODE))
         fine_tuned = result.get('fine_tuned')
-        
+
         # Check for RAG-specific fields
         similar_images = result.get('similar_images')
         rag_context = result.get('rag_context')
-        
+
+        # Parse analysis JSON to check dimensions
+        analysis_json = result.get('analysis_json', '{}')
+        try:
+            analysis_data = json.loads(analysis_json) if isinstance(analysis_json, str) else analysis_json
+            dimensions = analysis_data.get('dimensions', [])
+            num_dimensions = len(dimensions)
+            dimension_names = [d.get('name', 'Unknown') for d in dimensions]
+
+            # Check for citations in dimensions
+            cited_images = sum(1 for d in dimensions if d.get('_cited_image'))
+            cited_quotes = sum(1 for d in dimensions if d.get('_cited_quote'))
+        except:
+            num_dimensions = 0
+            dimension_names = []
+            cited_images = 0
+            cited_quotes = 0
+
         print_success(f"Analysis completed in {duration:.2f}s")
         print_info(f"Mode used: {mode_used}")
         print_info(f"Fine-tuned model: {fine_tuned}")
         print_info(f"Overall grade: {grade}")
         print_info(f"Dimensional analysis: {dims_count} dimensions")
-        
+        print_info(f"✓ Detailed dimensions: {num_dimensions}/6")
+
+        if num_dimensions != 6:
+            print_fail(f"Expected 6 dimensions, got {num_dimensions}")
+            if verbose:
+                print(f"Dimension names: {dimension_names}")
+            return False
+
+        print_info(f"  Dimensions: {', '.join(dimension_names)}")
+
         if similar_images:
             print_info(f"Similar images found: {len(similar_images)}")
-        
+
         if rag_context:
             print_info(f"RAG context generated: {len(str(rag_context))} chars")
-        
+
+        print_info(f"✓ Citations in detailed view: {cited_images} images, {cited_quotes} quotes")
+
         if verbose:
             print("\nDetailed Results:")
-            print(json.dumps(result, indent=2)[:1000])
-        
+            print(json.dumps(result, indent=2)[:2000])
+
         return True
-    
+
     except requests.exceptions.Timeout:
         print_fail(f"Request timeout after {TIMEOUT}s")
         print_info("Service may have run out of memory or is stuck")
         return False
-    
+
     except requests.exceptions.ConnectionError as e:
         print_fail(f"Connection error: {e}")
         print_info("Service may have crashed during inference")
         return False
-    
+
     except Exception as e:
         print_fail(f"Unexpected error: {e}")
         if verbose:

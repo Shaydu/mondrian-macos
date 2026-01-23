@@ -17,8 +17,8 @@
     "qwen3-4b-instruct": {
       "name": "Qwen3-VL-4B-Instruct",
       "model_id": "Qwen/Qwen3-VL-4B-Instruct",
-      "description": "9-dimension analysis with Subject Matter scoring. Trained on 30 images including negative examples.",
-      "adapter": "./adapters/ansel_qwen3_4b_v2/epoch_20",
+      "description": "Trained on 223 images including CADB dataset and Ansel Adams examples. 15 epochs.",
+      "adapter": "./training/training/lora_adapters/ansel_qwen3_4b_instruct/epoch_15",
       "speed": "fast",
       "quality": "good",
       "reasoning": false,
@@ -60,7 +60,20 @@
     "mode": "lora",
     "generation_profile": "optimized",
     "enable_rag": true,
-    "description": "Default: Qwen3-VL-4B-Instruct with LoRA adapter, 4-beam search with 2500 tokens, RAG enabled"
+    "system_prompt_key": "system_prompt",
+    "description": "Default: Qwen3-VL-4B-Instruct with LoRA adapter, 4-beam search with 2500 tokens, RAG enabled, 6-dimension prompt"
+  },
+  "prompts": {
+    "system_prompt": {
+      "dimensions": 6,
+      "target_tokens": "4000-4500",
+      "description": "Full 6-dimension analysis: Composition, Lighting, Focus & Sharpness, Depth & Perspective, Visual Balance, Emotional Impact"
+    },
+    "system_prompt_3": {
+      "dimensions": 3,
+      "target_tokens": "2000-2500",
+      "description": "Fast 3-dimension analysis: Composition, Lighting, Emotional Impact"
+    }
   },
   "rag": {
     "max_reference_images": 3,
@@ -72,7 +85,7 @@
       "max_new_tokens": 3500,
       "num_beams": 2,
       "do_sample": false,
-      "repetition_penalty": 1.0,
+      "repetition_penalty": 1.15,
       "early_stopping": true,
       "description": "2-beam search with 3500 token limit for detailed, actionable feedback"
     },
@@ -80,14 +93,14 @@
       "max_new_tokens": 1500,
       "num_beams": 1,
       "do_sample": false,
-      "repetition_penalty": 1.0,
+      "repetition_penalty": 1.15,
       "description": "Greedy decoding, fast inference (~2-3x faster than beam search)"
     },
     "beam_search": {
       "max_new_tokens": 3500,
       "num_beams": 4,
       "do_sample": false,
-      "repetition_penalty": 1.0,
+      "repetition_penalty": 1.15,
       "early_stopping": true,
       "description": "4-beam search for highest quality detailed feedback"
     },
@@ -98,7 +111,7 @@
       "temperature": 0.7,
       "top_p": 0.9,
       "top_k": 50,
-      "repetition_penalty": 1.0,
+      "repetition_penalty": 1.15,
       "description": "Nucleus sampling for more varied responses"
     },
     "ultra_fast": {

@@ -1,0 +1,117 @@
+╔════════════════════════════════════════════════════════════════════════════╗
+║                    TRAINING DATA QUICK START GUIDE                         ║
+╚════════════════════════════════════════════════════════════════════════════╝
+
+YOUR CURRENT STATE:
+───────────────────
+✓ 24 reference images with 9-dimensional scores
+✓ 16 training examples (proper format)
+✓ Need: 500-1000 more examples for effective fine-tuning
+
+FASTEST PATH: Add CADB Dataset (1,000 images)
+──────────────────────────────────────────────
+
+Step 1: Download CADB (10 minutes)
+   $ python scripts/training/download_cadb_dataset.py
+   → Downloads 1,000+ images with composition scores
+   → Creates training/cadb/ directory
+
+Step 2: Start AI Advisor Service (in terminal 1)
+   $ python mondrian/job_service_v2.3.py --port 5005
+
+Step 3: Batch Analyze Images (in terminal 2)
+   $ python scripts/training/analyze_cadb_batch.py
+   → Analyzes all 1,000 images
+   → Takes ~4 hours on GPU
+   → Creates augmented_training_data_cadb.jsonl
+
+Step 4: Merge with Existing Data
+   $ python scripts/training/merge_training_datasets.py
+
+RESULT: 16 + 1,000 = 1,016 training examples ✓
+
+═════════════════════════════════════════════════════════════════════════════
+
+ALTERNATIVE OPTIONS:
+─────────────────────
+
+Option A: Add High-Quality Wikimedia Images (50-100 new images)
+   $ python scripts/training/download_wikimedia_photographers.py
+   → Downloads more Adams, Lange, Cartier-Bresson
+   → Takes 1-2 hours to analyze
+   → Result: 16 + 100 = 116 examples (small but high quality)
+
+Option B: Add Both CADB + Wikimedia (Best)
+   Step 1: Download CADB (1,000 images)
+   Step 2: Download Wikimedia (100 images)
+   Step 3: Batch analyze both
+   Result: 16 + 1,000 + 100 = 1,116 examples (scale + quality)
+
+Option C: Download from Hugging Face
+   - AVA Dataset: 255,000+ images (but generic aesthetics)
+   - Photo-Critique: 5,000 images (critique text, not scores)
+   → Would need to parse or analyze all of them
+   → Most complex, least recommended for your use case
+
+═════════════════════════════════════════════════════════════════════════════
+
+RECOMMENDED APPROACH:
+─────────────────────
+
+1. Download CADB (now)
+   python scripts/training/download_cadb_dataset.py
+
+2. Review what you got
+   ls -lh training/cadb/images/ | head -10
+
+3. Start AI advisor & batch analyze
+   # Terminal 1
+   python mondrian/job_service_v2.3.py --port 5005
+
+   # Terminal 2
+   python scripts/training/analyze_cadb_batch.py
+
+4. Check results while analyzing
+   wc -l training/cadb/augmented_training_data_cadb.jsonl
+
+5. Fine-tune on combined dataset
+   python train_lora_qwen3vl.py \
+     --train-jsonl <merged_training_data>
+
+═════════════════════════════════════════════════════════════════════════════
+
+KEY ADVANTAGE OF CADB:
+──────────────────────
+✓ 1,000 images = 1,000 examples (huge boost from 16)
+✓ Composition scores can validate your model
+✓ All dimensions analyzed by same AI advisor
+✓ Faster than downloading from Unsplash/Pexels
+
+═════════════════════════════════════════════════════════════════════════════
+
+ESTIMATED TIMELINE:
+───────────────────
+Download CADB:        10 min
+Analyze (1,000 imgs): 4 hours (GPU only)
+Merge datasets:       5 min
+Fine-tune:           4-6 hours
+─────────────────────────────
+Total:              ~8-10 hours (mostly GPU time)
+
+═════════════════════════════════════════════════════════════════════════════
+
+FILES CREATED FOR YOU:
+──────────────────────
+✓ scripts/training/download_cadb_dataset.py
+✓ scripts/training/download_wikimedia_photographers.py
+✓ TRAINING_DATA_SOURCES.md (full guide)
+✓ TRAINING_DATA_QUICK_START.txt (this file)
+
+═════════════════════════════════════════════════════════════════════════════
+
+READY? Start with:
+   python scripts/training/download_cadb_dataset.py
+
+Any questions? Read: TRAINING_DATA_SOURCES.md
+
+═════════════════════════════════════════════════════════════════════════════
