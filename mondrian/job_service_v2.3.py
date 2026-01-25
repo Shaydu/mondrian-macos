@@ -437,28 +437,26 @@ def get_advisor_detail(advisor_id):
             artworks_list.append({
                 "title": "Representative Work",
                 "year": "",
-                "url": f"{base_url}/advisor_artwork/{advisor_id}/1"
-            })
-        
-        # Build advisor response
-        base_url = get_base_url()
-        
-        # Build "Learn More" section with references
-        learn_more = {}
-        if row["wikipedia_url"]:
-            learn_more["wikipedia"] = {
+                "url": f"{base_url}/advisor_artwork/{advisor_relative URLs (iOS client will prepend base URL)
+                for idx, image_file in enumerate(images, 1):
+                    # Determine MIME type
+                    mime_type = 'image/jpeg' if image_file.lower().endswith(('.jpg', '.jpeg')) else 'image/png'
+                    
+                    artworks_list.append({
+                        "title": image_file.replace('.jpg', '').replace('.png', '').replace('_', ' '),
+                        "year": "",
+                        "url": f"
                 "title": "Wikipedia",
                 "url": row["wikipedia_url"],
                 "description": f"Learn more about {row['name']} on Wikipedia"
             }
         if row["commons_url"]:
             learn_more["gallery"] = {
-                "title": "Gallery",
-                "url": row["commons_url"],
-                "description": f"View {row['name']}'s work"
-            }
-        
-        advisor = {
+            logger.warning(f"[ADVISOR_DETAIL] No artwork found for {advisor_id}, using fallback")
+            artworks_list.append({
+                "title": "Representative Work",
+                "year": "",
+                "url": f"
             "id": row["id"],
             "name": row["name"],
             "specialty": row["category"] if row["category"] else "Photography",
@@ -628,25 +626,25 @@ def get_advisor_artwork_lightbox_info(advisor_id, artwork_id):
                                 "url": f"{base_url}/advisor_artwork/{advisor_id}/{idx + 1}",
                                 "filename": img
                             } for idx, img in enumerate(images)
-                        ]
-                    }
-                    
-                    logger.info(f"Serving lightbox info for artwork {artwork_id} of {len(images)}")
-                    return jsonify(lightbox_info), 200
-        
-        # If no images found, return 404
-        logger.warning(f"No artwork {artwork_id} found for advisor {advisor_id} (lightbox)")
-        return jsonify({"error": f"No artwork found for advisor {advisor_id}"}), 404
-    
-    except Exception as e:
-        logger.error(f"Error serving advisor artwork lightbox info: {e}")
-        return jsonify({"error": str(e)}), 500
-
-
-@app.route('/api/reference-image/<filename>', methods=['GET'])
-def get_reference_image(filename):
-    """Serve reference images for RAG analysis results. Supports ?size=full for lightbox view."""
-    try:
+                        ]/advisor_artwork/{advisor_id}/{artwork_id}",
+                            "filename": current_image
+                        },
+                        "navigation": {
+                            "has_previous": current_idx > 0,
+                            "has_next": current_idx < len(images) - 1,
+                            "previous_id": artwork_id - 1 if current_idx > 0 else None,
+                            "next_id": artwork_id + 1 if current_idx < len(images) - 1 else None
+                        },
+                        "progress": {
+                            "current": artwork_id,
+                            "total": len(images),
+                            "percent": int((artwork_id / len(images)) * 100)
+                        },
+                        "all_items": [
+                            {
+                                "id": idx + 1,
+                                "title": img.replace('.jpg', '').replace('.png', '').replace('_', ' '),
+                                "url": f"
         # Log the request for debugging
         remote_addr = request.environ.get('REMOTE_ADDR', 'unknown')
         logger.info(f"[DEBUG] Reference image request: {filename} from {remote_addr}")
