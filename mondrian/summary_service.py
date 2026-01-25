@@ -113,6 +113,7 @@ def health():
     return jsonify({
         'service': 'summary_service',
         'status': 'UP',
+        'version': '14.5.9',
         'timestamp': datetime.utcnow().isoformat()
     }), 200
 

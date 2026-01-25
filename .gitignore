@@ -26,6 +26,18 @@ mondrian/mondrian.db
 *.db-shm
 *.db-wal
 
+# Database backups
+backups/
+mondrian.db.backup
+mondrian.db.backup_20260121_092313
+mondrian.db.backup_20260124_115850
+mondrian.db.backup_20260124_123821
+mondrian.db.backup_20260124_133916
+mondrian.db.backup_20260124_134759
+mondrian.db.backup_prerepair
+mondrian.db.preexport_20260124_134636
+mondrian.db.repaired
+
 # Documentation & Analysis Output
 analysis_output/
 analysis/
@@ -39,6 +51,10 @@ adapters/
 uploads/
 thumbnails/
 test_results/
+
+# Cache and datasets
+.embedding_cache/
+Image-Composition-Assessment-Dataset-CADB/
 
 # Massive training data and images
 training/ansel_ocr/the_camera_vol1/*.png

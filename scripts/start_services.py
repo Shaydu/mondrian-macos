@@ -402,12 +402,15 @@ def check_service_health(service_name, config):
     
     try:
         response = requests.get(health_url, timeout=timeout)
-        if response.status_code == 200:
+        if response.status_code in [200, 202]:
             data = response.json()
+            status = data.get("status", "UP")
+            # 202 means loading, which is acceptable
+            healthy = status in ["UP", "loading"]
             return {
-                "status": data.get("status", "UP"),
+                "status": status,
                 "version": data.get("version", "unknown"),
-                "healthy": data.get("status") == "UP",
+                "healthy": healthy,
                 "raw_data": data
             }
         else:

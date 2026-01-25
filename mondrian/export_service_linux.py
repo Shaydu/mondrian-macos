@@ -960,6 +960,7 @@ def health():
     return jsonify({
         "status": "UP",
         "service": "export",
+        "version": "14.5.9",
         "timestamp": datetime.now().isoformat(),
         "job_service": JOB_SERVICE_URL,
         "advisor_service": AI_ADVISOR_URL

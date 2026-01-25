@@ -98,6 +98,7 @@ def get_base_url():
         local_ip = socket.gethostbyname(hostname)
         return f"http://{local_ip}:5005"
 
+
 class JobDatabase:
     """Simple job tracking database"""
     
@@ -282,6 +283,7 @@ def health():
     return jsonify({
         "status": "UP",
         "service": "job_service",
+        "version": "14.5.9",
         "timestamp": datetime.now().isoformat()
     }), 200
 
@@ -339,8 +341,7 @@ def get_advisors():
                                    if f.lower().endswith(('.jpg', '.jpeg', '.png')) 
                                    and f.lower() != 'headshot.jpg'])
                     
-                    # Create artwork entries for up to 4 images with full URLs
-                    base_url = get_base_url()
+                    # Create artwork entries for up to 4 images with relative URLs
                     for idx, image_file in enumerate(images[:4], 1):
                         # Determine MIME type
                         mime_type = 'image/jpeg' if image_file.lower().endswith(('.jpg', '.jpeg')) else 'image/png'
@@ -348,13 +349,13 @@ def get_advisors():
                         artworks_list.append({
                             "title": image_file.replace('.jpg', '').replace('.png', '').replace('_', ' '),
                             "year": "",
-                            "url": f"{base_url}/advisor_artwork/{advisor_id}/{idx-1}",
+                            "url": f"/advisor_artwork/{advisor_id}/{idx-1}",
                             "mime_type": mime_type
                         })
                     break
             
             advisor["artworks"] = artworks_list
-            advisor["image_url"] = f"{base_url}/advisor_image/{advisor_id}"
+            advisor["image_url"] = f"/advisor_image/{advisor_id}"
             advisors.append(advisor)
         
         return jsonify({
@@ -417,8 +418,7 @@ def get_advisor_detail(advisor_id):
                                if f.lower().endswith(('.jpg', '.jpeg', '.png')) 
                                and f.lower() != 'headshot.jpg'])
                 
-                # Create artwork entries for ALL images with full URLs
-                base_url = get_base_url()
+                # Create artwork entries for ALL images with relative URLs
                 for idx, image_file in enumerate(images):
                     # Determine MIME type
                     mime_type = 'image/jpeg' if image_file.lower().endswith(('.jpg', '.jpeg')) else 'image/png'
@@ -426,43 +426,43 @@ def get_advisor_detail(advisor_id):
                     artworks_list.append({
                         "title": image_file.replace('.jpg', '').replace('.png', '').replace('_', ' '),
                         "year": "",
-                        "url": f"{base_url}/advisor_artwork/{advisor_id}/{idx}",
+                        "url": f"/advisor_artwork/{advisor_id}/{idx}",
                         "mime_type": mime_type
                     })
                 break
         
         # Fallback: add at least one artwork entry if none found
         if not artworks_list:
-            base_url = get_base_url()
+            logger.warning(f"[ADVISOR_DETAIL] No artwork found for {advisor_id}, using fallback")
             artworks_list.append({
                 "title": "Representative Work",
                 "year": "",
-                "url": f"{base_url}/advisor_artwork/{advisor_relative URLs (iOS client will prepend base URL)
-                for idx, image_file in enumerate(images, 1):
-                    # Determine MIME type
-                    mime_type = 'image/jpeg' if image_file.lower().endswith(('.jpg', '.jpeg')) else 'image/png'
-                    
-                    artworks_list.append({
-                        "title": image_file.replace('.jpg', '').replace('.png', '').replace('_', ' '),
-                        "year": "",
-                        "url": f"
+                "url": f"/advisor_artwork/{advisor_id}"
+            })
+        
+        # Build learn_more section
+        learn_more = {}
+        if row["wikipedia_url"]:
+            learn_more["wikipedia"] = {
                 "title": "Wikipedia",
                 "url": row["wikipedia_url"],
                 "description": f"Learn more about {row['name']} on Wikipedia"
             }
         if row["commons_url"]:
             learn_more["gallery"] = {
-            logger.warning(f"[ADVISOR_DETAIL] No artwork found for {advisor_id}, using fallback")
-            artworks_list.append({
-                "title": "Representative Work",
-                "year": "",
-                "url": f"
+                "title": "Wikimedia Commons",
+                "url": row["commons_url"],
+                "description": f"View {row['name']}'s work on Wikimedia Commons"
+            }
+        
+        # Build advisor response object
+        advisor = {
             "id": row["id"],
             "name": row["name"],
             "specialty": row["category"] if row["category"] else "Photography",
             "bio": row["bio"] if row["bio"] else "",
             "focus_areas": focus_areas_list,
-            "image_url": f"{base_url}/advisor_image/{advisor_id}",
+            "image_url": f"/advisor_image/{advisor_id}",
             "artworks": artworks_list,
             "learn_more": learn_more
         }
@@ -598,14 +598,13 @@ def get_advisor_artwork_lightbox_info(advisor_id, artwork_id):
                 if artwork_id <= len(images) and artwork_id >= 1:
                     current_idx = artwork_id - 1
                     current_image = images[current_idx]
-                    base_url = get_base_url()
                     
                     # Build lightbox metadata
                     lightbox_info = {
                         "current": {
                             "id": artwork_id,
                             "title": current_image.replace('.jpg', '').replace('.png', '').replace('_', ' '),
-                            "url": f"{base_url}/advisor_artwork/{advisor_id}/{artwork_id}",
+                            "url": f"/advisor_artwork/{advisor_id}/{artwork_id}",
                             "filename": current_image
                         },
                         "navigation": {
@@ -623,28 +622,26 @@ def get_advisor_artwork_lightbox_info(advisor_id, artwork_id):
                             {
                                 "id": idx + 1,
                                 "title": img.replace('.jpg', '').replace('.png', '').replace('_', ' '),
-                                "url": f"{base_url}/advisor_artwork/{advisor_id}/{idx + 1}",
+                                "url": f"/advisor_artwork/{advisor_id}/{idx + 1}",
                                 "filename": img
                             } for idx, img in enumerate(images)
-                        ]/advisor_artwork/{advisor_id}/{artwork_id}",
-                            "filename": current_image
-                        },
-                        "navigation": {
-                            "has_previous": current_idx > 0,
-                            "has_next": current_idx < len(images) - 1,
-                            "previous_id": artwork_id - 1 if current_idx > 0 else None,
-                            "next_id": artwork_id + 1 if current_idx < len(images) - 1 else None
-                        },
-                        "progress": {
-                            "current": artwork_id,
-                            "total": len(images),
-                            "percent": int((artwork_id / len(images)) * 100)
-                        },
-                        "all_items": [
-                            {
-                                "id": idx + 1,
-                                "title": img.replace('.jpg', '').replace('.png', '').replace('_', ' '),
-                                "url": f"
+                        ]
+                    }
+                    
+                    return jsonify(lightbox_info), 200
+        
+        # If we reach here, artwork ID was not found
+        return jsonify({"error": f"Artwork {artwork_id} not found for advisor {advisor_id}"}), 404
+        
+    except Exception as e:
+        logger.error(f"Error getting lightbox info: {e}", exc_info=True)
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/reference_image/<path:filename>', methods=['GET'])
+def serve_reference_image(filename):
+    """Serve reference images from advisor directories with flexible path searching"""
+    try:
         # Log the request for debugging
         remote_addr = request.environ.get('REMOTE_ADDR', 'unknown')
         logger.info(f"[DEBUG] Reference image request: {filename} from {remote_addr}")
@@ -1243,9 +1240,6 @@ def stream_job_updates(job_id: str):
     if not job:
         return jsonify({"error": "Job not found"}), 404
 
-    # Compute base_url outside generator (request context available here)
-    base_url = f"http://{request.host.split(':')[0]}:5005"
-
     def generate():
         """Generator function that yields SSE events"""
         import time
@@ -1264,6 +1258,9 @@ def stream_job_updates(job_id: str):
         last_step = job.get('current_step', '')
         last_update_time = time.time()
         update_interval = 3  # Send status updates every 3 seconds for iOS UI
+
+        # Compute base_url outside generator (request context available here)
+        base_url = f"http://{request.host.split(':')[0]}:5005"
 
         # Send initial status update immediately after connected
         initial_update_event = {

@@ -1743,6 +1743,7 @@ def health():
     if advisor:
         health_response = {
             "status": "UP",
+            "version": "14.5.9",
             "model": advisor.model_name,
             "device": advisor.device,
             "using_gpu": advisor.device == 'cuda',
