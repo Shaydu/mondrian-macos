@@ -1279,6 +1279,17 @@ Required JSON Structure:
             score = dim.get('score', 0)
             comment = dim.get('comment', 'No analysis available.')
             recommendation = dim.get('recommendation', 'No recommendation available.')
+            
+            # Strip IMG_X references from text since images are shown separately in case study boxes
+            import re
+            comment = re.sub(r'\bIMG_\d+\b', '', comment)
+            recommendation = re.sub(r'\bIMG_\d+\b', '', recommendation)
+            # Clean up extra spaces and punctuation left by removal
+            comment = re.sub(r'\s+', ' ', comment).strip()
+            comment = re.sub(r'\s+([.,;:])', r'\1', comment)  # Fix spacing before punctuation
+            recommendation = re.sub(r'\s+', ' ', recommendation).strip()
+            recommendation = re.sub(r'\s+([.,;:])', r'\1', recommendation)
+            
             color, rating = get_rating_style(score)
             
             # Check if LLM cited an image for this dimension
@@ -1743,7 +1754,7 @@ def health():
     if advisor:
         health_response = {
             "status": "UP",
-            "version": "14.5.9",
+            "version": "14.5.10",
             "model": advisor.model_name,
             "device": advisor.device,
             "using_gpu": advisor.device == 'cuda',

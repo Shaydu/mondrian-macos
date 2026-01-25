@@ -283,7 +283,7 @@ def health():
     return jsonify({
         "status": "UP",
         "service": "job_service",
-        "version": "14.5.9",
+        "version": "14.5.10",
         "timestamp": datetime.now().isoformat()
     }), 200
 
