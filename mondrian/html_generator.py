@@ -32,64 +32,65 @@ def format_dimension_name(name: str) -> str:
 
 def resolve_image_path(image_path: str) -> Optional[str]:
     """
-    Resolve image path intelligently for all environments.
-    
-    Works across:
-    - Bare metal: /absolute/path/to/mondrian/source/...
-    - Docker containers: ./mondrian/source/... (relative from /app)
-    - RunPod: ./mondrian/source/... (relative from /app)
+    Resolve image path for Docker/RunPod environments (working dir: /app).
+    Database may contain absolute paths from development machine, but in Docker
+    images are at ./mondrian/source/...
     
     Args:
-        image_path: Path from database (may be absolute or relative)
+        image_path: Path from database (may be absolute from dev machine or relative)
     
     Returns:
-        Resolved absolute path to image file, or None if not found
+        Resolved path to image file in container, or None if not found
     """
     if not image_path:
         return None
     
-    # Strategy 1: Try the path as-is (works for absolute paths on bare metal)
-    if os.path.exists(image_path):
-        logger.debug(f"[Path Resolve] Found at absolute path: {image_path}")
-        return image_path
+    logger.debug(f"[Path Resolve] Resolving: {image_path}")
     
-    # Strategy 2: If absolute path contains 'mondrian/', extract relative part
-    # Example: /home/doo/dev/mondrian-macos/mondrian/source/... → mondrian/source/...
-    if os.path.isabs(image_path) and 'mondrian/' in image_path:
-        relative = image_path[image_path.find('mondrian/'):]
-        if os.path.exists(relative):
-            logger.debug(f"[Path Resolve] Found at relative path: {relative}")
-            return relative
+    # If absolute path (from development machine), extract the mondrian-relative part
+    if os.path.isabs(image_path):
+        # Example: /home/doo/dev/mondrian-macos/mondrian/source/... → mondrian/source/...
+        if 'mondrian/' in image_path:
+            relative = image_path[image_path.find('mondrian/'):]
+            if os.path.exists(relative):
+                logger.debug(f"[Path Resolve] ✅ Found: {relative}")
+                return relative
+            
+            # Try with ./ prefix for Docker
+            relative_dot = f"./{relative}"
+            if os.path.exists(relative_dot):
+                logger.debug(f"[Path Resolve] ✅ Found: {relative_dot}")
+                return relative_dot
     
-    # Strategy 3: Try common relative path fallbacks
-    relative_fallbacks = [
-        image_path,                           # Already relative
-        f"mondrian/{image_path}",             # Add mondrian/ prefix
-        os.path.basename(image_path),         # Just filename in cwd
+    # If already relative, try as-is and with common prefixes
+    fallbacks = [
+        image_path,
+        f"mondrian/{image_path}",
+        f"./mondrian/{image_path}",
     ]
     
-    for fallback in relative_fallbacks:
-        if os.path.exists(fallback):
-            logger.debug(f"[Path Resolve] Found at fallback: {fallback}")
-            return fallback
+    for path in fallbacks:
+        if os.path.exists(path):
+            logger.debug(f"[Path Resolve] ✅ Found: {path}")
+            return path
     
-    # Strategy 4: Search advisor directories recursively
-    advisor_base_paths = [
+    # Last resort: search by filename in advisor directories
+    filename = os.path.basename(image_path)
+    search_dirs = [
         "mondrian/source/advisor/photographer",
-        "mondrian/source/advisor/painter",
+        "mondrian/source/advisor/painter", 
         "mondrian/source/advisor/architect",
     ]
     
-    filename = os.path.basename(image_path)
-    for base_path in advisor_base_paths:
-        if os.path.isdir(base_path):
-            for root, dirs, files in os.walk(base_path):
+    for base in search_dirs:
+        if os.path.isdir(base):
+            for root, _, files in os.walk(base):
                 if filename in files:
-                    found_path = os.path.join(root, filename)
-                    logger.debug(f"[Path Resolve] Found in advisor directory: {found_path}")
-                    return found_path
+                    found = os.path.join(root, filename)
+                    logger.info(f"[Path Resolve] ✅ Found by search: {found}")
+                    return found
     
-    logger.warning(f"[Path Resolve] Could not resolve image path: {image_path}")
+    logger.warning(f"[Path Resolve] ❌ Not found: {image_path}")
     return None
 
 
@@ -125,20 +126,22 @@ def generate_reference_image_html(
     # Get image data and convert to base64 with smart path resolution
     ref_image_url = ''
     if ref_path:
+        logger.info(f"[HTML Gen] Attempting to load image: {ref_path} for dimension: {dimension_name}")
         resolved_path = resolve_image_path(ref_path)
         if resolved_path:
             try:
+                logger.info(f"[HTML Gen] Resolved path: {resolved_path}")
                 with open(resolved_path, 'rb') as img_file:
                     image_data = img_file.read()
                     b64_image = base64.b64encode(image_data).decode('utf-8')
                     img_ext = os.path.splitext(resolved_path)[1].lower()
                     mime_type = 'image/png' if img_ext == '.png' else 'image/jpeg' if img_ext in ['.jpg', '.jpeg'] else 'image/png'
                     ref_image_url = f"data:{mime_type};base64,{b64_image}"
-                    logger.info(f"[HTML Gen] Embedded reference image: {os.path.basename(resolved_path)} ({len(image_data)} bytes)")
+                    logger.info(f"[HTML Gen] ✅ Successfully embedded reference image: {os.path.basename(resolved_path)} ({len(image_data)} bytes, base64: {len(b64_image)} chars)")
             except Exception as e:
-                logger.error(f"[HTML Gen] Failed to embed image as base64: {e} (resolved_path={resolved_path})")
+                logger.error(f"[HTML Gen] ❌ Failed to embed image as base64: {e} (resolved_path={resolved_path})", exc_info=True)
         else:
-            logger.error(f"[HTML Gen] Could not resolve image path for reference: {ref_path} (dimension={dimension_name})")
+            logger.error(f"[HTML Gen] ❌ Could not resolve image path for reference: {ref_path} (dimension={dimension_name})")
     
     # Build case study box
     html = '<div class="reference-citation"><div class="case-study-box">'
@@ -569,6 +572,12 @@ def generate_summary_html(analysis_data: Dict[str, Any], disclaimer_text: str = 
         name = dim.get('name', 'Unknown')
         score = dim.get('score', 0)
         recommendation = dim.get('recommendation', 'No recommendation available.')
+        
+        # Strip IMG_X references since images are shown in detailed view
+        recommendation = re.sub(r'\bIMG_\d+\b', '', recommendation)
+        # Clean up extra spaces and punctuation left by removal
+        recommendation = re.sub(r'\s+', ' ', recommendation).strip()
+        recommendation = re.sub(r'\s+([.,;:])', r'\1', recommendation)  # Fix spacing before punctuation
         
         html += f'''  <div class="recommendation-item">
     <div class="rec-number">{i}</div>

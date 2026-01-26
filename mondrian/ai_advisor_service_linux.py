@@ -713,8 +713,21 @@ class QwenAdvisor:
     def _create_prompt(self, advisor: str, mode: str) -> str:
         """Create analysis prompt by loading from database"""
         
-        # Load system prompt from config table
-        system_prompt = get_config(DB_PATH, "system_prompt")
+        # Load system prompt from versioned config table
+        prompt_version = get_config(DB_PATH, "system_prompt_version")
+        if prompt_version:
+            # Use versioned prompt if available
+            system_prompt = get_config(DB_PATH, f"system_prompt_{prompt_version}")
+            if system_prompt:
+                logger.info(f"Loaded system_prompt_{prompt_version}")
+            else:
+                # Fallback to system_prompt if version doesn't exist
+                logger.warning(f"system_prompt_{prompt_version} not found, falling back to system_prompt")
+                system_prompt = get_config(DB_PATH, "system_prompt")
+        else:
+            # No version specified, use system_prompt directly
+            system_prompt = get_config(DB_PATH, "system_prompt")
+        
         if not system_prompt:
             logger.warning("No system_prompt in database, using default")
             system_prompt = self._get_default_system_prompt()

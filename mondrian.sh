@@ -24,6 +24,7 @@ SERVICES_SCRIPT="$SCRIPT_DIR/scripts/start_services.py"
 MODEL_ARG=""
 DB_ARG=""
 BACKEND_ARG=""
+PROMPT_VERSION=""
 ALL_SERVICES=false
 for arg in "$@"; do
     if [[ $arg == --model=* ]]; then
@@ -32,6 +33,10 @@ for arg in "$@"; do
         set -- "${@/$arg}"
     elif [[ $arg == --db=* ]]; then
         DB_ARG="${arg#--db=}"
+        # Remove this from arguments passed to start_services
+        set -- "${@/$arg}"
+    elif [[ $arg == --prompt-version=* ]]; then
+        PROMPT_VERSION="${arg#--prompt-version=}"
         # Remove this from arguments passed to start_services
         set -- "${@/$arg}"
     elif [[ $arg == --backend=* ]]; then
@@ -43,6 +48,20 @@ for arg in "$@"; do
         set -- "${@/$arg}"
     fi
 done
+
+# Set prompt version in database if specified
+if [ ! -z "$PROMPT_VERSION" ]; then
+    echo "Setting prompt version to: $PROMPT_VERSION"
+    python3 -c "
+import sqlite3
+conn = sqlite3.connect('$SCRIPT_DIR/mondrian.db')
+cursor = conn.cursor()
+cursor.execute('UPDATE config SET value = ? WHERE key = ?', ('$PROMPT_VERSION', 'system_prompt_version'))
+conn.commit()
+conn.close()
+print('✅ Prompt version set to system_prompt_$PROMPT_VERSION')
+" 2>/dev/null || echo "⚠️ Could not update prompt version"
+fi
 
 # Load model configuration from model_config.json
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"

@@ -1,3 +1,5 @@
+# Ignore the main database file
+mondrian.db
 # Environment & Virtual Environments
 venv/
 env/
