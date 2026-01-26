@@ -27,19 +27,28 @@ Required JSON Structure:
 {
   "image_description": "2-3 sentence description",
   "dimensions": [
-    {"name": "Composition", "score": 8, "comment": "Technical observation about the compositional choices, leading lines, framing, and visual structure", "recommendation": "Consider how you could strengthen the compositional framework. Think about using natural leading lines to guide the viewer's eye, adjusting camera position to create stronger foreground-midground-background layering, or repositioning elements for better visual balance."},
-    {"name": "Lighting", "score": 7, "comment": "Technical observation about light quality, direction, tonal range, and exposure", "recommendation": "To improve lighting control, scout locations at different times to understand how light transforms the scene. Consider how to preserve detail in both highlights and shadows, or wait for more dramatic light conditions that enhance the emotional impact of your subject."},
-    {"name": "Focus & Sharpness", "score": 9, "comment": "Technical observation about focus technique and sharpness", "recommendation": "Continue this approach to technical precision. Maintain consistent focus methodology across your work."},
-    {"name": "Color Harmony", "score": 6, "comment": "Technical observation about color relationships, saturation, and emotional impact", "recommendation": "Evaluate the color relationships in your composition. Consider whether muted or vibrant tones better serve your subject, and how color contrast can either enhance or distract from your primary message."},
-    {"name": "Depth & Perspective", "score": 7, "comment": "Technical observation about spatial layering and dimensional quality", "recommendation": "Strengthen spatial depth by consciously including foreground, midground, and background elements. Choose camera position and lens selection to create stronger separation between these planes."},
-    {"name": "Visual Balance", "score": 8, "comment": "Technical observation about visual weight distribution and compositional equilibrium", "recommendation": "Consider how you're using visual weight and spatial relationships. Your current balance is effective - explore subtle refinements in element placement or emphasis."},
-    {"name": "Emotional Impact", "score": 7, "comment": "Technical observation about the emotional resonance and viewer connection", "recommendation": "Deepen the emotional impact by emphasizing the elements that moved you to take the photograph. Consider which details are essential to convey that feeling to the viewer."}
+    {
+      "name": "Composition",
+      "score": 8,
+      "comment": "Technical observation about the compositional choices, leading lines, framing, and visual structure",
+      "recommendation": "Consider how you could strengthen the compositional framework. Think about using natural leading lines to guide the viewer's eye, adjusting camera position to create stronger foreground-midground-background layering, or repositioning elements for better visual balance.",
+      "case_study_id": "IMG_1",
+      "quote_id": "QUOTE_2"
+    }
   ],
   "overall_score": 7.4,
   "key_strengths": ["strength 1", "strength 2"],
   "priority_improvements": ["improvement 1", "improvement 2"],
   "technical_notes": "Technical observations"
 }
+
+**CITATION INSTRUCTIONS:**
+- The "case_study_id" and "quote_id" fields are OPTIONAL
+- Use "case_study_id" to cite a reference image (format: "IMG_1", "IMG_2", etc.) when it demonstrates mastery in that specific dimension
+- Use "quote_id" to cite an advisor quote (format: "QUOTE_1", "QUOTE_2", etc.) when it provides relevant insight for that dimension
+- Reference images and quotes will be provided in the prompt if available
+- You may cite UP TO 3 images and UP TO 3 quotes total across all dimensions
+- Do NOT repeat the same citation ID across multiple dimensions
 
 **CRITICAL INSTRUCTIONS**:
 - Generate ORIGINAL recommendations tailored to THIS specific image

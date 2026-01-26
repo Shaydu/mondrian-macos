@@ -29,6 +29,7 @@ from mondrian.html_generator import (
     generate_summary_html,
     generate_advisor_bio_html
 )
+from mondrian.citation_service import render_cited_image_html, render_cited_quote_html
 from mondrian.rag_retrieval import (
     DIMENSIONS,
     DIMENSION_TO_DB_COLUMN,
@@ -1309,33 +1310,13 @@ Required JSON Structure:
             cited_image = dim.get('_cited_image')
             image_citation_html = ""
             if cited_image:
-                from mondrian.html_generator import generate_reference_image_html
-                image_citation_html = generate_reference_image_html(
-                    ref_image=cited_image,
-                    dimension_name=name
-                )
+                image_citation_html = render_cited_image_html(cited_image, name)
             
             # Check if LLM cited a quote for this dimension
             cited_quote = dim.get('_cited_quote')
             quote_citation_html = ""
             if cited_quote:
-                book_title = cited_quote.get('book_title', 'Unknown Book')
-                passage_text = cited_quote.get('passage_text', cited_quote.get('text', ''))
-                quote_dims = cited_quote.get('dimensions', [])
-                
-                # Truncate to 75 words
-                words = passage_text.split()
-                truncated_text = ' '.join(words[:75])
-                if len(words) > 75:
-                    truncated_text += "..."
-                
-                quote_citation_html = '<div class="advisor-quote-box">'
-                quote_citation_html += '<div class="advisor-quote-title">Advisor Insight</div>'
-                quote_citation_html += f'<div class="advisor-quote-text">"{truncated_text}"</div>'
-                quote_citation_html += f'<div class="advisor-quote-source"><strong>From:</strong> {book_title}</div>'
-                quote_citation_html += '</div>'
-                
-                logger.info(f"[HTML Gen] Added LLM-cited quote for {name} from '{book_title}'")
+                quote_citation_html = render_cited_quote_html(cited_quote, name)
             
             html += f'''
   <div class="feedback-card">
@@ -1473,11 +1454,19 @@ Required JSON Structure:
                         
                         if 'case_study_id' in dim:
                             img_id = dim['case_study_id']
+                            
+                            # Type validation
+                            if not isinstance(img_id, str):
+                                logger.warning(f"❌ Invalid image citation type in {dim['name']}: {type(img_id).__name__} (expected str) - removing")
+                                del dim['case_study_id']
+                                continue
+                            
                             if img_id in used_img_ids:
                                 logger.warning(f"❌ Duplicate image citation: {img_id} in {dim['name']} - removing")
                                 del dim['case_study_id']
                             elif img_id not in img_lookup:
-                                logger.warning(f"❌ Invalid image citation: {img_id} not in candidates - removing")
+                                available = ', '.join(sorted(img_lookup.keys()))
+                                logger.warning(f"❌ Invalid image citation: {img_id} not in candidates [{available}] for {dim['name']} - removing")
                                 del dim['case_study_id']
                             elif img_citation_count >= QwenAdvisor.MAX_REFERENCE_IMAGES:
                                 logger.warning(f"❌ Too many image citations (>{QwenAdvisor.MAX_REFERENCE_IMAGES}): removing {img_id} from {dim['name']}")
@@ -1496,11 +1485,19 @@ Required JSON Structure:
                         
                         if 'quote_id' in dim:
                             quote_id = dim['quote_id']
+                            
+                            # Type validation
+                            if not isinstance(quote_id, str):
+                                logger.warning(f"❌ Invalid quote citation type in {dim['name']}: {type(quote_id).__name__} (expected str) - removing")
+                                del dim['quote_id']
+                                continue
+                            
                             if quote_id in used_quote_ids:
                                 logger.warning(f"❌ Duplicate quote citation: {quote_id} in {dim['name']} - removing")
                                 del dim['quote_id']
                             elif quote_id not in quote_lookup:
-                                logger.warning(f"❌ Invalid quote citation: {quote_id} not in candidates - removing")
+                                available = ', '.join(sorted(quote_lookup.keys()))
+                                logger.warning(f"❌ Invalid quote citation: {quote_id} not in candidates [{available}] for {dim['name']} - removing")
                                 del dim['quote_id']
                             elif quote_citation_count >= QwenAdvisor.MAX_REFERENCE_QUOTES:
                                 logger.warning(f"❌ Too many quote citations (>{QwenAdvisor.MAX_REFERENCE_QUOTES}): removing {quote_id} from {dim['name']}")
