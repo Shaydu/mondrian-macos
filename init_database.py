@@ -228,9 +228,9 @@ Required JSON Structure:
 {
   "image_description": "2-3 sentence description",
   "dimensions": [
-    {"name": "Composition", "score": 8, "comment": "...", "recommendation": "..."},
+    {"name": "Composition", "score": 8, "comment": "...", "recommendation": "...", "case_study_id": "IMG_1", "quote_id": "QUOTE_1"},
     {"name": "Lighting", "score": 7, "comment": "...", "recommendation": "..."},
-    {"name": "Focus & Sharpness", "score": 9, "comment": "...", "recommendation": "..."},
+    {"name": "Focus & Sharpness", "score": 9, "comment": "...", "recommendation": "...", "case_study_id": "IMG_2"},
     {"name": "Color Harmony", "score": 6, "comment": "...", "recommendation": "..."},
     {"name": "Depth & Perspective", "score": 7, "comment": "...", "recommendation": "..."},
     {"name": "Visual Balance", "score": 8, "comment": "...", "recommendation": "..."},
@@ -239,14 +239,20 @@ Required JSON Structure:
   "overall_score": 7.4,
   "key_strengths": ["strength 1", "strength 2"],
   "priority_improvements": ["improvement 1", "improvement 2"],
-  "technical_notes": "Technical observations",
-  "case_studies": [
-    {"image_title": "Moon and Half Dome", "year": "1960", "dimension": "Lighting", "explanation": "Study the zone system technique..."},
-    {"image_title": "The Tetons and the Snake River", "year": "1942", "dimension": "Composition", "explanation": "..."}
-  ]
+  "technical_notes": "Technical observations"
 }
 
-**CRITICAL**: If reference images are provided in the prompt, you MUST include a case_studies array with up to 3 entries. Each case study must cite the EXACT image title from the references and explain how it demonstrates mastery in a specific dimension."""
+**CITATION FIELDS (OPTIONAL):**
+- Add "case_study_id": "IMG_X" to cite a reference image for that dimension
+- Add "quote_id": "QUOTE_X" to cite an advisor quote for that dimension
+- Only cite for 1-3 dimensions where the reference is MOST relevant and instructive
+- Each dimension may cite at most ONE image and ONE quote
+- Never reuse citation IDs across different dimensions
+
+**WHEN TO CITE:**
+- Only when the reference directly demonstrates a specific technique for that dimension
+- Your "recommendation" must explain the SPECIFIC TECHNIQUE shown in the cited image/quote
+- Example: "Study IMG_1's three-plane depth structure: foreground boulder anchors the composition while the S-curve river draws your eye to the peaks. Position yourself so a rock or plant occupies your lower third."
         
         cursor.execute('''
         INSERT INTO config (key, value)

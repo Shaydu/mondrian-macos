@@ -21,6 +21,12 @@ def render_cited_image_html(cited_image: dict, dimension_name: str) -> str:
     """
     from mondrian.html_generator import generate_reference_image_html
     
+    # DEBUG: Log what keys are in the cited_image
+    logger.info(f"[Citation Service] render_cited_image_html for {dimension_name}")
+    logger.info(f"[Citation Service] cited_image keys: {list(cited_image.keys())}")
+    instructive_key = f"{dimension_name.lower().replace(' ', '_')}_instructive"
+    logger.info(f"[Citation Service] has {instructive_key}: {instructive_key in cited_image}")
+    
     return generate_reference_image_html(
         ref_image=cited_image,
         dimension_name=dimension_name

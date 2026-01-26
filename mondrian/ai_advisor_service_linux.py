@@ -92,6 +92,35 @@ def get_config(db_path: str, key: str) -> Optional[str]:
         return None
 
 
+def get_latest_system_prompt_version(db_path: str) -> Optional[str]:
+    """
+    Query database to find the latest system_prompt_X version.
+    Returns the system prompt content from the highest numbered version.
+    """
+    try:
+        conn = sqlite3.connect(db_path)
+        cursor = conn.cursor()
+        
+        # Get all system_prompt_N keys (excluding system_prompt_version) and find the highest version number
+        cursor.execute(
+            "SELECT key FROM config WHERE key LIKE 'system_prompt_%' AND key != 'system_prompt_version' ORDER BY key DESC LIMIT 1"
+        )
+        row = cursor.fetchone()
+        conn.close()
+        
+        if row:
+            latest_key = row[0]  # e.g., "system_prompt_10"
+            prompt_content = get_config(db_path, latest_key)
+            if prompt_content:
+                logger.info(f"Loaded latest prompt version: {latest_key}")
+                return prompt_content
+        
+        return None
+    except Exception as e:
+        logger.error(f"Failed to get latest system prompt version: {e}")
+        return None
+
+
 def get_advisor_from_db(db_path: str, advisor_id: str) -> Optional[Dict[str, Any]]:
     """Get advisor data from database advisors table"""
     try:
@@ -713,24 +742,11 @@ class QwenAdvisor:
     def _create_prompt(self, advisor: str, mode: str) -> str:
         """Create analysis prompt by loading from database"""
         
-        # Load system prompt from versioned config table
-        prompt_version = get_config(DB_PATH, "system_prompt_version")
-        if prompt_version:
-            # Use versioned prompt if available
-            system_prompt = get_config(DB_PATH, f"system_prompt_{prompt_version}")
-            if system_prompt:
-                logger.info(f"Loaded system_prompt_{prompt_version}")
-            else:
-                # Fallback to system_prompt if version doesn't exist
-                logger.warning(f"system_prompt_{prompt_version} not found, falling back to system_prompt")
-                system_prompt = get_config(DB_PATH, "system_prompt")
-        else:
-            # No version specified, use system_prompt directly
-            system_prompt = get_config(DB_PATH, "system_prompt")
+        # Load system prompt: use latest versioned prompt (required)
+        system_prompt = get_latest_system_prompt_version(DB_PATH)
         
         if not system_prompt:
-            logger.warning("No system_prompt in database, using default")
-            system_prompt = self._get_default_system_prompt()
+            raise RuntimeError("No versioned system_prompt found in database. System cannot proceed without a versioned prompt.")
         
         # Load advisor-specific prompt from advisors table
         advisor_data = get_advisor_from_db(DB_PATH, advisor)
@@ -1432,6 +1448,13 @@ Required JSON Structure:
                     for idx, img in enumerate(reference_images, 1):
                         img_id = f"IMG_{idx}"
                         img_lookup[img_id] = img
+                    
+                    # DEBUG: Log what's in first image
+                    if img_lookup:
+                        first_id = list(img_lookup.keys())[0]
+                        first_img = img_lookup[first_id]
+                        logger.info(f"[DEBUG] IMG_LOOKUP[{first_id}] keys: {list(first_img.keys())}")
+                        logger.info(f"[DEBUG] IMG_LOOKUP has composition_instructive: {'composition_instructive' in first_img}")
                     
                     quote_lookup = {}
                     for idx, passage in enumerate(book_passages, 1):

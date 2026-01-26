@@ -223,6 +223,13 @@ def get_top_reference_images(db_path: str, advisor_id: str, max_total: int = 10)
                 result_images.append(img_dict)
         
         logger.info(f"Retrieved {len(result_images)} top reference images for single-pass RAG")
+        
+        # DEBUG: Log what columns are in the first image
+        if result_images:
+            first_img = result_images[0]
+            logger.info(f"[DEBUG] First image keys: {list(first_img.keys())}")
+            logger.info(f"[DEBUG] First image has composition_instructive: {'composition_instructive' in first_img}")
+            
         return result_images
         
     except Exception as e:
