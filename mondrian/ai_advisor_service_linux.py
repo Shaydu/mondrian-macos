@@ -25,7 +25,6 @@ import traceback
 
 # Import refactored modules
 from mondrian.html_generator import (
-    generate_ios_detailed_html,
     generate_summary_html,
     generate_advisor_bio_html
 )
