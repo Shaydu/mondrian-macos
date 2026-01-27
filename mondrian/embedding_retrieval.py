@@ -220,7 +220,7 @@ def get_similar_images_by_visual_embedding(
         logger.info(f"No images with embeddings found for advisor {advisor_id}")
         return []
     
-    # Compute similarities
+    # Compute similarities and dimensional strength scores
     results = []
     for row in rows:
         ref_embedding = load_embedding_from_blob(row['embedding'], CLIP_DIM)
@@ -234,11 +234,55 @@ def get_similar_images_by_visual_embedding(
         img_dict['visual_similarity'] = float(similarity)
         results.append(img_dict)
     
-    # Sort by similarity descending
-    results.sort(key=lambda x: x['visual_similarity'], reverse=True)
+    if not results:
+        logger.info("No candidate images found")
+        return []
     
-    logger.info(f"Found {len(results)} visually similar images, returning top {top_k}")
-    return results[:top_k]
+    # If weak_dimensions specified, return the best image for EACH dimension
+    if weak_dimensions:
+        selected = []
+        dim_to_col_mapping = {
+            'composition': 'composition_score',
+            'lighting': 'lighting_score',
+            'focus': 'focus_sharpness_score',
+            'focus_sharpness': 'focus_sharpness_score',
+            'color': 'color_harmony_score',
+            'color_harmony': 'color_harmony_score',
+            'subject_isolation': 'subject_isolation_score',
+            'depth': 'depth_perspective_score',
+            'depth_perspective': 'depth_perspective_score',
+            'visual_balance': 'visual_balance_score',
+            'balance': 'visual_balance_score',
+            'emotional_impact': 'emotional_impact_score',
+        }
+        
+        for dim in weak_dimensions[:3]:  # Up to 3 dimensions
+            col = dim_to_col_mapping.get(dim.lower().replace(' ', '_').replace('&', ''))
+            if not col:
+                continue
+            
+            # Find image with highest score in this specific dimension
+            best_for_dim = None
+            best_score = -1
+            for img in results:
+                score = img.get(col)
+                if score is not None and score > best_score:
+                    best_score = score
+                    best_for_dim = img
+            
+            if best_for_dim:
+                best_for_dim['target_dimension'] = dim
+                best_for_dim['dimension_score'] = best_score
+                selected.append(best_for_dim)
+                logger.info(f"Selected {best_for_dim.get('image_title', 'Unknown')} for {dim} (score: {best_score:.1f})")
+        
+        return selected[:top_k]
+    
+    else:
+        # No specific weak dimensions: sort by overall quality (visual similarity as tiebreaker)
+        results.sort(key=lambda x: (-x['visual_similarity']))
+        logger.info(f"No weak dimensions specified, returning top {top_k} visually similar images")
+        return results[:top_k]
 
 
 def get_similar_images_by_text_embedding(

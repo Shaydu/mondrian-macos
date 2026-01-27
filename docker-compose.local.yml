@@ -1,0 +1,7 @@
+version: '3.8'
+
+services:
+  mondrian:
+    environment:
+      - GENERATION_PROFILE=ultra_fast
+      - MODEL_PRESET=qwen3-4b-instruct

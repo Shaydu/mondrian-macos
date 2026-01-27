@@ -1,0 +1,7 @@
+version: '3.8'
+
+services:
+  mondrian:
+    environment:
+      - GENERATION_PROFILE=optimized
+      - MODEL_PRESET=qwen3-8b-instruct

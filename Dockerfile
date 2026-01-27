@@ -61,6 +61,9 @@ RUN mkdir -p mondrian/advisor_images
 # Copy existing database if it exists
 COPY mondrian.db* ./
 
+# Copy system prompt for easy editing (optional, falls back to DB)
+COPY system_prompt.txt ./
+
 # Copy only the trained LoRA adapter needed for inference (keep image lean)
 COPY adapters/ansel_qwen3_4b_full_9dim/ ./adapters/ansel_qwen3_4b_full_9dim/
 

@@ -55,12 +55,13 @@
   },
   "generation_profiles": {
     "optimized": {
-      "max_new_tokens": 2000,
-      "num_beams": 2,
+      "max_new_tokens": 2500,
+      "num_beams": 3,
       "do_sample": false,
-      "repetition_penalty": 1.0,
+      "repetition_penalty": 1.05,
       "early_stopping": true,
-      "description": "2-beam search with 2000 token limit for balanced quality and speed"
+      "length_penalty": 1.1,
+      "description": "3-beam search with 2500 tokens, optimized for RTX 4000 Ada (20GB VRAM). Faster and more thorough than 4-beam."
     },
     "fast_greedy": {
       "max_new_tokens": 1500,
@@ -70,12 +71,13 @@
       "description": "Greedy decoding, fast inference (~2-3x faster than beam search)"
     },
     "beam_search": {
-      "max_new_tokens": 2000,
-      "num_beams": 4,
+      "max_new_tokens": 3000,
+      "num_beams": 5,
       "do_sample": false,
-      "repetition_penalty": 1.0,
+      "repetition_penalty": 1.05,
       "early_stopping": true,
-      "description": "Beam search for better quality, slower inference"
+      "length_penalty": 1.2,
+      "description": "5-beam search for maximum quality and thoroughness. Takes advantage of 20GB VRAM."
     },
     "sampling": {
       "max_new_tokens": 1500,
@@ -93,6 +95,17 @@
       "do_sample": false,
       "repetition_penalty": 1.05,
       "description": "Maximum speed: greedy decoding with minimal tokens. Best for quick iterations and testing. ~3-5x faster than beam search."
+    },
+    "quality_focused": {
+      "max_new_tokens": 3500,
+      "num_beams": 4,
+      "do_sample": false,
+      "temperature": 0.0,
+      "repetition_penalty": 1.1,
+      "early_stopping": true,
+      "length_penalty": 1.3,
+      "no_repeat_ngram_size": 3,
+      "description": "Maximum thoughtfulness: 4-beam search with extended context, prevents repetition. Optimal for RTX 4000 Ada."
     }
   }
 }
