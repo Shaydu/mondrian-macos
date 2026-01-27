@@ -52,15 +52,17 @@ def generate_reference_image_html(
     ref_year = ref_image.get('date_taken', '')
     ref_path = ref_image.get('image_path', '')
     ref_location = ref_image.get('location', '')
-    
+
     # Format title with year
     if ref_year and str(ref_year).strip():
         title_with_year = f"{ref_title} ({ref_year})"
     else:
         title_with_year = ref_title
-    
+
     # Get image data and convert to base64
     ref_image_url = ''
+
+    # Prefer base64 embedding for better browser compatibility
     if ref_path and os.path.exists(ref_path):
         try:
             with open(ref_path, 'rb') as img_file:
@@ -69,8 +71,17 @@ def generate_reference_image_html(
                 img_ext = os.path.splitext(ref_path)[1].lower()
                 mime_type = 'image/png' if img_ext == '.png' else 'image/jpeg' if img_ext in ['.jpg', '.jpeg'] else 'image/png'
                 ref_image_url = f"data:{mime_type};base64,{b64_image}"
+                logger.info(f"[HTML Gen] Embedded case study image as base64: {os.path.basename(ref_path)}")
         except Exception as e:
             logger.warning(f"Failed to embed image as base64: {e}")
+            # Fallback to API URL if base64 fails
+            if ref_image.get('image_url'):
+                ref_image_url = ref_image.get('image_url')
+                logger.info(f"[HTML Gen] Fallback to image URL: {ref_image_url}")
+    # Fallback to image_url (API endpoint) if no local path
+    elif ref_image.get('image_url'):
+        ref_image_url = ref_image.get('image_url')
+        logger.info(f"[HTML Gen] Using image URL (no local path): {ref_image_url}")
     
     # Build case study box
     html = '<div class="reference-citation"><div class="case-study-box">'
