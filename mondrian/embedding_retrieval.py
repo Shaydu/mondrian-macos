@@ -497,16 +497,25 @@ def get_top_book_passages(advisor_id: str, max_passages: int = 6, db_path: str =
     conn.close()
     
     passages = []
+    seen_texts = set()  # Track passage texts to prevent duplicates
     for row in rows:
         import json
+        passage_text = row['passage_text']
+        
+        # Skip if we've already seen this exact text (database may have duplicates)
+        if passage_text in seen_texts:
+            logger.warning(f"Skipping duplicate passage text from {row['book_title']}")
+            continue
+        
+        seen_texts.add(passage_text)
         passages.append({
-            'passage_text': row['passage_text'],
+            'passage_text': passage_text,
             'book_title': row['book_title'],
             'dimensions': json.loads(row['dimension_tags']),
             'relevance_score': row['relevance_score']
         })
     
-    logger.info(f"Retrieved {len(passages)} top book passages for single-pass RAG")
+    logger.info(f"Retrieved {len(passages)} top book passages for single-pass RAG (deduplicated)")
     return passages
 
 
@@ -563,16 +572,25 @@ def get_book_passages_for_dimensions(advisor_id, weak_dimensions, max_passages=2
     conn.close()
     
     passages = []
+    seen_texts = set()  # Track passage texts to prevent duplicates
     for row in rows:
         import json
+        passage_text = row['passage_text']
+        
+        # Skip if we've already seen this exact text (database may have duplicates)
+        if passage_text in seen_texts:
+            logger.warning(f"Skipping duplicate passage text from {row['book_title']}")
+            continue
+        
+        seen_texts.add(passage_text)
         passages.append({
-            'passage_text': row['passage_text'],
+            'passage_text': passage_text,
             'book_title': row['book_title'],
             'dimensions': json.loads(row['dimension_tags']),
             'relevance_score': row['relevance_score']
         })
     
-    logger.info(f"Retrieved {len(passages)} book passages for weak dimensions")
+    logger.info(f"Retrieved {len(passages)} book passages for weak dimensions (deduplicated)")
     return passages
 
 
