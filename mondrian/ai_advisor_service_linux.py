@@ -13,6 +13,7 @@ import time
 import sqlite3
 import base64
 import io
+import re
 
 # Set PyTorch memory optimization to reduce fragmentation
 os.environ['PYTORCH_CUDA_ALLOC_CONF'] = 'expandable_segments:True'
@@ -1046,8 +1047,9 @@ Provide ONLY the JSON above with your scores. No explanations, no comments."""
             rag_context += "1. Names the SPECIFIC TECHNIQUE (e.g., 'three-plane composition', 'Zone V-VII midtones')\n"
             rag_context += "2. Explains WHY it works (e.g., 'creates dimensional depth', 'preserves highlight detail')\n"
             rag_context += "3. Tells the user HOW to do it (actionable, specific steps)\n"
-            rag_context += "\n❌ GENERIC: 'This image has excellent composition.'\n"
-            rag_context += "✓ INSTRUCTIVE: 'Study the foreground boulder anchoring this composition while the river's S-curve draws your eye to the peaks. This three-plane structure creates dimensional depth. Position yourself so a rock or plant occupies your lower third.'\n\n"
+            rag_context += "4. Reference the image by its TITLE, not the IMG_X identifier\n"
+            rag_context += "\n❌ BAD: 'Study IMG_5 - notice the S-curve...'\n"
+            rag_context += "✓ GOOD: 'Study \"The Tetons and the Snake River\" - notice the foreground boulder anchoring this composition while the river's S-curve draws your eye to the peaks. This three-plane structure creates dimensional depth. Position yourself so a rock or plant occupies your lower third.'\n\n"
         
         # Add final reminder about dimension-specific techniques
         rag_context += "\n**CRITICAL CITATION RULES:**\n"
@@ -1279,6 +1281,12 @@ Required JSON Structure:
             score = dim.get('score', 0)
             comment = dim.get('comment', 'No analysis available.')
             recommendation = dim.get('recommendation', 'No recommendation available.')
+
+            # Strip IMG_X references from the recommendation text
+            recommendation = re.sub(r'\[IMG_\d+\]', '', recommendation)
+            recommendation = re.sub(r'IMG_\d+', '', recommendation)
+            recommendation = recommendation.strip()
+
             color, rating = get_rating_style(score)
             
             # Check if LLM cited an image for this dimension

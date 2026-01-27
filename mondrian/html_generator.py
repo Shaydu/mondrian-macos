@@ -59,10 +59,8 @@ def generate_reference_image_html(
     else:
         title_with_year = ref_title
 
-    # Get image data and convert to base64
+    # Get image data and convert to base64 for reliable rendering across all environments
     ref_image_url = ''
-
-    # Prefer base64 embedding for better browser compatibility
     if ref_path and os.path.exists(ref_path):
         try:
             with open(ref_path, 'rb') as img_file:
@@ -74,14 +72,6 @@ def generate_reference_image_html(
                 logger.info(f"[HTML Gen] Embedded case study image as base64: {os.path.basename(ref_path)}")
         except Exception as e:
             logger.warning(f"Failed to embed image as base64: {e}")
-            # Fallback to API URL if base64 fails
-            if ref_image.get('image_url'):
-                ref_image_url = ref_image.get('image_url')
-                logger.info(f"[HTML Gen] Fallback to image URL: {ref_image_url}")
-    # Fallback to image_url (API endpoint) if no local path
-    elif ref_image.get('image_url'):
-        ref_image_url = ref_image.get('image_url')
-        logger.info(f"[HTML Gen] Using image URL (no local path): {ref_image_url}")
     
     # Build case study box
     html = '<div class="reference-citation"><div class="case-study-box">'
@@ -512,7 +502,12 @@ def generate_summary_html(analysis_data: Dict[str, Any], disclaimer_text: str = 
         name = dim.get('name', 'Unknown')
         score = dim.get('score', 0)
         recommendation = dim.get('recommendation', 'No recommendation available.')
-        
+
+        # Strip IMG_X references from the recommendation text
+        recommendation = re.sub(r'\[IMG_\d+\]', '', recommendation)
+        recommendation = re.sub(r'IMG_\d+', '', recommendation)
+        recommendation = recommendation.strip()
+
         html += f'''  <div class="recommendation-item">
     <div class="rec-number">{i}</div>
     <div class="rec-content">
