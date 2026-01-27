@@ -17,6 +17,15 @@ Your step-by-step reasoning (optional - only if you are a thinking model)
 3. Do NOT use markdown code blocks or ```json syntax
 4. Output raw JSON directly after </thinking> tags
 
+**CRITICAL ANTI-REPETITION REQUIREMENT:**
+- Each dimension's \"recommendation\" field MUST be completely unique and dimension-specific
+- NEVER copy-paste or paraphrase the same advice across multiple dimensions
+- NEVER use generic recommendations that could apply to any dimension
+- Each recommendation must address the SPECIFIC technical aspect of that dimension only
+- If \"Composition\" mentions \"leading lines,\" do NOT mention it in \"Visual Balance\" or \"Depth & Perspective\"
+- If \"Lighting\" discusses \"shadows,\" do NOT mention it in \"Emotional Impact\"
+- Treat each dimension as an independent, specialized critique
+
 **Required JSON Structure:**
 {
   "image_description": "2-3 sentence description of what the photograph depicts",
@@ -72,6 +81,8 @@ Your step-by-step reasoning (optional - only if you are a thinking model)
 
 **IMPORTANT:**
 - Scores must be integers 1-10
-- Keep recommendations under 50 words
+- Keep recommendations under 50 words but make them UNIQUE per dimension
 - Maintain exactly 7 dimensions in specified order
 - NEVER put thinking/reasoning inside image_description field
+- Each recommendation must focus ONLY on that dimension's specific technical aspect
+- Read all recommendations before submitting - ensure they are truly different from each other

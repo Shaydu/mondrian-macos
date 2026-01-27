@@ -27,6 +27,7 @@ __pycache__/
 mondrian/mondrian.db
 *.db-shm
 *.db-wal
+mondrian_14.5.18.db
 
 # Database backups
 backups/

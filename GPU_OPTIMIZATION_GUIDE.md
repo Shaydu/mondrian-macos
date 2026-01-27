@@ -129,6 +129,9 @@ watch -n 1 nvidia-smi
 ✅ **Image resizing to 800px** (efficient without quality loss)
 ✅ **Cached model weights** (no reload between requests)
 ✅ **PyTorch CUDA memory optimization** (`expandable_segments`)
+✅ **Anti-repetition controls** (prevents duplicate recommendations across dimensions)
+
+See [ANTI_REPETITION_FIX.md](ANTI_REPETITION_FIX.md) for details on the recommendation uniqueness system.
 
 ## Troubleshooting
 
