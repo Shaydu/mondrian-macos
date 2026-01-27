@@ -1275,10 +1275,6 @@ Required JSON Structure:
   <p style="color: #666; margin-bottom: 20px;">Each dimension is analyzed with specific feedback and actionable recommendations for improvement.</p>
 '''
 
-        # Collect first case study image to display once at the top
-        first_case_study_html = ""
-        first_case_study_rendered = False
-
         # Add dimension cards
         for dim in dimensions:
             name = dim.get('name', 'Unknown')
@@ -1295,15 +1291,14 @@ Required JSON Structure:
 
             # Check if LLM cited an image for this dimension
             cited_image = dim.get('_cited_image')
-            if cited_image and not first_case_study_rendered:
-                # Collect the first case study to render as a separate component
+            image_citation_html = ""
+            if cited_image:
                 from mondrian.html_generator import generate_reference_image_html
-                first_case_study_html = generate_reference_image_html(
+                image_citation_html = generate_reference_image_html(
                     ref_image=cited_image,
                     dimension_name=name
                 )
-                first_case_study_rendered = True
-                logger.info(f"[HTML Gen] Collected first case study for {name}")
+                logger.info(f"[HTML Gen] Added inline case study for {name}")
 
             # Check if LLM cited a quote for this dimension
             cited_quote = dim.get('_cited_quote')
@@ -1339,16 +1334,8 @@ Required JSON Structure:
     <div class="feedback-recommendation">
       <strong>How to Improve:</strong>
       <p>{recommendation}</p>
-    </div>{quote_citation_html}
+    </div>{image_citation_html}{quote_citation_html}
   </div>
-'''
-        
-        # Add case study component section (if any case studies were cited)
-        if first_case_study_html:
-            html += f'''
-  <h2>Learning Example</h2>
-  <p style="color: #666; margin-bottom: 20px;">Study this reference photograph to understand the techniques discussed above.</p>
-{first_case_study_html}
 '''
 
         html += f'''
