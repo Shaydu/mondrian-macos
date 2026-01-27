@@ -1485,12 +1485,13 @@ def clear_jobs():
 def process_job_worker(db_path: str):
     """Background worker that processes pending jobs"""
     logger.info("Job processor started")
-    
+
     # Wait for AI Advisor service to be ready before processing jobs
     ai_ready = False
     wait_attempts = 0
     max_wait_attempts = 300  # Up to 5 minutes (30s * 10 attempts per second)
-    
+
+    logger.info(f"Waiting for AI Advisor at {AI_ADVISOR_URL}...")
     while not ai_ready and wait_attempts < max_wait_attempts:
         try:
             response = requests.get(f"{AI_ADVISOR_URL}/health", timeout=5)
@@ -1501,17 +1502,19 @@ def process_job_worker(db_path: str):
                     ai_ready = True
                     break
         except Exception as e:
-            pass
-        
+            logger.debug(f"Health check attempt {wait_attempts}: {e}")
+
         wait_attempts += 1
         if wait_attempts % 20 == 0:  # Log every 2 seconds
             logger.info(f"Waiting for AI Advisor service... ({wait_attempts // 10}s)")
         time.sleep(0.1)
-    
+
     if not ai_ready:
         logger.warning(f"AI Advisor service did not become ready after {max_wait_attempts * 0.1}s")
         logger.warning("Job processor continuing anyway - jobs will fail until service is ready")
-    
+
+    logger.info("[PROCESSOR] Entering main processing loop")
+    loop_count = 0
     while True:
         try:
             with sqlite3.connect(db_path) as conn:
@@ -1526,6 +1529,10 @@ def process_job_worker(db_path: str):
                     LIMIT 1
                 """)
                 job = cursor.fetchone()
+
+                loop_count += 1
+                if loop_count % 10 == 0:
+                    logger.debug(f"[PROCESSOR] Loop {loop_count}: {'found job' if job else 'no jobs'}")
 
                 if not job:
                     time.sleep(1)

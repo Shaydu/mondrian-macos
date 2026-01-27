@@ -208,7 +208,7 @@ def get_top_reference_images(db_path: str, advisor_id: str, max_total: int = 10)
         for row in rows:
             img_dict = dict(row)
             image_path = img_dict.get('image_path')
-            
+
             # Construct image URL if image_path exists
             if image_path and os.path.exists(image_path):
                 try:
@@ -220,7 +220,7 @@ def get_top_reference_images(db_path: str, advisor_id: str, max_total: int = 10)
                     logger.warning(f"Failed to process image {image_path}: {e}")
                     continue
             else:
-                result_images.append(img_dict)
+                logger.error(f"[RAG] Image path not found or doesn't exist: '{image_path}'")
         
         logger.info(f"Retrieved {len(result_images)} top reference images for single-pass RAG")
         return result_images
@@ -412,14 +412,18 @@ def get_best_image_per_dimension(db_path: str, advisor_id: str) -> Dict[str, Dic
             
             cursor.execute(query, (advisor_id,))
             row = cursor.fetchone()
-            
+
             if row:
                 img_dict = dict(row)
                 # Don't include raw embedding in dict to avoid log clutter
                 if 'embedding' in img_dict:
                     img_dict['has_embedding'] = img_dict['embedding'] is not None
                     del img_dict['embedding']
+
+                # Add metadata
+                img_dict['dimension_name'] = dim_name
                 result[dim_name] = img_dict
+                logger.info(f"[CaseStudy] Found best for {dim_name}: '{img_dict.get('image_title')}' (score={img_dict.get(db_column)})")
         
         conn.close()
         
@@ -529,11 +533,11 @@ def compute_case_studies(
         db_column = DIMENSION_TO_DB_COLUMN.get(dim_name)
         if not db_column:
             continue
-            
+
         ref_score = ref_img.get(db_column, 0)
         user_score = user_scores.get(dim_name, 10)
         ref_path = ref_img.get('image_path', '')
-        
+
         # Skip if this image path already used (ensures uniqueness, first match wins)
         if ref_path in used_image_paths:
             logger.info(f"[CaseStudy] Skipping {dim_name}: image '{ref_img.get('image_title')}' already used")

@@ -1057,8 +1057,12 @@ Provide ONLY the JSON above with your scores. No explanations, no comments."""
         rag_context += "- Each dimension: cite at most ONE image and ONE quote\n"
         rag_context += "- NEVER reuse an ID once cited in another dimension\n"
         rag_context += "- Only cite if directly relevant to your specific feedback\n"
-        rag_context += "- Zone System references: ONLY mention in ONE dimension (Lighting preferred), never repeat\n"
-        
+        rag_context += "- Zone System references: ONLY mention in ONE dimension (Lighting preferred), never repeat\n\n"
+        rag_context += "**MANDATORY JSON FIELDS:**\n"
+        rag_context += "- EVERY dimension MUST include \"case_study_id\" field (set to IMG_X or null)\n"
+        rag_context += "- EVERY dimension MUST include \"quote_id\" field (set to QUOTE_X or null)\n"
+        rag_context += "- These fields CANNOT be omitted - include them in EVERY dimension object\n"
+
         return prompt + rag_context
     
     def _get_default_system_prompt(self) -> str:
@@ -1073,9 +1077,9 @@ Required JSON Structure:
 {
   "image_description": "2-3 sentence description",
   "dimensions": [
-    {"name": "Composition", "score": 8, "comment": "...", "recommendation": "...", "case_study_id": null, "quote_id": null},
-    {"name": "Lighting", "score": 7, "comment": "...", "recommendation": "...", "case_study_id": null, "quote_id": null},
-    {"name": "Focus & Sharpness", "score": 9, "comment": "...", "recommendation": "...", "case_study_id": null, "quote_id": null},
+    {"name": "Composition", "score": 8, "comment": "...", "recommendation": "...", "case_study_id": "IMG_1 or null", "quote_id": "QUOTE_1 or null"},
+    {"name": "Lighting", "score": 7, "comment": "...", "recommendation": "...", "case_study_id": "IMG_2 or null", "quote_id": "QUOTE_2 or null"},
+    {"name": "Focus & Sharpness", "score": 9, "comment": "...", "recommendation": "...", "case_study_id": "IMG_3 or null", "quote_id": "QUOTE_1 or null"},
     {"name": "Depth & Perspective", "score": 7, "comment": "...", "recommendation": "...", "case_study_id": null, "quote_id": null},
     {"name": "Visual Balance", "score": 8, "comment": "...", "recommendation": "...", "case_study_id": null, "quote_id": null},
     {"name": "Emotional Impact", "score": 7, "comment": "...", "recommendation": "...", "case_study_id": null, "quote_id": null}

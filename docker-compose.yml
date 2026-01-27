@@ -2,10 +2,7 @@ version: '3.8'
 
 services:
   mondrian:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: mondrian-macos:latest
+    image: shaydu/mondrian:14.5.24
     container_name: mondrian-services
     
     # GPU configuration for NVIDIA

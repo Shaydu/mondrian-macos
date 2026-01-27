@@ -30,6 +30,70 @@ def format_dimension_name(name: str) -> str:
     return formatted
 
 
+def resolve_image_path(image_path: str) -> Optional[str]:
+    """
+    Resolve image path for Docker/RunPod environments (working dir: /app or /workspace).
+    Database may contain absolute paths from development machine, but in Docker/RunPod
+    images are at ./mondrian/source/...
+
+    Args:
+        image_path: Path from database (may be absolute from dev machine or relative)
+
+    Returns:
+        Resolved path to image file in container, or None if not found
+    """
+    if not image_path:
+        return None
+
+    logger.debug(f"[Path Resolve] Resolving: {image_path}")
+
+    # If absolute path (from development machine), extract the mondrian-relative part
+    if os.path.isabs(image_path):
+        # Example: /home/doo/dev/mondrian-macos/mondrian/source/... → mondrian/source/...
+        if 'mondrian/' in image_path:
+            relative = image_path[image_path.find('mondrian/'):]
+            if os.path.exists(relative):
+                logger.debug(f"[Path Resolve] ✅ Found: {relative}")
+                return relative
+
+            # Try with ./ prefix for Docker
+            relative_dot = f"./{relative}"
+            if os.path.exists(relative_dot):
+                logger.debug(f"[Path Resolve] ✅ Found: {relative_dot}")
+                return relative_dot
+
+    # If already relative, try as-is and with common prefixes
+    fallbacks = [
+        image_path,
+        f"mondrian/{image_path}",
+        f"./mondrian/{image_path}",
+    ]
+
+    for path in fallbacks:
+        if os.path.exists(path):
+            logger.debug(f"[Path Resolve] ✅ Found: {path}")
+            return path
+
+    # Last resort: search by filename in advisor directories
+    filename = os.path.basename(image_path)
+    search_dirs = [
+        "mondrian/source/advisor/photographer",
+        "mondrian/source/advisor/painter",
+        "mondrian/source/advisor/architect",
+    ]
+
+    for base in search_dirs:
+        if os.path.isdir(base):
+            for root, _, files in os.walk(base):
+                if filename in files:
+                    found = os.path.join(root, filename)
+                    logger.info(f"[Path Resolve] ✅ Found by search: {found}")
+                    return found
+
+    logger.warning(f"[Path Resolve] ❌ Not found: {image_path}")
+    return None
+
+
 def generate_reference_image_html(
     ref_image: Dict[str, Any],
     dimension_name: str,
@@ -59,19 +123,25 @@ def generate_reference_image_html(
     else:
         title_with_year = ref_title
 
-    # Get image data and convert to base64 for reliable rendering across all environments
+    # Get image data and convert to base64 with smart path resolution
     ref_image_url = ''
-    if ref_path and os.path.exists(ref_path):
-        try:
-            with open(ref_path, 'rb') as img_file:
-                image_data = img_file.read()
-                b64_image = base64.b64encode(image_data).decode('utf-8')
-                img_ext = os.path.splitext(ref_path)[1].lower()
-                mime_type = 'image/png' if img_ext == '.png' else 'image/jpeg' if img_ext in ['.jpg', '.jpeg'] else 'image/png'
-                ref_image_url = f"data:{mime_type};base64,{b64_image}"
-                logger.info(f"[HTML Gen] Embedded case study image as base64: {os.path.basename(ref_path)}")
-        except Exception as e:
-            logger.warning(f"Failed to embed image as base64: {e}")
+    if ref_path:
+        logger.info(f"[HTML Gen] Attempting to load image: {ref_path} for dimension: {dimension_name}")
+        resolved_path = resolve_image_path(ref_path)
+        if resolved_path:
+            try:
+                logger.info(f"[HTML Gen] Resolved path: {resolved_path}")
+                with open(resolved_path, 'rb') as img_file:
+                    image_data = img_file.read()
+                    b64_image = base64.b64encode(image_data).decode('utf-8')
+                    img_ext = os.path.splitext(resolved_path)[1].lower()
+                    mime_type = 'image/png' if img_ext == '.png' else 'image/jpeg' if img_ext in ['.jpg', '.jpeg'] else 'image/png'
+                    ref_image_url = f"data:{mime_type};base64,{b64_image}"
+                    logger.info(f"[HTML Gen] ✅ Successfully embedded reference image: {os.path.basename(resolved_path)} ({len(image_data)} bytes, base64: {len(b64_image)} chars)")
+            except Exception as e:
+                logger.error(f"[HTML Gen] ❌ Failed to embed image as base64: {e} (resolved_path={resolved_path})", exc_info=True)
+        else:
+            logger.error(f"[HTML Gen] ❌ Could not resolve image path for reference: {ref_path} (dimension={dimension_name})")
     
     # Build case study box
     html = '<div class="reference-citation"><div class="case-study-box">'
