@@ -99,29 +99,36 @@ def get_database_path():
 
 
 # Default services (will be configured based on mode)
-def get_services_for_mode(mode="base", lora_path=None, model=None, db_path="mondrian.db", backend="bnb"):
+def get_services_for_mode(mode="base", lora_path=None, model=None, db_path="mondrian.db", backend="bnb", generation_profile=None):
     """
     Get service configurations based on mode.
-    
+
     Modes:
         - base: Base model only, no RAG, no LoRA
         - rag: Base model with RAG enabled
         - lora: Base model with LoRA adapter (requires --lora-path)
         - lora+rag: LoRA model with RAG enabled
-    
+
     Backends (Linux only):
         - bnb: BitsAndBytes 4-bit quantization (default)
         - vllm: vLLM high-performance server
         - awq: AutoAWQ quantization
+
+    Generation Profiles:
+        - ultra_fast: Maximum speed (greedy decoding, 1200 tokens)
+        - fast_greedy: Fast inference (1500 tokens)
+        - optimized: Balanced quality/speed (2-beam, 2000 tokens)
+        - beam_search: Better quality (4-beam, 2000 tokens)
+        - sampling: Varied responses with sampling
     """
     # Summary Service should start first (port 5006)
     services = [
         [PYTHON_EXECUTABLE, "mondrian/summary_service.py", "--port", "5006"],
     ]
-    
+
     # Job Service (port 5005) - pass database path parameter
     services.append([PYTHON_EXECUTABLE, "mondrian/job_service_v2.3.py", "--port", "5005", "--db", db_path])
-    
+
     # Configure AI Advisor Service based on mode and platform
     import platform
     if platform.system() == "Linux":
@@ -132,10 +139,15 @@ def get_services_for_mode(mode="base", lora_path=None, model=None, db_path="mond
             print(f"[BACKEND] Using {backend.upper()} inference backend")
     else:
         ai_advisor_cmd = [PYTHON_EXECUTABLE, "mondrian/ai_advisor_service.py", "--port", "5100"]
-    
+
     # Add model if specified
     if model:
         ai_advisor_cmd.extend(["--model", model])
+
+    # Add generation profile if specified
+    if generation_profile:
+        ai_advisor_cmd.extend(["--generation-profile", generation_profile])
+        print(f"[GENERATION] Using '{generation_profile}' profile")
     
     if mode == "base":
         # Base mode: default settings (no special flags)
@@ -783,7 +795,8 @@ def main():
     db_path_arg = None
     all_services = False
     backend = "bnb"  # Default backend (BitsAndBytes - current implementation)
-    
+    generation_profile = None  # Generation profile for inference (ultra_fast, fast_greedy, optimized, etc.)
+
     for arg in sys.argv:
         if arg.startswith("--mode="):
             mode = arg.split("=", 1)[1]
@@ -793,6 +806,8 @@ def main():
             model_arg = arg.split("=", 1)[1]
         elif arg.startswith("--db="):
             db_path_arg = arg.split("=", 1)[1]
+        elif arg.startswith("--generation-profile="):
+            generation_profile = arg.split("=", 1)[1]
         elif arg == "--all-services" or arg == "--full":
             all_services = True
         elif arg.startswith("--backend="):
@@ -978,7 +993,7 @@ Examples:
         print(f"[CONFIG] Using database path: {final_db_path}")
     
     # Get services for the selected mode
-    services = get_services_for_mode(mode, lora_path, model_arg, final_db_path, backend)
+    services = get_services_for_mode(mode, lora_path, model_arg, final_db_path, backend, generation_profile)
     
     print("\n" + "=" * 60)
     print(f"Starting Mondrian services in {mode.upper()} mode")

@@ -1,0 +1,62 @@
+FROM nvidia/cuda:12.2.0-runtime-ubuntu22.04
+
+# Base image with all dependencies - built once, reused many times
+# Build with: docker build -f Dockerfile.base -t shaydu/mondrian:base .
+
+# Prevent interactive prompts during package installation
+ENV DEBIAN_FRONTEND=noninteractive
+ENV PYTHONUNBUFFERED=1
+ENV PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True,max_split_size_mb:512
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y \
+    python3.10 \
+    python3-pip \
+    python3-dev \
+    git \
+    wget \
+    curl \
+    build-essential \
+    libsqlite3-dev \
+    libglib2.0-0 \
+    libsm6 \
+    libxext6 \
+    libxrender-dev \
+    libgomp1 \
+    libfontconfig1 \
+    libfreetype6 \
+    libpango-1.0-0 \
+    libpangoft2-1.0-0 \
+    libgdk-pixbuf2.0-0 \
+    libcairo2 \
+    libjpeg-dev \
+    libpng-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Upgrade pip and install wheel
+RUN pip3 install --no-cache-dir --upgrade pip setuptools wheel
+
+# Set working directory
+WORKDIR /app
+
+# Copy requirements files
+COPY requirements.txt requirements_linux.txt ./
+
+# Install Python dependencies
+# PyTorch with CUDA 12.1 support
+RUN pip3 install --no-cache-dir torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu121
+
+# Install HuggingFace and ML libraries
+RUN pip3 install --no-cache-dir transformers accelerate bitsandbytes
+
+# Install all other dependencies from requirements
+RUN pip3 install --no-cache-dir -r requirements.txt
+
+# Create necessary directories for runtime
+RUN mkdir -p logs data models uploads temp mondrian/advisor_images
+
+# Expose all service ports
+EXPOSE 5100 5005 5006
+
+# Label for version tracking
+LABEL description="Mondrian Base Image - Dependencies only"

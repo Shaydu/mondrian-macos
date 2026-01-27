@@ -1,0 +1,36 @@
+[33mcommit b1405c1c770b335ab7bd0aae5378a34c8ffa085b[m[33m ([m[1;36mHEAD[m[33m, [m[1;33mtag: [m[1;33m20260126-all-but-repetition[m[33m, [m[1;31morigin/20260126-citation-restore[m[33m, [m[1;32m20260126-citation-restore[m[33m)[m
+Author: Stephen <shaydu@gmail.com>
+Date:   Mon Jan 26 08:14:06 2026 -0700
+
+    structurally complete, still duplicating recommendations
+
+[33mcommit 2b7f8de11ed0e4dc16c29e4bc534641df475877b[m
+Author: Stephen <shaydu@gmail.com>
+Date:   Mon Jan 26 07:55:27 2026 -0700
+
+    working citations and image case studies, but I can't get more than one. shaydu/mondrian:14.5.18
+
+[33mcommit 764c86012bf76906acc95453896669c3ec6f7679[m
+Author: Stephen <shaydu@gmail.com>
+Date:   Mon Jan 26 06:31:35 2026 -0700
+
+    working locally with all elements: case studies, quotations, advisor case study images and all dimensions
+
+[33mcommit a0bfb3939bf7353486254cf8cbc234d79c94558a[m
+Author: Stephen <shaydu@gmail.com>
+Date:   Mon Jan 26 04:32:37 2026 -0700
+
+    Fix import error: remove deleted generate_ios_detailed_html function
+
+[33mcommit 862803eb4f5cb680591d455bb8a454f43bea342e[m
+Author: Stephen <shaydu@gmail.com>
+Date:   Mon Jan 26 04:04:36 2026 -0700
+
+    Enable dimension-specific citations with refactoring
+    
+    - Created citation_service.py to centralize HTML generation for citations
+    - Updated system prompt (system_prompt_3) with explicit citation field examples
+    - Enhanced citation validation with type checking and better error logging
+    - Removed deprecated generate_ios_detailed_html() function from html_generator.py
+    - Refactored citation rendering to use citation service helpers
+    - Citations (case studies and quotes) now render inline in dimension cards

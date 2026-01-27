@@ -1,0 +1,58 @@
+{
+  "models": {
+    "qwen3-4b-instruct": {
+      "name": "Qwen3-VL-4B-Instruct",
+      "model_id": "Qwen/Qwen3-VL-4B-Instruct",
+      "description": "9-dimension analysis with Subject Matter scoring. Reduced tokens for testing.",
+      "adapter": "./adapters/ansel_qwen3_4b_full_9dim/epoch_20",
+      "speed": "fast",
+      "quality": "good",
+      "reasoning": false,
+      "tokens_per_sec": "25-35 (BF16)"
+    }
+  },
+  "defaults": {
+    "model_preset": "qwen3-4b-instruct",
+    "mode": "lora",
+    "generation_profile": "ultra_fast",
+    "enable_rag": true,
+    "description": "TEST CONFIG: Ultra-fast mode with reduced tokens for RTX 3060 testing"
+  },
+  "rag": {
+    "max_reference_images": 2,
+    "max_reference_quotes": 2,
+    "description": "Reduced references for testing"
+  },
+  "timeouts": {
+    "health_check": 10,
+    "ai_inference": 600,
+    "description": "Timeout values in seconds"
+  },
+  "generation_profiles": {
+    "ultra_fast": {
+      "max_new_tokens": 1500,
+      "num_beams": 1,
+      "do_sample": false,
+      "repetition_penalty": 2.0,
+      "no_repeat_ngram_size": 4,
+      "description": "Ultra-fast greedy decoding for testing on RTX 3060. Reduced tokens to save GPU memory."
+    },
+    "optimized": {
+      "max_new_tokens": 2500,
+      "num_beams": 2,
+      "do_sample": false,
+      "repetition_penalty": 2.0,
+      "no_repeat_ngram_size": 4,
+      "early_stopping": true,
+      "description": "2-beam search with 2500 token limit for balanced quality and speed. High repetition penalty to prevent duplicate feedback."
+    },
+    "fast_greedy": {
+      "max_new_tokens": 2500,
+      "num_beams": 1,
+      "do_sample": false,
+      "repetition_penalty": 2.0,
+      "no_repeat_ngram_size": 4,
+      "description": "Greedy decoding, fast inference. High repetition penalty ensures unique dimension feedback."
+    }
+  }
+}

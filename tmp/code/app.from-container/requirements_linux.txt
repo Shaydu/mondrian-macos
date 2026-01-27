@@ -1,0 +1,72 @@
+# Mondrian Linux/CUDA - Core Dependencies
+# For RTX 3060 (12GB VRAM) or similar NVIDIA GPUs
+#
+# Installation:
+#   1. Create virtual environment: python -m venv venv
+#   2. Activate: source venv/bin/activate
+#   3. Install PyTorch with CUDA first (check https://pytorch.org for latest):
+#      pip install torch torchvision --index-url https://download.pytorch.org/whl/cu121
+#   4. Install remaining dependencies: pip install -r requirements_linux.txt
+
+# Web framework
+Flask>=3.0.0
+Flask-CORS>=4.0.0
+
+# Image processing
+Pillow>=10.3.0
+opencv-python>=4.9.0
+
+# YAML support (for metadata)
+PyYAML>=6.0.1
+
+# HTTP requests
+requests>=2.31.0
+
+# Process management
+psutil>=5.9.0
+
+# Database (using built-in sqlite3)
+
+# =============================================================================
+# PyTorch and CUDA (install separately - see instructions above)
+# =============================================================================
+# torch>=2.0.0
+# torchvision>=0.15.0
+
+# =============================================================================
+# Transformers and ML Stack
+# =============================================================================
+transformers>=4.40.0
+accelerate>=0.20.0
+bitsandbytes>=0.41.0  # For 4-bit/8-bit quantization
+huggingface-hub>=0.23.0
+safetensors>=0.4.0
+
+# LoRA/PEFT support (for fine-tuned adapters)
+peft>=0.10.0
+
+# Vision processing for transformers
+qwen-vl-utils>=0.0.2  # Qwen2-VL specific utilities
+
+# =============================================================================
+# CLIP for RAG Embeddings (optional - for visual similarity)
+# =============================================================================
+# Choose one:
+# open-clip-torch>=2.24.0  # OpenCLIP (recommended)
+# clip-by-openai  # Original CLIP
+
+# =============================================================================
+# Development/Testing
+# =============================================================================
+pytest>=7.4.3
+
+# =============================================================================
+# Notes for RTX 3060 (12GB VRAM):
+# =============================================================================
+# - Qwen2-VL-7B in 4-bit: ~4-5GB VRAM
+# - With CLIP for RAG: +~400MB
+# - Headroom for batch processing: ~6GB free
+#
+# Recommended model: Qwen/Qwen2-VL-7B-Instruct with --load_in_4bit
+# Larger models (if needed): Qwen/Qwen2-VL-72B-Instruct (requires multi-GPU)
+# =============================================================================

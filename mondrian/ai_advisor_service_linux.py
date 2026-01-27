@@ -1073,12 +1073,12 @@ Required JSON Structure:
 {
   "image_description": "2-3 sentence description",
   "dimensions": [
-    {"name": "Composition", "score": 8, "comment": "...", "recommendation": "..."},
-    {"name": "Lighting", "score": 7, "comment": "...", "recommendation": "..."},
-    {"name": "Focus & Sharpness", "score": 9, "comment": "...", "recommendation": "..."},
-    {"name": "Depth & Perspective", "score": 7, "comment": "...", "recommendation": "..."},
-    {"name": "Visual Balance", "score": 8, "comment": "...", "recommendation": "..."},
-    {"name": "Emotional Impact", "score": 7, "comment": "...", "recommendation": "..."}
+    {"name": "Composition", "score": 8, "comment": "...", "recommendation": "...", "case_study_id": null, "quote_id": null},
+    {"name": "Lighting", "score": 7, "comment": "...", "recommendation": "...", "case_study_id": null, "quote_id": null},
+    {"name": "Focus & Sharpness", "score": 9, "comment": "...", "recommendation": "...", "case_study_id": null, "quote_id": null},
+    {"name": "Depth & Perspective", "score": 7, "comment": "...", "recommendation": "...", "case_study_id": null, "quote_id": null},
+    {"name": "Visual Balance", "score": 8, "comment": "...", "recommendation": "...", "case_study_id": null, "quote_id": null},
+    {"name": "Emotional Impact", "score": 7, "comment": "...", "recommendation": "...", "case_study_id": null, "quote_id": null}
   ],
   "overall_score": 7.4,
   "key_strengths": ["strength 1", "strength 2"],
@@ -1274,7 +1274,11 @@ Required JSON Structure:
   <h2>Improvement Guide</h2>
   <p style="color: #666; margin-bottom: 20px;">Each dimension is analyzed with specific feedback and actionable recommendations for improvement.</p>
 '''
-        
+
+        # Collect first case study image to display once at the top
+        first_case_study_html = ""
+        first_case_study_rendered = False
+
         # Add dimension cards
         for dim in dimensions:
             name = dim.get('name', 'Unknown')
@@ -1288,17 +1292,19 @@ Required JSON Structure:
             recommendation = recommendation.strip()
 
             color, rating = get_rating_style(score)
-            
+
             # Check if LLM cited an image for this dimension
             cited_image = dim.get('_cited_image')
-            image_citation_html = ""
-            if cited_image:
+            if cited_image and not first_case_study_rendered:
+                # Collect the first case study to render as a separate component
                 from mondrian.html_generator import generate_reference_image_html
-                image_citation_html = generate_reference_image_html(
+                first_case_study_html = generate_reference_image_html(
                     ref_image=cited_image,
                     dimension_name=name
                 )
-            
+                first_case_study_rendered = True
+                logger.info(f"[HTML Gen] Collected first case study for {name}")
+
             # Check if LLM cited a quote for this dimension
             cited_quote = dim.get('_cited_quote')
             quote_citation_html = ""
@@ -1306,21 +1312,21 @@ Required JSON Structure:
                 book_title = cited_quote.get('book_title', 'Unknown Book')
                 passage_text = cited_quote.get('passage_text', cited_quote.get('text', ''))
                 quote_dims = cited_quote.get('dimensions', [])
-                
+
                 # Truncate to 75 words
                 words = passage_text.split()
                 truncated_text = ' '.join(words[:75])
                 if len(words) > 75:
                     truncated_text += "..."
-                
+
                 quote_citation_html = '<div class="advisor-quote-box">'
                 quote_citation_html += '<div class="advisor-quote-title">Advisor Insight</div>'
                 quote_citation_html += f'<div class="advisor-quote-text">"{truncated_text}"</div>'
                 quote_citation_html += f'<div class="advisor-quote-source"><strong>From:</strong> {book_title}</div>'
                 quote_citation_html += '</div>'
-                
+
                 logger.info(f"[HTML Gen] Added LLM-cited quote for {name} from '{book_title}'")
-            
+
             html += f'''
   <div class="feedback-card">
     <h3>
@@ -1333,22 +1339,30 @@ Required JSON Structure:
     <div class="feedback-recommendation">
       <strong>How to Improve:</strong>
       <p>{recommendation}</p>
-    </div>{image_citation_html}{quote_citation_html}
+    </div>{quote_citation_html}
   </div>
 '''
         
+        # Add case study component section (if any case studies were cited)
+        if first_case_study_html:
+            html += f'''
+  <h2>Learning Example</h2>
+  <p style="color: #666; margin-bottom: 20px;">Study this reference photograph to understand the techniques discussed above.</p>
+{first_case_study_html}
+'''
+
         html += f'''
   <h2>Overall Grade</h2>
   <p><strong>{overall_score}/10</strong></p>
   <p><strong>Grade Note:</strong> {technical_notes}</p>
 '''
-        
+
         html += '''
 </div>
 </div>
 </body>
 </html>'''
-        
+
         return html
     
     def _parse_response(self, response: str, advisor: str, mode: str, prompt: str, 

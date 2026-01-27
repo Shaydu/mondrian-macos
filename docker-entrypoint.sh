@@ -38,6 +38,11 @@ if [ -n "$MONDRIAN_LORA_PATH" ]; then
     echo "LoRA Adapter: $MONDRIAN_LORA_PATH"
 fi
 
+if [ -n "$MONDRIAN_GENERATION_PROFILE" ]; then
+    SERVICE_ARGS="$SERVICE_ARGS --generation-profile=$MONDRIAN_GENERATION_PROFILE"
+    echo "Generation Profile: $MONDRIAN_GENERATION_PROFILE"
+fi
+
 echo ""
 
 # Start services with explicit database path using --db= format
