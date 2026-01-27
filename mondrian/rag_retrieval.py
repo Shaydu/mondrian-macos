@@ -221,7 +221,8 @@ def get_top_reference_images(db_path: str, advisor_id: str, max_total: int = 10)
                     continue
             else:
                 logger.error(f"[RAG] Image path not found or doesn't exist: '{image_path}'")
-        
+                result_images.append(img_dict)
+
         logger.info(f"Retrieved {len(result_images)} top reference images for single-pass RAG")
         return result_images
         

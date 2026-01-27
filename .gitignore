@@ -47,6 +47,7 @@ training/ansel_ocr/extracted_photos/
 training/ansel_ocr/the_print_vol3/
 training/user_images/
 training/datasets/ansel-images/
+Image-Composition-Assessment-Dataset-CADB/
 
 # Logs
 logs/
