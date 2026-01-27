@@ -22,6 +22,7 @@ __pycache__/
 *.sublime-workspace
 
 # SQLite database files
+mondrian.db
 mondrian/mondrian.db
 *.db-shm
 *.db-wal
