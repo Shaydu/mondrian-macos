@@ -60,19 +60,21 @@ def print_text(images):
             score = img.get(f'{dim}_score')
             instructive = img.get(f'{dim}_instructive')
             
-            if instructive and instructive.strip():
+            filtered_instructive = filter_user_focused_guidance(instructive)
+            
+            if filtered_instructive:
                 has_content = True
                 dim_name = dim.replace('_', ' ').title()
                 print(f"\n{dim_name} ({score:.1f}/10):")
-                print(f"  {instructive}")
+                print(f"  {filtered_instructive}")
         
         if not has_content:
-            print("  (No instructive text available)")
+            print("  (No improvement recommendations available)")
 
 def print_markdown(images):
     """Print in Markdown format"""
-    print(f"# Instructive Text - All Advisor Images\n")
-    print(f"Total images: {len(images)}\n")
+    print(f"# Guidance - Improve Your Images\n")
+    print(f"Based on {len(images)} advisor reference images\n")
     
     for img in images:
         print(f"\n## {img['image_title']}\n")
@@ -82,14 +84,46 @@ def print_markdown(images):
             score = img.get(f'{dim}_score')
             instructive = img.get(f'{dim}_instructive')
             
-            if instructive and instructive.strip():
+            filtered_instructive = filter_user_focused_guidance(instructive)
+            
+            if filtered_instructive:
                 has_content = True
                 dim_name = dim.replace('_', ' ').title()
                 print(f"### {dim_name} ({score:.1f}/10)\n")
-                print(f"{instructive}\n")
+                print(f"{filtered_instructive}\n")
         
         if not has_content:
-            print("*No instructive text available*\n")
+            print("*No improvement recommendations available*\n")
+
+def filter_user_focused_guidance(instructive_text):
+    """
+    Filter instructive text to focus only on user's image improvements.
+    Removes feedback about the advisor's image and keeps only actionable recommendations.
+    """
+    if not instructive_text:
+        return None
+    
+    lines = instructive_text.split('\n')
+    user_focused_lines = []
+    
+    for line in lines:
+        line_lower = line.lower()
+        # Skip lines that describe the advisor's image qualities
+        skip_phrases = [
+            'this image', 'the image shows', 'demonstrates', 'exemplifies',
+            'reference image', 'advisor image', 'example of'
+        ]
+        
+        if any(phrase in line_lower for phrase in skip_phrases):
+            # Check if it's a recommendation (has "consider", "try", "improve", "should", "could")
+            recommendation_phrases = ['consider', 'try', 'improve', 'should', 'could', 'recommend', 'increase', 'decrease', 'adjust', 'enhance']
+            if not any(phrase in line_lower for phrase in recommendation_phrases):
+                continue
+        
+        user_focused_lines.append(line)
+    
+    filtered_text = '\n'.join(user_focused_lines).strip()
+    return filtered_text if filtered_text else None
 
 def main():
     parser = argparse.ArgumentParser(

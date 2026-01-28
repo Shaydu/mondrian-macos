@@ -1036,11 +1036,21 @@ Provide ONLY the JSON above with your scores. No explanations, no comments."""
         if not reference_images and not book_passages:
             return prompt
         
-        rag_context = "\n\n## REFERENCE MATERIALS FOR CITATION\n\n"
+        rag_context = "\n\n" + "="*80 + "\n"
+        rag_context += "## REFERENCE MATERIALS FOR LEARNING (NOT FOR ANALYSIS)\n"
+        rag_context += "="*80 + "\n\n"
+        
+        rag_context += "**CRITICAL INSTRUCTION:**\n"
+        rag_context += "- The reference materials below are LEARNING EXAMPLES from the advisor's portfolio\n"
+        rag_context += "- They show principles of excellent photography that you can CITE in your feedback\n"
+        rag_context += "- **YOU ARE ANALYZING THE USER'S UPLOADED PHOTOGRAPH - NOT THESE REFERENCES**\n"
+        rag_context += "- Do NOT describe elements from reference images\n"
+        rag_context += "- Do NOT recommend adding elements that only exist in references but not in the user's image\n"
+        rag_context += "- If user uploaded a portrait, don't mention mountains/landscapes/rocks from reference images\n\n"
         
         # Add book passages
         if book_passages:
-            rag_context += "**Advisor Quotes** (cite with quote_id=\"QUOTE_X\"):\n"
+            rag_context += "**Advisor Quotes** (cite with quote_id=\"QUOTE_X\" when relevant to YOUR feedback about THE USER'S image):\n\n"
             for idx, passage in enumerate(book_passages[:6], 1):
                 book_title = passage['book_title']
                 text = passage['passage_text']
@@ -1050,11 +1060,11 @@ Provide ONLY the JSON above with your scores. No explanations, no comments."""
                 words = text.split()
                 preview = ' '.join(words[:60]) + ("..." if len(words) > 60 else "")
                 
-                rag_context += f'QUOTE_{idx}: "{preview}" —{book_title} (for {", ".join(dims)})\n\n'
+                rag_context += f'QUOTE_{idx}: "{preview}" —{book_title} (relevant for {", ".join(dims)} dimension)\n\n'
         
         # Add reference images
         if reference_images:
-            rag_context += "**Reference Images** (cite with case_study_id=\"IMG_X\"):\n"
+            rag_context += "**Reference Images** (cite with case_study_id=\"IMG_X\" when demonstrating principles applicable to THE USER'S image):\n\n"
             for idx, img in enumerate(reference_images[:10], 1):
                 img_title = img.get('image_title') or 'Untitled'
                 year = img.get('date_taken', '')
@@ -1069,11 +1079,18 @@ Provide ONLY the JSON above with your scores. No explanations, no comments."""
                         strong_dims.append(f"{dim_name}={score:.1f}")
                 
                 if strong_dims:
-                    rag_context += f'IMG_{idx}: "{img_title}" ({year}) - Excels in {", ".join(strong_dims)}\n'
+                    rag_context += f'IMG_{idx}: "{img_title}" ({year}) - Demonstrates excellence in {", ".join(strong_dims)}\n'
             rag_context += "\n"
         
         # Concise citation rules
-        rag_context += "**Citation Rules:** Use case_study_id or quote_id fields to reference these materials when relevant to your feedback. Maximum 3 citations total. Each ID may only be used once.\n"
+        rag_context += "**Citation Rules:**\n"
+        rag_context += "- Use case_study_id or quote_id fields to reference these materials when the PRINCIPLE applies to the user's image\n"
+        rag_context += "- Maximum 3 citations total. Each ID may only be used once\n"
+        rag_context += "- Only cite if the principle/technique is RELEVANT to improving the user's specific photograph\n\n"
+        
+        rag_context += "="*80 + "\n"
+        rag_context += "NOW ANALYZE THE USER'S UPLOADED PHOTOGRAPH BELOW\n"
+        rag_context += "="*80 + "\n\n"
         
         return prompt + rag_context
     

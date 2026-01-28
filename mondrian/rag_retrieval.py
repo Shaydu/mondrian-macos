@@ -525,7 +525,7 @@ def compute_case_studies(
     user_dimensions: List[Dict[str, Any]], 
     user_image_path: str = None,
     max_case_studies: int = 3,
-    relevance_threshold: float = 0.15  # Lowered for more variety
+    relevance_threshold: float = 0.35  # Raised to avoid unrelated images (0.15 was too low)
 ) -> List[Dict[str, Any]]:
     """
     Compute which dimensions should get case studies based on:
@@ -936,6 +936,12 @@ def augment_prompt_with_rag_context(
         else:
             rag_context += "Study how these master works demonstrate excellence in the dimensions where improvement is most needed.\n"
         
+        # CRITICAL: Add explicit warning to prevent analyzing reference images
+        rag_context += "\n**CRITICAL: These reference images are EXAMPLES ONLY for learning principles.**\n"
+        rag_context += "**ALL your analysis, comments, and recommendations MUST be about THE USER'S uploaded photograph ONLY.**\n"
+        rag_context += "**Do NOT describe elements from these reference images. Do NOT recommend changes based on elements that appear in reference images but NOT in the user's image.**\n"
+        rag_context += "**If the user uploaded a portrait, do NOT mention mountains, landscapes, or other elements that only exist in these reference examples.**\n"
+        
     else:
         # No user dimensions yet - use visual embedding retrieval (required)
         if not user_image_path:
@@ -963,6 +969,12 @@ def augment_prompt_with_rag_context(
             rag_context += "These master works are visually similar to your photograph and provide dimensional benchmarks.\n"
         else:
             rag_context += "These master works from the advisor's portfolio provide dimensional benchmarks.\n"
+        
+        # CRITICAL: Add explicit warning to prevent analyzing reference images
+        rag_context += "\n**CRITICAL: These reference images are EXAMPLES ONLY for learning principles.**\n"
+        rag_context += "**ALL your analysis, comments, and recommendations MUST be about THE USER'S uploaded photograph ONLY.**\n"
+        rag_context += "**Do NOT describe elements from these reference images. Do NOT recommend changes based on elements that appear in reference images but NOT in the user's image.**\n"
+        rag_context += "**If the user uploaded a portrait, do NOT mention mountains, landscapes, or other elements that only exist in these reference examples.**\n"
     
     # Add reference image details with case study containers
     for i, img in enumerate(reference_images, 1):
@@ -1086,6 +1098,9 @@ def augment_prompt_with_rag_context(
                 rag_context += f"- \"{img_title}\" ({year}): Excels in [{', '.join(strong_dims)}]\n"
     
     rag_context += "\n**FOR case_studies OUTPUT:** Only cite images from the list above. Match reference strengths (>=8) to user weaknesses (<=5).\n"
+    
+    # Final critical reminder
+    rag_context += "\n\n**FINAL REMINDER: You are analyzing THE USER'S uploaded photograph. All dimensions, scores, comments, and recommendations must describe and improve THE USER'S image - not these reference examples.**\n"
     
     # Augment prompt
     augmented_prompt = f"{prompt}\n{rag_context}"
