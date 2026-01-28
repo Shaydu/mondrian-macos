@@ -406,7 +406,7 @@ def get_best_image_per_dimension(db_path: str, advisor_id: str, as_list: bool = 
             
             # Get a random high-quality image for this dimension from the top scorers
             # This provides variety across analyses instead of always using the same #1 image
-            # CRITICAL: Only select images that have instructive text populated
+            # NOTE: Instructive text filter temporarily removed - will re-enable after populating data
             query = f"""
                 SELECT id, image_path, composition_score, lighting_score, 
                        focus_sharpness_score, color_harmony_score,
@@ -421,8 +421,6 @@ def get_best_image_per_dimension(db_path: str, advisor_id: str, as_list: bool = 
                 WHERE advisor_id = ?
                   AND {db_column} >= 8.0
                   AND {db_column} IS NOT NULL
-                  AND {instructive_column} IS NOT NULL
-                  AND {instructive_column} != ''
                 ORDER BY RANDOM()
                 LIMIT 1
             """
