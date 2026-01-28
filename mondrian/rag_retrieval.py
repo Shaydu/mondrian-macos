@@ -474,13 +474,14 @@ def compute_case_studies(
     user_dimensions: List[Dict[str, Any]], 
     user_image_path: str = None,
     max_case_studies: int = 3,
-    relevance_threshold: float = 0.25
+    relevance_threshold: float = 0.15  # Lowered for more variety
 ) -> List[Dict[str, Any]]:
     """
     Compute which dimensions should get case studies based on:
     1. Gap between reference score and user score (larger = more learning opportunity)
     2. Visual relevance between user image and reference image
     3. Unique images only (first match wins for tie-breaking)
+    4. Variety: Uses weighted sampling to ensure diverse dimensions across analyses
     
     Args:
         db_path: Path to the SQLite database
@@ -499,6 +500,8 @@ def compute_case_studies(
         - gap: ref_score - user_score
         - relevance: Visual similarity score (if computed)
     """
+    import random
+    
     # Get best reference image for each dimension
     best_per_dim = get_best_image_per_dimension(db_path, advisor_id)
     
@@ -548,7 +551,8 @@ def compute_case_studies(
         
         gap = ref_score - user_score
         
-        # Only consider if there's a meaningful gap (user can learn something)
+        # Lower gap threshold to consider more dimensions
+        # Only exclude if user score is equal or better than reference
         if gap <= 0:
             logger.info(f"[CaseStudy] Skipping {dim_name}: no gap (user={user_score}, ref={ref_score})")
             continue
@@ -561,7 +565,7 @@ def compute_case_studies(
         else:
             logger.info(f"[CaseStudy] {dim_name}: gap={gap:.1f}, relevance=N/A, ref='{ref_img.get('image_title')}'")
         
-        # Filter by relevance threshold
+        # Filter by relevance threshold (but be more lenient)
         if relevance < relevance_threshold:
             logger.info(f"[CaseStudy] Skipping {dim_name}: relevance {relevance:.2f} below threshold {relevance_threshold}")
             continue
@@ -569,20 +573,69 @@ def compute_case_studies(
         # Mark this image as used (first match wins for tie-breaking)
         used_image_paths.add(ref_path)
         
+        # Compute selection weight: gap * relevance (balanced approach)
+        # This ensures both learning opportunity AND relevance matter
+        selection_weight = gap * relevance
+        
         candidates.append({
             'dimension_name': dim_name,
             'user_score': user_score,
             'ref_image': ref_img,
             'ref_score': ref_score,
             'gap': gap,
-            'relevance': relevance
+            'relevance': relevance,
+            'weight': selection_weight
         })
     
-    # Sort by gap descending (largest learning opportunity first)
-    candidates.sort(key=lambda x: x['gap'], reverse=True)
+    if not candidates:
+        logger.info(f"[CaseStudy] No candidates passed filters")
+        return []
     
-    # Take top N case studies
-    selected = candidates[:max_case_studies]
+    # Improved Selection Strategy:
+    # 1. Always include the top gap dimension (most important learning opportunity)
+    # 2. For remaining slots, use weighted random sampling based on gap*relevance
+    # This ensures variety while maintaining instructional value
+    
+    # Sort by weight descending
+    candidates.sort(key=lambda x: x['weight'], reverse=True)
+    
+    selected = []
+    
+    # Always take the highest-weighted dimension first (most important)
+    if candidates:
+        selected.append(candidates[0])
+        remaining_candidates = candidates[1:]
+        logger.info(f"[CaseStudy] Top priority: {candidates[0]['dimension_name']} (gap={candidates[0]['gap']:.1f}, weight={candidates[0]['weight']:.2f})")
+    
+    # For remaining slots, use weighted random selection to add variety
+    remaining_slots = max_case_studies - len(selected)
+    if remaining_slots > 0 and remaining_candidates:
+        # Normalize weights for probability distribution
+        total_weight = sum(c['weight'] for c in remaining_candidates)
+        if total_weight > 0:
+            # Sample without replacement
+            sample_size = min(remaining_slots, len(remaining_candidates))
+            weights = [c['weight'] / total_weight for c in remaining_candidates]
+            
+            # Use weighted random sampling
+            try:
+                sampled_indices = random.choices(
+                    range(len(remaining_candidates)), 
+                    weights=weights, 
+                    k=sample_size
+                )
+                # Remove duplicates while preserving order
+                seen = set()
+                for idx in sampled_indices:
+                    if idx not in seen and len(selected) < max_case_studies:
+                        seen.add(idx)
+                        selected.append(remaining_candidates[idx])
+                        logger.info(f"[CaseStudy] Weighted selection: {remaining_candidates[idx]['dimension_name']} (gap={remaining_candidates[idx]['gap']:.1f}, weight={remaining_candidates[idx]['weight']:.2f})")
+            except Exception as e:
+                logger.warning(f"[CaseStudy] Weighted sampling failed, falling back to top candidates: {e}")
+                # Fallback: just take next highest
+                for c in remaining_candidates[:remaining_slots]:
+                    selected.append(c)
     
     if selected:
         selected_info = [(c['dimension_name'], f"gap={c['gap']:.1f}", c['ref_image'].get('image_title')) for c in selected]

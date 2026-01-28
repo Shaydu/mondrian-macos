@@ -215,7 +215,7 @@ class QwenAdvisor:
             "top_p": 0.9,
             "top_k": 50,
             "repetition_penalty": 1.0,
-            "early_stopping": True,
+            "early_stopping": False,
         }
         if generation_config:
             # Filter out non-generation parameters (e.g., 'description')
@@ -528,7 +528,7 @@ class QwenAdvisor:
         user_dimensions: List[Dict[str, Any]], 
         user_image_path: str = None,
         max_case_studies: int = 3,
-        relevance_threshold: float = 0.25
+        relevance_threshold: float = 0.15  # Lowered for more variety
     ) -> List[Dict[str, Any]]:
         """
         Compute which dimensions should get case studies based on:
@@ -1028,81 +1028,50 @@ Provide ONLY the JSON above with your scores. No explanations, no comments."""
     def _build_rag_prompt(self, prompt: str, reference_images: List[Dict], 
                           book_passages: List[Dict]) -> str:
         """
-        Build RAG-augmented prompt for single-pass analysis.
-        Assigns citation IDs to ALL candidates and lets LLM decide relevance.
+        Build RAG-augmented prompt with reference materials.
+        Streamlined to avoid overwhelming the model while keeping citation functionality.
         """
-        rag_context = "\n\n### REFERENCE MATERIALS AVAILABLE:\n"
-        rag_context += "Here are reference images and quotes from my writings. Cite any that are directly relevant to your feedback on specific dimensions.\n"
+        if not reference_images and not book_passages:
+            return prompt
         
-        # Add book passages with citation IDs
+        rag_context = "\n\n## REFERENCE MATERIALS FOR CITATION\n\n"
+        
+        # Add book passages
         if book_passages:
-            rag_context += "\n#### AVAILABLE QUOTES FROM MY WRITINGS:\n"
-            rag_context += "You may cite UP TO 3 of these quotes total across all dimensions. Each dimension may cite ONE quote maximum. Never reuse quote IDs.\n\n"
-            
-            for idx, passage in enumerate(book_passages, 1):
+            rag_context += "**Advisor Quotes** (cite with quote_id=\"QUOTE_X\"):\n"
+            for idx, passage in enumerate(book_passages[:6], 1):
                 book_title = passage['book_title']
                 text = passage['passage_text']
                 dims = passage['dimensions']
-                quote_id = f"QUOTE_{idx}"
                 
-                # Truncate to 75 words for preview
+                # Truncate to 60 words
                 words = text.split()
-                preview = ' '.join(words[:75])
-                if len(words) > 75:
-                    preview += "..."
+                preview = ' '.join(words[:60]) + ("..." if len(words) > 60 else "")
                 
-                rag_context += f"[{quote_id}] From \"{book_title}\" (relevant to: {', '.join(dims)})\n"
-                rag_context += f'  "{preview}"\n\n'
-            
-            rag_context += "**CITATION INSTRUCTION:** To cite a quote, include its ID in your JSON response: `\"quote_id\": \"QUOTE_1\"`\n"
-            rag_context += "Cite ONLY when the quote directly supports your specific feedback for that dimension.\n"
+                rag_context += f'QUOTE_{idx}: "{preview}" —{book_title} (for {", ".join(dims)})\n\n'
         
-        # Add reference images with citation IDs
+        # Add reference images
         if reference_images:
-            rag_context += "\n#### AVAILABLE REFERENCE IMAGES:\n"
-            rag_context += "You may cite UP TO 3 of these images total across all dimensions. Each dimension may cite ONE image maximum. Never reuse image IDs.\n\n"
-            
-            for idx, img in enumerate(reference_images, 1):
-                img_title = img.get('image_title') or img.get('image_path', '').split('/')[-1]
+            rag_context += "**Reference Images** (cite with case_study_id=\"IMG_X\"):\n"
+            for idx, img in enumerate(reference_images[:10], 1):
+                img_title = img.get('image_title') or 'Untitled'
                 year = img.get('date_taken', '')
-                location = img.get('location', '')
-                img_id = f"IMG_{idx}"
                 
-                # Get all dimension scores >= 8.0
+                # Get strong dimensions (>= 8.0)
                 strong_dims = []
-                for dim in ['composition', 'lighting', 'focus_sharpness', 'color_harmony', 
-                           'subject_isolation', 'depth_perspective', 'visual_balance', 'emotional_impact']:
+                for dim in ['composition', 'lighting', 'focus_sharpness', 'color_harmony',
+                           'depth_perspective', 'visual_balance', 'emotional_impact']:
                     score = img.get(f"{dim}_score", 0)
                     if score and score >= 8.0:
-                        dim_display = dim.replace('_', ' ').title()
-                        strong_dims.append(f"{dim_display}={score:.1f}")
+                        dim_name = dim.replace('_', ' ').title()
+                        strong_dims.append(f"{dim_name}={score:.1f}")
                 
-                rag_context += f"[{img_id}] \"{img_title}\" ({year})\n"
-                if location:
-                    rag_context += f"  Location: {location}\n"
-                    
-                # Show what this image teaches (dimensions >= 8.0)
                 if strong_dims:
-                    rag_context += f"  📸 Master-level in: {', '.join(strong_dims)}\n"
-                    rag_context += f"  💡 When citing this image: Explain the SPECIFIC TECHNIQUE that creates this excellence and HOW the user can apply it.\n"
-                    rag_context += f"     Example: Don't say 'good composition' - say 'three-plane depth with foreground anchor'\n"
-                rag_context += "\n"
-            
-            rag_context += "**WHEN YOU CITE AN IMAGE (case_study_id):**\n"
-            rag_context += "Your 'recommendation' field MUST be a teaching moment that:\n"
-            rag_context += "1. Names the SPECIFIC TECHNIQUE (e.g., 'three-plane composition', 'Zone V-VII midtones')\n"
-            rag_context += "2. Explains WHY it works (e.g., 'creates dimensional depth', 'preserves highlight detail')\n"
-            rag_context += "3. Tells the user HOW to do it (actionable, specific steps)\n"
-            rag_context += "\n❌ GENERIC: 'This image has excellent composition.'\n"
-            rag_context += "✓ INSTRUCTIVE: 'Study the foreground boulder anchoring this composition while the river's S-curve draws your eye to the peaks. This three-plane structure creates dimensional depth. Position yourself so a rock or plant occupies your lower third.'\n\n"
+                    rag_context += f'IMG_{idx}: "{img_title}" ({year}) - Excels in {", ".join(strong_dims)}\n'
+            rag_context += "\n"
         
-        # Add final reminder about dimension-specific techniques
-        rag_context += "\n**CRITICAL CITATION RULES:**\n"
-        rag_context += "- Maximum 3 images and 3 quotes total across ALL dimensions\n"
-        rag_context += "- Each dimension: cite at most ONE image and ONE quote\n"
-        rag_context += "- NEVER reuse an ID once cited in another dimension\n"
-        rag_context += "- Only cite if directly relevant to your specific feedback\n"
-        rag_context += "- Zone System references: ONLY mention in ONE dimension (Lighting preferred), never repeat\n"
+        # Concise citation rules
+        rag_context += "**Citation Rules:** Use case_study_id or quote_id fields to reference these materials when relevant to your feedback. Maximum 3 citations total. Each ID may only be used once.\n"
         
         return prompt + rag_context
     
@@ -1370,7 +1339,11 @@ Required JSON Structure:
         html += f'''
   <h2>Overall Grade</h2>
   <p><strong>{overall_score}/10</strong></p>
-  <p><strong>Grade Note:</strong> {technical_notes}</p>
+'''
+        
+        if technical_notes and technical_notes.strip():
+            html += f'''
+  <p><strong>Technical notes:</strong> {technical_notes}</p>
 '''
         
         html += '''
@@ -1696,7 +1669,7 @@ Required JSON Structure:
                 user_dimensions=dimensions,
                 user_image_path=user_image_path,
                 max_case_studies=3,
-                relevance_threshold=0.25
+                relevance_threshold=0.15  # Lowered for more variety
             )
             if case_studies:
                 logger.info(f"✓ Computed {len(case_studies)} case studies for weak dimensions")
@@ -2116,7 +2089,7 @@ def analyze_stream():
                             user_dimensions=dimensions,
                             user_image_path=temp_path,
                             max_case_studies=3,
-                            relevance_threshold=0.25
+                            relevance_threshold=0.15  # Lowered for more variety
                         )
                         if case_studies is None:
                             raise RuntimeError("compute_case_studies returned None")
