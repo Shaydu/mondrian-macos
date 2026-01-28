@@ -1596,12 +1596,14 @@ def process_job_worker(db_path: str):
                         adapter = analysis_data.get('adapter', '')
 
                         # Prepare llm_outputs as JSON string
+                        # Include the full analysis structure with case studies
                         llm_outputs = json.dumps({
                             'prompt': prompt,
                             'response': full_response,
                             'summary': summary,
                             'model': model,
-                            'timestamp': analysis_data.get('timestamp', '')
+                            'timestamp': analysis_data.get('timestamp', ''),
+                            'analysis': analysis_data.get('analysis', {})  # Include full analysis with case studies
                         })
 
                         # Create markdown summary for analysis_markdown field

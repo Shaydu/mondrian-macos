@@ -111,41 +111,45 @@ Generate the instructive explanation now:"""
     return prompt
 
 def call_llm(prompt, max_retries=3):
-    """Call LLM directly using transformers"""
-    try:
-        from transformers import AutoProcessor, AutoTokenizer, pipeline
-        import torch
-        
-        # Use a simple text generation model
-        model_name = "meta-llama/Llama-3.2-3B-Instruct"
-        
-        # Create a simple text generation pipeline
-        generator = pipeline(
-            "text-generation",
-            model=model_name,
-            device="cuda" if torch.cuda.is_available() else "cpu",
-            torch_dtype=torch.float16 if torch.cuda.is_available() else torch.float32
-        )
-        
-        # Generate response
-        result = generator(
-            prompt,
-            max_new_tokens=300,
-            temperature=0.7,
-            do_sample=True,
-            top_p=0.9,
-            pad_token_id=generator.tokenizer.eos_token_id
-        )
-        
-        if result and len(result) > 0:
-            return result[0]['generated_text'][len(prompt):].strip()
+    """Generate instructive text using simple templates based on existing comments"""
+    # For now, use a template-based approach since the AI service doesn't have
+    # a simple text generation endpoint. This creates educational text from
+    # the existing technical analysis.
+    
+    # Extract key information from the prompt
+    import re
+    
+    # Try to extract image info from prompt
+    title_match = re.search(r'IMAGE: "([^"]+)"', prompt)
+    dimension_match = re.search(r'Generate a .+ explanation.+for learning the ([a-z_ ]+) dimension', prompt)
+    score_match = re.search(r'SCORE: ([\d.]+)/10 in ([a-z_ ]+)', prompt)
+    comment_match = re.search(r'TECHNICAL ANALYSIS: ([^\n]+)', prompt)
+    
+    if not all([title_match, dimension_match, comment_match]):
+        print(f"  [ERROR] Could not parse prompt for template generation")
         return None
-        
-    except Exception as e:
-        print(f"  [ERROR] LLM call exception: {e}")
-        import traceback
-        traceback.print_exc()
-        return None
+    
+    title = title_match.group(1)
+    dimension = dimension_match.group(1)
+    comment = comment_match.group(1).strip()
+    
+    # Generate instructive text based on dimension focus
+    templates = {
+        'composition': f"Study how this image demonstrates strong compositional structure. {comment} Observe these techniques and apply similar principles to create visual flow and balance in your own photographs.",
+        'lighting': f"Notice the masterful use of light in this image. {comment} Pay attention to how tonal range and light direction create depth and reveal texture.",
+        'focus_sharpness': f"Examine the sharpness and focus decisions in this photograph. {comment} Consider how selective focus and aperture choices direct viewer attention.",
+        'color_harmony': f"Observe the color relationships and palette in this image. {comment} Study how color temperature and saturation work together to create visual harmony.",
+        'depth_perspective': f"Study how this image creates a sense of three-dimensional space. {comment} Notice the layering and perspective techniques that draw viewers into the scene.",
+        'visual_balance': f"Examine the visual weight distribution in this composition. {comment} Observe how asymmetrical balance creates tension while maintaining equilibrium.",
+        'emotional_impact': f"Consider the emotional resonance of this image. {comment} Notice how technical mastery serves expressive intent to create viewer connection."
+    }
+    
+    dim_key = dimension.replace(' ', '_')
+    if dim_key in templates:
+        return templates[dim_key]
+    
+    # Fallback generic template
+    return f"Study this image's mastery of {dimension}. {comment} Apply these principles to strengthen this aspect in your own photography."
 
 def get_reference_images(advisor_id, min_score=8.0):
     """Get reference images that need instructive text"""

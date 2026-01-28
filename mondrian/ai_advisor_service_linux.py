@@ -44,7 +44,8 @@ from mondrian.rag_retrieval import (
     get_user_dimensional_profile,
     get_images_with_embedding_retrieval,
     augment_prompt_with_rag_context,
-    augment_prompt_for_pass2
+    augment_prompt_for_pass2,
+    rag_logger  # Import the dedicated RAG logger
 )
 
 import torch
@@ -1314,6 +1315,9 @@ Required JSON Structure:
             image_citation_html = ""
             if cited_image:
                 image_citation_html = render_cited_image_html(cited_image, name)
+                rag_logger.info(f"[HTML] Rendering case study for dimension '{name}': {cited_image.get('image_title', 'Unknown')}")
+            else:
+                rag_logger.debug(f"[HTML] No case study for dimension '{name}'")
             
             # Check if LLM cited a quote for this dimension
             cited_quote = dim.get('_cited_quote')
@@ -1501,6 +1505,7 @@ Required JSON Structure:
                                 img_citation_count += 1
                                 dim['_cited_image'] = img_lookup[img_id]
                                 logger.info(f"✓ Valid image citation: {img_id} in {dim['name']}")
+                                rag_logger.info(f"[Citation] LLM cited image {img_id} for dimension '{dim['name']}': {img_lookup[img_id].get('image_title', 'Unknown')}")
                         
                         # Validate quote_id (quote citation)
                         # Handle null values - treat as if field is absent
@@ -1663,7 +1668,10 @@ Required JSON Structure:
         # Compute case studies using gap-based selection with visual relevance
         # This replaces the old reference_images approach with smarter selection
         case_studies = []
+        rag_logger.info(f"[Job] Starting case study computation (has dimensions={bool(dimensions)}, has user_image={bool(user_image_path)})")
+        
         if dimensions and user_image_path:
+            rag_logger.info(f"[Job] Calling compute_case_studies with user image")
             case_studies = compute_case_studies(
                 db_path=DB_PATH,
                 advisor_id=advisor,
@@ -1674,8 +1682,12 @@ Required JSON Structure:
             )
             if case_studies:
                 logger.info(f"✓ Computed {len(case_studies)} case studies for weak dimensions")
+                rag_logger.info(f"[Job] compute_case_studies returned {len(case_studies)} case studies")
+            else:
+                rag_logger.warning(f"[Job] compute_case_studies returned EMPTY list (with user image)")
         elif dimensions:
             # No user image path - fall back to gap-only selection (no relevance filtering)
+            rag_logger.info(f"[Job] Calling compute_case_studies WITHOUT user image (gap-only)")
             case_studies = compute_case_studies(
                 db_path=DB_PATH,
                 advisor_id=advisor,
@@ -1686,6 +1698,54 @@ Required JSON Structure:
             )
             if case_studies:
                 logger.info(f"✓ Computed {len(case_studies)} case studies (gap-only, no user image)")
+                rag_logger.info(f"[Job] compute_case_studies returned {len(case_studies)} case studies (gap-only)")
+            else:
+                rag_logger.warning(f"[Job] compute_case_studies returned EMPTY list (gap-only)")
+        else:
+            rag_logger.warning(f"[Job] Skipping case study computation - no dimensions parsed from LLM")
+        
+        # Merge case studies into dimensions as _cited_image
+        # This ensures they get rendered in HTML alongside LLM-cited images
+        if case_studies and dimensions:
+            rag_logger.info(f"[Job] Merging {len(case_studies)} case studies into dimensions")
+            
+            # Build dimension name mapping for robust matching
+            dim_name_map = {
+                'composition': ['composition'],
+                'lighting': ['lighting'],
+                'focus_sharpness': ['focus', 'sharpness', 'focus & sharpness', 'focus and sharpness'],
+                'depth_perspective': ['depth', 'perspective', 'depth & perspective', 'depth and perspective'],
+                'visual_balance': ['balance', 'visual balance'],
+                'emotional_impact': ['emotional', 'impact', 'emotional impact', 'emotion']
+            }
+            
+            for case_study in case_studies:
+                dim_name = case_study['dimension_name']
+                ref_image = case_study['ref_image']
+                
+                # Find matching dimension in analysis_data
+                for dim in dimensions:
+                    # Normalize dimension name for matching
+                    dim_display_name = dim.get('name', '').lower().strip()
+                    
+                    # Check if this dimension matches the case study
+                    matches = False
+                    if dim_name in dim_name_map:
+                        for variant in dim_name_map[dim_name]:
+                            if variant in dim_display_name or dim_display_name in variant:
+                                matches = True
+                                break
+                    
+                    if matches:
+                        # Only attach if not already cited by LLM
+                        if '_cited_image' not in dim:
+                            dim['_cited_image'] = ref_image
+                            rag_logger.info(f"[Job] Attached case study to dimension '{dim.get('name')}': {ref_image.get('image_title')}")
+                        else:
+                            rag_logger.info(f"[Job] Dimension '{dim.get('name')}' already has LLM citation, skipping case study")
+                        break
+                else:
+                    rag_logger.warning(f"[Job] Could not find dimension match for case study '{dim_name}'")
         
         # Generate HTML outputs
         analysis_html = self._generate_ios_detailed_html(analysis_data, advisor, mode, case_studies=case_studies)

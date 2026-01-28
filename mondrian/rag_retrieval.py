@@ -9,8 +9,21 @@ import sqlite3
 import logging
 from typing import Dict, Any, List, Optional
 from pathlib import Path
+from datetime import datetime
 
 logger = logging.getLogger(__name__)
+
+# Setup dedicated RAG file logger
+rag_logger = logging.getLogger('rag_analysis')
+rag_logger.setLevel(logging.DEBUG)
+if not rag_logger.handlers:
+    os.makedirs('logs', exist_ok=True)
+    log_file = f'logs/rag_analysis_{datetime.now().strftime("%Y%m%d")}.log'
+    fh = logging.FileHandler(log_file)
+    fh.setLevel(logging.DEBUG)
+    formatter = logging.Formatter('%(asctime)s [%(levelname)s] %(message)s')
+    fh.setFormatter(formatter)
+    rag_logger.addHandler(fh)
 
 # Database path - project root
 DB_PATH = str(Path(__file__).parent.parent / 'mondrian.db')
@@ -404,6 +417,8 @@ def get_best_image_per_dimension(db_path: str, advisor_id: str, as_list: bool = 
             # Get the instructive column name for this dimension
             instructive_column = f"{dim_name}_instructive"
             
+            rag_logger.info(f"[{advisor_id}] Querying best image for dimension: {dim_name} (column: {db_column})")
+            
             # Get a random high-quality image for this dimension from the top scorers
             # This provides variety across analyses instead of always using the same #1 image
             # NOTE: Instructive text filter temporarily removed - will re-enable after populating data
@@ -436,14 +451,23 @@ def get_best_image_per_dimension(db_path: str, advisor_id: str, as_list: bool = 
                     del img_dict['embedding']
                 
                 image_path = img_dict.get('image_path')
+                image_title = img_dict.get('image_title', 'Unknown')
+                dim_score = img_dict.get(db_column, 0)
+                has_instructive = img_dict.get(instructive_column) is not None and img_dict.get(instructive_column) != ''
+                
+                rag_logger.info(f"  ✓ Found: '{image_title}' (score={dim_score}, has_instructive={has_instructive})")
+                
                 if image_path:
                     seen_paths.add(image_path)
                     
                 result[dim_name] = img_dict
+            else:
+                rag_logger.warning(f"  ✗ No high-scoring image found for {dim_name}")
         
         conn.close()
         
         logger.info(f"[RAG] Retrieved best images for {len(result)}/{len(DIMENSIONS)} dimensions ({len(seen_paths)} unique images)")
+        rag_logger.info(f"[{advisor_id}] SUMMARY: Retrieved {len(result)}/{len(DIMENSIONS)} dimension images ({len(seen_paths)} unique)")
         
         # If as_list requested, convert to list format with image URLs
         if as_list:
@@ -455,6 +479,7 @@ def get_best_image_per_dimension(db_path: str, advisor_id: str, as_list: bool = 
                     img_dict['image_url'] = f"/api/reference-image/{img_filename}"
                     img_dict['image_filename'] = img_filename
                     result_list.append(img_dict)
+            rag_logger.info(f"[{advisor_id}] Converted to list format: {len(result_list)} images with URLs")
             return result_list
         
         return result
@@ -528,17 +553,26 @@ def compute_case_studies(
     """
     import random
     
+    rag_logger.info(f"[{advisor_id}] ===== COMPUTE CASE STUDIES START =====")
+    rag_logger.info(f"[{advisor_id}] User image: {user_image_path}")
+    rag_logger.info(f"[{advisor_id}] Max case studies: {max_case_studies}")
+    rag_logger.info(f"[{advisor_id}] Relevance threshold: {relevance_threshold}")
+    
     # Get best reference image for each dimension
     best_per_dim = get_best_image_per_dimension(db_path, advisor_id)
     
     if not best_per_dim:
         logger.warning("[CaseStudy] No reference images found for any dimension")
+        rag_logger.error(f"[{advisor_id}] FAILED: No reference images returned from get_best_image_per_dimension")
         return []
+    
+    rag_logger.info(f"[{advisor_id}] Retrieved reference images for {len(best_per_dim)} dimensions")
     
     # Build user score lookup (normalize dimension names)
     user_scores = {}
     for dim in user_dimensions:
         dim_name = dim.get('name', '').lower().strip()
+        original_name = dim_name
         # Normalize common variations
         dim_name = dim_name.replace(' & ', '_').replace(' and ', '_').replace(' ', '_')
         if 'focus' in dim_name:
@@ -554,12 +588,17 @@ def compute_case_studies(
         elif 'isolation' in dim_name:
             dim_name = 'subject_isolation'
         user_scores[dim_name] = dim.get('score', 10)
+        if dim_name != original_name:
+            rag_logger.debug(f"[{advisor_id}] Normalized '{original_name}' -> '{dim_name}' = {user_scores[dim_name]}")
     
     logger.info(f"[CaseStudy] User scores: {user_scores}")
+    rag_logger.info(f"[{advisor_id}] User scores: {user_scores}")
     
     # Calculate gaps and relevance for each dimension
     candidates = []
     used_image_paths = set()
+    
+    rag_logger.info(f"[{advisor_id}] Evaluating candidates for case studies...")
     
     for dim_name, ref_img in best_per_dim.items():
         db_column = DIMENSION_TO_DB_COLUMN.get(dim_name)
@@ -569,10 +608,12 @@ def compute_case_studies(
         ref_score = ref_img.get(db_column, 0)
         user_score = user_scores.get(dim_name, 10)
         ref_path = ref_img.get('image_path', '')
+        ref_title = ref_img.get('image_title', 'Unknown')
         
         # Skip if this image path already used (ensures uniqueness, first match wins)
         if ref_path in used_image_paths:
             logger.info(f"[CaseStudy] Skipping {dim_name}: image '{ref_img.get('image_title')}' already used")
+            rag_logger.info(f"[{advisor_id}]   {dim_name}: SKIP (duplicate image '{ref_title}')")
             continue
         
         gap = ref_score - user_score
@@ -581,6 +622,7 @@ def compute_case_studies(
         # Only exclude if user score is equal or better than reference
         if gap <= 0:
             logger.info(f"[CaseStudy] Skipping {dim_name}: no gap (user={user_score}, ref={ref_score})")
+            rag_logger.info(f"[{advisor_id}]   {dim_name}: SKIP (no gap: user={user_score}, ref={ref_score})")
             continue
         
         # Compute visual relevance if user image provided
@@ -588,12 +630,15 @@ def compute_case_studies(
         if user_image_path and ref_path and os.path.exists(ref_path):
             relevance = compute_visual_relevance(user_image_path, ref_path)
             logger.info(f"[CaseStudy] {dim_name}: gap={gap:.1f}, relevance={relevance:.2f}, ref='{ref_img.get('image_title')}'")
+            rag_logger.info(f"[{advisor_id}]   {dim_name}: gap={gap:.1f}, relevance={relevance:.2f}, ref='{ref_title}'")
         else:
             logger.info(f"[CaseStudy] {dim_name}: gap={gap:.1f}, relevance=N/A, ref='{ref_img.get('image_title')}'")
+            rag_logger.info(f"[{advisor_id}]   {dim_name}: gap={gap:.1f}, relevance=N/A (no user image), ref='{ref_title}'")
         
         # Filter by relevance threshold (but be more lenient)
         if relevance < relevance_threshold:
             logger.info(f"[CaseStudy] Skipping {dim_name}: relevance {relevance:.2f} below threshold {relevance_threshold}")
+            rag_logger.info(f"[{advisor_id}]   {dim_name}: SKIP (relevance {relevance:.2f} < threshold {relevance_threshold})")
             continue
         
         # Mark this image as used (first match wins for tie-breaking)
@@ -602,6 +647,8 @@ def compute_case_studies(
         # Compute selection weight: gap * relevance (balanced approach)
         # This ensures both learning opportunity AND relevance matter
         selection_weight = gap * relevance
+        
+        rag_logger.info(f"[{advisor_id}]   {dim_name}: CANDIDATE (weight={selection_weight:.2f})")
         
         candidates.append({
             'dimension_name': dim_name,
@@ -615,7 +662,10 @@ def compute_case_studies(
     
     if not candidates:
         logger.info(f"[CaseStudy] No candidates passed filters")
+        rag_logger.warning(f"[{advisor_id}] No candidates passed filters - returning empty list")
         return []
+    
+    rag_logger.info(f"[{advisor_id}] {len(candidates)} candidates passed all filters")
     
     # Improved Selection Strategy:
     # 1. Always include the top gap dimension (most important learning opportunity)
@@ -632,6 +682,7 @@ def compute_case_studies(
         selected.append(candidates[0])
         remaining_candidates = candidates[1:]
         logger.info(f"[CaseStudy] Top priority: {candidates[0]['dimension_name']} (gap={candidates[0]['gap']:.1f}, weight={candidates[0]['weight']:.2f})")
+        rag_logger.info(f"[{advisor_id}] Selected #1 (top priority): {candidates[0]['dimension_name']} (weight={candidates[0]['weight']:.2f}, '{candidates[0]['ref_image'].get('image_title')}')")
     
     # For remaining slots, use weighted random selection to add variety
     remaining_slots = max_case_studies - len(selected)
@@ -657,17 +708,24 @@ def compute_case_studies(
                         seen.add(idx)
                         selected.append(remaining_candidates[idx])
                         logger.info(f"[CaseStudy] Weighted selection: {remaining_candidates[idx]['dimension_name']} (gap={remaining_candidates[idx]['gap']:.1f}, weight={remaining_candidates[idx]['weight']:.2f})")
+                        rag_logger.info(f"[{advisor_id}] Selected #{len(selected)} (weighted random): {remaining_candidates[idx]['dimension_name']} (weight={remaining_candidates[idx]['weight']:.2f}, '{remaining_candidates[idx]['ref_image'].get('image_title')}')")
             except Exception as e:
                 logger.warning(f"[CaseStudy] Weighted sampling failed, falling back to top candidates: {e}")
+                rag_logger.warning(f"[{advisor_id}] Weighted sampling failed: {e}, using fallback")
                 # Fallback: just take next highest
                 for c in remaining_candidates[:remaining_slots]:
                     selected.append(c)
+                    rag_logger.info(f"[{advisor_id}] Selected #{len(selected)} (fallback): {c['dimension_name']}")
     
     if selected:
         selected_info = [(c['dimension_name'], f"gap={c['gap']:.1f}", c['ref_image'].get('image_title')) for c in selected]
         logger.info(f"[CaseStudy] Selected {len(selected)} case studies: {selected_info}")
+        rag_logger.info(f"[{advisor_id}] ===== CASE STUDIES FINAL: {len(selected)} selected =====")
+        for i, c in enumerate(selected, 1):
+            rag_logger.info(f"[{advisor_id}]   {i}. {c['dimension_name']}: '{c['ref_image'].get('image_title')}' (gap={c['gap']:.1f}, weight={c['weight']:.2f})")
     else:
         logger.info(f"[CaseStudy] No case studies selected (no gaps or low relevance)")
+        rag_logger.warning(f"[{advisor_id}] ===== CASE STUDIES FINAL: 0 selected =====")
     
     return selected
 
