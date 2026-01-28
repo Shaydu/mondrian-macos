@@ -398,7 +398,8 @@ def get_best_image_per_dimension(db_path: str, advisor_id: str) -> Dict[str, Dic
             if not db_column:
                 continue
             
-            # Get the single best image for this dimension (score >= 8.0, ordered by score DESC)
+            # Get a random high-quality image for this dimension from the top scorers
+            # This provides variety across analyses instead of always using the same #1 image
             query = f"""
                 SELECT id, image_path, composition_score, lighting_score, 
                        focus_sharpness_score, color_harmony_score,
@@ -413,7 +414,7 @@ def get_best_image_per_dimension(db_path: str, advisor_id: str) -> Dict[str, Dic
                 WHERE advisor_id = ?
                   AND {db_column} >= 8.0
                   AND {db_column} IS NOT NULL
-                ORDER BY {db_column} DESC
+                ORDER BY RANDOM()
                 LIMIT 1
             """
             
