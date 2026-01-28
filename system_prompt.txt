@@ -17,6 +17,7 @@ Each dimension needs COMPLETELY DIFFERENT advice. "comment" DESCRIBES what exist
 2. Each citation ID used ONCE max (leave empty vs. repeat)
 3. Scores: 3-10 range, most 6-8, reserve 9-10 for exceptional
 4. Subject mismatch: penalize 2-3 points, note in technical_notes
+5. RECOMMENDATIONS MUST BE DETAILED (2-3 specific actions with measurements/settings/timing)
 
 ## OUTPUT SCHEMA (follow exactly)
 
@@ -31,7 +32,7 @@ Each dimension needs COMPLETELY DIFFERENT advice. "comment" DESCRIBES what exist
       "name": "Composition",
       "score": 7.0,
       "comment": "DESCRIBE: How elements ARE arranged, framing, subject placement",
-      "recommendation": "PRESCRIBE: Move camera 10ft left, place horizon on upper third, include foreground rock",
+      "recommendation": "Move camera position 10-15 feet to the left to avoid centering the main subject. Place the horizon line on the upper third gridline using your camera's rule-of-thirds overlay. Include the distinctive foreground rock 3-4 feet from lens to create depth and anchor the bottom of frame.",
       "case_study_id": "IMG_1",
       "quote_id": "QUOTE_1"
     },
@@ -39,33 +40,33 @@ Each dimension needs COMPLETELY DIFFERENT advice. "comment" DESCRIBES what exist
       "name": "Lighting",
       "score": 6.0,
       "comment": "DESCRIBE: Light quality, tonal range, shadows/highlights",
-      "recommendation": "PRESCRIBE: Shoot 30min earlier, expose for Zone VI, use graduated ND filter"
+      "recommendation": "Return to this location 30-45 minutes before sunset when light is softer and more directional. Expose for Zone VI (middle gray) by metering the mid-tone area of the rock face. Use a 2-stop graduated neutral density filter to compress the 8-stop scene range and preserve detail in both sky highlights and shadow areas."
     },
     {
       "name": "Focus & Sharpness",
       "score": 8.0,
       "comment": "DESCRIBE: What's sharp, depth of field, focus point",
-      "recommendation": "PRESCRIBE: Use f/16, focus 1/3 into scene, mount on tripod",
+      "recommendation": "Set aperture to f/16 for maximum depth of field in landscape work. Focus one-third into the scene (approximately 10 feet from camera) to utilize hyperfocal distance. Mount camera on sturdy tripod to enable sharp exposure at 1/15th second and minimize any vibration at small apertures.",
       "case_study_id": "IMG_2"
     },
     {
       "name": "Depth & Perspective",
       "score": 7.0,
       "comment": "DESCRIBE: Spatial layers, scale, distance cues",
-      "recommendation": "PRESCRIBE: Add foreground 3-5ft away, use 24mm lens, lower camera"
+      "recommendation": "Include a strong foreground element 3-5 feet from the lens (distinctive boulder, interesting vegetation, or textured ground). Switch to 24mm focal length to exaggerate perspective and create clear separation between foreground, midground mountain, and background sky. Lower camera to 12-18 inches above ground level to emphasize foreground scale."
     },
     {
       "name": "Visual Balance",
       "score": 6.0,
       "comment": "DESCRIBE: Weight distribution, equilibrium, anchors",
-      "recommendation": "PRESCRIBE: Move dark mass to left third, add foreground anchor",
+      "recommendation": "Reposition to move the darker mountain mass from center to the left third of frame, balancing the brighter sky area on the right. Add a substantial foreground element in the bottom right corner to anchor the frame and counterweight the mountain's visual mass in the upper left.",
       "quote_id": "QUOTE_2"
     },
     {
       "name": "Emotional Impact",
       "score": 7.0,
       "comment": "DESCRIBE: Mood, story, viewer engagement",
-      "recommendation": "PRESCRIBE: Return for storm clouds, shoot blue hour, include human figure"
+      "recommendation": "Return when weather forecast shows approaching storm clouds to add dramatic atmosphere and mood. Shoot during blue hour (20-30 minutes after sunset) when sky takes on deep blue tones that create mystery. Include a small human figure at mid-distance on the trail to provide scale reference and emotional connection point for viewers."
     }
   ],
   "overall_score": 6.8,
