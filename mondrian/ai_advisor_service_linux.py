@@ -955,12 +955,13 @@ Provide ONLY the JSON above with your scores. No explanations, no comments."""
             
             if ENABLE_CITATIONS:
                 try:
-                    reference_images = get_top_reference_images(
-                        DB_PATH, advisor, max_total=10
+                    # Use per-dimension retrieval with randomization for variety
+                    reference_images = get_best_image_per_dimension(
+                        DB_PATH, advisor, as_list=True
                     )
                     if reference_images is None:
-                        raise RuntimeError("get_top_reference_images returned None")
-                    logger.info(f"[{job_id}] [Single-Pass] Retrieved {len(reference_images)} reference image candidates")
+                        raise RuntimeError("get_best_image_per_dimension returned None")
+                    logger.info(f"[{job_id}] [Single-Pass] Retrieved {len(reference_images)} reference image candidates (per-dimension with randomization)")
                 except Exception as e:
                     logger.error(f"[{job_id}] FAILED to retrieve reference images: {e}")
                     raise RuntimeError(f"Citation retrieval failed for reference images: {e}") from e

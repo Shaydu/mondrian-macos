@@ -373,7 +373,7 @@ def deduplicate_reference_images(images: List[Dict[str, Any]], used_paths: set, 
     return deduplicated
 
 
-def get_best_image_per_dimension(db_path: str, advisor_id: str) -> Dict[str, Dict[str, Any]]:
+def get_best_image_per_dimension(db_path: str, advisor_id: str, as_list: bool = False) -> Dict[str, Dict[str, Any]]:
     """
     Retrieve the single best reference image for EACH dimension separately.
     This ensures diversity - each dimension gets its own best exemplar.
@@ -381,9 +381,11 @@ def get_best_image_per_dimension(db_path: str, advisor_id: str) -> Dict[str, Dic
     Args:
         db_path: Path to the SQLite database
         advisor_id: Advisor to search (e.g., 'ansel')
+        as_list: If True, return as list of images (for RAG context). If False, return as dict keyed by dimension.
         
     Returns:
-        Dict mapping dimension name to best image for that dimension
+        Dict mapping dimension name to best image for that dimension (as_list=False)
+        OR List of unique images with image_url fields (as_list=True)
         e.g., {'composition': {...}, 'lighting': {...}, ...}
     """
     try:
@@ -392,6 +394,7 @@ def get_best_image_per_dimension(db_path: str, advisor_id: str) -> Dict[str, Dic
         cursor = conn.cursor()
         
         result = {}
+        seen_paths = set()  # Track unique images
         
         for dim_name in DIMENSIONS:
             db_column = DIMENSION_TO_DB_COLUMN.get(dim_name)
@@ -427,11 +430,29 @@ def get_best_image_per_dimension(db_path: str, advisor_id: str) -> Dict[str, Dic
                 if 'embedding' in img_dict:
                     img_dict['has_embedding'] = img_dict['embedding'] is not None
                     del img_dict['embedding']
+                
+                image_path = img_dict.get('image_path')
+                if image_path:
+                    seen_paths.add(image_path)
+                    
                 result[dim_name] = img_dict
         
         conn.close()
         
-        logger.info(f"[CaseStudy] Retrieved best images for {len(result)}/{len(DIMENSIONS)} dimensions")
+        logger.info(f"[RAG] Retrieved best images for {len(result)}/{len(DIMENSIONS)} dimensions ({len(seen_paths)} unique images)")
+        
+        # If as_list requested, convert to list format with image URLs
+        if as_list:
+            result_list = []
+            for dim_name, img_dict in result.items():
+                image_path = img_dict.get('image_path')
+                if image_path and os.path.exists(image_path):
+                    img_filename = os.path.basename(image_path)
+                    img_dict['image_url'] = f"/api/reference-image/{img_filename}"
+                    img_dict['image_filename'] = img_filename
+                    result_list.append(img_dict)
+            return result_list
+        
         return result
         
     except Exception as e:
